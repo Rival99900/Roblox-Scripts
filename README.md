@@ -9,7 +9,7 @@ This repository contains professionally-developed Roblox exploit scripts created
 ### Current Available Scripts
 
 #### 🔴 SCP vs Guard Hub Pro
-**Game**: [Be an SCP or Guard](https://www.roblox.com/games/17732115125)
+**Game**: [Be an SCP or Guard](https://www.roblox.com/games/121461214257813/Be-an-SCP-or-Guard)
 
 A feature-rich exploit hub designed specifically for the SCP Foundation roleplay game, providing gameplay enhancements and utility tools for both Guards and SCPs.
 
