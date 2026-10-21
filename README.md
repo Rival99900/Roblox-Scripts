@@ -32,7 +32,7 @@ A feature-rich exploit hub designed specifically for the SCP Foundation roleplay
 3. **Paste this command** into your executor:
 
 ```lua
-loadstring(game:HttpGet("https://raw.githubusercontent.com/Rival99900/Roblox-Scripts/main/SCP_Guard_Hub_Pro.lua"))()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/Rival99900/Roblox-Scripts/refs/heads/main/scripts/Be-an-SCP-or-Guard-KEYLESS.lua"))()
 ```
 
 4. **Press Execute** - The GUI will load automatically with Rayfield UI
