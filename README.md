@@ -1,27 +1,27 @@
 # Roblox Scripts Hub
 
-A comprehensive collection of advanced exploit scripts for various Roblox games, featuring multilingual support, robust security, and user-friendly interfaces.
+A collection of Roblox exploit scripts for various games, featuring multilingual support and a Rayfield UI.
 
 ## 📚 Repository Overview
 
-This repository contains professionally-developed Roblox exploit scripts created by **Rival960**, leveraging the **Rayfield UI Framework** for intuitive user experience and **Luau** scripting language for optimal performance.
+This repository contains Roblox exploit scripts created by **Rival960**, using the **Rayfield UI** library and the **Luau** scripting language.
 
 ### Current Available Scripts
 
-#### 🔴 SCP vs Guard Hub Pro
+#### 🔴 SCP vs Guard Hub
 **Game**: [Be an SCP or Guard](https://www.roblox.com/games/121461214257813/Be-an-SCP-or-Guard)
 
-A feature-rich exploit hub designed specifically for the SCP Foundation roleplay game, providing gameplay enhancements and utility tools for both Guards and SCPs.
+An exploit hub for the SCP Foundation roleplay game, with gameplay and utility tools for both Guards and SCPs.
 
 **Key Features**:
-- **Dynamic Enemy ESP** - Strict team-based filtering with real-time health displays
-- **Balanced Silent Aim** - Weapon-fire triggered auto-aiming with FOV-based targeting
-- **Universal Flight System** - PC & Mobile compatible flying with adjustable speed
-- **NoClip Traversal** - Walk through walls and obstacles
-- **Anti-Ban Protection** - Built-in safety mechanisms to prevent account bans
+- **Enemy ESP** - Team-based filtering with health display
+- **Silent Aim** - Triggered on weapon fire, with FOV-based targeting
+- **Flight** - PC and mobile controls with adjustable speed
+- **NoClip** - Walk through walls and obstacles
+- **Ban Broadcast Listener** - Listens for ban broadcast events and prints a console message (see [Safety & Limitations](#%EF%B8%8F-safety--limitations))
 - **Doors Control** - Bulk facility door and checkpoint management
-- **Fullbright Mode** - Enhanced visibility with dynamic lighting
-- **21-Language Support** - Complete multilingual interface
+- **Fullbright** - Raises brightness and disables global shadows
+- **21 languages** - Multilingual interface
 
 ### Installation & Usage
 
@@ -35,11 +35,11 @@ A feature-rich exploit hub designed specifically for the SCP Foundation roleplay
 loadstring(game:HttpGet("https://raw.githubusercontent.com/Rival99900/Roblox-Scripts/refs/heads/main/scripts/Be-an-SCP-or-Guard-KEYLESS.lua"))()
 ```
 
-4. **Press Execute** - The GUI will load automatically with Rayfield UI
+4. **Press Execute** - The GUI loads with the Rayfield UI
 
 #### Method 2: Manual Execution
 
-1. Copy the complete script from `Be-an-SCP-or-Guard-KEYLESS.lua`
+1. Copy the complete script from `scripts/Be-an-SCP-or-Guard-KEYLESS.lua`
 2. Paste into your executor
 3. Execute in-game
 
@@ -55,44 +55,40 @@ loadstring(readfile("path/to/Be-an-SCP-or-Guard-KEYLESS.lua"))()
 ## 🎮 Features Breakdown
 
 ### Vision & ESP Module
-- **Dynamic Enemy Detection** - Automatically identifies and highlights enemies
-- **Strict Team Filtering** - Never targets or affects teammates
-- **Role-Based Identification** - SCP vs Human player detection
-- **Health Display** - Real-time HP information on nameplates
-- **Billboard Info Tags** - Floating player information displays
-- **Proximity-Based Alerts** - Visual indicators for nearby threats
+- **Enemy Detection** - Highlights players on the opposing team
+- **Team Filtering** - Ignores teammates
+- **Role Identification** - SCP vs Human player detection
+- **Health Display** - HP shown on player tags
+- **Billboard Info Tags** - Floating player information
 
 ### Movement & Flight System
-- **Universal PC & Mobile Fly** - Works on all platforms seamlessly
-- **Adjustable Fly Speed** - Customizable from 10 to 300 studs/second
-- **NoClip Mode** - Bypass collision detection for wall traversal
-- **Independent Walk Speed** - Modify base movement speed
-- **Camera-Based Movement** - Smooth directional input using WASD + Space/Shift
+- **PC & Mobile Flight** - Keyboard and touch controls
+- **Adjustable Fly Speed** - From 10 to 300 studs/second
+- **NoClip Mode** - Disables collisions to pass through walls
+- **Walk Speed** - Adjustable base movement speed
+- **Camera-Based Movement** - WASD + Space/Shift, relative to the camera
 
 ### Combat & Silent Aim
-- **Weapon-Fire Triggered Aiming** - Activates only during active attacks
-- **FOV-Based Target Acquisition** - Smart targeting within configurable field of view
-- **Distance Customization** - Adjust maximum aiming range (20-300 studs)
-- **FOV Adjustment** - Fine-tune targeting radius (10-200 pixels)
-- **Clean Hitbox Expansion** - Expand enemy hitboxes up to 10x for easier targeting
-- **Infinite Ammo Support** - Freeze ammo for unlimited ammunition
+- **Fire-Triggered Aiming** - Active only while attacking
+- **FOV-Based Targeting** - Targets within a configurable field of view
+- **Distance Setting** - Maximum aim distance (20-300 studs)
+- **FOV Setting** - Targeting radius (10-200 pixels)
+- **Hitbox Expansion** - Enlarges enemy hitboxes up to 10x
+- **Freeze Ammo** - Keeps ammunition from decreasing
 
 ### Facility Control
-- **Bulk Door Operations** - Open/close all doors simultaneously
-- **Multi-Detection Methods** - Works with ProximityPrompts, ClickDetectors, and RemoteEvents
-- **Checkpoint Hacking** - Automatic security checkpoint interaction
-- **Recursive Scanning** - Detects nested door structures in workspace
+- **Bulk Door Operations** - Open/close doors together
+- **Multiple Interaction Methods** - ProximityPrompts, ClickDetectors and RemoteEvents
+- **Checkpoint Interaction** - Interacts with checkpoints by name
+- **Recursive Scanning** - Finds doors nested in the workspace
 
 ### Visual Enhancements
-- **Fullbright Mode** - Remove darkness and shadows for maximum visibility
-- **Dynamic Lighting Control** - Automatic day/night cycle management
-- **Shadow Removal System** - Eliminate shadows for better visibility
-- **Global Brightness Adjustment** - Complete lighting control
+- **Fullbright** - Raises lighting brightness and disables global shadows. It also sets the in-game clock to a fixed time (14:00); there is no day/night cycle
 
 ### Additional Tools
-- **Teleport to Closest Enemy** - Instantly move to nearest target
-- **Auto Walk Speed Sync** - Automatic speed application on respawn
-- **Language Selector** - Switch between 21 languages dynamically
+- **Teleport to Closest Enemy** - Moves your character to the nearest target
+- **Walk Speed Reapply** - Applies the chosen walk speed again after respawn
+- **Language Selector** - Switches between 21 languages (the full UI updates after re-executing the script)
 
 ---
 
@@ -117,21 +113,19 @@ loadstring(readfile("path/to/Be-an-SCP-or-Guard-KEYLESS.lua"))()
 ## ⚙️ Technical Architecture
 
 ### Core Framework
-- **UI Library**: Rayfield (Keyless Implementation)
+- **UI Library**: Rayfield (loaded from `sirius.menu/rayfield`)
 - **Language**: Luau (Roblox's scripting language)
 - **Services**: Players, RunService, UserInputService, Workspace, ReplicatedStorage, Lighting
 
-### Optimization Features
-- **RenderStepped Loop** - 60 FPS compatible main execution loop
-- **PCall Safety Wrapping** - Comprehensive error handling throughout
-- **Efficient Entity Filtering** - Optimized player and object scanning
-- **Minimal Memory Footprint** - Low CPU and RAM usage
+### Implementation Notes
+- **Main loop** - `RunService` loop that updates features every frame
+- **pcall wrapping** - Some operations are wrapped in `pcall` to avoid stopping the script on an error
+- **Entity scanning** - Scans players and workspace objects to find targets and doors
 
-### Security Implementation
-- **Strict Team Filtering** - `isEnemy()` function prevents friendly fire
-- **Role-Based Detection** - `isPlayerSCP()` identifies SCP players
-- **Ban Protection Events** - Intercepts ban broadcast signals
-- **Safe Operation Wrapping** - All critical operations protected with pcall blocks
+### Safety Checks
+- **Team Filtering** - `isEnemy()` decides whether a player is treated as an enemy
+- **Role Detection** - `isPlayerSCP()` identifies SCP players
+- **Ban Event Listener** - Connects to the `BroadcastBan` event and prints a message
 
 ---
 
@@ -139,50 +133,48 @@ loadstring(readfile("path/to/Be-an-SCP-or-Guard-KEYLESS.lua"))()
 
 ### Playing as a Guard
 
-**Recommended Setup**:
-1. Enable Dynamic ESP to locate SCPs
-2. Activate Silent Aim for combat advantage
-3. Enable Fullbright for facility visibility
-4. Use TP to Closest Enemy for quick engagement
-5. Control doors to contain SCP breaches
+**Suggested setup**:
+1. Enable ESP to locate SCPs
+2. Enable Silent Aim for combat
+3. Enable Fullbright for visibility in the facility
+4. Use Teleport to Closest Enemy to engage quickly
+5. Use the door controls to contain SCP breaches
 
-**Strategy Tips**:
-- Stay in groups for safety
+**Tips**:
+- Stay in groups
 - Use flight to reach high positions
 - Control key checkpoints
-- Protect the facility entrance
 
 ### Playing as an SCP
 
-**Recommended Setup**:
-1. Enable Fly to navigate quickly
-2. Activate NoClip for hidden passages
+**Suggested setup**:
+1. Enable Fly to move quickly
+2. Enable NoClip to reach hidden passages
 3. Use ESP to track guard movements
-4. Control doors to seal areas
-5. Hunt strategically
+4. Use the door controls to seal areas
 
-**Strategy Tips**:
-- Use flight for vertical advantage
-- Find hiding spots with NoClip
-- Avoid early detection
-- Hunt aggressively late game
+**Tips**:
+- Use flight for vertical positions
+- Use NoClip to reach hiding spots
 
 ---
 
-## 🛡️ Safety & Security
+## 🛡️ Safety & Limitations
 
-### Anti-Ban Features
-- **Event Interception** - Monitors ban broadcast events
-- **Safe Execution** - All operations wrapped in protective pcall blocks
-- **Legitimate Integration** - Uses standard game mechanics
-- **No Game-Breaking Mods** - Respects game structure
+**This script does not protect your account.** The "Ban Broadcast Listener" only listens for the `BroadcastBan` event and prints a message in the console. It does not block, undo or prevent any ban. Nothing in this script guarantees that you will not be banned.
 
 ### Best Practices
-- **Use Fresh Account** - Better for long-term safety
-- **Vary Playstyle** - Mix script usage with normal gameplay
-- **Enable Anti-Ban** - Always keep this feature activated
-- **Limit Active Time** - Don't run continuously 24/7
-- **Share Wisely** - Don't give credentials to others
+- **Use a separate account** if you are worried about losing your main account
+- **Vary your playstyle** - Mix script usage with normal gameplay
+- **Limit active time** - Don't run the script continuously
+- **Share wisely** - Don't give your credentials to others
+
+### Known Limitations
+- Door and checkpoint detection relies mostly on object names, so some doors may not be detected
+- Server-side checks can block or undo local effects
+- Silent Aim effectiveness depends on network latency
+- Hitbox expansion may behave differently with some models
+- Changing language requires re-executing the script to update the full UI
 
 ---
 
@@ -223,31 +215,31 @@ Settings = {
     SilentAim = false,           -- Auto-aiming
     SilentAimMaxDist = 120,      -- Max aim distance (20-300)
     SilentAimFov = 60,           -- FOV size (10-200)
-    FreezeAmmo = true,           -- Infinite ammo
-    AntiBan = true,              -- Ban protection
+    FreezeAmmo = true,           -- Freeze ammunition
+    AntiBan = true,              -- Ban broadcast listener (prints a message only)
     Hitbox_Enabled = false,      -- Hitbox expansion
     HitboxSize = 2,              -- Hitbox multiplier (2-10)
     WalkSpeed = 16,              -- Base movement speed
 }
 ```
 
-### Recommended Configurations
+### Example Configurations
 
-**Beginner Profile**:
+**Beginner**:
 - Fly Speed: 75 studs/s
 - Walk Speed: 40
 - Silent Aim: Disabled
 - Fullbright: Enabled
 - ESP: Enabled
 
-**Advanced Profile**:
+**Advanced**:
 - Fly Speed: 150 studs/s
 - Walk Speed: 100
 - Silent Aim: Enabled (Dist: 150, FOV: 80)
 - Hitbox: Enabled (Size: 5x)
 - Fullbright: Disabled
 
-**Stealth Profile**:
+**Low-visibility**:
 - Fly Speed: 50 studs/s
 - Walk Speed: 16 (normal)
 - Silent Aim: Disabled
@@ -263,45 +255,39 @@ Settings = {
 **Problem**: GUI doesn't appear after execution
 
 **Solutions**:
-1. Verify you're in-game (not main menu)
-2. Wait 3-5 seconds for Rayfield to load
-3. Check internet connection
+1. Verify you're in-game (not the main menu)
+2. Wait a few seconds for Rayfield to load
+3. Check your internet connection
 4. Try a different executor
-5. Make sure executor is up-to-date
+5. Make sure your executor is up to date
 
 ### Features Not Working
 
-**Problem**: Toggle doesn't seem to activate feature
+**Problem**: A toggle doesn't seem to activate a feature
 
 **Solutions**:
-1. Ensure feature toggle is ON (blue)
-2. Check if character exists (press R to respawn)
-3. For ESP: Make sure enemies exist nearby
-4. For Fly: Character must be alive
-5. Re-execute script if stuck
+1. Make sure the toggle is ON
+2. Check that your character exists (respawn if needed)
+3. For ESP: make sure enemies are nearby
+4. For Fly: your character must be alive
+5. Re-execute the script if it is stuck
 
 ### Performance Issues / Lag
 
-**Problem**: Script causes game lag or freezing
-
 **Solutions**:
-1. Disable Fullbright (heavy on rendering)
-2. Disable Dynamic ESP (uses resources)
-3. Reduce Fly Speed to 50-75
+1. Disable Fullbright
+2. Disable ESP
+3. Reduce Fly Speed
 4. Close background applications
-5. Lower game graphics settings
+5. Lower the game's graphics settings
 
-### Ban Concerns
+### Account Bans
 
-**Problem**: Account getting banned or flagged
-
-**Prevention**:
-1. Enable Anti-Ban protection
-2. Don't use exploits excessively
-3. Mix normal gameplay with script usage
-4. Don't target same player repeatedly
-5. Vary your behavior patterns
-6. Use separate account if worried
+No feature in this script prevents bans. To reduce risk:
+1. Don't use exploits excessively
+2. Mix normal gameplay with script usage
+3. Don't repeatedly target the same player
+4. Use a separate account if you are worried
 
 ---
 
@@ -309,42 +295,25 @@ Settings = {
 
 ### Minimum Requirements
 - **OS**: Windows, macOS, or Linux
-- **Executor**: Any updated Roblox exploit executor
-- **RAM**: 2GB minimum
+- **Executor**: A Roblox exploit executor that is up to date
+- **RAM**: 2 GB minimum
 - **Internet**: Stable connection required
-- **Browser**: Any modern browser (for Roblox)
-
-### Recommended Setup
-- **OS**: Windows 10/11 or macOS Monterey+
-- **Executor**: Wave, Delta, or Solara
-- **RAM**: 4GB+
-- **Processor**: Intel i5 equivalent or better
-- **Internet**: 50+ Mbps connection
 
 ---
 
-## 🔄 Update & Version History
+## 🔄 Version
 
 ### Current Version: 1.0.0
 
-**Release Date**: October 21, 2026
-
-**Status**: ✅ Production Ready
+**Status**: untested in-game
 
 **What's Included**:
-- ✅ Complete hub implementation
-- ✅ All major gameplay features
-- ✅ 21-language multilingual support
-- ✅ Rayfield UI with 6 customizable tabs
-- ✅ Anti-ban protection system
-- ✅ Optimized performance loop
-- ✅ Professional documentation
+- Hub with the features listed above
+- 21-language interface
+- Rayfield UI with 6 tabs
 
 **Known Limitations**:
-- Hitbox expansion may vary with custom SCP models
-- Some specialized door types may require manual activation
-- Silent Aim effectiveness depends on network latency
-- Language switching requires script re-execution for full UI update
+- See [Known Limitations](#known-limitations)
 
 ---
 
@@ -355,14 +324,8 @@ Settings = {
 **GitHub Issues**:
 - Report bugs with detailed information
 - Include executor and OS information
-- Describe steps to reproduce issue
+- Describe the steps to reproduce the issue
 - Attach screenshots if applicable
-
-**GitHub Discussions**:
-- Ask general questions
-- Share tips and tricks
-- Discuss gameplay strategies
-- Community support available
 
 **Direct Contact**:
 - **Discord**: rival960
@@ -386,20 +349,17 @@ When reporting issues, include:
 
 ## 👥 Contributing
 
-We welcome contributions! Here's how to help:
-
 1. **Fork the repository** on GitHub
-2. **Create feature branch**: `git checkout -b feature/YourFeature`
+2. **Create a feature branch**: `git checkout -b feature/YourFeature`
 3. **Make your changes** with clear commit messages
-4. **Push to branch**: `git push origin feature/YourFeature`
-5. **Open Pull Request** with detailed description
+4. **Push to the branch**: `git push origin feature/YourFeature`
+5. **Open a Pull Request** with a description of the changes
 
 ### Contribution Guidelines
-- Follow existing code style
+- Follow the existing code style
 - Add comments for complex logic
-- Test thoroughly before submitting
-- Update documentation if needed
-- Keep commits focused and clean
+- Test your changes in-game and say what you tested
+- Update the documentation if needed
 
 ---
 
@@ -407,34 +367,32 @@ We welcome contributions! Here's how to help:
 
 ### Educational Purpose Only
 
-This project is provided **for educational purposes only**. Users acknowledge and agree that they are:
+This project is provided **for educational purposes only**. By using it, you agree that you:
 
-- Responsible for complying with Roblox's Terms of Service
-- Aware of potential risks including account bans or suspension
-- Making informed decisions about script usage
-- Liable for any consequences from script usage
-- Following all applicable local and international laws
+- Are responsible for complying with Roblox's Terms of Service
+- Accept the risks, including account bans or suspension
+- Are responsible for your own decisions about script usage
+- Are responsible for any consequences of using the script
 
 **The creator assumes no liability for**:
 - Account bans or suspensions
 - Data loss or account compromise
 - Game updates breaking compatibility
-- Any other consequences from usage
+- Any other consequences of usage
 
 ### Your Responsibility
 
 By using this script, you agree to:
-- Use it responsibly and ethically
+- Use it responsibly
 - Not harm other players' experience
 - Follow game rules and guidelines
 - Accept all risks involved
-- Indemnify the creator from liability
 
 ---
 
 ## 📄 License & Attribution
 
-This project is provided as-is without specific license restrictions.
+This project is provided as-is, without a specific license.
 
 ### Creator Information
 - **Creator**: Rival960
@@ -444,25 +402,21 @@ This project is provided as-is without specific license restrictions.
   - YouTube: `rival9607`
 
 ### Acknowledgments
-- **Rayfield UI Library** - Keyless UI framework
-- **Roblox Community** - Script testing and feedback
-- **Translators** - 21-language support
-- **Beta Testers** - Feature validation
+- **Rayfield UI Library** - UI framework used by the script
 
 ---
 
 ## 🎉 Getting Started
 
-### Quick Start (30 seconds)
+### Quick Start
 
-1. Join "Be an SCP or Guard" game on Roblox
+1. Join the "Be an SCP or Guard" game on Roblox
 2. Open your exploit executor
 3. Paste and execute:
 ```lua
-loadstring(game:HttpGet("https://raw.githubusercontent.com/Rival99900/Roblox-Scripts/main/SCP_Guard_Hub_Pro.lua"))()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/Rival99900/Roblox-Scripts/refs/heads/main/scripts/Be-an-SCP-or-Guard-KEYLESS.lua"))()
 ```
-4. Wait for GUI to load
-5. Enjoy! 🎮
+4. Wait for the GUI to load
 
 ---
 
@@ -471,70 +425,26 @@ loadstring(game:HttpGet("https://raw.githubusercontent.com/Rival99900/Roblox-Scr
 ### Learning Luau
 - [Roblox Luau Documentation](https://roblox.github.io/luau/)
 - [Roblox API Reference](https://developer.roblox.com/en-us/api-reference)
-- [Community Scripts & Resources](https://github.com/Rival99900/Roblox-Scripts)
-
-### Community Links
-- Roblox Developer Forums
-- Roblox Community Discord servers
-- GitHub Script repositories
-- YouTube tutorial channels
-
----
-
-## 🔮 Future Plans
-
-### Planned Updates
-- Additional game support
-- Enhanced feature set
-- Performance optimizations
-- UI/UX improvements
-- Community feature requests
-
-### Feature Roadmap
-- Custom keybind configuration
-- Theme customization options
-- Advanced analytics
-- Plugin system for extensions
-- Cross-game compatibility
 
 ---
 
 ## ⭐ Repository Stats
 
 - **Current Version**: 1.0.0
-- **Release Date**: October 21, 2026
-- **Supported Games**: 1 (SCP vs Guard)
+- **Supported Games**: 1 (Be an SCP or Guard)
 - **Languages**: 21
-- **Lines of Code**: 1000+
-- **Status**: ✅ Production Ready
+- **Script Length**: 1,275 lines
+- **Status**: untested in-game
 
 ---
 
-## 🙏 Thank You
-
-Thank you for using **Roblox Scripts Hub**! 
-
-Your support helps improve and expand this project. If you find this useful, consider:
-- ⭐ Starring this repository
-- 🐛 Reporting issues and bugs
-- 💡 Suggesting new features
-- 👥 Contributing improvements
-- 📢 Sharing with others
-
----
-
-**Last Updated**: October 21, 2026  
-**Version**: 1.0.0  
-**Status**: ✅ Production Ready  
+**Last Updated**: October 21, 2026
 **Maintained By**: Rival960
 
 ---
 
 ## 📞 Contact
 
-For questions, suggestions, or support:
 - **Discord**: rival960
 - **GitHub**: [@Rival99900](https://github.com/Rival99900)
 - **YouTube**: [rival9607](https://youtube.com/@rival9607)
-
-Happy scripting! 🎮✨
