@@ -755,13 +755,75 @@ if LocalPlayer.Character then
 end
 
 -- -----------------------------------------------------------------
--- 4. ANTI-BAN PROTECTION
+-- 4. ANTI-BAN & ANTI-KICK PROTECTION
 -- -----------------------------------------------------------------
+
+-- Search for ban/kick remotes
+local BanRemote = nil
+local KickRemote = nil
+
+pcall(function()
+    -- Try different locations
+    local remotes = ReplicatedStorage:FindFirstChild("Remotes") or game:FindFirstChild("Remotes")
+    if remotes then
+        BanRemote = remotes:FindFirstChild("Ban") or remotes:FindFirstChild("BanPlayer")
+        KickRemote = remotes:FindFirstChild("Kick") or remotes:FindFirstChild("KickPlayer")
+    end
+end)
+
+-- Block any remotes found
+if BanRemote then
+    local OrigBan = BanRemote.FireServer
+    BanRemote.FireServer = function(self, ...)
+        local args = {...}
+        if Settings.AntiBan and (args[1] == LocalPlayer.Name or args[1] == LocalPlayer.DisplayName) then
+            print("[Anti-Ban] Blocked ban remote:", args[1])
+            return
+        end
+        return OrigBan(self, ...)
+    end
+end
+
+if KickRemote then
+    local OrigKick = KickRemote.FireServer
+    KickRemote.FireServer = function(self, ...)
+        local args = {...}
+        if Settings.AntiBan and (args[1] == LocalPlayer.Name or args[1] == LocalPlayer.DisplayName) then
+            print("[Anti-Kick] Blocked kick remote:", args[1])
+            return
+        end
+        return OrigKick(self, ...)
+    end
+end
+
+-- Detect and respond to ban/kick broadcasts
 if BroadcastBanEvent then
     BroadcastBanEvent.OnClientEvent:Connect(function(username, reason)
         if Settings.AntiBan then
             if username == LocalPlayer.Name or username == LocalPlayer.DisplayName then
-                print("[Anti-Ban] Ban attempt blocked!")
+                print("[Anti-Ban] Ban broadcast detected! Reason:", reason)
+                
+                -- Notify the player
+                Rayfield:Notify({
+                    Title = "🚨 Ban Detected",
+                    Content = "Ban attempt: " .. reason,
+                    Duration = 5,
+                    Image = 4483362458,
+                })
+                
+                -- Option: Log out before the ban takes effect
+                -- LocalPlayer:Kick("[Protected] Disconnecting to prevent ban")
+            end
+        end
+    end)
+end
+
+-- Disable detection scripts
+if Settings.AntiBan then
+    task.spawn(function()
+        for _, obj in pairs(game:GetDescendants()) do
+            if obj:IsA("LocalScript") and obj.Name:find("Detect") or obj.Name:find("Anti") or obj.Name:find("Ban") then
+                obj.Disabled = true
             end
         end
     end)
