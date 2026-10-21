@@ -1,0 +1,153 @@
+# Operating System Files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+Desktop.ini
+
+# IDE & Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.sublime-project
+.sublime-workspace
+*.code-workspace
+.vim/
+.netrwhist
+
+# Local Environment
+.env
+.env.local
+.env.*.local
+config.local.json
+
+# Node/NPM (if ever needed)
+node_modules/
+npm-debug.log
+yarn-error.log
+package-lock.json
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+.venv
+
+# Logs
+logs/
+*.log
+*.logs
+
+# Temporary Files
+*.tmp
+*.temp
+*.bak
+*.backup
+*.swp
+*~
+
+# OS Specific
+.AppleDouble
+.LSOverride
+.TemporaryItems
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
+
+# Windows
+[Dd]esktop.ini
+[Ss]ystem Volume Information
+$RECYCLE.BIN/
+
+# Roblox Studio Cache
+.rbxl
+.rbxlx
+*.rbxl
+*.rbxlx
+cache/
+Packages/
+
+# Local Test Files
+local_test.lua
+test_*.lua
+debug_*.lua
+
+# Sensitive Information
+*.key
+*.pem
+*.p12
+secrets.json
+credentials.json
+oauth_tokens.json
+
+# Build & Distribution
+dist/
+build/
+out/
+
+# Backup Files
+*.bak
+*.backup
+*.orig
+*.rej
+
+# Archive Files
+*.zip
+*.rar
+*.7z
+*.tar.gz
+*.tar.bz2
+
+# Documentation Build
+site/
+docs/_build/
+
+# IDE Specific
+.classpath
+.project
+.pydevproject
+.settings/
+*.sublime-project
+*.sublime-workspace
+
+# OS Generated Files
+.AppleDouble
+.LSOverride
+._*
+.apdisk
+
+# Coverage
+coverage/
+.coverage
+htmlcov/
+
+# Thumbnails
+._*
+.Thumbs.db
+
+# Git Merge Files
+*.orig
+*.rej
+.git/
+
+# Miscellaneous
+.cache/
+.sass-cache/
+.jekyll-cache/
+.bundle/
+vendor/
+
+# Custom Project Exclusions
+deprecated/
+archive/
+testing/
+experiments/
