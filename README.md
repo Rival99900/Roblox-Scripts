@@ -39,7 +39,7 @@ loadstring(game:HttpGet("https://raw.githubusercontent.com/Rival99900/Roblox-Scr
 
 #### Method 2: Manual Execution
 
-1. Copy the complete script from `SCP_Guard_Hub_Pro.lua`
+1. Copy the complete script from `Be-an-SCP-or-Guard-KEYLESS.lua`
 2. Paste into your executor
 3. Execute in-game
 
@@ -47,7 +47,7 @@ loadstring(game:HttpGet("https://raw.githubusercontent.com/Rival99900/Roblox-Scr
 
 If hosting locally:
 ```lua
-loadstring(readfile("path/to/SCP_Guard_Hub_Pro.lua"))()
+loadstring(readfile("path/to/Be-an-SCP-or-Guard-KEYLESS.lua"))()
 ```
 
 ---
