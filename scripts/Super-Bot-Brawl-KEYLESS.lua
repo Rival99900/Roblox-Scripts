@@ -3,7 +3,6 @@
     Super Bot Brawl Hub — Super Bot Brawl
     Created by Rival960 with the help of Claude
     Version: 1.0.0 | Languages: 21 | Rayfield UI
-    Status: untested in-game
     ================================================================
     Features:
       - God Mode (health loop, nearly indestructible vs robots)
