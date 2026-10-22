@@ -5,14 +5,14 @@
     Version: 1.0.0 | Languages: 21 | Rayfield UI
     ================================================================
     Features:
-      - Silent Aim (hookmetamethod __namecall, distance limit)
-      - Auto Farm (teleports above bot, disables touch damage)
+      - Auto Farm (teleports above bot, disables bot touch damage)
+      - Anti Touch (disables TouchInterest on both player and bots)
+      - No Animation (hooks Animator to stop attack animations)
       - ESP Bots (highlight + HP billboard on all NPCs)
       - Teleport to Nearest Bot
       - Fly (PC: WASD/Space/Shift | Mobile: joystick + on-screen ▲/▼)
-      - NoClip (fully disables all collisions, anti-slide)
+      - NoClip (fully restores original collision states)
       - Walk Speed (adjustable)
-      - No Cooldown (button, hooks task.wait & sets tool values to 0)
       - Fullbright (brightness boost, fixed clock)
       - 21-language interface
     ================================================================
@@ -38,780 +38,381 @@ local CurrentLang = "EN"
 local Translations = {
     EN = {
         WindowTitle     = "Super Bot Brawl Hub",
-        TabHome         = "Home",
-        TabVision       = "Vision",
-        TabMovement     = "Movement",
-        TabCombat       = "Combat",
-        TabTools        = "Tools",
-        ESPBots         = "ESP Bots",
-        ESPBotsDesc     = "Highlight nearby bots and show their HP",
-        TPNearestBot    = "TP to Nearest Bot",
-        TPNearestDesc   = "Teleport in front of the closest bot",
-        Fly             = "Fly",
-        FlyDesc         = "Toggle flight mode",
-        FlySpeed        = "Fly Speed",
-        NoClip          = "NoClip",
-        NoClipDesc      = "Pass through walls and obstacles",
+        TabHome         = "Home", TabVision = "Vision", TabMovement = "Movement", TabCombat = "Combat", TabTools = "Tools",
+        ESPBots         = "ESP Bots", ESPBotsDesc = "Highlight nearby bots and show their HP",
+        TPNearestBot    = "TP to Nearest Bot", TPNearestDesc = "Teleport in front of the closest bot",
+        Fly             = "Fly", FlyDesc = "Toggle flight mode", FlySpeed = "Fly Speed",
+        NoClip          = "NoClip", NoClipDesc = "Pass through walls and obstacles",
         WalkSpeed       = "Walk Speed",
-        SilentAim       = "Silent Aim",
-        SilentAimDesc   = "Redirect attacks to the nearest bot",
-        SilentAimDist   = "Silent Aim Max Distance",
-        AutoFarm        = "Auto Farm",
-        AutoFarmDesc    = "Automatically attack the nearest bot",
-        AutoFarmDelay   = "Farm Delay (s)",
-        AntiTouch       = "Anti Touch",
-        AntiTouchDesc   = "Prevent bots from dealing touch damage to you",
-        NoCooldown      = "No Cooldown",
-        NoCooldownDesc  = "Set equipped tool cooldowns to 0 and hook waits",
-        Fullbright      = "Fullbright",
-        FullbrightDesc  = "Raise brightness and disable shadows",
+        AutoFarm        = "Auto Farm", AutoFarmDesc = "Automatically attack the nearest bot", AutoFarmDelay = "Farm Delay (s)",
+        AntiTouch       = "Anti Touch", AntiTouchDesc = "Disable bot touch damage",
+        NoAnimation     = "No Animation", NoAnimationDesc = "Stop attack animations for faster hits",
+        Fullbright      = "Fullbright", FullbrightDesc = "Raise brightness and disable shadows",
         LangSelect      = "Language",
         CreditsTitle    = "Super Bot Brawl Hub",
         CreditsContent  = "Created by Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — First release",
         Loaded          = "Hub loaded! Fight smarter.",
         NoBot           = "No bot found nearby.",
-        NoCooldownOn    = "No Cooldown activated!",
-        NoCooldownOff   = "No Cooldown deactivated.",
     },
     FR = {
         WindowTitle     = "Super Bot Brawl Hub",
-        TabHome         = "Accueil",
-        TabVision       = "Vision",
-        TabMovement     = "Mouvement",
-        TabCombat       = "Combat",
-        TabTools        = "Outils",
-        ESPBots         = "ESP Bots",
-        ESPBotsDesc     = "Surligner les bots proches et afficher leurs PV",
-        TPNearestBot    = "TP au Bot le plus proche",
-        TPNearestDesc   = "Se téléporter devant le bot le plus proche",
-        Fly             = "Vol",
-        FlyDesc         = "Activer le mode vol",
-        FlySpeed        = "Vitesse de vol",
-        NoClip          = "NoClip",
-        NoClipDesc      = "Passer à travers les murs et obstacles",
+        TabHome         = "Accueil", TabVision = "Vision", TabMovement = "Mouvement", TabCombat = "Combat", TabTools = "Outils",
+        ESPBots         = "ESP Bots", ESPBotsDesc = "Surligner les bots proches et afficher leurs PV",
+        TPNearestBot    = "TP au Bot le plus proche", TPNearestDesc = "Se téléporter devant le bot le plus proche",
+        Fly             = "Vol", FlyDesc = "Activer le mode vol", FlySpeed = "Vitesse de vol",
+        NoClip          = "NoClip", NoClipDesc = "Passer à travers les murs et obstacles",
         WalkSpeed       = "Vitesse de marche",
-        SilentAim       = "Silent Aim",
-        SilentAimDesc   = "Redirige les attaques vers le bot le plus proche",
-        SilentAimDist   = "Distance Max Silent Aim",
-        AutoFarm        = "Auto Farm",
-        AutoFarmDesc    = "Attaque automatiquement le bot le plus proche",
-        AutoFarmDelay   = "Délai farm (s)",
-        AntiTouch       = "Anti Touche",
-        AntiTouchDesc   = "Empêche les bots de vous infliger des dégâts de contact",
-        NoCooldown      = "Pas de Cooldown",
-        NoCooldownDesc  = "Met à zéro les cooldowns et intercepte les délais",
-        Fullbright      = "Luminosité max",
-        FullbrightDesc  = "Augmenter la luminosité et désactiver les ombres",
+        AutoFarm        = "Auto Farm", AutoFarmDesc = "Attaque automatiquement le bot le plus proche", AutoFarmDelay = "Délai farm (s)",
+        AntiTouch       = "Anti Touche", AntiTouchDesc = "Désactive les dégâts de contact des bots",
+        NoAnimation     = "Sans Animation", NoAnimationDesc = "Arrête les animations d'attaque pour frapper plus vite",
+        Fullbright      = "Luminosité max", FullbrightDesc = "Augmenter la luminosité et désactiver les ombres",
         LangSelect      = "Langue",
         CreditsTitle    = "Super Bot Brawl Hub",
         CreditsContent  = "Créé par Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — Première version",
         Loaded          = "Hub chargé ! Combats plus intelligemment.",
         NoBot           = "Aucun bot trouvé à proximité.",
-        NoCooldownOn    = "Pas de Cooldown activé !",
-        NoCooldownOff   = "Pas de Cooldown désactivé.",
     },
     DE = {
         WindowTitle     = "Super Bot Brawl Hub",
-        TabHome         = "Start",
-        TabVision       = "Sicht",
-        TabMovement     = "Bewegung",
-        TabCombat       = "Kampf",
-        TabTools        = "Werkzeuge",
-        ESPBots         = "ESP Bots",
-        ESPBotsDesc     = "Nahe Bots hervorheben und HP anzeigen",
-        TPNearestBot    = "TP zum nächsten Bot",
-        TPNearestDesc   = "Zum nächsten Bot teleportieren",
-        Fly             = "Fliegen",
-        FlyDesc         = "Flugmodus umschalten",
-        FlySpeed        = "Fluggeschwindigkeit",
-        NoClip          = "NoClip",
-        NoClipDesc      = "Durch Wände und Hindernisse gehen",
+        TabHome         = "Start", TabVision = "Sicht", TabMovement = "Bewegung", TabCombat = "Kampf", TabTools = "Werkzeuge",
+        ESPBots         = "ESP Bots", ESPBotsDesc = "Nahe Bots hervorheben und HP anzeigen",
+        TPNearestBot    = "TP zum nächsten Bot", TPNearestDesc = "Zum nächsten Bot teleportieren",
+        Fly             = "Fliegen", FlyDesc = "Flugmodus umschalten", FlySpeed = "Fluggeschwindigkeit",
+        NoClip          = "NoClip", NoClipDesc = "Durch Wände und Hindernisse gehen",
         WalkSpeed       = "Laufgeschwindigkeit",
-        SilentAim       = "Silent Aim",
-        SilentAimDesc   = "Angriffe auf den nächsten Bot umleiten",
-        SilentAimDist   = "Silent Aim Max. Distanz",
-        AutoFarm        = "Auto Farm",
-        AutoFarmDesc    = "Greift automatisch den nächsten Bot an",
-        AutoFarmDelay   = "Farm-Verzögerung (s)",
-        AntiTouch       = "Anti Touch",
-        AntiTouchDesc   = "Verhindert Kontaktschaden durch Bots",
-        NoCooldown      = "Kein Cooldown",
-        NoCooldownDesc  = "Setzt Abklingzeiten auf 0 und hookt Wartezeiten",
-        Fullbright      = "Vollhell",
-        FullbrightDesc  = "Helligkeit erhöhen und Schatten deaktivieren",
+        AutoFarm        = "Auto Farm", AutoFarmDesc = "Greift automatisch den nächsten Bot an", AutoFarmDelay = "Farm-Verzögerung (s)",
+        AntiTouch       = "Anti Touch", AntiTouchDesc = "Deaktiviert Kontaktschaden von Bots",
+        NoAnimation     = "Keine Animation", NoAnimationDesc = "Stoppt Angriffsanimationen für schnellere Treffer",
+        Fullbright      = "Vollhell", FullbrightDesc = "Helligkeit erhöhen und Schatten deaktivieren",
         LangSelect      = "Sprache",
         CreditsTitle    = "Super Bot Brawl Hub",
         CreditsContent  = "Erstellt von Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — Erste Version",
         Loaded          = "Hub geladen! Kämpfe klüger.",
         NoBot           = "Kein Bot in der Nähe gefunden.",
-        NoCooldownOn    = "Kein Cooldown aktiviert!",
-        NoCooldownOff   = "Kein Cooldown deaktiviert.",
     },
     ES = {
         WindowTitle     = "Super Bot Brawl Hub",
-        TabHome         = "Inicio",
-        TabVision       = "Visión",
-        TabMovement     = "Movimiento",
-        TabCombat       = "Combate",
-        TabTools        = "Herramientas",
-        ESPBots         = "ESP Bots",
-        ESPBotsDesc     = "Resaltar bots cercanos y mostrar su HP",
-        TPNearestBot    = "TP al Bot más cercano",
-        TPNearestDesc   = "Teletransportarse frente al bot más cercano",
-        Fly             = "Volar",
-        FlyDesc         = "Activar modo vuelo",
-        FlySpeed        = "Velocidad de vuelo",
-        NoClip          = "NoClip",
-        NoClipDesc      = "Atravesar paredes y obstáculos",
+        TabHome         = "Inicio", TabVision = "Visión", TabMovement = "Movimiento", TabCombat = "Combate", TabTools = "Herramientas",
+        ESPBots         = "ESP Bots", ESPBotsDesc = "Resaltar bots cercanos y mostrar su HP",
+        TPNearestBot    = "TP al Bot más cercano", TPNearestDesc = "Teletransportarse frente al bot más cercano",
+        Fly             = "Volar", FlyDesc = "Activar modo vuelo", FlySpeed = "Velocidad de vuelo",
+        NoClip          = "NoClip", NoClipDesc = "Atravesar paredes y obstáculos",
         WalkSpeed       = "Velocidad de marcha",
-        SilentAim       = "Silent Aim",
-        SilentAimDesc   = "Redirigir ataques al bot más cercano",
-        SilentAimDist   = "Distancia Máx Silent Aim",
-        AutoFarm        = "Auto Farm",
-        AutoFarmDesc    = "Ataca automáticamente al bot más cercano",
-        AutoFarmDelay   = "Retraso farm (s)",
-        AntiTouch       = "Anti Contacto",
-        AntiTouchDesc   = "Evita que los bots te causen daño por contacto",
-        NoCooldown      = "Sin Cooldown",
-        NoCooldownDesc  = "Pone a cero los cooldowns e intercepta las esperas",
-        Fullbright      = "Brillo máximo",
-        FullbrightDesc  = "Aumentar brillo y desactivar sombras",
+        AutoFarm        = "Auto Farm", AutoFarmDesc = "Ataca automáticamente al bot más cercano", AutoFarmDelay = "Retraso farm (s)",
+        AntiTouch       = "Anti Contacto", AntiTouchDesc = "Desactiva el daño por contacto de los bots",
+        NoAnimation     = "Sin Animación", NoAnimationDesc = "Detiene las animaciones de ataque para golpear más rápido",
+        Fullbright      = "Brillo máximo", FullbrightDesc = "Aumentar brillo y desactivar sombras",
         LangSelect      = "Idioma",
         CreditsTitle    = "Super Bot Brawl Hub",
         CreditsContent  = "Creado por Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — Primera versión",
         Loaded          = "¡Hub cargado! Lucha de forma más inteligente.",
         NoBot           = "No se encontró ningún bot cerca.",
-        NoCooldownOn    = "¡Sin Cooldown activado!",
-        NoCooldownOff   = "Sin Cooldown desactivado.",
     },
     PT = {
         WindowTitle     = "Super Bot Brawl Hub",
-        TabHome         = "Início",
-        TabVision       = "Visão",
-        TabMovement     = "Movimento",
-        TabCombat       = "Combate",
-        TabTools        = "Ferramentas",
-        ESPBots         = "ESP Bots",
-        ESPBotsDesc     = "Destacar bots próximos e mostrar HP",
-        TPNearestBot    = "TP para o Bot mais próximo",
-        TPNearestDesc   = "Teleportar para o bot mais próximo",
-        Fly             = "Voar",
-        FlyDesc         = "Ativar modo de voo",
-        FlySpeed        = "Velocidade de voo",
-        NoClip          = "NoClip",
-        NoClipDesc      = "Atravessar paredes e obstáculos",
+        TabHome         = "Início", TabVision = "Visão", TabMovement = "Movimento", TabCombat = "Combate", TabTools = "Ferramentas",
+        ESPBots         = "ESP Bots", ESPBotsDesc = "Destacar bots próximos e mostrar HP",
+        TPNearestBot    = "TP para o Bot mais próximo", TPNearestDesc = "Teleportar para o bot mais próximo",
+        Fly             = "Voar", FlyDesc = "Ativar modo de voo", FlySpeed = "Velocidade de voo",
+        NoClip          = "NoClip", NoClipDesc = "Atravessar paredes e obstáculos",
         WalkSpeed       = "Velocidade de caminhada",
-        SilentAim       = "Silent Aim",
-        SilentAimDesc   = "Redirecionar ataques para o bot mais próximo",
-        SilentAimDist   = "Distância Máx Silent Aim",
-        AutoFarm        = "Auto Farm",
-        AutoFarmDesc    = "Ataca automaticamente o bot mais próximo",
-        AutoFarmDelay   = "Atraso do farm (s)",
-        AntiTouch       = "Anti Toque",
-        AntiTouchDesc   = "Impede que os bots causem dano de contato",
-        NoCooldown      = "Sem Cooldown",
-        NoCooldownDesc  = "Zera os cooldowns e intercepta as esperas",
-        Fullbright      = "Brilho máximo",
-        FullbrightDesc  = "Aumentar brilho e desativar sombras",
+        AutoFarm        = "Auto Farm", AutoFarmDesc = "Ataca automaticamente o bot mais próximo", AutoFarmDelay = "Atraso do farm (s)",
+        AntiTouch       = "Anti Toque", AntiTouchDesc = "Desativa o dano de contato dos bots",
+        NoAnimation     = "Sem Animação", NoAnimationDesc = "Para as animações de ataque para acertar mais rápido",
+        Fullbright      = "Brilho máximo", FullbrightDesc = "Aumentar brilho e desativar sombras",
         LangSelect      = "Idioma",
         CreditsTitle    = "Super Bot Brawl Hub",
         CreditsContent  = "Criado por Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — Primeira versão",
         Loaded          = "Hub carregado! Lute de forma mais inteligente.",
         NoBot           = "Nenhum bot encontrado por perto.",
-        NoCooldownOn    = "Sem Cooldown ativado!",
-        NoCooldownOff   = "Sem Cooldown desativado.",
     },
     RU = {
         WindowTitle     = "Super Bot Brawl Hub",
-        TabHome         = "Главная",
-        TabVision       = "Зрение",
-        TabMovement     = "Движение",
-        TabCombat       = "Бой",
-        TabTools        = "Инструменты",
-        ESPBots         = "ESP ботов",
-        ESPBotsDesc     = "Выделить ближайших ботов и показать их HP",
-        TPNearestBot    = "ТП к ближайшему боту",
-        TPNearestDesc   = "Телепортироваться к ближайшему боту",
-        Fly             = "Полёт",
-        FlyDesc         = "Включить режим полёта",
-        FlySpeed        = "Скорость полёта",
-        NoClip          = "Ноклип",
-        NoClipDesc      = "Проходить сквозь стены и препятствия",
+        TabHome         = "Главная", TabVision = "Зрение", TabMovement = "Движение", TabCombat = "Бой", TabTools = "Инструменты",
+        ESPBots         = "ESP ботов", ESPBotsDesc = "Выделить ближайших ботов и показать их HP",
+        TPNearestBot    = "ТП к ближайшему боту", TPNearestDesc = "Телепортироваться к ближайшему боту",
+        Fly             = "Полёт", FlyDesc = "Включить режим полёта", FlySpeed = "Скорость полёта",
+        NoClip          = "Ноклип", NoClipDesc = "Проходить сквозь стены и препятствия",
         WalkSpeed       = "Скорость ходьбы",
-        SilentAim       = "Тихий прицел",
-        SilentAimDesc   = "Перенаправлять атаки на ближайшего бота",
-        SilentAimDist   = "Макс. дистанция тихого прицела",
-        AutoFarm        = "Авто фарм",
-        AutoFarmDesc    = "Автоматически атаковать ближайшего бота",
-        AutoFarmDelay   = "Задержка фарма (с)",
-        AntiTouch       = "Анти-касание",
-        AntiTouchDesc   = "Предотвращает контактный урон от ботов",
-        NoCooldown      = "Без перезарядки",
-        NoCooldownDesc  = "Сбрасывает перезарядку и перехватывает задержки",
-        Fullbright      = "Максяркость",
-        FullbrightDesc  = "Увеличить яркость и отключить тени",
+        AutoFarm        = "Авто фарм", AutoFarmDesc = "Автоматически атаковать ближайшего бота", AutoFarmDelay = "Задержка фарма (с)",
+        AntiTouch       = "Анти-касание", AntiTouchDesc = "Отключает контактный урон от ботов",
+        NoAnimation     = "Без анимации", NoAnimationDesc = "Останавливает анимации атаки для более быстрых ударов",
+        Fullbright      = "Максяркость", FullbrightDesc = "Увеличить яркость и отключить тени",
         LangSelect      = "Язык",
         CreditsTitle    = "Super Bot Brawl Hub",
         CreditsContent  = "Создано Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — Первый выпуск",
         Loaded          = "Хаб загружен! Сражайся умнее.",
         NoBot           = "Рядом нет ботов.",
-        NoCooldownOn    = "Без перезарядки активировано!",
-        NoCooldownOff   = "Без перезарядки деактивировано.",
     },
     IT = {
         WindowTitle     = "Super Bot Brawl Hub",
-        TabHome         = "Home",
-        TabVision       = "Visione",
-        TabMovement     = "Movimento",
-        TabCombat       = "Combattimento",
-        TabTools        = "Strumenti",
-        ESPBots         = "ESP Bot",
-        ESPBotsDesc     = "Evidenziare i bot vicini e mostrare i loro HP",
-        TPNearestBot    = "TP al Bot più vicino",
-        TPNearestDesc   = "Teletrasportarsi davanti al bot più vicino",
-        Fly             = "Volare",
-        FlyDesc         = "Attivare modalità volo",
-        FlySpeed        = "Velocità di volo",
-        NoClip          = "NoClip",
-        NoClipDesc      = "Attraversare muri e ostacoli",
+        TabHome         = "Home", TabVision = "Visione", TabMovement = "Movimento", TabCombat = "Combattimento", TabTools = "Strumenti",
+        ESPBots         = "ESP Bot", ESPBotsDesc = "Evidenziare i bot vicini e mostrare i loro HP",
+        TPNearestBot    = "TP al Bot più vicino", TPNearestDesc = "Teletrasportarsi davanti al bot più vicino",
+        Fly             = "Volare", FlyDesc = "Attivare modalità volo", FlySpeed = "Velocità di volo",
+        NoClip          = "NoClip", NoClipDesc = "Attraversare muri e ostacoli",
         WalkSpeed       = "Velocità di camminata",
-        SilentAim       = "Silent Aim",
-        SilentAimDesc   = "Reindirizza gli attacchi al bot più vicino",
-        SilentAimDist   = "Distanza Max Silent Aim",
-        AutoFarm        = "Auto Farm",
-        AutoFarmDesc    = "Attacca automaticamente il bot più vicino",
-        AutoFarmDelay   = "Ritardo farm (s)",
-        AntiTouch       = "Anti Contatto",
-        AntiTouchDesc   = "Impedisce ai bot di infliggere danni da contatto",
-        NoCooldown      = "Nessun Cooldown",
-        NoCooldownDesc  = "Azzera i cooldown e intercetta le attese",
-        Fullbright      = "Luminosità massima",
-        FullbrightDesc  = "Aumenta luminosità e disattiva ombre",
+        AutoFarm        = "Auto Farm", AutoFarmDesc = "Attacca automaticamente il bot più vicino", AutoFarmDelay = "Ritardo farm (s)",
+        AntiTouch       = "Anti Contatto", AntiTouchDesc = "Disattiva i danni da contatto dei bot",
+        NoAnimation     = "Nessuna Animazione", NoAnimationDesc = "Ferma le animazioni di attacco per colpire più velocemente",
+        Fullbright      = "Luminosità massima", FullbrightDesc = "Aumenta luminosità e disattiva ombre",
         LangSelect      = "Lingua",
         CreditsTitle    = "Super Bot Brawl Hub",
         CreditsContent  = "Creato da Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — Prima versione",
         Loaded          = "Hub caricato! Combatti in modo più intelligente.",
         NoBot           = "Nessun bot trovato nelle vicinanze.",
-        NoCooldownOn    = "Nessun Cooldown attivato!",
-        NoCooldownOff   = "Nessun Cooldown disattivato.",
     },
     NL = {
         WindowTitle     = "Super Bot Brawl Hub",
-        TabHome         = "Start",
-        TabVision       = "Zicht",
-        TabMovement     = "Beweging",
-        TabCombat       = "Gevecht",
-        TabTools        = "Hulpmiddelen",
-        ESPBots         = "ESP Bots",
-        ESPBotsDesc     = "Nabijgelegen bots markeren en HP weergeven",
-        TPNearestBot    = "TP naar dichtstbijzijnde Bot",
-        TPNearestDesc   = "Teleporteer naar de dichtstbijzijnde bot",
-        Fly             = "Vliegen",
-        FlyDesc         = "Vliegmodus in-/uitschakelen",
-        FlySpeed        = "Vliegsnelheid",
-        NoClip          = "NoClip",
-        NoClipDesc      = "Door muren en obstakels lopen",
+        TabHome         = "Start", TabVision = "Zicht", TabMovement = "Beweging", TabCombat = "Gevecht", TabTools = "Hulpmiddelen",
+        ESPBots         = "ESP Bots", ESPBotsDesc = "Nabijgelegen bots markeren en HP weergeven",
+        TPNearestBot    = "TP naar dichtstbijzijnde Bot", TPNearestDesc = "Teleporteer naar de dichtstbijzijnde bot",
+        Fly             = "Vliegen", FlyDesc = "Vliegmodus in-/uitschakelen", FlySpeed = "Vliegsnelheid",
+        NoClip          = "NoClip", NoClipDesc = "Door muren en obstakels lopen",
         WalkSpeed       = "Loopsnelheid",
-        SilentAim       = "Silent Aim",
-        SilentAimDesc   = "Aanvallen omleiden naar de dichtstbijzijnde bot",
-        SilentAimDist   = "Silent Aim Max Afstand",
-        AutoFarm        = "Auto Farm",
-        AutoFarmDesc    = "Valt automatisch de dichtstbijzijnde bot aan",
-        AutoFarmDelay   = "Farm vertraging (s)",
-        AntiTouch       = "Anti Aanraking",
-        AntiTouchDesc   = "Voorkomt aanrakingsschade van bots",
-        NoCooldown      = "Geen Cooldown",
-        NoCooldownDesc  = "Zet cooldowns op 0 en onderschept wachttijden",
-        Fullbright      = "Maximale helderheid",
-        FullbrightDesc  = "Helderheid verhogen en schaduwen uitschakelen",
+        AutoFarm        = "Auto Farm", AutoFarmDesc = "Valt automatisch de dichtstbijzijnde bot aan", AutoFarmDelay = "Farm vertraging (s)",
+        AntiTouch       = "Anti Aanraking", AntiTouchDesc = "Schakelt aanrakingsschade van bots uit",
+        NoAnimation     = "Geen Animatie", NoAnimationDesc = "Stopt aanvalsanimaties voor snellere treffers",
+        Fullbright      = "Maximale helderheid", FullbrightDesc = "Helderheid verhogen en schaduwen uitschakelen",
         LangSelect      = "Taal",
         CreditsTitle    = "Super Bot Brawl Hub",
         CreditsContent  = "Gemaakt door Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — Eerste versie",
         Loaded          = "Hub geladen! Vecht slimmer.",
         NoBot           = "Geen bot in de buurt gevonden.",
-        NoCooldownOn    = "Geen Cooldown geactiveerd!",
-        NoCooldownOff   = "Geen Cooldown gedeactiveerd.",
     },
     PL = {
         WindowTitle     = "Super Bot Brawl Hub",
-        TabHome         = "Główna",
-        TabVision       = "Wzrok",
-        TabMovement     = "Ruch",
-        TabCombat       = "Walka",
-        TabTools        = "Narzędzia",
-        ESPBots         = "ESP Boty",
-        ESPBotsDesc     = "Podświetl pobliskie boty i pokaż ich HP",
-        TPNearestBot    = "TP do najbliższego Bota",
-        TPNearestDesc   = "Teleportuj się do najbliższego bota",
-        Fly             = "Latanie",
-        FlyDesc         = "Włącz tryb lotu",
-        FlySpeed        = "Prędkość lotu",
-        NoClip          = "NoClip",
-        NoClipDesc      = "Przechodzić przez ściany i przeszkody",
+        TabHome         = "Główna", TabVision = "Wzrok", TabMovement = "Ruch", TabCombat = "Walka", TabTools = "Narzędzia",
+        ESPBots         = "ESP Boty", ESPBotsDesc = "Podświetl pobliskie boty i pokaż ich HP",
+        TPNearestBot    = "TP do najbliższego Bota", TPNearestDesc = "Teleportuj się do najbliższego bota",
+        Fly             = "Latanie", FlyDesc = "Włącz tryb lotu", FlySpeed = "Prędkość lotu",
+        NoClip          = "NoClip", NoClipDesc = "Przechodzić przez ściany i przeszkody",
         WalkSpeed       = "Prędkość chodzenia",
-        SilentAim       = "Silent Aim",
-        SilentAimDesc   = "Przekieruj ataki na najbliższego bota",
-        SilentAimDist   = "Maks. dystans Silent Aim",
-        AutoFarm        = "Auto Farm",
-        AutoFarmDesc    = "Automatycznie atakuje najbliższego bota",
-        AutoFarmDelay   = "Opóźnienie farmu (s)",
-        AntiTouch       = "Anti Dotyk",
-        AntiTouchDesc   = "Zapobiega obrażeniom od kontaktu z botami",
-        NoCooldown      = "Brak Cooldownu",
-        NoCooldownDesc  = "Zeruje cooldowny i przechwytuje opóźnienia",
-        Fullbright      = "Pełna jasność",
-        FullbrightDesc  = "Zwiększ jasność i wyłącz cienie",
+        AutoFarm        = "Auto Farm", AutoFarmDesc = "Automatycznie atakuje najbliższego bota", AutoFarmDelay = "Opóźnienie farmu (s)",
+        AntiTouch       = "Anti Dotyk", AntiTouchDesc = "Wyłącza obrażenia od kontaktu z botami",
+        NoAnimation     = "Bez Animacji", NoAnimationDesc = "Zatrzymuje animacje ataku dla szybszych trafień",
+        Fullbright      = "Pełna jasność", FullbrightDesc = "Zwiększ jasność i wyłącz cienie",
         LangSelect      = "Język",
         CreditsTitle    = "Super Bot Brawl Hub",
         CreditsContent  = "Stworzone przez Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — Pierwsza wersja",
         Loaded          = "Hub załadowany! Walcz mądrzej.",
         NoBot           = "Nie znaleziono bota w pobliżu.",
-        NoCooldownOn    = "Brak Cooldownu aktywowany!",
-        NoCooldownOff   = "Brak Cooldownu dezaktywowany.",
     },
     ZH = {
         WindowTitle     = "超级机器人乱斗Hub",
-        TabHome         = "主页",
-        TabVision       = "视野",
-        TabMovement     = "移动",
-        TabCombat       = "战斗",
-        TabTools        = "工具",
-        ESPBots         = "ESP机器人",
-        ESPBotsDesc     = "高亮附近机器人并显示HP",
-        TPNearestBot    = "传送至最近机器人",
-        TPNearestDesc   = "传送到最近的机器人前方",
-        Fly             = "飞行",
-        FlyDesc         = "切换飞行模式",
-        FlySpeed        = "飞行速度",
-        NoClip          = "穿墙",
-        NoClipDesc      = "穿过墙壁和障碍物",
+        TabHome         = "主页", TabVision = "视野", TabMovement = "移动", TabCombat = "战斗", TabTools = "工具",
+        ESPBots         = "ESP机器人", ESPBotsDesc = "高亮附近机器人并显示HP",
+        TPNearestBot    = "传送至最近机器人", TPNearestDesc = "传送到最近的机器人前方",
+        Fly             = "飞行", FlyDesc = "切换飞行模式", FlySpeed = "飞行速度",
+        NoClip          = "穿墙", NoClipDesc = "穿过墙壁和障碍物",
         WalkSpeed       = "移动速度",
-        SilentAim       = "无声自瞄",
-        SilentAimDesc   = "将攻击重定向至最近的机器人",
-        SilentAimDist   = "无声自瞄最大距离",
-        AutoFarm        = "自动刷怪",
-        AutoFarmDesc    = "自动攻击最近的机器人",
-        AutoFarmDelay   = "刷怪延迟（秒）",
-        AntiTouch       = "防触摸",
-        AntiTouchDesc   = "防止机器人对你造成接触伤害",
-        NoCooldown      = "无冷却",
-        NoCooldownDesc  = "将装备冷却设为0并拦截等待",
-        Fullbright      = "全亮",
-        FullbrightDesc  = "提高亮度并关闭阴影",
+        AutoFarm        = "自动刷怪", AutoFarmDesc = "自动攻击最近的机器人", AutoFarmDelay = "刷怪延迟（秒）",
+        AntiTouch       = "防触摸", AntiTouchDesc = "禁用机器人的接触伤害",
+        NoAnimation     = "无动画", NoAnimationDesc = "停止攻击动画以加快攻击速度",
+        Fullbright      = "全亮", FullbrightDesc = "提高亮度并关闭阴影",
         LangSelect      = "语言",
         CreditsTitle    = "超级机器人乱斗Hub",
         CreditsContent  = "由 Rival960 创建\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — 首次发布",
         Loaded          = "Hub已加载！更智慧地战斗。",
         NoBot           = "附近没有找到机器人。",
-        NoCooldownOn    = "无冷却已激活！",
-        NoCooldownOff   = "无冷却已停用。",
     },
     JA = {
         WindowTitle     = "スーパーボットブロールHub",
-        TabHome         = "ホーム",
-        TabVision       = "視覚",
-        TabMovement     = "移動",
-        TabCombat       = "戦闘",
-        TabTools        = "ツール",
-        ESPBots         = "ESPボット",
-        ESPBotsDesc     = "近くのボットをハイライトしてHPを表示",
-        TPNearestBot    = "最近のボットにTP",
-        TPNearestDesc   = "最も近いボットの前にテレポート",
-        Fly             = "飛行",
-        FlyDesc         = "飛行モードを切り替える",
-        FlySpeed        = "飛行速度",
-        NoClip          = "ノークリップ",
-        NoClipDesc      = "壁や障害物を通り抜ける",
+        TabHome         = "ホーム", TabVision = "視覚", TabMovement = "移動", TabCombat = "戦闘", TabTools = "ツール",
+        ESPBots         = "ESPボット", ESPBotsDesc = "近くのボットをハイライトしてHPを表示",
+        TPNearestBot    = "最近のボットにTP", TPNearestDesc = "最も近いボットの前にテレポート",
+        Fly             = "飛行", FlyDesc = "飛行モードを切り替える", FlySpeed = "飛行速度",
+        NoClip          = "ノークリップ", NoClipDesc = "壁や障害物を通り抜ける",
         WalkSpeed       = "移動速度",
-        SilentAim       = "サイレントエイム",
-        SilentAimDesc   = "攻撃を最寄りのボットにリダイレクト",
-        SilentAimDist   = "サイレントエイム最大距離",
-        AutoFarm        = "オートファーム",
-        AutoFarmDesc    = "最も近いボットを自動攻撃",
-        AutoFarmDelay   = "ファーム遅延（秒）",
-        AntiTouch       = "アンチタッチ",
-        AntiTouchDesc   = "ボットからの接触ダメージを防ぐ",
-        NoCooldown      = "クールダウンなし",
-        NoCooldownDesc  = "ツールのクールダウンを0にし、待機をフックする",
-        Fullbright      = "フルブライト",
-        FullbrightDesc  = "明るさを上げてシャドウを無効化",
+        AutoFarm        = "オートファーム", AutoFarmDesc = "最も近いボットを自動攻撃", AutoFarmDelay = "ファーム遅延（秒）",
+        AntiTouch       = "アンチタッチ", AntiTouchDesc = "ボットの接触ダメージを無効化",
+        NoAnimation     = "アニメーションなし", NoAnimationDesc = "攻撃アニメーションを停止して攻撃を速くする",
+        Fullbright      = "フルブライト", FullbrightDesc = "明るさを上げてシャドウを無効化",
         LangSelect      = "言語",
         CreditsTitle    = "スーパーボットブロールHub",
         CreditsContent  = "Rival960 作\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — 初回リリース",
         Loaded          = "Hub読み込み完了！より賢く戦おう。",
         NoBot           = "近くにボットが見つかりません。",
-        NoCooldownOn    = "クールダウンなしが有効になりました！",
-        NoCooldownOff   = "クールダウンなしが無効になりました。",
     },
     TR = {
         WindowTitle     = "Super Bot Brawl Hub",
-        TabHome         = "Ana Sayfa",
-        TabVision       = "Görüş",
-        TabMovement     = "Hareket",
-        TabCombat       = "Savaş",
-        TabTools        = "Araçlar",
-        ESPBots         = "ESP Botlar",
-        ESPBotsDesc     = "Yakındaki botları vurgula ve HP göster",
-        TPNearestBot    = "En Yakın Bota TP",
-        TPNearestDesc   = "En yakın botun önüne ışınlan",
-        Fly             = "Uçuş",
-        FlyDesc         = "Uçuş modunu aç/kapat",
-        FlySpeed        = "Uçuş Hızı",
-        NoClip          = "NoClip",
-        NoClipDesc      = "Duvarlardan ve engellerden geç",
+        TabHome         = "Ana Sayfa", TabVision = "Görüş", TabMovement = "Hareket", TabCombat = "Savaş", TabTools = "Araçlar",
+        ESPBots         = "ESP Botlar", ESPBotsDesc = "Yakındaki botları vurgula ve HP göster",
+        TPNearestBot    = "En Yakın Bota TP", TPNearestDesc = "En yakın botun önüne ışınlan",
+        Fly             = "Uçuş", FlyDesc = "Uçuş modunu aç/kapat", FlySpeed = "Uçuş Hızı",
+        NoClip          = "NoClip", NoClipDesc = "Duvarlardan ve engellerden geç",
         WalkSpeed       = "Yürüyüş Hızı",
-        SilentAim       = "Sessiz Nişan",
-        SilentAimDesc   = "Saldırıları en yakın bota yönlendir",
-        SilentAimDist   = "Sessiz Nişan Maks. Mesafe",
-        AutoFarm        = "Otomatik Farm",
-        AutoFarmDesc    = "En yakın botu otomatik saldır",
-        AutoFarmDelay   = "Farm gecikmesi (s)",
-        AntiTouch       = "Anti Dokunma",
-        AntiTouchDesc   = "Botların sana temas hasarı vermesini engeller",
-        NoCooldown      = "Bekleme Yok",
-        NoCooldownDesc  = "Bekleme sürelerini sıfırlar ve gecikmeleri engeller",
-        Fullbright      = "Tam Parlaklık",
-        FullbrightDesc  = "Parlaklığı artır ve gölgeleri devre dışı bırak",
+        AutoFarm        = "Otomatik Farm", AutoFarmDesc = "En yakın botu otomatik saldır", AutoFarmDelay = "Farm gecikmesi (s)",
+        AntiTouch       = "Anti Dokunma", AntiTouchDesc = "Botların temas hasarını devre dışı bırakır",
+        NoAnimation     = "Animasyonsuz", NoAnimationDesc = "Daha hızlı vuruş için saldırı animasyonlarını durdurur",
+        Fullbright      = "Tam Parlaklık", FullbrightDesc = "Parlaklığı artır ve gölgeleri devre dışı bırak",
         LangSelect      = "Dil",
         CreditsTitle    = "Super Bot Brawl Hub",
         CreditsContent  = "Rival960 tarafından oluşturuldu\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — İlk sürüm",
         Loaded          = "Hub yüklendi! Daha akıllıca savaş.",
         NoBot           = "Yakında bot bulunamadı.",
-        NoCooldownOn    = "Bekleme Yok etkinleştirildi!",
-        NoCooldownOff   = "Bekleme Yok devre dışı bırakıldı.",
     },
     KO = {
         WindowTitle     = "슈퍼 봇 브롤 허브",
-        TabHome         = "홈",
-        TabVision       = "시야",
-        TabMovement     = "이동",
-        TabCombat       = "전투",
-        TabTools        = "도구",
-        ESPBots         = "ESP 봇",
-        ESPBotsDesc     = "근처 봇 강조 표시 및 HP 표시",
-        TPNearestBot    = "가장 가까운 봇으로 TP",
-        TPNearestDesc   = "가장 가까운 봇 앞으로 순간이동",
-        Fly             = "비행",
-        FlyDesc         = "비행 모드 전환",
-        FlySpeed        = "비행 속도",
-        NoClip          = "노클립",
-        NoClipDesc      = "벽과 장애물을 통과",
+        TabHome         = "홈", TabVision = "시야", TabMovement = "이동", TabCombat = "전투", TabTools = "도구",
+        ESPBots         = "ESP 봇", ESPBotsDesc = "근처 봇 강조 표시 및 HP 표시",
+        TPNearestBot    = "가장 가까운 봇으로 TP", TPNearestDesc = "가장 가까운 봇 앞으로 순간이동",
+        Fly             = "비행", FlyDesc = "비행 모드 전환", FlySpeed = "비행 속도",
+        NoClip          = "노클립", NoClipDesc = "벽과 장애물을 통과",
         WalkSpeed       = "이동 속도",
-        SilentAim       = "사일런트 에임",
-        SilentAimDesc   = "공격을 가장 가까운 봇으로 리다이렉트",
-        SilentAimDist   = "사일런트 에임 최대 거리",
-        AutoFarm        = "자동 파밍",
-        AutoFarmDesc    = "가장 가까운 봇을 자동 공격",
-        AutoFarmDelay   = "파밍 딜레이(초)",
-        AntiTouch       = "안티 터치",
-        AntiTouchDesc   = "봇의 접촉 피해를 방지합니다",
-        NoCooldown      = "쿨다운 없음",
-        NoCooldownDesc  = "장착 도구 쿨다운을 0으로 하고 대기를 차단합니다",
-        Fullbright      = "풀브라이트",
-        FullbrightDesc  = "밝기 증가 및 그림자 비활성화",
+        AutoFarm        = "자동 파밍", AutoFarmDesc = "가장 가까운 봇을 자동 공격", AutoFarmDelay = "파밍 딜레이(초)",
+        AntiTouch       = "안티 터치", AntiTouchDesc = "봇의 접촉 피해를 비활성화합니다",
+        NoAnimation     = "애니메이션 없음", NoAnimationDesc = "더 빠른 공격을 위해 공격 애니메이션을 중지합니다",
+        Fullbright      = "풀브라이트", FullbrightDesc = "밝기 증가 및 그림자 비활성화",
         LangSelect      = "언어",
         CreditsTitle    = "슈퍼 봇 브롤 허브",
         CreditsContent  = "Rival960 제작\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — 첫 번째 릴리스",
         Loaded          = "허브 로드 완료! 더 스마트하게 싸우자.",
         NoBot           = "근처에 봇이 없습니다.",
-        NoCooldownOn    = "쿨다운 없음 활성화!",
-        NoCooldownOff   = "쿨다운 없음 비활성화.",
     },
     AR = {
         WindowTitle     = "سوبر بوت برول هاب",
-        TabHome         = "الرئيسية",
-        TabVision       = "الرؤية",
-        TabMovement     = "الحركة",
-        TabCombat       = "القتال",
-        TabTools        = "الأدوات",
-        ESPBots         = "ESP الروبوتات",
-        ESPBotsDesc     = "تمييز الروبوتات القريبة وعرض HP",
-        TPNearestBot    = "انتقال إلى أقرب روبوت",
-        TPNearestDesc   = "الانتقال أمام أقرب روبوت",
-        Fly             = "الطيران",
-        FlyDesc         = "تبديل وضع الطيران",
-        FlySpeed        = "سرعة الطيران",
-        NoClip          = "نوكليب",
-        NoClipDesc      = "المرور عبر الجدران والعوائق",
+        TabHome         = "الرئيسية", TabVision = "الرؤية", TabMovement = "الحركة", TabCombat = "القتال", TabTools = "الأدوات",
+        ESPBots         = "ESP الروبوتات", ESPBotsDesc = "تمييز الروبوتات القريبة وعرض HP",
+        TPNearestBot    = "انتقال إلى أقرب روبوت", TPNearestDesc = "الانتقال أمام أقرب روبوت",
+        Fly             = "الطيران", FlyDesc = "تبديل وضع الطيران", FlySpeed = "سرعة الطيران",
+        NoClip          = "نوكليب", NoClipDesc = "المرور عبر الجدران والعوائق",
         WalkSpeed       = "سرعة المشي",
-        SilentAim       = "التصويب الصامت",
-        SilentAimDesc   = "إعادة توجيه الهجمات إلى أقرب روبوت",
-        SilentAimDist   = "أقصى مسافة للتصويب الصامت",
-        AutoFarm        = "زراعة تلقائية",
-        AutoFarmDesc    = "مهاجمة أقرب روبوت تلقائياً",
-        AutoFarmDelay   = "تأخير الزراعة (ث)",
-        AntiTouch       = "مضاد اللمس",
-        AntiTouchDesc   = "يمنع الروبوتات من إلحاق ضرر اللمس بك",
-        NoCooldown      = "بدون تبريد",
-        NoCooldownDesc  = "تصفير أوقات التبريد واعتراض فترات الانتظار",
-        Fullbright      = "إضاءة كاملة",
-        FullbrightDesc  = "رفع السطوع وتعطيل الظلال",
+        AutoFarm        = "زراعة تلقائية", AutoFarmDesc = "مهاجمة أقرب روبوت تلقائياً", AutoFarmDelay = "تأخير الزراعة (ث)",
+        AntiTouch       = "مضاد اللمس", AntiTouchDesc = "يعطل ضرر اللمس من الروبوتات",
+        NoAnimation     = "بدون رسوم متحركة", NoAnimationDesc = "يوقف رسوم الهجوم لضربات أسرع",
+        Fullbright      = "إضاءة كاملة", FullbrightDesc = "رفع السطوع وتعطيل الظلال",
         LangSelect      = "اللغة",
         CreditsTitle    = "سوبر بوت برول هاب",
         CreditsContent  = "أنشأه Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — الإصدار الأول",
         Loaded          = "تم تحميل الهاب! قاتل بذكاء.",
         NoBot           = "لم يتم العثور على روبوت قريب.",
-        NoCooldownOn    = "تم تفعيل بدون تبريد!",
-        NoCooldownOff   = "تم تعطيل بدون تبريد.",
     },
     VI = {
         WindowTitle     = "Super Bot Brawl Hub",
-        TabHome         = "Trang chủ",
-        TabVision       = "Tầm nhìn",
-        TabMovement     = "Di chuyển",
-        TabCombat       = "Chiến đấu",
-        TabTools        = "Công cụ",
-        ESPBots         = "ESP Bots",
-        ESPBotsDesc     = "Làm nổi bật bot gần đó và hiển thị HP",
-        TPNearestBot    = "TP đến Bot gần nhất",
-        TPNearestDesc   = "Dịch chuyển đến phía trước bot gần nhất",
-        Fly             = "Bay",
-        FlyDesc         = "Bật/tắt chế độ bay",
-        FlySpeed        = "Tốc độ bay",
-        NoClip          = "NoClip",
-        NoClipDesc      = "Đi xuyên tường và chướng ngại vật",
+        TabHome         = "Trang chủ", TabVision = "Tầm nhìn", TabMovement = "Di chuyển", TabCombat = "Chiến đấu", TabTools = "Công cụ",
+        ESPBots         = "ESP Bots", ESPBotsDesc = "Làm nổi bật bot gần đó và hiển thị HP",
+        TPNearestBot    = "TP đến Bot gần nhất", TPNearestDesc = "Dịch chuyển đến phía trước bot gần nhất",
+        Fly             = "Bay", FlyDesc = "Bật/tắt chế độ bay", FlySpeed = "Tốc độ bay",
+        NoClip          = "NoClip", NoClipDesc = "Đi xuyên tường và chướng ngại vật",
         WalkSpeed       = "Tốc độ đi bộ",
-        SilentAim       = "Silent Aim",
-        SilentAimDesc   = "Chuyển hướng đòn tấn công đến bot gần nhất",
-        SilentAimDist   = "Khoảng cách tối đa Silent Aim",
-        AutoFarm        = "Tự động Farm",
-        AutoFarmDesc    = "Tự động tấn công bot gần nhất",
-        AutoFarmDelay   = "Độ trễ farm (s)",
-        AntiTouch       = "Chống chạm",
-        AntiTouchDesc   = "Ngăn bot gây sát thương chạm cho bạn",
-        NoCooldown      = "Không hồi chiêu",
-        NoCooldownDesc  = "Đặt hồi chiêu về 0 và chặn thời gian chờ",
-        Fullbright      = "Sáng tối đa",
-        FullbrightDesc  = "Tăng độ sáng và tắt bóng",
+        AutoFarm        = "Tự động Farm", AutoFarmDesc = "Tự động tấn công bot gần nhất", AutoFarmDelay = "Độ trễ farm (s)",
+        AntiTouch       = "Chống chạm", AntiTouchDesc = "Vô hiệu hóa sát thương chạm từ bot",
+        NoAnimation     = "Không Hoạt Ảnh", NoAnimationDesc = "Dừng hoạt ảnh tấn công để đánh nhanh hơn",
+        Fullbright      = "Sáng tối đa", FullbrightDesc = "Tăng độ sáng và tắt bóng",
         LangSelect      = "Ngôn ngữ",
         CreditsTitle    = "Super Bot Brawl Hub",
         CreditsContent  = "Tạo bởi Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — Phiên bản đầu tiên",
         Loaded          = "Hub đã tải! Chiến đấu thông minh hơn.",
         NoBot           = "Không tìm thấy bot nào gần đây.",
-        NoCooldownOn    = "Không hồi chiêu đã kích hoạt!",
-        NoCooldownOff   = "Không hồi chiêu đã tắt.",
     },
     SV = {
         WindowTitle     = "Super Bot Brawl Hub",
-        TabHome         = "Hem",
-        TabVision       = "Syn",
-        TabMovement     = "Rörelse",
-        TabCombat       = "Strid",
-        TabTools        = "Verktyg",
-        ESPBots         = "ESP Botar",
-        ESPBotsDesc     = "Markera närliggande botar och visa deras HP",
-        TPNearestBot    = "TP till närmaste Bot",
-        TPNearestDesc   = "Teleportera framför närmaste boten",
-        Fly             = "Flyg",
-        FlyDesc         = "Aktivera flygläge",
-        FlySpeed        = "Flyghastighet",
-        NoClip          = "NoClip",
-        NoClipDesc      = "Gå igenom väggar och hinder",
+        TabHome         = "Hem", TabVision = "Syn", TabMovement = "Rörelse", TabCombat = "Strid", TabTools = "Verktyg",
+        ESPBots         = "ESP Botar", ESPBotsDesc = "Markera närliggande botar och visa deras HP",
+        TPNearestBot    = "TP till närmaste Bot", TPNearestDesc = "Teleportera framför närmaste boten",
+        Fly             = "Flyg", FlyDesc = "Aktivera flygläge", FlySpeed = "Flyghastighet",
+        NoClip          = "NoClip", NoClipDesc = "Gå igenom väggar och hinder",
         WalkSpeed       = "Gånghastighet",
-        SilentAim       = "Silent Aim",
-        SilentAimDesc   = "Omdirigera attacker till närmaste boten",
-        SilentAimDist   = "Silent Aim Max Avstånd",
-        AutoFarm        = "Auto Farm",
-        AutoFarmDesc    = "Attackera automatiskt närmaste boten",
-        AutoFarmDelay   = "Farmfördröjning (s)",
-        AntiTouch       = "Anti Beröring",
-        AntiTouchDesc   = "Förhindrar att botar ger dig beröringsskada",
-        NoCooldown      = "Ingen Cooldown",
-        NoCooldownDesc  = "Nollställer cooldowns och fångar upp väntetider",
-        Fullbright      = "Fullbright",
-        FullbrightDesc  = "Öka ljusstyrka och inaktivera skuggor",
+        AutoFarm        = "Auto Farm", AutoFarmDesc = "Attackera automatiskt närmaste boten", AutoFarmDelay = "Farmfördröjning (s)",
+        AntiTouch       = "Anti Beröring", AntiTouchDesc = "Inaktiverar beröringsskada från botar",
+        NoAnimation     = "Ingen Animation", NoAnimationDesc = "Stoppar attackanimationer för snabbare träffar",
+        Fullbright      = "Fullbright", FullbrightDesc = "Öka ljusstyrka och inaktivera skuggor",
         LangSelect      = "Språk",
         CreditsTitle    = "Super Bot Brawl Hub",
         CreditsContent  = "Skapad av Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — Första utgåvan",
         Loaded          = "Hub laddad! Kämpa smartare.",
         NoBot           = "Ingen bot hittades i närheten.",
-        NoCooldownOn    = "Ingen Cooldown aktiverad!",
-        NoCooldownOff   = "Ingen Cooldown inaktiverad.",
     },
     EL = {
         WindowTitle     = "Super Bot Brawl Hub",
-        TabHome         = "Αρχική",
-        TabVision       = "Όραση",
-        TabMovement     = "Κίνηση",
-        TabCombat       = "Μάχη",
-        TabTools        = "Εργαλεία",
-        ESPBots         = "ESP Bots",
-        ESPBotsDesc     = "Επισήμανση κοντινών bots και εμφάνιση HP",
-        TPNearestBot    = "TP στο Κοντινότερο Bot",
-        TPNearestDesc   = "Τηλεμεταφορά μπροστά στο κοντινότερο bot",
-        Fly             = "Πτήση",
-        FlyDesc         = "Εναλλαγή λειτουργίας πτήσης",
-        FlySpeed        = "Ταχύτητα Πτήσης",
-        NoClip          = "NoClip",
-        NoClipDesc      = "Περνάς μέσα από τοίχους και εμπόδια",
+        TabHome         = "Αρχική", TabVision = "Όραση", TabMovement = "Κίνηση", TabCombat = "Μάχη", TabTools = "Εργαλεία",
+        ESPBots         = "ESP Bots", ESPBotsDesc = "Επισήμανση κοντινών bots και εμφάνιση HP",
+        TPNearestBot    = "TP στο Κοντινότερο Bot", TPNearestDesc = "Τηλεμεταφορά μπροστά στο κοντινότερο bot",
+        Fly             = "Πτήση", FlyDesc = "Εναλλαγή λειτουργίας πτήσης", FlySpeed = "Ταχύτητα Πτήσης",
+        NoClip          = "NoClip", NoClipDesc = "Περνάς μέσα από τοίχους και εμπόδια",
         WalkSpeed       = "Ταχύτητα Βαδίσματος",
-        SilentAim       = "Silent Aim",
-        SilentAimDesc   = "Ανακατεύθυνση επιθέσεων στο κοντινότερο bot",
-        SilentAimDist   = "Μέγιστη Απόσταση Silent Aim",
-        AutoFarm        = "Αυτόματο Farm",
-        AutoFarmDesc    = "Αυτόματη επίθεση στο κοντινότερο bot",
-        AutoFarmDelay   = "Καθυστέρηση farm (δευτ.)",
-        AntiTouch       = "Anti Touch",
-        AntiTouchDesc   = "Αποτρέπει τα bots από το να σου προκαλούν ζημιά επαφής",
-        NoCooldown      = "Χωρίς Cooldown",
-        NoCooldownDesc  = "Μηδενίζει τα cooldown και ανακόπτει τις αναμονές",
-        Fullbright      = "Πλήρης Φωτεινότητα",
-        FullbrightDesc  = "Αύξηση φωτεινότητας και απενεργοποίηση σκιών",
+        AutoFarm        = "Αυτόματο Farm", AutoFarmDesc = "Αυτόματη επίθεση στο κοντινότερο bot", AutoFarmDelay = "Καθυστέρηση farm (δευτ.)",
+        AntiTouch       = "Anti Touch", AntiTouchDesc = "Απενεργοποιεί τη ζημιά επαφής από bots",
+        NoAnimation     = "Χωρίς Animation", NoAnimationDesc = "Σταματά τις κινήσεις επίθεσης για γρηγορότερα χτυπήματα",
+        Fullbright      = "Πλήρης Φωτεινότητα", FullbrightDesc = "Αύξηση φωτεινότητας και απενεργοποίηση σκιών",
         LangSelect      = "Γλώσσα",
         CreditsTitle    = "Super Bot Brawl Hub",
         CreditsContent  = "Δημιουργήθηκε από τον Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — Πρώτη έκδοση",
         Loaded          = "Hub φορτώθηκε! Μάχου εξυπνότερα.",
         NoBot           = "Δεν βρέθηκε bot κοντά.",
-        NoCooldownOn    = "Χωρίς Cooldown ενεργοποιήθηκε!",
-        NoCooldownOff   = "Χωρίς Cooldown απενεργοποιήθηκε.",
     },
     RO = {
         WindowTitle     = "Super Bot Brawl Hub",
-        TabHome         = "Acasă",
-        TabVision       = "Viziune",
-        TabMovement     = "Mișcare",
-        TabCombat       = "Luptă",
-        TabTools        = "Instrumente",
-        ESPBots         = "ESP Boți",
-        ESPBotsDesc     = "Evidențiază boții din apropiere și arată HP",
-        TPNearestBot    = "TP la Cel Mai Aproape Bot",
-        TPNearestDesc   = "Teleportare în fața celui mai apropiat bot",
-        Fly             = "Zbor",
-        FlyDesc         = "Activează modul de zbor",
-        FlySpeed        = "Viteza de zbor",
-        NoClip          = "NoClip",
-        NoClipDesc      = "Treci prin pereți și obstacole",
+        TabHome         = "Acasă", TabVision = "Viziune", TabMovement = "Mișcare", TabCombat = "Luptă", TabTools = "Instrumente",
+        ESPBots         = "ESP Boți", ESPBotsDesc = "Evidențiază boții din apropiere și arată HP",
+        TPNearestBot    = "TP la Cel Mai Aproape Bot", TPNearestDesc = "Teleportare în fața celui mai apropiat bot",
+        Fly             = "Zbor", FlyDesc = "Activează modul de zbor", FlySpeed = "Viteza de zbor",
+        NoClip          = "NoClip", NoClipDesc = "Treci prin pereți și obstacole",
         WalkSpeed       = "Viteză de mers",
-        SilentAim       = "Silent Aim",
-        SilentAimDesc   = "Redirecționează atacurile către cel mai apropiat bot",
-        SilentAimDist   = "Distanță Max Silent Aim",
-        AutoFarm        = "Auto Farm",
-        AutoFarmDesc    = "Atacă automat cel mai apropiat bot",
-        AutoFarmDelay   = "Întârziere farm (s)",
-        AntiTouch       = "Anti Atingere",
-        AntiTouchDesc   = "Împiedică boții să-ți provoace daune de contact",
-        NoCooldown      = "Fără Cooldown",
-        NoCooldownDesc  = "Setează la 0 timpii de reîncărcare și interceptează așteptările",
-        Fullbright      = "Luminozitate maximă",
-        FullbrightDesc  = "Crește luminozitatea și dezactivează umbrele",
+        AutoFarm        = "Auto Farm", AutoFarmDesc = "Atacă automat cel mai apropiat bot", AutoFarmDelay = "Întârziere farm (s)",
+        AntiTouch       = "Anti Atingere", AntiTouchDesc = "Dezactivează daunele de contact de la boți",
+        NoAnimation     = "Fără Animație", NoAnimationDesc = "Oprește animațiile de atac pentru lovituri mai rapide",
+        Fullbright      = "Luminozitate maximă", FullbrightDesc = "Crește luminozitatea și dezactivează umbrele",
         LangSelect      = "Limbă",
         CreditsTitle    = "Super Bot Brawl Hub",
         CreditsContent  = "Creat de Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — Prima versiune",
         Loaded          = "Hub încărcat! Luptă mai inteligent.",
         NoBot           = "Niciun bot găsit în apropiere.",
-        NoCooldownOn    = "Fără Cooldown activat!",
-        NoCooldownOff   = "Fără Cooldown dezactivat.",
     },
     UK = {
         WindowTitle     = "Super Bot Brawl Hub",
-        TabHome         = "Головна",
-        TabVision       = "Зір",
-        TabMovement     = "Рух",
-        TabCombat       = "Бій",
-        TabTools        = "Інструменти",
-        ESPBots         = "ESP ботів",
-        ESPBotsDesc     = "Підсвічувати ближніх ботів і показувати HP",
-        TPNearestBot    = "ТП до найближчого бота",
-        TPNearestDesc   = "Телепортуватися до найближчого бота",
-        Fly             = "Політ",
-        FlyDesc         = "Увімкнути режим польоту",
-        FlySpeed        = "Швидкість польоту",
-        NoClip          = "Нокліп",
-        NoClipDesc      = "Проходити крізь стіни й перешкоди",
+        TabHome         = "Головна", TabVision = "Зір", TabMovement = "Рух", TabCombat = "Бій", TabTools = "Інструменти",
+        ESPBots         = "ESP ботів", ESPBotsDesc = "Підсвічувати ближніх ботів і показувати HP",
+        TPNearestBot    = "ТП до найближчого бота", TPNearestDesc = "Телепортуватися до найближчого бота",
+        Fly             = "Політ", FlyDesc = "Увімкнути режим польоту", FlySpeed = "Швидкість польоту",
+        NoClip          = "Нокліп", NoClipDesc = "Проходити крізь стіни й перешкоди",
         WalkSpeed       = "Швидкість ходьби",
-        SilentAim       = "Тихий приціл",
-        SilentAimDesc   = "Перенаправляти атаки на найближчого бота",
-        SilentAimDist   = "Макс. дистанція тихого прицілу",
-        AutoFarm        = "Авто фарм",
-        AutoFarmDesc    = "Автоматично атакує найближчого бота",
-        AutoFarmDelay   = "Затримка фарму (с)",
-        AntiTouch       = "Анти-дотик",
-        AntiTouchDesc   = "Запобігає контактній шкоді від ботів",
-        NoCooldown      = "Без перезарядки",
-        NoCooldownDesc  = "Скидає перезарядку та перехоплює затримки",
-        Fullbright      = "Повна яскравість",
-        FullbrightDesc  = "Збільшити яскравість і вимкнути тіні",
+        AutoFarm        = "Авто фарм", AutoFarmDesc = "Автоматично атакує найближчого бота", AutoFarmDelay = "Затримка фарму (с)",
+        AntiTouch       = "Анти-дотик", AntiTouchDesc = "Вимикає контактну шкоду від ботів",
+        NoAnimation     = "Без анімації", NoAnimationDesc = "Зупиняє анімації атаки для швидших ударів",
+        Fullbright      = "Повна яскравість", FullbrightDesc = "Збільшити яскравість і вимкнути тіні",
         LangSelect      = "Мова",
         CreditsTitle    = "Super Bot Brawl Hub",
         CreditsContent  = "Створено Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — Перший випуск",
         Loaded          = "Hub завантажено! Бийся розумніше.",
         NoBot           = "Поруч немає ботів.",
-        NoCooldownOn    = "Без перезарядки активовано!",
-        NoCooldownOff   = "Без перезарядки деактивовано.",
     },
     CS = {
         WindowTitle     = "Super Bot Brawl Hub",
-        TabHome         = "Domů",
-        TabVision       = "Vidění",
-        TabMovement     = "Pohyb",
-        TabCombat       = "Boj",
-        TabTools        = "Nástroje",
-        ESPBots         = "ESP Boti",
-        ESPBotsDesc     = "Zvýraznit blízké boty a zobrazit jejich HP",
-        TPNearestBot    = "TP k nejbližšímu Botovi",
-        TPNearestDesc   = "Přesuň se před nejbližšího bota",
-        Fly             = "Létání",
-        FlyDesc         = "Přepnout letový režim",
-        FlySpeed        = "Rychlost letu",
-        NoClip          = "NoClip",
-        NoClipDesc      = "Procházet zdmi a překážkami",
+        TabHome         = "Domů", TabVision = "Vidění", TabMovement = "Pohyb", TabCombat = "Boj", TabTools = "Nástroje",
+        ESPBots         = "ESP Boti", ESPBotsDesc = "Zvýraznit blízké boty a zobrazit jejich HP",
+        TPNearestBot    = "TP k nejbližšímu Botovi", TPNearestDesc = "Přesuň se před nejbližšího bota",
+        Fly             = "Létání", FlyDesc = "Přepnout letový režim", FlySpeed = "Rychlost letu",
+        NoClip          = "NoClip", NoClipDesc = "Procházet zdmi a překážkami",
         WalkSpeed       = "Rychlost chůze",
-        SilentAim       = "Silent Aim",
-        SilentAimDesc   = "Přesměrovat útoky na nejbližšího bota",
-        SilentAimDist   = "Max. vzdálenost Silent Aim",
-        AutoFarm        = "Auto Farm",
-        AutoFarmDesc    = "Automaticky útočí na nejbližšího bota",
-        AutoFarmDelay   = "Zpoždění farmu (s)",
-        AntiTouch       = "Anti Dotyk",
-        AntiTouchDesc   = "Zabraňuje poškození kontaktem od botů",
-        NoCooldown      = "Bez Cooldownu",
-        NoCooldownDesc  = "Nastaví cooldowny na 0 a zachytí čekání",
-        Fullbright      = "Plné světlo",
-        FullbrightDesc  = "Zvýšit jas a vypnout stíny",
+        AutoFarm        = "Auto Farm", AutoFarmDesc = "Automaticky útočí na nejbližšího bota", AutoFarmDelay = "Zpoždění farmu (s)",
+        AntiTouch       = "Anti Dotyk", AntiTouchDesc = "Vypíná poškození kontaktem od botů",
+        NoAnimation     = "Bez Animace", NoAnimationDesc = "Zastaví animace útoku pro rychlejší zásahy",
+        Fullbright      = "Plné světlo", FullbrightDesc = "Zvýšit jas a vypnout stíny",
         LangSelect      = "Jazyk",
         CreditsTitle    = "Super Bot Brawl Hub",
         CreditsContent  = "Vytvořil Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — První verze",
         Loaded          = "Hub načten! Bojuj chytřeji.",
         NoBot           = "V okolí nebyl nalezen žádný bot.",
-        NoCooldownOn    = "Bez Cooldownu aktivováno!",
-        NoCooldownOff   = "Bez Cooldownu deaktivováno.",
     },
     DA = {
         WindowTitle     = "Super Bot Brawl Hub",
-        TabHome         = "Hjem",
-        TabVision       = "Syn",
-        TabMovement     = "Bevægelse",
-        TabCombat       = "Kamp",
-        TabTools        = "Værktøjer",
-        ESPBots         = "ESP Bots",
-        ESPBotsDesc     = "Fremhæv nærliggende bots og vis deres HP",
-        TPNearestBot    = "TP til nærmeste Bot",
-        TPNearestDesc   = "Teleportér foran den nærmeste bot",
-        Fly             = "Fly",
-        FlyDesc         = "Slå flytilstand til/fra",
-        FlySpeed        = "Flyhastighed",
-        NoClip          = "NoClip",
-        NoClipDesc      = "Gå igennem vægge og forhindringer",
+        TabHome         = "Hjem", TabVision = "Syn", TabMovement = "Bevægelse", TabCombat = "Kamp", TabTools = "Værktøjer",
+        ESPBots         = "ESP Bots", ESPBotsDesc = "Fremhæv nærliggende bots og vis deres HP",
+        TPNearestBot    = "TP til nærmeste Bot", TPNearestDesc = "Teleportér foran den nærmeste bot",
+        Fly             = "Fly", FlyDesc = "Slå flytilstand til/fra", FlySpeed = "Flyhastighed",
+        NoClip          = "NoClip", NoClipDesc = "Gå igennem vægge og forhindringer",
         WalkSpeed       = "Gåhastighed",
-        SilentAim       = "Silent Aim",
-        SilentAimDesc   = "Omdiriger angreb til den nærmeste bot",
-        SilentAimDist   = "Silent Aim Maks. Afstand",
-        AutoFarm        = "Auto Farm",
-        AutoFarmDesc    = "Angrib automatisk den nærmeste bot",
-        AutoFarmDelay   = "Farm-forsinkelse (s)",
-        AntiTouch       = "Anti Berøring",
-        AntiTouchDesc   = "Forhindrer bots i at give dig berøringsskade",
-        NoCooldown      = "Ingen Cooldown",
-        NoCooldownDesc  = "Sætter cooldowns til 0 og opsnapper ventetider",
-        Fullbright      = "Fuld lysstyrke",
-        FullbrightDesc  = "Øg lysstyrke og deaktiver skygger",
+        AutoFarm        = "Auto Farm", AutoFarmDesc = "Angrib automatisk den nærmeste bot", AutoFarmDelay = "Farm-forsinkelse (s)",
+        AntiTouch       = "Anti Berøring", AntiTouchDesc = "Deaktiverer berøringsskade fra bots",
+        NoAnimation     = "Ingen Animation", NoAnimationDesc = "Stopper angrebsanimationer for hurtigere hits",
+        Fullbright      = "Fuld lysstyrke", FullbrightDesc = "Øg lysstyrke og deaktiver skygger",
         LangSelect      = "Sprog",
         CreditsTitle    = "Super Bot Brawl Hub",
         CreditsContent  = "Oprettet af Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — Første udgivelse",
         Loaded          = "Hub indlæst! Kæmp klogere.",
         NoBot           = "Ingen bot fundet i nærheden.",
-        NoCooldownOn    = "Ingen Cooldown aktiveret!",
-        NoCooldownOff   = "Ingen Cooldown deaktiveret.",
     },
 }
 
@@ -825,8 +426,6 @@ end
 -- SETTINGS
 -- ───────────────────────────────────────────────────────────────
 local Settings = {
-    SilentAim        = false,
-    SilentAimMaxDist = 150,
     AutoFarm         = false,
     AutoFarmDelay    = 0.3,
     ESP_Bots         = false,
@@ -834,8 +433,8 @@ local Settings = {
     FlySpeed         = 60,
     NoClip           = false,
     WalkSpeed        = 16,
-    NoCooldown       = false,
     AntiTouch        = false,
+    NoAnimation      = false,
     Fullbright       = false,
 }
 
@@ -855,7 +454,7 @@ end
 local Window = Rayfield:CreateWindow({
     Name            = T("WindowTitle"),
     LoadingTitle    = "Loading Hub...",
-    LoadingSubtitle = "Created by Rival960 & Claude",
+    LoadingSubtitle = "Created by Rival960 & Claude and DeepSeek",
     ConfigurationSaving = { Enabled = false },
     Discord         = { Enabled = false },
     KeySystem       = false,
@@ -907,87 +506,6 @@ local function getNearestBot()
         end
     end
     return bestBot, bestHRP
-end
-
--- ───────────────────────────────────────────────────────────────
--- SILENT AIM (hookmetamethod __namecall)
--- ───────────────────────────────────────────────────────────────
-local originalNamecall = nil
-local attackRemoteKeywords = {"Attack", "Hit", "Damage", "Shoot", "Strike", "Slash", "Melee", "Swing", "Fire"}
-
-local function getClosestBotToCursor()
-    local mouse = UserInputService:GetMouseLocation()
-    local cam = Workspace.CurrentCamera
-    local hrp = getHRP()
-    if not hrp then return nil end
-    local closest, minDist = nil, math.huge
-    local botsFolder = Workspace:FindFirstChild("Bots")
-    if not botsFolder then return nil end
-    for _, obj in ipairs(botsFolder:GetDescendants()) do
-        if isBot(obj) then
-            local bhrp = obj:FindFirstChild("HumanoidRootPart")
-            if bhrp then
-                local worldDist = (bhrp.Position - hrp.Position).Magnitude
-                if worldDist <= Settings.SilentAimMaxDist then
-                    local screenPos, onScreen = cam:WorldToViewportPoint(bhrp.Position)
-                    if onScreen then
-                        local dist = (Vector2.new(screenPos.X, screenPos.Y) - mouse).Magnitude
-                        if dist < minDist then
-                            minDist = dist
-                            closest = bhrp
-                        end
-                    end
-                end
-            end
-        end
-    end
-    return closest
-end
-
-local function enableSilentAim()
-    if originalNamecall then return end
-    local mt = getrawmetatable(game)
-    local oldNamecall = mt.__namecall
-    setreadonly(mt, false)
-    originalNamecall = oldNamecall
-    mt.__namecall = newcclosure(function(self, ...)
-        local method = getnamecallmethod()
-        if method == "FireServer" and not checkcaller() and Settings.SilentAim then
-            local args = {...}
-            if self:IsA("RemoteEvent") then
-                local shouldHook = false
-                for _, kw in ipairs(attackRemoteKeywords) do
-                    if self.Name:lower():find(kw:lower()) then
-                        shouldHook = true
-                        break
-                    end
-                end
-                if shouldHook then
-                    local target = getClosestBotToCursor()
-                    if target then
-                        if #args >= 1 and typeof(args[1]) == "Instance" then
-                            args[1] = target
-                        else
-                            table.insert(args, 1, target)
-                        end
-                    end
-                end
-            end
-            return oldNamecall(self, table.unpack(args))
-        end
-        return oldNamecall(self, ...)
-    end)
-    setreadonly(mt, true)
-end
-
-local function disableSilentAim()
-    if originalNamecall then
-        local mt = getrawmetatable(game)
-        setreadonly(mt, false)
-        mt.__namecall = originalNamecall
-        setreadonly(mt, true)
-        originalNamecall = nil
-    end
 end
 
 -- ───────────────────────────────────────────────────────────────
@@ -1069,20 +587,20 @@ local function disableFly()
 end
 
 -- ───────────────────────────────────────────────────────────────
--- NOCLIP (Robust, fully disables collisions, anti-slide)
+-- NOCLIP (save/restore original CanCollide)
 -- ───────────────────────────────────────────────────────────────
 local noclipConnection = nil
-local noclipParts = {}
+local originalCanCollide = {} -- [Part] = original state
 
 local function enableNoClip()
     if noclipConnection then return end
-    noclipParts = {}
+    originalCanCollide = {}
     local char = LocalPlayer.Character
     if not char then return end
 
     for _, part in ipairs(char:GetDescendants()) do
         if part:IsA("BasePart") then
-            noclipParts[part] = true
+            originalCanCollide[part] = part.CanCollide
             part.CanCollide = false
         end
     end
@@ -1096,7 +614,9 @@ local function enableNoClip()
 
         for _, part in ipairs(c:GetDescendants()) do
             if part:IsA("BasePart") then
-                noclipParts[part] = true
+                if originalCanCollide[part] == nil then
+                    originalCanCollide[part] = part.CanCollide
+                end
                 if part.CanCollide then
                     part.CanCollide = false
                 end
@@ -1115,37 +635,64 @@ local function disableNoClip()
         noclipConnection:Disconnect()
         noclipConnection = nil
     end
-    for part, _ in pairs(noclipParts) do
+
+    -- Restore exactly the original state
+    for part, originalState in pairs(originalCanCollide) do
         if part and part.Parent then
-            part.CanCollide = true
+            part.CanCollide = originalState
         end
     end
-    noclipParts = {}
+    originalCanCollide = {}
 
+    -- Safety: parts that were added during noclip get their default state back
     local char = LocalPlayer.Character
     if char then
         for _, part in ipairs(char:GetDescendants()) do
-            if part:IsA("BasePart") then
-                part.CanCollide = true
+            if part:IsA("BasePart") and originalCanCollide[part] == nil then
+                -- Don't force true; leave whatever the game set
             end
         end
     end
 end
 
 -- ───────────────────────────────────────────────────────────────
--- ANTI TOUCH (Disables touch damage from bots)
+-- ANTI TOUCH (disables TouchInterest on player + bots)
 -- ───────────────────────────────────────────────────────────────
 local antiTouchConnection = nil
+local originalTouchInterest = {}
+
+local function disableTouchInterest(part)
+    if not part or not part:IsA("BasePart") then return end
+    local ti = part:FindFirstChildOfClass("TouchInterest")
+    if ti and not originalTouchInterest[part] then
+        originalTouchInterest[part] = ti
+        ti:Destroy()
+    end
+end
 
 local function enableAntiTouch()
     if antiTouchConnection then return end
+    originalTouchInterest = {}
     antiTouchConnection = RunService.Heartbeat:Connect(function()
         if not Settings.AntiTouch then return end
         local char = LocalPlayer.Character
-        if not char then return end
-        for _, part in ipairs(char:GetDescendants()) do
-            if part:IsA("BasePart") and part.CanTouch then
-                part.CanTouch = false
+        if char then
+            for _, part in ipairs(char:GetDescendants()) do
+                if part:IsA("BasePart") then
+                    disableTouchInterest(part)
+                end
+            end
+        end
+        local botsFolder = Workspace:FindFirstChild("Bots")
+        if botsFolder then
+            for _, obj in ipairs(botsFolder:GetDescendants()) do
+                if isBot(obj) then
+                    for _, part in ipairs(obj:GetDescendants()) do
+                        if part:IsA("BasePart") then
+                            disableTouchInterest(part)
+                        end
+                    end
+                end
             end
         end
     end)
@@ -1156,56 +703,49 @@ local function disableAntiTouch()
         antiTouchConnection:Disconnect()
         antiTouchConnection = nil
     end
-    local char = LocalPlayer.Character
-    if char then
-        for _, part in ipairs(char:GetDescendants()) do
-            if part:IsA("BasePart") then
-                part.CanTouch = true
-            end
+    -- TouchInterest cannot be easily recreated; leave it destroyed
+    originalTouchInterest = {}
+end
+
+-- ───────────────────────────────────────────────────────────────
+-- NO ANIMATION (stops attack animations)
+-- ───────────────────────────────────────────────────────────────
+local noAnimConnection = nil
+local originalPlayAnimations = nil
+
+local function enableNoAnimation()
+    if noAnimConnection then return end
+    local hum = getHumanoid()
+    if not hum then return end
+    local animator = hum:FindFirstChildOfClass("Animator")
+    if not animator then return end
+
+    originalPlayAnimations = animator.PlayAnimations
+    animator.PlayAnimations = false
+
+    -- Also stop any currently playing tracks
+    for _, track in ipairs(animator:GetPlayingAnimationTracks()) do
+        pcall(function() track:Stop(0) end)
+    end
+end
+
+local function disableNoAnimation()
+    if noAnimConnection then
+        noAnimConnection:Disconnect()
+        noAnimConnection = nil
+    end
+    local hum = getHumanoid()
+    if hum then
+        local animator = hum:FindFirstChildOfClass("Animator")
+        if animator and originalPlayAnimations ~= nil then
+            animator.PlayAnimations = originalPlayAnimations
+            originalPlayAnimations = nil
         end
     end
 end
 
 -- ───────────────────────────────────────────────────────────────
--- NO COOLDOWN (Button + hooks task.wait, wait)
--- ───────────────────────────────────────────────────────────────
-local originalWait = nil
-local originalTaskWait = nil
-
-local function applyNoCooldown()
-    if not originalWait then
-        originalWait = wait
-        wait = function(seconds)
-            if Settings.NoCooldown then
-                return originalWait(0)
-            end
-            return originalWait(seconds)
-        end
-    end
-    if not originalTaskWait then
-        originalTaskWait = task.wait
-        task.wait = function(seconds)
-            if Settings.NoCooldown then
-                return originalTaskWait(0)
-            end
-            return originalTaskWait(seconds)
-        end
-    end
-end
-
-local function removeNoCooldownHooks()
-    if originalWait then
-        wait = originalWait
-        originalWait = nil
-    end
-    if originalTaskWait then
-        task.wait = originalTaskWait
-        originalTaskWait = nil
-    end
-end
-
--- ───────────────────────────────────────────────────────────────
--- AUTO FARM (teleports above bot, anti-touch)
+-- AUTO FARM (teleports above bot, ensures anti-touch)
 -- ───────────────────────────────────────────────────────────────
 local lastFarmTime = 0
 
@@ -1224,14 +764,15 @@ local function doAutoFarm()
     local botModel, botHRP = getNearestBot()
     if not botHRP or not botModel then return end
 
-    -- Teleport 20 studs above the bot (safer)
-    local above = botHRP.Position + Vector3.new(0, 20, 0)
+    -- Teleport 25 studs above the bot (safely out of reach)
+    local above = botHRP.Position + Vector3.new(0, 25, 0)
     hrp.CFrame = CFrame.lookAt(above, botHRP.Position)
 
-    -- Disable touch damage on the player while farming
+    -- Ensure anti-touch is active on the player while farming
     for _, part in ipairs(char:GetDescendants()) do
         if part:IsA("BasePart") then
-            part.CanTouch = false
+            local ti = part:FindFirstChildOfClass("TouchInterest")
+            if ti then ti:Destroy() end
         end
     end
 
@@ -1266,14 +807,6 @@ local function doAutoFarm()
             end
         end
     end
-
-    for _, name in ipairs(attackRemoteKeywords) do
-        local ev = ReplicatedStorage:FindFirstChild(name, true)
-        if ev and ev:IsA("RemoteEvent") then
-            pcall(function() ev:FireServer(botHum) end)
-            break
-        end
-    end
 end
 
 -- ───────────────────────────────────────────────────────────────
@@ -1281,25 +814,14 @@ end
 -- ───────────────────────────────────────────────────────────────
 
 local TabHome = Window:CreateTab(T("TabHome"), 4483362458)
-TabHome:CreateParagraph({
-    Title   = T("CreditsTitle"),
-    Content = T("CreditsContent"),
-})
+TabHome:CreateParagraph({ Title = T("CreditsTitle"), Content = T("CreditsContent") })
 
 local TabVision = Window:CreateTab(T("TabVision"), 4483362458)
-
-TabVision:CreateToggle({
-    Name         = T("ESPBots"),
-    CurrentValue = Settings.ESP_Bots,
-    Flag         = "ESP_Bots",
-    Callback     = function(v) Settings.ESP_Bots = v end,
-})
-
+TabVision:CreateToggle({ Name = T("ESPBots"), CurrentValue = Settings.ESP_Bots, Flag = "ESP_Bots", Callback = function(v) Settings.ESP_Bots = v end })
 TabVision:CreateButton({
-    Name     = T("TPNearestBot"),
+    Name = T("TPNearestBot"),
     Callback = function()
-        local hrp = getHRP()
-        if not hrp then return end
+        local hrp = getHRP(); if not hrp then return end
         local _, botHRP = getNearestBot()
         if botHRP then
             local dir = (hrp.Position - botHRP.Position).Unit
@@ -1312,152 +834,33 @@ TabVision:CreateButton({
 })
 
 local TabMovement = Window:CreateTab(T("TabMovement"), 4483362458)
-
-TabMovement:CreateToggle({
-    Name         = T("Fly"),
-    CurrentValue = Settings.Fly,
-    Flag         = "Fly",
-    Callback     = function(v)
-        Settings.Fly = v
-        if v then enableFly() else disableFly() end
-    end,
-})
-
-TabMovement:CreateSlider({
-    Name         = T("FlySpeed"),
-    Range        = {10, 300},
-    Increment    = 5,
-    CurrentValue = Settings.FlySpeed,
-    Flag         = "FlySpeed",
-    Callback     = function(v) Settings.FlySpeed = v end,
-})
-
-TabMovement:CreateToggle({
-    Name         = T("NoClip"),
-    CurrentValue = Settings.NoClip,
-    Flag         = "NoClip",
-    Callback     = function(v)
-        Settings.NoClip = v
-        if v then enableNoClip() else disableNoClip() end
-    end,
-})
-
-TabMovement:CreateSlider({
-    Name         = T("WalkSpeed"),
-    Range        = {16, 250},
-    Increment    = 1,
-    CurrentValue = Settings.WalkSpeed,
-    Flag         = "WalkSpeed",
-    Callback     = function(v)
-        Settings.WalkSpeed = v
-        local hum = getHumanoid()
-        if hum then hum.WalkSpeed = v end
-    end,
-})
+TabMovement:CreateToggle({ Name = T("Fly"), CurrentValue = Settings.Fly, Flag = "Fly", Callback = function(v) Settings.Fly = v; if v then enableFly() else disableFly() end end })
+TabMovement:CreateSlider({ Name = T("FlySpeed"), Range = {10, 300}, Increment = 5, CurrentValue = Settings.FlySpeed, Flag = "FlySpeed", Callback = function(v) Settings.FlySpeed = v end })
+TabMovement:CreateToggle({ Name = T("NoClip"), CurrentValue = Settings.NoClip, Flag = "NoClip", Callback = function(v) Settings.NoClip = v; if v then enableNoClip() else disableNoClip() end end })
+TabMovement:CreateSlider({ Name = T("WalkSpeed"), Range = {16, 250}, Increment = 1, CurrentValue = Settings.WalkSpeed, Flag = "WalkSpeed", Callback = function(v) Settings.WalkSpeed = v; local hum = getHumanoid(); if hum then hum.WalkSpeed = v end end })
 
 local TabCombat = Window:CreateTab(T("TabCombat"), 4483362458)
-
-TabCombat:CreateToggle({
-    Name         = T("SilentAim"),
-    CurrentValue = Settings.SilentAim,
-    Flag         = "SilentAim",
-    Callback     = function(v)
-        Settings.SilentAim = v
-        if v then enableSilentAim() else disableSilentAim() end
-    end,
-})
-
-TabCombat:CreateSlider({
-    Name         = T("SilentAimDist"),
-    Range        = {10, 500},
-    Increment    = 10,
-    CurrentValue = Settings.SilentAimMaxDist,
-    Flag         = "SilentAimMaxDist",
-    Callback     = function(v) Settings.SilentAimMaxDist = v end,
-})
-
-TabCombat:CreateToggle({
-    Name         = T("AutoFarm"),
-    CurrentValue = Settings.AutoFarm,
-    Flag         = "AutoFarm",
-    Callback     = function(v) Settings.AutoFarm = v end,
-})
-
-TabCombat:CreateSlider({
-    Name         = T("AutoFarmDelay"),
-    Range        = {0.1, 2.0},
-    Increment    = 0.1,
-    CurrentValue = Settings.AutoFarmDelay,
-    Flag         = "AutoFarmDelay",
-    Callback     = function(v) Settings.AutoFarmDelay = v end,
-})
-
-TabCombat:CreateToggle({
-    Name         = T("AntiTouch"),
-    CurrentValue = Settings.AntiTouch,
-    Flag         = "AntiTouch",
-    Callback     = function(v)
-        Settings.AntiTouch = v
-        if v then enableAntiTouch() else disableAntiTouch() end
-    end,
-})
-
--- NO COOLDOWN BUTTON (requested)
-TabCombat:CreateButton({
-    Name     = T("NoCooldown"),
-    Callback = function()
-        Settings.NoCooldown = not Settings.NoCooldown
-        if Settings.NoCooldown then
-            applyNoCooldown()
-            Rayfield:Notify({
-                Title   = T("NoCooldown"),
-                Content = T("NoCooldownOn"),
-                Duration = 2,
-            })
-        else
-            removeNoCooldownHooks()
-            Rayfield:Notify({
-                Title   = T("NoCooldown"),
-                Content = T("NoCooldownOff"),
-                Duration = 2,
-            })
-        end
-    end,
-})
+TabCombat:CreateToggle({ Name = T("AutoFarm"), CurrentValue = Settings.AutoFarm, Flag = "AutoFarm", Callback = function(v) Settings.AutoFarm = v end })
+TabCombat:CreateSlider({ Name = T("AutoFarmDelay"), Range = {0.1, 2.0}, Increment = 0.1, CurrentValue = Settings.AutoFarmDelay, Flag = "AutoFarmDelay", Callback = function(v) Settings.AutoFarmDelay = v end })
+TabCombat:CreateToggle({ Name = T("AntiTouch"), CurrentValue = Settings.AntiTouch, Flag = "AntiTouch", Callback = function(v) Settings.AntiTouch = v; if v then enableAntiTouch() else disableAntiTouch() end end })
+TabCombat:CreateToggle({ Name = T("NoAnimation"), CurrentValue = Settings.NoAnimation, Flag = "NoAnimation", Callback = function(v) Settings.NoAnimation = v; if v then enableNoAnimation() else disableNoAnimation() end end })
 
 local TabTools = Window:CreateTab(T("TabTools"), 4483362458)
-
-TabTools:CreateToggle({
-    Name         = T("Fullbright"),
-    CurrentValue = Settings.Fullbright,
-    Flag         = "Fullbright",
-    Callback     = function(v)
-        Settings.Fullbright = v
-        if v then
-            Lighting.Brightness     = 2
-            Lighting.ClockTime      = 14
-            Lighting.GlobalShadows  = false
-        else
-            Lighting.Brightness     = 1
-            Lighting.ClockTime      = 14
-            Lighting.GlobalShadows  = true
-        end
-    end,
-})
+TabTools:CreateToggle({ Name = T("Fullbright"), CurrentValue = Settings.Fullbright, Flag = "Fullbright", Callback = function(v)
+    Settings.Fullbright = v
+    if v then
+        Lighting.Brightness = 2; Lighting.ClockTime = 14; Lighting.GlobalShadows = false
+    else
+        Lighting.Brightness = 1; Lighting.ClockTime = 14; Lighting.GlobalShadows = true
+    end
+end })
 
 local langOptions = {"EN","FR","DE","ES","PT","RU","IT","NL","PL","ZH","JA","TR","KO","AR","VI","SV","EL","RO","UK","CS","DA"}
 TabTools:CreateDropdown({
-    Name          = T("LangSelect"),
-    Options       = langOptions,
-    CurrentOption = {CurrentLang},
-    Flag          = "Language",
-    Callback      = function(selected)
+    Name = T("LangSelect"), Options = langOptions, CurrentOption = {CurrentLang}, Flag = "Language",
+    Callback = function(selected)
         CurrentLang = selected[1] or selected
-        Rayfield:Notify({
-            Title    = "Language",
-            Content  = "Re-execute the script to apply the new language.",
-            Duration = 4,
-        })
+        Rayfield:Notify({ Title = "Language", Content = "Re-execute the script to apply the new language.", Duration = 4 })
     end,
 })
 
@@ -1473,9 +876,9 @@ RunService.RenderStepped:Connect(function()
 
     -- Fly
     if Settings.Fly and flyVelocity and flyGyro and hrp then
-        local cam   = Workspace.CurrentCamera
+        local cam = Workspace.CurrentCamera
         local speed = Settings.FlySpeed
-        local dir   = Vector3.zero
+        local dir = Vector3.zero
 
         if isMobile then
             local move = hum and hum.MoveDirection or Vector3.zero
@@ -1485,24 +888,12 @@ RunService.RenderStepped:Connect(function()
             end
         else
             local uis = UserInputService
-            if uis:IsKeyDown(Enum.KeyCode.W) or uis:IsKeyDown(Enum.KeyCode.Up) then
-                dir = dir + cam.CFrame.LookVector
-            end
-            if uis:IsKeyDown(Enum.KeyCode.S) or uis:IsKeyDown(Enum.KeyCode.Down) then
-                dir = dir - cam.CFrame.LookVector
-            end
-            if uis:IsKeyDown(Enum.KeyCode.A) or uis:IsKeyDown(Enum.KeyCode.Left) then
-                dir = dir - cam.CFrame.RightVector
-            end
-            if uis:IsKeyDown(Enum.KeyCode.D) or uis:IsKeyDown(Enum.KeyCode.Right) then
-                dir = dir + cam.CFrame.RightVector
-            end
-            if uis:IsKeyDown(Enum.KeyCode.Space) then
-                dir = dir + Vector3.new(0, 1, 0)
-            end
-            if uis:IsKeyDown(Enum.KeyCode.LeftShift) or uis:IsKeyDown(Enum.KeyCode.RightShift) then
-                dir = dir - Vector3.new(0, 1, 0)
-            end
+            if uis:IsKeyDown(Enum.KeyCode.W) or uis:IsKeyDown(Enum.KeyCode.Up) then dir = dir + cam.CFrame.LookVector end
+            if uis:IsKeyDown(Enum.KeyCode.S) or uis:IsKeyDown(Enum.KeyCode.Down) then dir = dir - cam.CFrame.LookVector end
+            if uis:IsKeyDown(Enum.KeyCode.A) or uis:IsKeyDown(Enum.KeyCode.Left) then dir = dir - cam.CFrame.RightVector end
+            if uis:IsKeyDown(Enum.KeyCode.D) or uis:IsKeyDown(Enum.KeyCode.Right) then dir = dir + cam.CFrame.RightVector end
+            if uis:IsKeyDown(Enum.KeyCode.Space) then dir = dir + Vector3.new(0, 1, 0) end
+            if uis:IsKeyDown(Enum.KeyCode.LeftShift) or uis:IsKeyDown(Enum.KeyCode.RightShift) then dir = dir - Vector3.new(0, 1, 0) end
         end
 
         flyVelocity.Velocity = dir.Magnitude > 0 and dir.Unit * speed or Vector3.zero
@@ -1516,37 +907,34 @@ RunService.RenderStepped:Connect(function()
             for _, obj in ipairs(botsFolder:GetDescendants()) do
                 if isBot(obj) then
                     local botHum = obj:FindFirstChildOfClass("Humanoid")
-
                     local hl = obj:FindFirstChild("_BotESP_Highlight")
                     if not hl then
                         hl = Instance.new("Highlight")
-                        hl.Name             = "_BotESP_Highlight"
-                        hl.FillColor        = Color3.fromRGB(255, 60, 60)
-                        hl.OutlineColor     = Color3.fromRGB(255, 200, 0)
+                        hl.Name = "_BotESP_Highlight"
+                        hl.FillColor = Color3.fromRGB(255, 60, 60)
+                        hl.OutlineColor = Color3.fromRGB(255, 200, 0)
                         hl.FillTransparency = 0.4
-                        hl.Parent           = obj
+                        hl.Parent = obj
                     end
-
                     local bhrp = obj:FindFirstChild("HumanoidRootPart")
                     if bhrp then
                         local bb = bhrp:FindFirstChild("_BotESP_BB")
                         if not bb then
                             bb = Instance.new("BillboardGui")
-                            bb.Name        = "_BotESP_BB"
-                            bb.Size        = UDim2.new(0, 120, 0, 40)
+                            bb.Name = "_BotESP_BB"
+                            bb.Size = UDim2.new(0, 120, 0, 40)
                             bb.StudsOffset = Vector3.new(0, 3, 0)
                             bb.AlwaysOnTop = true
-                            bb.Parent      = bhrp
-
+                            bb.Parent = bhrp
                             local lbl = Instance.new("TextLabel")
-                            lbl.Name                   = "Label"
-                            lbl.Size                   = UDim2.new(1, 0, 1, 0)
+                            lbl.Name = "Label"
+                            lbl.Size = UDim2.new(1, 0, 1, 0)
                             lbl.BackgroundTransparency = 1
-                            lbl.TextColor3             = Color3.fromRGB(255, 240, 100)
+                            lbl.TextColor3 = Color3.fromRGB(255, 240, 100)
                             lbl.TextStrokeTransparency = 0
-                            lbl.TextScaled             = true
-                            lbl.Font                   = Enum.Font.GothamBold
-                            lbl.Parent                 = bb
+                            lbl.TextScaled = true
+                            lbl.Font = Enum.Font.GothamBold
+                            lbl.Parent = bb
                         end
                         local lbl = bb:FindFirstChild("Label")
                         if lbl and botHum then
@@ -1579,34 +967,13 @@ RunService.Heartbeat:Connect(doAutoFarm)
 LocalPlayer.CharacterAdded:Connect(function(_character)
     task.wait(0.5)
 
-    if Settings.Fly then
-        disableFly()
-        task.wait(0.1)
-        enableFly()
-    end
-
-    if Settings.NoClip then
-        enableNoClip()
-    end
-
-    if Settings.SilentAim then
-        enableSilentAim()
-    end
-
-    if Settings.AntiTouch then
-        enableAntiTouch()
-    end
-
-    if Settings.NoCooldown then
-        applyNoCooldown()
-    end
+    if Settings.Fly then disableFly(); task.wait(0.1); enableFly() end
+    if Settings.NoClip then enableNoClip() end
+    if Settings.AntiTouch then enableAntiTouch() end
+    if Settings.NoAnimation then enableNoAnimation() end
 
     local hum = getHumanoid()
     if hum then hum.WalkSpeed = Settings.WalkSpeed end
 end)
 
-Rayfield:Notify({
-    Title    = T("WindowTitle"),
-    Content  = T("Loaded"),
-    Duration = 4,
-})
+Rayfield:Notify({ Title = T("WindowTitle"), Content = T("Loaded"), Duration = 4 })
