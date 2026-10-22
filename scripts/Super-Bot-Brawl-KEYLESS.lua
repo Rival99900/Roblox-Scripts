@@ -5,7 +5,7 @@
     Version: 1.0.0 | Languages: 21 | Rayfield UI
     ================================================================
     Features:
-      - God Mode (MaxHealth + HealthChanged + safety loop)
+      - God Mode (MaxHealth + HealthChanged + Dead state block)
       - Auto Farm (auto-attack nearest bot with cooldown)
       - ESP Bots (highlight + HP billboard on all NPCs)
       - Teleport to Nearest Bot
@@ -771,7 +771,6 @@ end
 
 -- STRICT bot detection: only Models with a live Humanoid that are NOT
 -- the local player's character and NOT any other player's character.
--- This guarantees the hitbox NEVER affects the player.
 local function isBot(model)
     if not model or not model:IsA("Model") then return false end
     if LocalPlayer.Character and (model == LocalPlayer.Character or model:IsDescendantOf(LocalPlayer.Character)) then
@@ -941,24 +940,66 @@ local function disableFly()
 end
 
 -- ───────────────────────────────────────────────────────────────
--- NOCLIP (same logic as the working SCP script: disable CanCollide
--- on every BasePart, including HumanoidRootPart, and leave it off)
+-- NOCLIP (CORRECTED: Keep HumanoidRootPart collidable)
 -- ───────────────────────────────────────────────────────────────
-local function applyNoClip(state)
+local noclipConnection = nil
+local originalCollisions = {}
+
+local function enableNoClip()
+    if noclipConnection then return end
     local char = LocalPlayer.Character
     if not char then return end
+
+    -- Save original collision states
     for _, part in ipairs(char:GetDescendants()) do
         if part:IsA("BasePart") then
-            part.CanCollide = not state
+            originalCollisions[part] = part.CanCollide
         end
     end
-    if state then
-        -- Also stop any residual sliding when enabling
-        local hrp = char:FindFirstChild("HumanoidRootPart")
-        if hrp then
-            hrp.AssemblyLinearVelocity  = Vector3.zero
-            hrp.AssemblyAngularVelocity = Vector3.zero
+
+    -- Apply no-clip: disable collisions on all parts EXCEPT HumanoidRootPart
+    for part, _ in pairs(originalCollisions) do
+        if part.Parent and part:IsA("BasePart") and part.Name ~= "HumanoidRootPart" then
+            part.CanCollide = false
         end
+    end
+
+    -- Re-apply every frame to counter any game script trying to re-enable
+    noclipConnection = RunService.Stepped:Connect(function()
+        if not Settings.NoClip then return end
+        local c = LocalPlayer.Character
+        if not c then return end
+        for _, part in ipairs(c:GetDescendants()) do
+            if part:IsA("BasePart") and part.Name ~= "HumanoidRootPart" then
+                if part.CanCollide then
+                    part.CanCollide = false
+                end
+            end
+        end
+    end)
+end
+
+local function disableNoClip()
+    if noclipConnection then
+        noclipConnection:Disconnect()
+        noclipConnection = nil
+    end
+
+    -- Restore original collision states
+    for part, originalState in pairs(originalCollisions) do
+        if part and part.Parent and part:IsA("BasePart") then
+            pcall(function()
+                part.CanCollide = originalState
+            end)
+        end
+    end
+    originalCollisions = {}
+
+    -- Stop residual sliding
+    local hrp = getHRP()
+    if hrp then
+        hrp.AssemblyLinearVelocity  = Vector3.zero
+        hrp.AssemblyAngularVelocity = Vector3.zero
     end
 end
 
@@ -1058,7 +1099,11 @@ TabMovement:CreateToggle({
     Flag         = "NoClip",
     Callback     = function(v)
         Settings.NoClip = v
-        applyNoClip(v)
+        if v then
+            enableNoClip()
+        else
+            disableNoClip()
+        end
     end,
 })
 
@@ -1185,15 +1230,6 @@ RunService.RenderStepped:Connect(function()
 
     local hrp  = char:FindFirstChild("HumanoidRootPart")
     local hum  = char:FindFirstChildOfClass("Humanoid")
-
-    -- NoClip: re-apply every frame (same as SCP script)
-    if Settings.NoClip then
-        for _, part in ipairs(char:GetDescendants()) do
-            if part:IsA("BasePart") then
-                part.CanCollide = false
-            end
-        end
-    end
 
     -- Fly
     if Settings.Fly and flyVelocity and flyGyro and hrp then
@@ -1333,7 +1369,7 @@ LocalPlayer.CharacterAdded:Connect(function(_character)
     end
 
     if Settings.NoClip then
-        applyNoClip(true)
+        enableNoClip()
     end
 
     local hum = getHumanoid()
@@ -1343,5 +1379,5 @@ end)
 Rayfield:Notify({
     Title    = T("WindowTitle"),
     Content  = T("Loaded"),
-    Duration     = 4,
+    Duration = 4,
 })
