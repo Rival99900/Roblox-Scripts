@@ -5,9 +5,10 @@
     Version: 1.0.0 | Languages: 21 | Rayfield UI
     ================================================================
     Features:
-      - Auto Farm (teleports above bot, scaled to character size)
-      - Anti Touch (CanTouch=false on player and bots)
-      - No Animation (stops all animation tracks every frame)
+      - Auto Farm (teleports high above bot, anti-touch, anti-ragdoll)
+      - Anti Touch (CanTouch=false + TouchInterest removed on player & bots)
+      - Anti Ragdoll (blocks Ragdoll/Physics/FallingDown/Dead states)
+      - No Animation (universal R6/R15/custom, stops all tracks)
       - ESP Bots (highlight + HP billboard on all NPCs)
       - Teleport to Nearest Bot
       - Fly (PC: WASD/Space/Shift | Mobile: joystick + on-screen ▲/▼)
@@ -26,7 +27,6 @@ local RunService       = game:GetService("RunService")
 local UserInputService = game:GetService("UserInputService")
 local Workspace        = game:GetService("Workspace")
 local Lighting         = game:GetService("Lighting")
-local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local LocalPlayer = Players.LocalPlayer
 
@@ -46,7 +46,8 @@ local Translations = {
         WalkSpeed       = "Walk Speed",
         AutoFarm        = "Auto Farm", AutoFarmDesc = "Automatically attack the nearest bot", AutoFarmDelay = "Farm Delay (s)",
         AntiTouch       = "Anti Touch", AntiTouchDesc = "Disable bot touch damage",
-        NoAnimation     = "No Animation", NoAnimationDesc = "Stop attack animations for faster hits",
+        AntiRagdoll     = "Anti Ragdoll", AntiRagdollDesc = "Prevent ragdoll and physics states",
+        NoAnimation     = "No Animation", NoAnimationDesc = "Stop attack animations (R6/R15/custom)",
         Fullbright      = "Fullbright", FullbrightDesc = "Raise brightness and disable shadows",
         LangSelect      = "Language",
         CreditsTitle    = "Super Bot Brawl Hub",
@@ -64,7 +65,8 @@ local Translations = {
         WalkSpeed       = "Vitesse de marche",
         AutoFarm        = "Auto Farm", AutoFarmDesc = "Attaque automatiquement le bot le plus proche", AutoFarmDelay = "Délai farm (s)",
         AntiTouch       = "Anti Touche", AntiTouchDesc = "Désactive les dégâts de contact des bots",
-        NoAnimation     = "Sans Animation", NoAnimationDesc = "Arrête les animations d'attaque pour frapper plus vite",
+        AntiRagdoll     = "Anti Ragdoll", AntiRagdollDesc = "Empêche le ragdoll et les états physiques",
+        NoAnimation     = "Sans Animation", NoAnimationDesc = "Arrête les animations d'attaque (R6/R15/custom)",
         Fullbright      = "Luminosité max", FullbrightDesc = "Augmenter la luminosité et désactiver les ombres",
         LangSelect      = "Langue",
         CreditsTitle    = "Super Bot Brawl Hub",
@@ -82,7 +84,8 @@ local Translations = {
         WalkSpeed       = "Laufgeschwindigkeit",
         AutoFarm        = "Auto Farm", AutoFarmDesc = "Greift automatisch den nächsten Bot an", AutoFarmDelay = "Farm-Verzögerung (s)",
         AntiTouch       = "Anti Touch", AntiTouchDesc = "Deaktiviert Kontaktschaden von Bots",
-        NoAnimation     = "Keine Animation", NoAnimationDesc = "Stoppt Angriffsanimationen für schnellere Treffer",
+        AntiRagdoll     = "Anti Ragdoll", AntiRagdollDesc = "Verhindert Ragdoll- und Physik-Zustände",
+        NoAnimation     = "Keine Animation", NoAnimationDesc = "Stoppt Angriffsanimationen (R6/R15/custom)",
         Fullbright      = "Vollhell", FullbrightDesc = "Helligkeit erhöhen und Schatten deaktivieren",
         LangSelect      = "Sprache",
         CreditsTitle    = "Super Bot Brawl Hub",
@@ -100,7 +103,8 @@ local Translations = {
         WalkSpeed       = "Velocidad de marcha",
         AutoFarm        = "Auto Farm", AutoFarmDesc = "Ataca automáticamente al bot más cercano", AutoFarmDelay = "Retraso farm (s)",
         AntiTouch       = "Anti Contacto", AntiTouchDesc = "Desactiva el daño por contacto de los bots",
-        NoAnimation     = "Sin Animación", NoAnimationDesc = "Detiene las animaciones de ataque para golpear más rápido",
+        AntiRagdoll     = "Anti Ragdoll", AntiRagdollDesc = "Evita el ragdoll y los estados físicos",
+        NoAnimation     = "Sin Animación", NoAnimationDesc = "Detiene las animaciones de ataque (R6/R15/custom)",
         Fullbright      = "Brillo máximo", FullbrightDesc = "Aumentar brillo y desactivar sombras",
         LangSelect      = "Idioma",
         CreditsTitle    = "Super Bot Brawl Hub",
@@ -118,7 +122,8 @@ local Translations = {
         WalkSpeed       = "Velocidade de caminhada",
         AutoFarm        = "Auto Farm", AutoFarmDesc = "Ataca automaticamente o bot mais próximo", AutoFarmDelay = "Atraso do farm (s)",
         AntiTouch       = "Anti Toque", AntiTouchDesc = "Desativa o dano de contato dos bots",
-        NoAnimation     = "Sem Animação", NoAnimationDesc = "Para as animações de ataque para acertar mais rápido",
+        AntiRagdoll     = "Anti Ragdoll", AntiRagdollDesc = "Impede ragdoll e estados físicos",
+        NoAnimation     = "Sem Animação", NoAnimationDesc = "Para as animações de ataque (R6/R15/custom)",
         Fullbright      = "Brilho máximo", FullbrightDesc = "Aumentar brilho e desativar sombras",
         LangSelect      = "Idioma",
         CreditsTitle    = "Super Bot Brawl Hub",
@@ -136,7 +141,8 @@ local Translations = {
         WalkSpeed       = "Скорость ходьбы",
         AutoFarm        = "Авто фарм", AutoFarmDesc = "Автоматически атаковать ближайшего бота", AutoFarmDelay = "Задержка фарма (с)",
         AntiTouch       = "Анти-касание", AntiTouchDesc = "Отключает контактный урон от ботов",
-        NoAnimation     = "Без анимации", NoAnimationDesc = "Останавливает анимации атаки для более быстрых ударов",
+        AntiRagdoll     = "Анти-рагдолл", AntiRagdollDesc = "Предотвращает состояния ragdoll и физики",
+        NoAnimation     = "Без анимации", NoAnimationDesc = "Останавливает анимации атаки (R6/R15/custom)",
         Fullbright      = "Максяркость", FullbrightDesc = "Увеличить яркость и отключить тени",
         LangSelect      = "Язык",
         CreditsTitle    = "Super Bot Brawl Hub",
@@ -154,7 +160,8 @@ local Translations = {
         WalkSpeed       = "Velocità di camminata",
         AutoFarm        = "Auto Farm", AutoFarmDesc = "Attacca automaticamente il bot più vicino", AutoFarmDelay = "Ritardo farm (s)",
         AntiTouch       = "Anti Contatto", AntiTouchDesc = "Disattiva i danni da contatto dei bot",
-        NoAnimation     = "Nessuna Animazione", NoAnimationDesc = "Ferma le animazioni di attacco per colpire più velocemente",
+        AntiRagdoll     = "Anti Ragdoll", AntiRagdollDesc = "Impedisce ragdoll e stati fisici",
+        NoAnimation     = "Nessuna Animazione", NoAnimationDesc = "Ferma le animazioni di attacco (R6/R15/custom)",
         Fullbright      = "Luminosità massima", FullbrightDesc = "Aumenta luminosità e disattiva ombre",
         LangSelect      = "Lingua",
         CreditsTitle    = "Super Bot Brawl Hub",
@@ -172,7 +179,8 @@ local Translations = {
         WalkSpeed       = "Loopsnelheid",
         AutoFarm        = "Auto Farm", AutoFarmDesc = "Valt automatisch de dichtstbijzijnde bot aan", AutoFarmDelay = "Farm vertraging (s)",
         AntiTouch       = "Anti Aanraking", AntiTouchDesc = "Schakelt aanrakingsschade van bots uit",
-        NoAnimation     = "Geen Animatie", NoAnimationDesc = "Stopt aanvalsanimaties voor snellere treffers",
+        AntiRagdoll     = "Anti Ragdoll", AntiRagdollDesc = "Voorkomt ragdoll- en fysica-toestanden",
+        NoAnimation     = "Geen Animatie", NoAnimationDesc = "Stopt aanvalsanimaties (R6/R15/custom)",
         Fullbright      = "Maximale helderheid", FullbrightDesc = "Helderheid verhogen en schaduwen uitschakelen",
         LangSelect      = "Taal",
         CreditsTitle    = "Super Bot Brawl Hub",
@@ -190,7 +198,8 @@ local Translations = {
         WalkSpeed       = "Prędkość chodzenia",
         AutoFarm        = "Auto Farm", AutoFarmDesc = "Automatycznie atakuje najbliższego bota", AutoFarmDelay = "Opóźnienie farmu (s)",
         AntiTouch       = "Anti Dotyk", AntiTouchDesc = "Wyłącza obrażenia od kontaktu z botami",
-        NoAnimation     = "Bez Animacji", NoAnimationDesc = "Zatrzymuje animacje ataku dla szybszych trafień",
+        AntiRagdoll     = "Anti Ragdoll", AntiRagdollDesc = "Zapobiega stanom ragdoll i fizyki",
+        NoAnimation     = "Bez Animacji", NoAnimationDesc = "Zatrzymuje animacje ataku (R6/R15/custom)",
         Fullbright      = "Pełna jasność", FullbrightDesc = "Zwiększ jasność i wyłącz cienie",
         LangSelect      = "Język",
         CreditsTitle    = "Super Bot Brawl Hub",
@@ -208,7 +217,8 @@ local Translations = {
         WalkSpeed       = "移动速度",
         AutoFarm        = "自动刷怪", AutoFarmDesc = "自动攻击最近的机器人", AutoFarmDelay = "刷怪延迟（秒）",
         AntiTouch       = "防触摸", AntiTouchDesc = "禁用机器人的接触伤害",
-        NoAnimation     = "无动画", NoAnimationDesc = "停止攻击动画以加快攻击速度",
+        AntiRagdoll     = "防布娃娃", AntiRagdollDesc = "防止布娃娃和物理状态",
+        NoAnimation     = "无动画", NoAnimationDesc = "停止攻击动画（R6/R15/自定义）",
         Fullbright      = "全亮", FullbrightDesc = "提高亮度并关闭阴影",
         LangSelect      = "语言",
         CreditsTitle    = "超级机器人乱斗Hub",
@@ -226,7 +236,8 @@ local Translations = {
         WalkSpeed       = "移動速度",
         AutoFarm        = "オートファーム", AutoFarmDesc = "最も近いボットを自動攻撃", AutoFarmDelay = "ファーム遅延（秒）",
         AntiTouch       = "アンチタッチ", AntiTouchDesc = "ボットの接触ダメージを無効化",
-        NoAnimation     = "アニメーションなし", NoAnimationDesc = "攻撃アニメーションを停止して攻撃を速くする",
+        AntiRagdoll     = "アンチラグドール", AntiRagdollDesc = "ラグドールと物理状態を防止",
+        NoAnimation     = "アニメーションなし", NoAnimationDesc = "攻撃アニメーションを停止（R6/R15/カスタム）",
         Fullbright      = "フルブライト", FullbrightDesc = "明るさを上げてシャドウを無効化",
         LangSelect      = "言語",
         CreditsTitle    = "スーパーボットブロールHub",
@@ -244,7 +255,8 @@ local Translations = {
         WalkSpeed       = "Yürüyüş Hızı",
         AutoFarm        = "Otomatik Farm", AutoFarmDesc = "En yakın botu otomatik saldır", AutoFarmDelay = "Farm gecikmesi (s)",
         AntiTouch       = "Anti Dokunma", AntiTouchDesc = "Botların temas hasarını devre dışı bırakır",
-        NoAnimation     = "Animasyonsuz", NoAnimationDesc = "Daha hızlı vuruş için saldırı animasyonlarını durdurur",
+        AntiRagdoll     = "Anti Ragdoll", AntiRagdollDesc = "Ragdoll ve fizik durumlarını engeller",
+        NoAnimation     = "Animasyonsuz", NoAnimationDesc = "Saldırı animasyonlarını durdurur (R6/R15/özel)",
         Fullbright      = "Tam Parlaklık", FullbrightDesc = "Parlaklığı artır ve gölgeleri devre dışı bırak",
         LangSelect      = "Dil",
         CreditsTitle    = "Super Bot Brawl Hub",
@@ -262,7 +274,8 @@ local Translations = {
         WalkSpeed       = "이동 속도",
         AutoFarm        = "자동 파밍", AutoFarmDesc = "가장 가까운 봇을 자동 공격", AutoFarmDelay = "파밍 딜레이(초)",
         AntiTouch       = "안티 터치", AntiTouchDesc = "봇의 접촉 피해를 비활성화합니다",
-        NoAnimation     = "애니메이션 없음", NoAnimationDesc = "더 빠른 공격을 위해 공격 애니메이션을 중지합니다",
+        AntiRagdoll     = "안티 래그돌", AntiRagdollDesc = "래그돌 및 물리 상태를 방지합니다",
+        NoAnimation     = "애니메이션 없음", NoAnimationDesc = "공격 애니메이션을 중지합니다 (R6/R15/커스텀)",
         Fullbright      = "풀브라이트", FullbrightDesc = "밝기 증가 및 그림자 비활성화",
         LangSelect      = "언어",
         CreditsTitle    = "슈퍼 봇 브롤 허브",
@@ -280,7 +293,8 @@ local Translations = {
         WalkSpeed       = "سرعة المشي",
         AutoFarm        = "زراعة تلقائية", AutoFarmDesc = "مهاجمة أقرب روبوت تلقائياً", AutoFarmDelay = "تأخير الزراعة (ث)",
         AntiTouch       = "مضاد اللمس", AntiTouchDesc = "يعطل ضرر اللمس من الروبوتات",
-        NoAnimation     = "بدون رسوم متحركة", NoAnimationDesc = "يوقف رسوم الهجوم لضربات أسرع",
+        AntiRagdoll     = "مضاد الراجدول", AntiRagdollDesc = "يمنع حالات الراجدول والفيزياء",
+        NoAnimation     = "بدون رسوم متحركة", NoAnimationDesc = "يوقف رسوم الهجوم (R6/R15/مخصص)",
         Fullbright      = "إضاءة كاملة", FullbrightDesc = "رفع السطوع وتعطيل الظلال",
         LangSelect      = "اللغة",
         CreditsTitle    = "سوبر بوت برول هاب",
@@ -298,7 +312,8 @@ local Translations = {
         WalkSpeed       = "Tốc độ đi bộ",
         AutoFarm        = "Tự động Farm", AutoFarmDesc = "Tự động tấn công bot gần nhất", AutoFarmDelay = "Độ trễ farm (s)",
         AntiTouch       = "Chống chạm", AntiTouchDesc = "Vô hiệu hóa sát thương chạm từ bot",
-        NoAnimation     = "Không Hoạt Ảnh", NoAnimationDesc = "Dừng hoạt ảnh tấn công để đánh nhanh hơn",
+        AntiRagdoll     = "Chống Ragdoll", AntiRagdollDesc = "Ngăn chặn ragdoll và trạng thái vật lý",
+        NoAnimation     = "Không Hoạt Ảnh", NoAnimationDesc = "Dừng hoạt ảnh tấn công (R6/R15/tùy chỉnh)",
         Fullbright      = "Sáng tối đa", FullbrightDesc = "Tăng độ sáng và tắt bóng",
         LangSelect      = "Ngôn ngữ",
         CreditsTitle    = "Super Bot Brawl Hub",
@@ -316,7 +331,8 @@ local Translations = {
         WalkSpeed       = "Gånghastighet",
         AutoFarm        = "Auto Farm", AutoFarmDesc = "Attackera automatiskt närmaste boten", AutoFarmDelay = "Farmfördröjning (s)",
         AntiTouch       = "Anti Beröring", AntiTouchDesc = "Inaktiverar beröringsskada från botar",
-        NoAnimation     = "Ingen Animation", NoAnimationDesc = "Stoppar attackanimationer för snabbare träffar",
+        AntiRagdoll     = "Anti Ragdoll", AntiRagdollDesc = "Förhindrar ragdoll- och fysiktillstånd",
+        NoAnimation     = "Ingen Animation", NoAnimationDesc = "Stoppar attackanimationer (R6/R15/anpassad)",
         Fullbright      = "Fullbright", FullbrightDesc = "Öka ljusstyrka och inaktivera skuggor",
         LangSelect      = "Språk",
         CreditsTitle    = "Super Bot Brawl Hub",
@@ -334,7 +350,8 @@ local Translations = {
         WalkSpeed       = "Ταχύτητα Βαδίσματος",
         AutoFarm        = "Αυτόματο Farm", AutoFarmDesc = "Αυτόματη επίθεση στο κοντινότερο bot", AutoFarmDelay = "Καθυστέρηση farm (δευτ.)",
         AntiTouch       = "Anti Touch", AntiTouchDesc = "Απενεργοποιεί τη ζημιά επαφής από bots",
-        NoAnimation     = "Χωρίς Animation", NoAnimationDesc = "Σταματά τις κινήσεις επίθεσης για γρηγορότερα χτυπήματα",
+        AntiRagdoll     = "Anti Ragdoll", AntiRagdollDesc = "Αποτρέπει καταστάσεις ragdoll και φυσικής",
+        NoAnimation     = "Χωρίς Animation", NoAnimationDesc = "Σταματά τις κινήσεις επίθεσης (R6/R15/custom)",
         Fullbright      = "Πλήρης Φωτεινότητα", FullbrightDesc = "Αύξηση φωτεινότητας και απενεργοποίηση σκιών",
         LangSelect      = "Γλώσσα",
         CreditsTitle    = "Super Bot Brawl Hub",
@@ -352,7 +369,8 @@ local Translations = {
         WalkSpeed       = "Viteză de mers",
         AutoFarm        = "Auto Farm", AutoFarmDesc = "Atacă automat cel mai apropiat bot", AutoFarmDelay = "Întârziere farm (s)",
         AntiTouch       = "Anti Atingere", AntiTouchDesc = "Dezactivează daunele de contact de la boți",
-        NoAnimation     = "Fără Animație", NoAnimationDesc = "Oprește animațiile de atac pentru lovituri mai rapide",
+        AntiRagdoll     = "Anti Ragdoll", AntiRagdollDesc = "Previne stările ragdoll și fizice",
+        NoAnimation     = "Fără Animație", NoAnimationDesc = "Oprește animațiile de atac (R6/R15/custom)",
         Fullbright      = "Luminozitate maximă", FullbrightDesc = "Crește luminozitatea și dezactivează umbrele",
         LangSelect      = "Limbă",
         CreditsTitle    = "Super Bot Brawl Hub",
@@ -370,7 +388,8 @@ local Translations = {
         WalkSpeed       = "Швидкість ходьби",
         AutoFarm        = "Авто фарм", AutoFarmDesc = "Автоматично атакує найближчого бота", AutoFarmDelay = "Затримка фарму (с)",
         AntiTouch       = "Анти-дотик", AntiTouchDesc = "Вимикає контактну шкоду від ботів",
-        NoAnimation     = "Без анімації", NoAnimationDesc = "Зупиняє анімації атаки для швидших ударів",
+        AntiRagdoll     = "Анти-рагдол", AntiRagdollDesc = "Запобігає станам ragdoll та фізики",
+        NoAnimation     = "Без анімації", NoAnimationDesc = "Зупиняє анімації атаки (R6/R15/custom)",
         Fullbright      = "Повна яскравість", FullbrightDesc = "Збільшити яскравість і вимкнути тіні",
         LangSelect      = "Мова",
         CreditsTitle    = "Super Bot Brawl Hub",
@@ -388,7 +407,8 @@ local Translations = {
         WalkSpeed       = "Rychlost chůze",
         AutoFarm        = "Auto Farm", AutoFarmDesc = "Automaticky útočí na nejbližšího bota", AutoFarmDelay = "Zpoždění farmu (s)",
         AntiTouch       = "Anti Dotyk", AntiTouchDesc = "Vypíná poškození kontaktem od botů",
-        NoAnimation     = "Bez Animace", NoAnimationDesc = "Zastaví animace útoku pro rychlejší zásahy",
+        AntiRagdoll     = "Anti Ragdoll", AntiRagdollDesc = "Zabraňuje stavům ragdoll a fyziky",
+        NoAnimation     = "Bez Animace", NoAnimationDesc = "Zastaví animace útoku (R6/R15/custom)",
         Fullbright      = "Plné světlo", FullbrightDesc = "Zvýšit jas a vypnout stíny",
         LangSelect      = "Jazyk",
         CreditsTitle    = "Super Bot Brawl Hub",
@@ -406,7 +426,8 @@ local Translations = {
         WalkSpeed       = "Gåhastighed",
         AutoFarm        = "Auto Farm", AutoFarmDesc = "Angrib automatisk den nærmeste bot", AutoFarmDelay = "Farm-forsinkelse (s)",
         AntiTouch       = "Anti Berøring", AntiTouchDesc = "Deaktiverer berøringsskade fra bots",
-        NoAnimation     = "Ingen Animation", NoAnimationDesc = "Stopper angrebsanimationer for hurtigere hits",
+        AntiRagdoll     = "Anti Ragdoll", AntiRagdollDesc = "Forhindrer ragdoll- og fysiktilstande",
+        NoAnimation     = "Ingen Animation", NoAnimationDesc = "Stopper angrebsanimationer (R6/R15/custom)",
         Fullbright      = "Fuld lysstyrke", FullbrightDesc = "Øg lysstyrke og deaktiver skygger",
         LangSelect      = "Sprog",
         CreditsTitle    = "Super Bot Brawl Hub",
@@ -434,6 +455,7 @@ local Settings = {
     NoClip           = false,
     WalkSpeed        = 16,
     AntiTouch        = false,
+    AntiRagdoll      = false,
     NoAnimation      = false,
     Fullbright       = false,
 }
@@ -508,7 +530,6 @@ local function getNearestBot()
     return bestBot, bestHRP
 end
 
--- Returns the local character's height, adapted to any character size
 local function getCharacterHeight()
     local char = LocalPlayer.Character
     if not char then return 5 end
@@ -516,22 +537,17 @@ local function getCharacterHeight()
         local _, sz = char:GetBoundingBox()
         return sz
     end)
-    if ok and size then
-        return size.Y
-    end
+    if ok and size then return size.Y end
     return 5
 end
 
--- Returns the bot's height (for placing the player above without touching)
 local function getBotHeight(botModel)
     if not botModel then return 5 end
     local ok, size = pcall(function()
         local _, sz = botModel:GetBoundingBox()
         return sz
     end)
-    if ok and size then
-        return size.Y
-    end
+    if ok and size then return size.Y end
     return 5
 end
 
@@ -671,7 +687,7 @@ local function disableNoClip()
 end
 
 -- ───────────────────────────────────────────────────────────────
--- ANTI TOUCH (CanTouch=false on player + bots, destroy TouchInterest)
+-- ANTI TOUCH (player + bots: CanTouch=false, TouchInterest removed)
 -- ───────────────────────────────────────────────────────────────
 local antiTouchConnection = nil
 
@@ -679,15 +695,15 @@ local function disablePartTouch(part)
     if not part or not part:IsA("BasePart") then return end
     part.CanTouch = false
     local ti = part:FindFirstChildOfClass("TouchInterest")
-    if ti then
-        ti:Destroy()
-    end
+    if ti then ti:Destroy() end
 end
 
 local function enableAntiTouch()
     if antiTouchConnection then return end
     antiTouchConnection = RunService.Heartbeat:Connect(function()
         if not Settings.AntiTouch then return end
+
+        -- Player parts
         local char = LocalPlayer.Character
         if char then
             for _, part in ipairs(char:GetDescendants()) do
@@ -696,6 +712,8 @@ local function enableAntiTouch()
                 end
             end
         end
+
+        -- Bot parts (critical: bots must not be able to trigger touch)
         local botsFolder = Workspace:FindFirstChild("Bots")
         if botsFolder then
             for _, obj in ipairs(botsFolder:GetDescendants()) do
@@ -727,11 +745,83 @@ local function disableAntiTouch()
 end
 
 -- ───────────────────────────────────────────────────────────────
--- NO ANIMATION (loop + PlayAnimations=false + AnimationPlayed hook)
+-- ANTI RAGDOLL (blocks Ragdoll/Physics/FallingDown/Dead states)
+-- ───────────────────────────────────────────────────────────────
+local antiRagdollConnection = nil
+local bannedConstraints = { "BallSocketConstraint", "HingeConstraint", "NoCollisionConstraint" }
+local blockedStates = {
+    [Enum.HumanoidStateType.Ragdoll] = true,
+    [Enum.HumanoidStateType.FallingDown] = true,
+    [Enum.HumanoidStateType.Physics] = true,
+    [Enum.HumanoidStateType.Dead] = true,
+}
+
+local function cleanRagdoll(char)
+    local hum = char:FindFirstChildOfClass("Humanoid")
+    if not hum then return end
+
+    if hum.PlatformStand then hum.PlatformStand = false end
+    if hum.Sit then hum.Sit = false end
+
+    local state = hum:GetState()
+    if blockedStates[state] then
+        hum:ChangeState(Enum.HumanoidStateType.Running)
+    end
+
+    for _, v in ipairs(char:GetDescendants()) do
+        if table.find(bannedConstraints, v.ClassName) then
+            pcall(function() v:Destroy() end)
+        elseif v:IsA("Motor6D") and not v.Enabled then
+            v.Enabled = true
+        end
+    end
+end
+
+local function enableAntiRagdoll()
+    if antiRagdollConnection then return end
+    local char = LocalPlayer.Character
+    if char then
+        local hum = char:FindFirstChildOfClass("Humanoid")
+        if hum then
+            for state in pairs(blockedStates) do
+                pcall(function() hum:SetStateEnabled(state, false) end)
+            end
+            hum.StateChanged:Connect(function(_, newState)
+                if Settings.AntiRagdoll and blockedStates[newState] then
+                    cleanRagdoll(char)
+                end
+            end)
+        end
+    end
+
+    antiRagdollConnection = RunService.Heartbeat:Connect(function()
+        if not Settings.AntiRagdoll then return end
+        local c = LocalPlayer.Character
+        if not c then return end
+        cleanRagdoll(c)
+    end)
+end
+
+local function disableAntiRagdoll()
+    if antiRagdollConnection then
+        antiRagdollConnection:Disconnect()
+        antiRagdollConnection = nil
+    end
+    local hum = getHumanoid()
+    if hum then
+        for state in pairs(blockedStates) do
+            pcall(function() hum:SetStateEnabled(state, true) end)
+        end
+    end
+end
+
+-- ───────────────────────────────────────────────────────────────
+-- NO ANIMATION (universal R6/R15/custom)
 -- ───────────────────────────────────────────────────────────────
 local noAnimConnection = nil
 local animatorHook = nil
 local originalPlayAnimations = nil
+local originalAnimateDisabled = nil
 
 local function getAnimator()
     local hum = getHumanoid()
@@ -739,19 +829,32 @@ local function getAnimator()
     return hum:FindFirstChildOfClass("Animator")
 end
 
+local function stopAllTracks()
+    local animator = getAnimator()
+    if not animator then return end
+    for _, track in ipairs(animator:GetPlayingAnimationTracks()) do
+        pcall(function() track:Stop(0) end)
+    end
+end
+
 local function enableNoAnimation()
     if noAnimConnection then return end
 
-    local function setupAnimator()
-        local animator = getAnimator()
-        if not animator then return end
+    local char = LocalPlayer.Character
+    if char then
+        local animateScript = char:FindFirstChild("Animate")
+        if animateScript then
+            originalAnimateDisabled = animateScript.Disabled
+            animateScript.Disabled = true
+        end
+    end
+
+    local animator = getAnimator()
+    if animator then
         originalPlayAnimations = animator.PlayAnimations
         animator.PlayAnimations = false
 
-        if animatorHook then
-            animatorHook:Disconnect()
-            animatorHook = nil
-        end
+        if animatorHook then animatorHook:Disconnect() end
         animatorHook = animator.AnimationPlayed:Connect(function(track)
             if Settings.NoAnimation then
                 pcall(function() track:Stop(0) end)
@@ -759,21 +862,27 @@ local function enableNoAnimation()
         end)
     end
 
-    setupAnimator()
+    stopAllTracks()
 
-    -- Loop that keeps stopping all tracks every frame (catches everything)
     noAnimConnection = RunService.Heartbeat:Connect(function()
         if not Settings.NoAnimation then return end
+
+        local c = LocalPlayer.Character
+        if c then
+            local animateScript = c:FindFirstChild("Animate")
+            if animateScript and not animateScript.Disabled then
+                animateScript.Disabled = true
+            end
+        end
+
         local animator = getAnimator()
-        if not animator then
-            setupAnimator()
-            return
-        end
-        if animator.PlayAnimations then
-            animator.PlayAnimations = false
-        end
-        for _, track in ipairs(animator:GetPlayingAnimationTracks()) do
-            pcall(function() track:Stop(0) end)
+        if animator then
+            if animator.PlayAnimations then
+                animator.PlayAnimations = false
+            end
+            for _, track in ipairs(animator:GetPlayingAnimationTracks()) do
+                pcall(function() track:Stop(0) end)
+            end
         end
     end)
 end
@@ -787,6 +896,16 @@ local function disableNoAnimation()
         animatorHook:Disconnect()
         animatorHook = nil
     end
+
+    local char = LocalPlayer.Character
+    if char then
+        local animateScript = char:FindFirstChild("Animate")
+        if animateScript and originalAnimateDisabled ~= nil then
+            animateScript.Disabled = originalAnimateDisabled
+            originalAnimateDisabled = nil
+        end
+    end
+
     local animator = getAnimator()
     if animator and originalPlayAnimations ~= nil then
         animator.PlayAnimations = originalPlayAnimations
@@ -795,7 +914,7 @@ local function disableNoAnimation()
 end
 
 -- ───────────────────────────────────────────────────────────────
--- AUTO FARM (adapts to character size, teleports above bot)
+-- AUTO FARM (teleports high above bot, size-adapted)
 -- ───────────────────────────────────────────────────────────────
 local lastFarmTime = 0
 
@@ -814,20 +933,17 @@ local function doAutoFarm()
     local botModel, botHRP = getNearestBot()
     if not botHRP or not botModel then return end
 
-    -- Adapt offset to character size so feet stay above the bot's top
     local charHeight = getCharacterHeight()
     local botHeight  = getBotHeight(botModel)
-    -- HRP is at character center. Placing HRP at:
-    --   botHRP.Y + botHeight/2 + charHeight/2 + margin
-    -- ensures feet are above the bot's top.
-    local margin     = 3
+    -- Bigger margin so even tiny characters stay out of reach
+    local margin = 12
     local offsetAbove = (botHeight / 2) + (charHeight / 2) + margin
-    offsetAbove = math.clamp(offsetAbove, 8, 40)
+    offsetAbove = math.clamp(offsetAbove, 15, 60)
 
     local targetPos = botHRP.Position + Vector3.new(0, offsetAbove, 0)
     hrp.CFrame = CFrame.lookAt(targetPos, botHRP.Position)
 
-    -- Safety: ensure anti-touch stays active on the player while farming
+    -- Ensure anti-touch while farming
     for _, part in ipairs(char:GetDescendants()) do
         if part:IsA("BasePart") then
             part.CanTouch = false
@@ -903,6 +1019,7 @@ local TabCombat = Window:CreateTab(T("TabCombat"), 4483362458)
 TabCombat:CreateToggle({ Name = T("AutoFarm"), CurrentValue = Settings.AutoFarm, Flag = "AutoFarm", Callback = function(v) Settings.AutoFarm = v end })
 TabCombat:CreateSlider({ Name = T("AutoFarmDelay"), Range = {0.1, 2.0}, Increment = 0.1, CurrentValue = Settings.AutoFarmDelay, Flag = "AutoFarmDelay", Callback = function(v) Settings.AutoFarmDelay = v end })
 TabCombat:CreateToggle({ Name = T("AntiTouch"), CurrentValue = Settings.AntiTouch, Flag = "AntiTouch", Callback = function(v) Settings.AntiTouch = v; if v then enableAntiTouch() else disableAntiTouch() end end })
+TabCombat:CreateToggle({ Name = T("AntiRagdoll"), CurrentValue = Settings.AntiRagdoll, Flag = "AntiRagdoll", Callback = function(v) Settings.AntiRagdoll = v; if v then enableAntiRagdoll() else disableAntiRagdoll() end end })
 TabCombat:CreateToggle({ Name = T("NoAnimation"), CurrentValue = Settings.NoAnimation, Flag = "NoAnimation", Callback = function(v) Settings.NoAnimation = v; if v then enableNoAnimation() else disableNoAnimation() end end })
 
 local TabTools = Window:CreateTab(T("TabTools"), 4483362458)
@@ -1030,6 +1147,7 @@ LocalPlayer.CharacterAdded:Connect(function(_character)
     if Settings.Fly then disableFly(); task.wait(0.1); enableFly() end
     if Settings.NoClip then enableNoClip() end
     if Settings.AntiTouch then enableAntiTouch() end
+    if Settings.AntiRagdoll then enableAntiRagdoll() end
     if Settings.NoAnimation then enableNoAnimation() end
 
     local hum = getHumanoid()
