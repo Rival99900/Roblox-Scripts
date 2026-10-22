@@ -5,12 +5,12 @@
     Version: 1.0.0 | Languages: 21 | Rayfield UI
     ================================================================
     Features:
-      - God Mode (MaxHealth + HealthChanged + Dead state block)
-      - Auto Farm (auto-attack nearest bot with cooldown)
+      - God Mode (MaxHealth + HealthChanged + Dead state disabled)
+      - Auto Farm (attacks nearest bot with tool/remote, oriented correctly)
       - ESP Bots (highlight + HP billboard on all NPCs)
       - Teleport to Nearest Bot
       - Fly (PC: WASD/Space/Shift | Mobile: joystick + on-screen ▲/▼)
-      - NoClip (pass through walls — HumanoidRootPart stays collidable)
+      - NoClip (pass through walls, anti-slide)
       - Walk Speed (adjustable)
       - Fullbright (brightness boost, fixed clock)
       - 21-language interface
@@ -769,16 +769,12 @@ local function getHumanoid()
     return char:FindFirstChildOfClass("Humanoid")
 end
 
--- STRICT bot detection: only Models with a live Humanoid that are NOT
--- the local player's character and NOT any other player's character.
+-- STRICT bot detection: any Model with a live Humanoid that is NOT a player
+-- and NOT the local player's character. Uses Players:GetPlayerFromCharacter
+-- to reliably exclude every player.
 local function isBot(model)
     if not model or not model:IsA("Model") then return false end
-    if LocalPlayer.Character and (model == LocalPlayer.Character or model:IsDescendantOf(LocalPlayer.Character)) then
-        return false
-    end
-    for _, p in ipairs(Players:GetPlayers()) do
-        if p.Character == model then return false end
-    end
+    if Players:GetPlayerFromCharacter(model) then return false end
     local hum = model:FindFirstChildOfClass("Humanoid")
     if not hum or hum.Health <= 0 then return false end
     if not model:FindFirstChild("HumanoidRootPart") then return false end
@@ -804,7 +800,7 @@ local function getNearestBot()
 end
 
 -- ───────────────────────────────────────────────────────────────
--- GOD MODE (MaxHealth first, then Health + HealthChanged)
+-- GOD MODE (MaxHealth + Dead disabled + per-frame enforcement)
 -- ───────────────────────────────────────────────────────────────
 local godModeConnection = nil
 local originalMaxHealth = nil
@@ -819,7 +815,6 @@ local function setGodMode(state)
             originalMaxHealth = hum.MaxHealth
         end
 
-        -- Set MaxHealth FIRST, then Health (critical for the effect to stick)
         hum.MaxHealth = 1e9
         hum.Health    = 1e9
         hum:SetStateEnabled(Enum.HumanoidStateType.Dead, false)
@@ -842,6 +837,18 @@ local function setGodMode(state)
         godModeConnection = hum.HealthChanged:Connect(function(newHealth)
             if Settings.GodMode and hum.Parent and newHealth < hum.MaxHealth then
                 hum.Health = hum.MaxHealth
+            end
+        end)
+
+        -- Re-apply if the humanoid dies for any reason
+        hum.Died:Connect(function()
+            if Settings.GodMode then
+                task.wait(0.1)
+                local newHum = getHumanoid()
+                if newHum then
+                    originalMaxHealth = nil
+                    setGodMode(true)
+                end
             end
         end)
     else
@@ -940,71 +947,59 @@ local function disableFly()
 end
 
 -- ───────────────────────────────────────────────────────────────
--- NOCLIP (CORRECTED: Keep HumanoidRootPart collidable)
+-- NOCLIP (disable CanCollide on ALL parts, anti-slide)
 -- ───────────────────────────────────────────────────────────────
 local noclipConnection = nil
-local originalCollisions = {}
 
-local function enableNoClip()
-    if noclipConnection then return end
-    local char = LocalPlayer.Character
-    if not char then return end
-
-    -- Save original collision states
-    for _, part in ipairs(char:GetDescendants()) do
-        if part:IsA("BasePart") then
-            originalCollisions[part] = part.CanCollide
-        end
-    end
-
-    -- Apply no-clip: disable collisions on all parts EXCEPT HumanoidRootPart
-    for part, _ in pairs(originalCollisions) do
-        if part.Parent and part:IsA("BasePart") and part.Name ~= "HumanoidRootPart" then
-            part.CanCollide = false
-        end
-    end
-
-    -- Re-apply every frame to counter any game script trying to re-enable
-    noclipConnection = RunService.Stepped:Connect(function()
-        if not Settings.NoClip then return end
-        local c = LocalPlayer.Character
-        if not c then return end
-        for _, part in ipairs(c:GetDescendants()) do
-            if part:IsA("BasePart") and part.Name ~= "HumanoidRootPart" then
-                if part.CanCollide then
-                    part.CanCollide = false
-                end
-            end
-        end
-    end)
-end
-
-local function disableNoClip()
+local function applyNoClip(state)
     if noclipConnection then
         noclipConnection:Disconnect()
         noclipConnection = nil
     end
 
-    -- Restore original collision states
-    for part, originalState in pairs(originalCollisions) do
-        if part and part.Parent and part:IsA("BasePart") then
-            pcall(function()
-                part.CanCollide = originalState
-            end)
+    if not state then
+        local char = LocalPlayer.Character
+        if char then
+            for _, part in ipairs(char:GetDescendants()) do
+                if part:IsA("BasePart") then
+                    part.CanCollide = true
+                end
+            end
+            local hrp = char:FindFirstChild("HumanoidRootPart")
+            if hrp then
+                hrp.AssemblyLinearVelocity  = Vector3.zero
+                hrp.AssemblyAngularVelocity = Vector3.zero
+            end
         end
+        return
     end
-    originalCollisions = {}
 
-    -- Stop residual sliding
-    local hrp = getHRP()
-    if hrp then
-        hrp.AssemblyLinearVelocity  = Vector3.zero
-        hrp.AssemblyAngularVelocity = Vector3.zero
-    end
+    -- Enable: disable CanCollide on every part, including HumanoidRootPart.
+    -- Anti-slide: when the player is not actively moving, cancel horizontal velocity.
+    noclipConnection = RunService.Stepped:Connect(function()
+        local char = LocalPlayer.Character
+        if not char or not Settings.NoClip then return end
+        local hrp = char:FindFirstChild("HumanoidRootPart")
+        local hum = char:FindFirstChildOfClass("Humanoid")
+
+        for _, part in ipairs(char:GetDescendants()) do
+            if part:IsA("BasePart") then
+                part.CanCollide = false
+            end
+        end
+
+        if hrp and hum then
+            -- If the player is not pressing any movement input, cancel horizontal slide.
+            if hum.MoveDirection.Magnitude < 0.1 then
+                local v = hrp.AssemblyLinearVelocity
+                hrp.AssemblyLinearVelocity = Vector3.new(0, v.Y, 0)
+            end
+        end
+    end)
 end
 
 -- ───────────────────────────────────────────────────────────────
--- AUTO FARM
+-- AUTO FARM (teleport in front, orient, activate tool with bot humanoid)
 -- ───────────────────────────────────────────────────────────────
 local lastFarmTime = 0
 
@@ -1017,22 +1012,53 @@ local function doAutoFarm()
     local char = LocalPlayer.Character
     if not char then return end
     local hrp = char:FindFirstChild("HumanoidRootPart")
-    if not hrp then return end
+    local hum = char:FindFirstChildOfClass("Humanoid")
+    if not hrp or not hum then return end
 
     local botModel, botHRP = getNearestBot()
     if not botHRP or not botModel then return end
 
-    local offset = (hrp.Position - botHRP.Position).Unit * 4
-    hrp.CFrame = CFrame.new(botHRP.Position + offset + Vector3.new(0, 1, 0))
+    -- Position 3 studs in front of the bot, looking at it
+    local botPos = botHRP.Position
+    local front = botPos + Vector3.new(0, 0, 3)
+    hrp.CFrame = CFrame.lookAt(front, botPos)
 
+    -- Equip tool if not already equipped
     local tool = char:FindFirstChildOfClass("Tool")
+    if not tool then
+        local backpack = LocalPlayer:FindFirstChild("Backpack")
+        if backpack then
+            local newTool = backpack:FindFirstChildOfClass("Tool")
+            if newTool then
+                hum:EquipTool(newTool)
+                task.wait(0.1)
+                tool = newTool
+            end
+        end
+    end
+
     if tool then
         pcall(function() tool:Activate() end)
+        -- Fire tool remotes with the bot's Humanoid as argument
+        local botHum = botModel:FindFirstChildOfClass("Humanoid")
         for _, v in ipairs(tool:GetDescendants()) do
             if v:IsA("RemoteEvent") then
-                pcall(function() v:FireServer() end)
-                break
+                pcall(function() v:FireServer(botHum) end)
             end
+        end
+    end
+
+    -- Fallback: generic attack remotes with the bot's Humanoid
+    local rs = game:GetService("ReplicatedStorage")
+    local botHum = botModel:FindFirstChildOfClass("Humanoid")
+    for _, name in ipairs({
+        "Attack", "Hit", "Damage", "DamageBot", "BotHit", "Strike",
+        "SwordSlash", "Slash", "Melee", "AttackEvent", "Combat"
+    }) do
+        local ev = rs:FindFirstChild(name, true)
+        if ev and ev:IsA("RemoteEvent") then
+            pcall(function() ev:FireServer(botHum) end)
+            break
         end
     end
 end
@@ -1099,11 +1125,7 @@ TabMovement:CreateToggle({
     Flag         = "NoClip",
     Callback     = function(v)
         Settings.NoClip = v
-        if v then
-            enableNoClip()
-        else
-            disableNoClip()
-        end
+        applyNoClip(v)
     end,
 })
 
@@ -1155,7 +1177,6 @@ TabCombat:CreateToggle({
     Callback     = function(v)
         Settings.Hitbox_Enabled = v
         if not v then
-            -- Restore all bot hitboxes
             for _, obj in ipairs(Workspace:GetDescendants()) do
                 if isBot(obj) then
                     local bhrp = obj:FindFirstChild("HumanoidRootPart")
@@ -1325,7 +1346,7 @@ RunService.RenderStepped:Connect(function()
         end
     end
 
-    -- HITBOX: only bots, never the local player
+    -- HITBOX: only bots, never the player
     if Settings.Hitbox_Enabled then
         for _, obj in ipairs(Workspace:GetDescendants()) do
             if isBot(obj) then
@@ -1369,7 +1390,7 @@ LocalPlayer.CharacterAdded:Connect(function(_character)
     end
 
     if Settings.NoClip then
-        enableNoClip()
+        applyNoClip(true)
     end
 
     local hum = getHumanoid()
