@@ -5,14 +5,14 @@
     Version: 1.0.0 | Languages: 21 | Rayfield UI
     ================================================================
     Features:
-      - Silent Aim (hooks attack remotes, distance limit slider)
-      - Auto Farm (attacks nearest bot from above, anti-touch)
+      - Silent Aim (hookmetamethod __namecall, distance limit)
+      - Auto Farm (teleports above bot, disables touch damage)
       - ESP Bots (highlight + HP billboard on all NPCs)
       - Teleport to Nearest Bot
       - Fly (PC: WASD/Space/Shift | Mobile: joystick + on-screen ▲/▼)
-      - NoClip (pass through walls, fully cleans up on disable)
+      - NoClip (fully disables all collisions, anti-slide)
       - Walk Speed (adjustable)
-      - No Cooldown (hook task.wait & set tool values to 0)
+      - No Cooldown (button, hooks task.wait & sets tool values to 0)
       - Fullbright (brightness boost, fixed clock)
       - 21-language interface
     ================================================================
@@ -70,6 +70,8 @@ local Translations = {
         CreditsContent  = "Created by Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — First release",
         Loaded          = "Hub loaded! Fight smarter.",
         NoBot           = "No bot found nearby.",
+        NoCooldownOn    = "No Cooldown activated!",
+        NoCooldownOff   = "No Cooldown deactivated.",
     },
     FR = {
         WindowTitle     = "Super Bot Brawl Hub",
@@ -105,6 +107,8 @@ local Translations = {
         CreditsContent  = "Créé par Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — Première version",
         Loaded          = "Hub chargé ! Combats plus intelligemment.",
         NoBot           = "Aucun bot trouvé à proximité.",
+        NoCooldownOn    = "Pas de Cooldown activé !",
+        NoCooldownOff   = "Pas de Cooldown désactivé.",
     },
     DE = {
         WindowTitle     = "Super Bot Brawl Hub",
@@ -140,6 +144,8 @@ local Translations = {
         CreditsContent  = "Erstellt von Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — Erste Version",
         Loaded          = "Hub geladen! Kämpfe klüger.",
         NoBot           = "Kein Bot in der Nähe gefunden.",
+        NoCooldownOn    = "Kein Cooldown aktiviert!",
+        NoCooldownOff   = "Kein Cooldown deaktiviert.",
     },
     ES = {
         WindowTitle     = "Super Bot Brawl Hub",
@@ -175,6 +181,8 @@ local Translations = {
         CreditsContent  = "Creado por Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — Primera versión",
         Loaded          = "¡Hub cargado! Lucha de forma más inteligente.",
         NoBot           = "No se encontró ningún bot cerca.",
+        NoCooldownOn    = "¡Sin Cooldown activado!",
+        NoCooldownOff   = "Sin Cooldown desactivado.",
     },
     PT = {
         WindowTitle     = "Super Bot Brawl Hub",
@@ -210,6 +218,8 @@ local Translations = {
         CreditsContent  = "Criado por Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — Primeira versão",
         Loaded          = "Hub carregado! Lute de forma mais inteligente.",
         NoBot           = "Nenhum bot encontrado por perto.",
+        NoCooldownOn    = "Sem Cooldown ativado!",
+        NoCooldownOff   = "Sem Cooldown desativado.",
     },
     RU = {
         WindowTitle     = "Super Bot Brawl Hub",
@@ -245,6 +255,8 @@ local Translations = {
         CreditsContent  = "Создано Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — Первый выпуск",
         Loaded          = "Хаб загружен! Сражайся умнее.",
         NoBot           = "Рядом нет ботов.",
+        NoCooldownOn    = "Без перезарядки активировано!",
+        NoCooldownOff   = "Без перезарядки деактивировано.",
     },
     IT = {
         WindowTitle     = "Super Bot Brawl Hub",
@@ -280,6 +292,8 @@ local Translations = {
         CreditsContent  = "Creato da Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — Prima versione",
         Loaded          = "Hub caricato! Combatti in modo più intelligente.",
         NoBot           = "Nessun bot trovato nelle vicinanze.",
+        NoCooldownOn    = "Nessun Cooldown attivato!",
+        NoCooldownOff   = "Nessun Cooldown disattivato.",
     },
     NL = {
         WindowTitle     = "Super Bot Brawl Hub",
@@ -315,6 +329,8 @@ local Translations = {
         CreditsContent  = "Gemaakt door Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — Eerste versie",
         Loaded          = "Hub geladen! Vecht slimmer.",
         NoBot           = "Geen bot in de buurt gevonden.",
+        NoCooldownOn    = "Geen Cooldown geactiveerd!",
+        NoCooldownOff   = "Geen Cooldown gedeactiveerd.",
     },
     PL = {
         WindowTitle     = "Super Bot Brawl Hub",
@@ -350,6 +366,8 @@ local Translations = {
         CreditsContent  = "Stworzone przez Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — Pierwsza wersja",
         Loaded          = "Hub załadowany! Walcz mądrzej.",
         NoBot           = "Nie znaleziono bota w pobliżu.",
+        NoCooldownOn    = "Brak Cooldownu aktywowany!",
+        NoCooldownOff   = "Brak Cooldownu dezaktywowany.",
     },
     ZH = {
         WindowTitle     = "超级机器人乱斗Hub",
@@ -385,6 +403,8 @@ local Translations = {
         CreditsContent  = "由 Rival960 创建\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — 首次发布",
         Loaded          = "Hub已加载！更智慧地战斗。",
         NoBot           = "附近没有找到机器人。",
+        NoCooldownOn    = "无冷却已激活！",
+        NoCooldownOff   = "无冷却已停用。",
     },
     JA = {
         WindowTitle     = "スーパーボットブロールHub",
@@ -420,6 +440,8 @@ local Translations = {
         CreditsContent  = "Rival960 作\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — 初回リリース",
         Loaded          = "Hub読み込み完了！より賢く戦おう。",
         NoBot           = "近くにボットが見つかりません。",
+        NoCooldownOn    = "クールダウンなしが有効になりました！",
+        NoCooldownOff   = "クールダウンなしが無効になりました。",
     },
     TR = {
         WindowTitle     = "Super Bot Brawl Hub",
@@ -455,6 +477,8 @@ local Translations = {
         CreditsContent  = "Rival960 tarafından oluşturuldu\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — İlk sürüm",
         Loaded          = "Hub yüklendi! Daha akıllıca savaş.",
         NoBot           = "Yakında bot bulunamadı.",
+        NoCooldownOn    = "Bekleme Yok etkinleştirildi!",
+        NoCooldownOff   = "Bekleme Yok devre dışı bırakıldı.",
     },
     KO = {
         WindowTitle     = "슈퍼 봇 브롤 허브",
@@ -490,6 +514,8 @@ local Translations = {
         CreditsContent  = "Rival960 제작\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — 첫 번째 릴리스",
         Loaded          = "허브 로드 완료! 더 스마트하게 싸우자.",
         NoBot           = "근처에 봇이 없습니다.",
+        NoCooldownOn    = "쿨다운 없음 활성화!",
+        NoCooldownOff   = "쿨다운 없음 비활성화.",
     },
     AR = {
         WindowTitle     = "سوبر بوت برول هاب",
@@ -525,6 +551,8 @@ local Translations = {
         CreditsContent  = "أنشأه Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — الإصدار الأول",
         Loaded          = "تم تحميل الهاب! قاتل بذكاء.",
         NoBot           = "لم يتم العثور على روبوت قريب.",
+        NoCooldownOn    = "تم تفعيل بدون تبريد!",
+        NoCooldownOff   = "تم تعطيل بدون تبريد.",
     },
     VI = {
         WindowTitle     = "Super Bot Brawl Hub",
@@ -560,6 +588,8 @@ local Translations = {
         CreditsContent  = "Tạo bởi Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — Phiên bản đầu tiên",
         Loaded          = "Hub đã tải! Chiến đấu thông minh hơn.",
         NoBot           = "Không tìm thấy bot nào gần đây.",
+        NoCooldownOn    = "Không hồi chiêu đã kích hoạt!",
+        NoCooldownOff   = "Không hồi chiêu đã tắt.",
     },
     SV = {
         WindowTitle     = "Super Bot Brawl Hub",
@@ -595,6 +625,8 @@ local Translations = {
         CreditsContent  = "Skapad av Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — Första utgåvan",
         Loaded          = "Hub laddad! Kämpa smartare.",
         NoBot           = "Ingen bot hittades i närheten.",
+        NoCooldownOn    = "Ingen Cooldown aktiverad!",
+        NoCooldownOff   = "Ingen Cooldown inaktiverad.",
     },
     EL = {
         WindowTitle     = "Super Bot Brawl Hub",
@@ -630,6 +662,8 @@ local Translations = {
         CreditsContent  = "Δημιουργήθηκε από τον Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — Πρώτη έκδοση",
         Loaded          = "Hub φορτώθηκε! Μάχου εξυπνότερα.",
         NoBot           = "Δεν βρέθηκε bot κοντά.",
+        NoCooldownOn    = "Χωρίς Cooldown ενεργοποιήθηκε!",
+        NoCooldownOff   = "Χωρίς Cooldown απενεργοποιήθηκε.",
     },
     RO = {
         WindowTitle     = "Super Bot Brawl Hub",
@@ -665,6 +699,8 @@ local Translations = {
         CreditsContent  = "Creat de Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — Prima versiune",
         Loaded          = "Hub încărcat! Luptă mai inteligent.",
         NoBot           = "Niciun bot găsit în apropiere.",
+        NoCooldownOn    = "Fără Cooldown activat!",
+        NoCooldownOff   = "Fără Cooldown dezactivat.",
     },
     UK = {
         WindowTitle     = "Super Bot Brawl Hub",
@@ -700,6 +736,8 @@ local Translations = {
         CreditsContent  = "Створено Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — Перший випуск",
         Loaded          = "Hub завантажено! Бийся розумніше.",
         NoBot           = "Поруч немає ботів.",
+        NoCooldownOn    = "Без перезарядки активовано!",
+        NoCooldownOff   = "Без перезарядки деактивовано.",
     },
     CS = {
         WindowTitle     = "Super Bot Brawl Hub",
@@ -735,6 +773,8 @@ local Translations = {
         CreditsContent  = "Vytvořil Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — První verze",
         Loaded          = "Hub načten! Bojuj chytřeji.",
         NoBot           = "V okolí nebyl nalezen žádný bot.",
+        NoCooldownOn    = "Bez Cooldownu aktivováno!",
+        NoCooldownOff   = "Bez Cooldownu deaktivováno.",
     },
     DA = {
         WindowTitle     = "Super Bot Brawl Hub",
@@ -770,6 +810,8 @@ local Translations = {
         CreditsContent  = "Oprettet af Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — Første udgivelse",
         Loaded          = "Hub indlæst! Kæmp klogere.",
         NoBot           = "Ingen bot fundet i nærheden.",
+        NoCooldownOn    = "Ingen Cooldown aktiveret!",
+        NoCooldownOff   = "Ingen Cooldown deaktiveret.",
     },
 }
 
@@ -870,7 +912,6 @@ end
 -- ───────────────────────────────────────────────────────────────
 -- SILENT AIM (hookmetamethod __namecall)
 -- ───────────────────────────────────────────────────────────────
-local silentAimConnection = nil
 local originalNamecall = nil
 local attackRemoteKeywords = {"Attack", "Hit", "Damage", "Shoot", "Strike", "Slash", "Melee", "Swing", "Fire"}
 
@@ -905,7 +946,6 @@ end
 
 local function enableSilentAim()
     if originalNamecall then return end
-
     local mt = getrawmetatable(game)
     local oldNamecall = mt.__namecall
     setreadonly(mt, false)
@@ -1029,20 +1069,20 @@ local function disableFly()
 end
 
 -- ───────────────────────────────────────────────────────────────
--- NOCLIP (Robust, fully cleans up)
+-- NOCLIP (Robust, fully disables collisions, anti-slide)
 -- ───────────────────────────────────────────────────────────────
 local noclipConnection = nil
-local originalCollisions = {} -- Stores [Part] = original CanCollide
+local noclipParts = {}
 
 local function enableNoClip()
     if noclipConnection then return end
-    originalCollisions = {}
+    noclipParts = {}
     local char = LocalPlayer.Character
     if not char then return end
 
     for _, part in ipairs(char:GetDescendants()) do
         if part:IsA("BasePart") then
-            originalCollisions[part] = part.CanCollide
+            noclipParts[part] = true
             part.CanCollide = false
         end
     end
@@ -1051,13 +1091,21 @@ local function enableNoClip()
         if not Settings.NoClip then return end
         local c = LocalPlayer.Character
         if not c then return end
+        local hrp = c:FindFirstChild("HumanoidRootPart")
+        local hum = c:FindFirstChildOfClass("Humanoid")
+
         for _, part in ipairs(c:GetDescendants()) do
-            if part:IsA("BasePart") and part.CanCollide then
-                if originalCollisions[part] == nil then
-                    originalCollisions[part] = part.CanCollide
+            if part:IsA("BasePart") then
+                noclipParts[part] = true
+                if part.CanCollide then
+                    part.CanCollide = false
                 end
-                part.CanCollide = false
             end
+        end
+
+        if hrp and hum and hum.MoveDirection.Magnitude < 0.1 then
+            local v = hrp.AssemblyLinearVelocity
+            hrp.AssemblyLinearVelocity = Vector3.new(0, v.Y, 0)
         end
     end)
 end
@@ -1067,16 +1115,13 @@ local function disableNoClip()
         noclipConnection:Disconnect()
         noclipConnection = nil
     end
-
-    -- Restore original collision states
-    for part, originalState in pairs(originalCollisions) do
+    for part, _ in pairs(noclipParts) do
         if part and part.Parent then
-            part.CanCollide = originalState
+            part.CanCollide = true
         end
     end
-    originalCollisions = {}
+    noclipParts = {}
 
-    -- Safety: force CanCollide = true on all current parts
     local char = LocalPlayer.Character
     if char then
         for _, part in ipairs(char:GetDescendants()) do
@@ -1122,13 +1167,12 @@ local function disableAntiTouch()
 end
 
 -- ───────────────────────────────────────────────────────────────
--- NO COOLDOWN (Hook waits + set tool values to 0)
+-- NO COOLDOWN (Button + hooks task.wait, wait)
 -- ───────────────────────────────────────────────────────────────
 local originalWait = nil
 local originalTaskWait = nil
 
 local function applyNoCooldown()
-    -- 1. Hook global waits
     if not originalWait then
         originalWait = wait
         wait = function(seconds)
@@ -1147,27 +1191,6 @@ local function applyNoCooldown()
             return originalTaskWait(seconds)
         end
     end
-
-    -- 2. Set tool values to 0
-    local char = LocalPlayer.Character
-    if not char then return end
-    local tool = char:FindFirstChildOfClass("Tool")
-    if not tool then
-        local backpack = LocalPlayer:FindFirstChild("Backpack")
-        if backpack then
-            tool = backpack:FindFirstChildOfClass("Tool")
-        end
-    end
-    if not tool then return end
-
-    for _, v in ipairs(tool:GetDescendants()) do
-        if v:IsA("NumberValue") or v:IsA("IntValue") then
-            local n = v.Name:lower()
-            if n:find("cooldown") or n:find("firerate") or n:find("delay") or n:find("reload") or n:find("rate") then
-                v.Value = 0
-            end
-        end
-    end
 end
 
 local function removeNoCooldownHooks()
@@ -1182,7 +1205,7 @@ local function removeNoCooldownHooks()
 end
 
 -- ───────────────────────────────────────────────────────────────
--- AUTO FARM (attacks from above)
+-- AUTO FARM (teleports above bot, anti-touch)
 -- ───────────────────────────────────────────────────────────────
 local lastFarmTime = 0
 
@@ -1201,9 +1224,16 @@ local function doAutoFarm()
     local botModel, botHRP = getNearestBot()
     if not botHRP or not botModel then return end
 
-    -- Teleport above the bot (10 studs higher)
-    local above = botHRP.Position + Vector3.new(0, 10, 0)
+    -- Teleport 20 studs above the bot (safer)
+    local above = botHRP.Position + Vector3.new(0, 20, 0)
     hrp.CFrame = CFrame.lookAt(above, botHRP.Position)
+
+    -- Disable touch damage on the player while farming
+    for _, part in ipairs(char:GetDescendants()) do
+        if part:IsA("BasePart") then
+            part.CanTouch = false
+        end
+    end
 
     local tool = char:FindFirstChildOfClass("Tool")
     if not tool then
@@ -1372,15 +1402,26 @@ TabCombat:CreateToggle({
     end,
 })
 
+-- NO COOLDOWN BUTTON (requested)
 TabCombat:CreateButton({
     Name     = T("NoCooldown"),
     Callback = function()
-        applyNoCooldown()
-        Rayfield:Notify({
-            Title   = T("NoCooldown"),
-            Content = T("NoCooldownDesc"),
-            Duration = 2,
-        })
+        Settings.NoCooldown = not Settings.NoCooldown
+        if Settings.NoCooldown then
+            applyNoCooldown()
+            Rayfield:Notify({
+                Title   = T("NoCooldown"),
+                Content = T("NoCooldownOn"),
+                Duration = 2,
+            })
+        else
+            removeNoCooldownHooks()
+            Rayfield:Notify({
+                Title   = T("NoCooldown"),
+                Content = T("NoCooldownOff"),
+                Duration = 2,
+            })
+        end
     end,
 })
 
@@ -1554,6 +1595,10 @@ LocalPlayer.CharacterAdded:Connect(function(_character)
 
     if Settings.AntiTouch then
         enableAntiTouch()
+    end
+
+    if Settings.NoCooldown then
+        applyNoCooldown()
     end
 
     local hum = getHumanoid()
