@@ -795,7 +795,7 @@ local function getNearestBot()
     for _, obj in ipairs(Workspace:GetDescendants()) do
         if isBot(obj) then
             local bhrp = obj:FindFirstChild("HumanoidRootPart")
-                      or obj:FindFirstChild("HumanoidRootPart")
+                      or obj:FindFirstChild("Torso")
                       or obj:FindFirstChildOfClass("BasePart")
             if bhrp then
                 local d = (bhrp.Position - hrp.Position).Magnitude
@@ -806,6 +806,59 @@ local function getNearestBot()
         end
     end
     return bestBot, bestHRP
+end
+
+-- ───────────────────────────────────────────────────────────────
+-- GOD MODE (MaxHealth + HealthChanged + safety loop)
+-- ───────────────────────────────────────────────────────────────
+local godModeConnection = nil
+local originalMaxHealth = nil
+
+local function setGodMode(state)
+    local hum = getHumanoid()
+    if not hum then return end
+
+    if state then
+        -- Capture the original MaxHealth only once
+        if originalMaxHealth == nil then
+            originalMaxHealth = hum.MaxHealth
+        end
+
+        hum.MaxHealth = math.huge
+        hum.Health    = math.huge
+
+        -- Safety loop: re-apply in case the game resets MaxHealth
+        task.spawn(function()
+            while Settings.GodMode and hum.Parent do
+                hum.MaxHealth = math.huge
+                hum.Health    = math.huge
+                task.wait()
+            end
+        end)
+
+        -- React instantly to any health change (more reliable than a loop)
+        if godModeConnection then godModeConnection:Disconnect() end
+        godModeConnection = hum.HealthChanged:Connect(function(newHealth)
+            if Settings.GodMode and hum.Parent and newHealth < hum.MaxHealth then
+                hum.Health = hum.MaxHealth
+            end
+        end)
+    else
+        if godModeConnection then
+            godModeConnection:Disconnect()
+            godModeConnection = nil
+        end
+
+        if originalMaxHealth then
+            hum.MaxHealth = originalMaxHealth
+            hum.Health    = originalMaxHealth
+            originalMaxHealth = nil
+        else
+            -- Fallback: restore default health values
+            hum.MaxHealth = 100
+            hum.Health    = math.min(hum.Health, 100)
+        end
+    end
 end
 
 -- ───────────────────────────────────────────────────────────────
@@ -837,6 +890,12 @@ local function disableFly()
     if flyGyro     then flyGyro:Destroy();     flyGyro     = nil end
     local hum = getHumanoid()
     if hum then hum.PlatformStand = false end
+    -- Stop any residual velocity so the character doesn't slide
+    local hrp = getHRP()
+    if hrp then
+        hrp.AssemblyLinearVelocity  = Vector3.zero
+        hrp.AssemblyAngularVelocity = Vector3.zero
+    end
 end
 
 -- ───────────────────────────────────────────────────────────────
@@ -855,8 +914,8 @@ local function doAutoFarm()
     local hrp = char:FindFirstChild("HumanoidRootPart")
     if not hrp then return end
 
-    local _, botHRP = getNearestBot()
-    if not botHRP then return end
+    local botModel, botHRP = getNearestBot()
+    if not botHRP or not botModel then return end
 
     -- Teleport close enough to hit
     local offset = (hrp.Position - botHRP.Position).Unit * 4
@@ -866,7 +925,7 @@ local function doAutoFarm()
     local tool = char:FindFirstChildOfClass("Tool")
     if tool then
         pcall(function() tool:Activate() end)
-        -- also try firing the tool's remote if one exists
+        -- Also fire the tool's remote if one exists
         for _, v in ipairs(tool:GetDescendants()) do
             if v:IsA("RemoteEvent") then
                 pcall(function() v:FireServer() end)
@@ -877,10 +936,13 @@ local function doAutoFarm()
 
     -- Fallback: try generic attack remotes in ReplicatedStorage
     local rs = game:GetService("ReplicatedStorage")
-    for _, name in ipairs({"Attack", "Hit", "Damage", "DamageBot", "BotHit", "Strike"}) do
+    for _, name in ipairs({
+        "Attack", "Hit", "Damage", "DamageBot", "BotHit", "Strike",
+        "SwordSlash", "Slash", "Melee", "AttackEvent", "Combat"
+    }) do
         local ev = rs:FindFirstChild(name, true)
         if ev and ev:IsA("RemoteEvent") then
-            pcall(function() ev:FireServer(botHRP.Parent) end)
+            pcall(function() ev:FireServer(botModel) end)
             break
         end
     end
@@ -949,7 +1011,25 @@ TabMovement:CreateToggle({
     Name         = T("NoClip"),
     CurrentValue = Settings.NoClip,
     Flag         = "NoClip",
-    Callback     = function(v) Settings.NoClip = v end,
+    Callback     = function(v)
+        Settings.NoClip = v
+        if not v then
+            -- Restore collisions and stop residual velocity when disabling
+            local character = LocalPlayer.Character
+            if character then
+                for _, part in ipairs(character:GetDescendants()) do
+                    if part:IsA("BasePart") then
+                        part.CanCollide = true
+                    end
+                end
+                local hrp = character:FindFirstChild("HumanoidRootPart")
+                if hrp then
+                    hrp.AssemblyLinearVelocity  = Vector3.zero
+                    hrp.AssemblyAngularVelocity = Vector3.zero
+                end
+            end
+        end
+    end,
 })
 
 TabMovement:CreateSlider({
@@ -972,7 +1052,10 @@ TabCombat:CreateToggle({
     Name         = T("GodMode"),
     CurrentValue = Settings.GodMode,
     Flag         = "GodMode",
-    Callback     = function(v) Settings.GodMode = v end,
+    Callback     = function(v)
+        Settings.GodMode = v
+        setGodMode(v)
+    end,
 })
 
 TabCombat:CreateToggle({
@@ -1069,15 +1152,11 @@ RunService.RenderStepped:Connect(function()
     local hrp  = char:FindFirstChild("HumanoidRootPart")
     local hum  = char:FindFirstChildOfClass("Humanoid")
 
-    -- GOD MODE: reset HP each frame
-    if Settings.GodMode and hum and hum.Health > 0 then
-        hum.Health = hum.MaxHealth
-    end
-
-    -- NOCLIP: disable collisions on all character parts
+    -- NOCLIP: disable collisions on all parts EXCEPT the HumanoidRootPart.
+    -- Keeping the root part collidable prevents the character from sliding.
     if Settings.NoClip then
         for _, part in ipairs(char:GetDescendants()) do
-            if part:IsA("BasePart") and part.CanCollide then
+            if part:IsA("BasePart") and part.Name ~= "HumanoidRootPart" and part.CanCollide then
                 part.CanCollide = false
             end
         end
@@ -1204,15 +1283,25 @@ end)
 RunService.Heartbeat:Connect(doAutoFarm)
 
 -- ───────────────────────────────────────────────────────────────
--- ON RESPAWN: re-apply fly if enabled
+-- ON RESPAWN: re-apply fly / godmode / walkspeed
 -- ───────────────────────────────────────────────────────────────
-LocalPlayer.CharacterAdded:Connect(function()
+LocalPlayer.CharacterAdded:Connect(function(_character)
     task.wait(0.5)
+
+    -- Re-apply GodMode on the new Humanoid
+    if Settings.GodMode then
+        originalMaxHealth = nil -- force re-capture on the new Humanoid
+        setGodMode(true)
+    end
+
+    -- Re-apply Fly
     if Settings.Fly then
         disableFly()
         task.wait(0.1)
         enableFly()
     end
+
+    -- Re-apply WalkSpeed
     local hum = getHumanoid()
     if hum then hum.WalkSpeed = Settings.WalkSpeed end
 end)
