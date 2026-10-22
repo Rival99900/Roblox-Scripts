@@ -5,12 +5,12 @@
     Version: 1.0.0 | Languages: 21 | Rayfield UI
     ================================================================
     Features:
-      - God Mode (health loop, nearly indestructible vs robots)
+      - God Mode (MaxHealth + HealthChanged + safety loop)
       - Auto Farm (auto-attack nearest bot with cooldown)
       - ESP Bots (highlight + HP billboard on all NPCs)
       - Teleport to Nearest Bot
       - Fly (WASD + Space/Shift, camera-relative, adjustable speed)
-      - NoClip (pass through walls)
+      - NoClip (pass through walls — HumanoidRootPart stays collidable)
       - Walk Speed (adjustable)
       - Fullbright (brightness boost, fixed clock)
       - 21-language interface
@@ -41,19 +41,16 @@ local Translations = {
         TabMovement     = "Movement",
         TabCombat       = "Combat",
         TabTools        = "Tools",
-        -- Vision
         ESPBots         = "ESP Bots",
         ESPBotsDesc     = "Highlight nearby bots and show their HP",
         TPNearestBot    = "TP to Nearest Bot",
         TPNearestDesc   = "Teleport in front of the closest bot",
-        -- Movement
         Fly             = "Fly",
         FlyDesc         = "Toggle flight mode",
         FlySpeed        = "Fly Speed",
         NoClip          = "NoClip",
         NoClipDesc      = "Pass through walls and obstacles",
         WalkSpeed       = "Walk Speed",
-        -- Combat
         GodMode         = "God Mode",
         GodModeDesc     = "Continuously restore HP — almost indestructible",
         AutoFarm        = "Auto Farm",
@@ -62,11 +59,9 @@ local Translations = {
         HitboxToggle    = "Expand Hitboxes",
         HitboxDesc      = "Increase bot hitbox size to hit more easily",
         HitboxSize      = "Hitbox Size",
-        -- Tools
         Fullbright      = "Fullbright",
         FullbrightDesc  = "Raise brightness and disable shadows",
         LangSelect      = "Language",
-        -- Credits
         CreditsTitle    = "Super Bot Brawl Hub",
         CreditsContent  = "Created by Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — First release",
         Loaded          = "Hub loaded! Fight smarter.",
@@ -725,15 +720,15 @@ end
 local Settings = {
     GodMode         = false,
     AutoFarm        = false,
-    AutoFarmDelay   = 0.3,   -- seconds between attacks (slider 0.1–2.0)
+    AutoFarmDelay   = 0.3,
     ESP_Bots        = false,
     Fly             = false,
-    FlySpeed        = 60,    -- slider 10–300
+    FlySpeed        = 60,
     NoClip          = false,
-    WalkSpeed       = 16,    -- slider 16–250
+    WalkSpeed       = 16,
     Fullbright      = false,
     Hitbox_Enabled  = false,
-    HitboxSize      = 3,     -- slider 2–10 (multiplier)
+    HitboxSize      = 3,
 }
 
 -- ───────────────────────────────────────────────────────────────
@@ -760,42 +755,43 @@ local Window = Rayfield:CreateWindow({
 -- HELPERS
 -- ───────────────────────────────────────────────────────────────
 
--- Returns the Character's HumanoidRootPart, or nil
 local function getHRP()
     local char = LocalPlayer.Character
     if not char then return nil end
     return char:FindFirstChild("HumanoidRootPart")
 end
 
--- Returns the Character's Humanoid, or nil
 local function getHumanoid()
     local char = LocalPlayer.Character
     if not char then return nil end
     return char:FindFirstChildOfClass("Humanoid")
 end
 
--- Returns true if the model is a live NPC bot (has Humanoid, not a player)
+-- Strict bot check: only models inside Workspace.Bots, with a live Humanoid,
+-- and never the local player's own character.
 local function isBot(model)
-    if not model:IsA("Model") then return false end
+    if not model or not model:IsA("Model") then return false end
+    -- Must be a descendant of Workspace.Bots
+    local botsFolder = Workspace:FindFirstChild("Bots")
+    if not botsFolder or not model:IsDescendantOf(botsFolder) then return false end
+    -- Never target the local player
+    if LocalPlayer.Character and (model == LocalPlayer.Character or model:IsDescendantOf(LocalPlayer.Character)) then
+        return false
+    end
     local hum = model:FindFirstChildOfClass("Humanoid")
     if not hum or hum.Health <= 0 then return false end
-    -- exclude player characters
-    for _, p in ipairs(Players:GetPlayers()) do
-        if p.Character == model then return false end
-    end
     return true
 end
 
--- Returns the nearest live bot and its HRP, or nil
 local function getNearestBot()
     local hrp = getHRP()
     if not hrp then return nil, nil end
     local bestDist, bestBot, bestHRP = math.huge, nil, nil
-    for _, obj in ipairs(Workspace:GetDescendants()) do
+    local botsFolder = Workspace:FindFirstChild("Bots")
+    if not botsFolder then return nil, nil end
+    for _, obj in ipairs(botsFolder:GetDescendants()) do
         if isBot(obj) then
             local bhrp = obj:FindFirstChild("HumanoidRootPart")
-                      or obj:FindFirstChild("Torso")
-                      or obj:FindFirstChildOfClass("BasePart")
             if bhrp then
                 local d = (bhrp.Position - hrp.Position).Magnitude
                 if d < bestDist then
@@ -808,7 +804,7 @@ local function getNearestBot()
 end
 
 -- ───────────────────────────────────────────────────────────────
--- GOD MODE (MaxHealth + HealthChanged + safety loop)
+-- GOD MODE
 -- ───────────────────────────────────────────────────────────────
 local godModeConnection = nil
 local originalMaxHealth = nil
@@ -818,15 +814,12 @@ local function setGodMode(state)
     if not hum then return end
 
     if state then
-        -- Capture the original MaxHealth only once
         if originalMaxHealth == nil then
             originalMaxHealth = hum.MaxHealth
         end
-
         hum.MaxHealth = math.huge
         hum.Health    = math.huge
 
-        -- Safety loop: re-apply in case the game resets MaxHealth
         task.spawn(function()
             while Settings.GodMode and hum.Parent do
                 hum.MaxHealth = math.huge
@@ -835,7 +828,6 @@ local function setGodMode(state)
             end
         end)
 
-        -- React instantly to any health change (more reliable than a loop)
         if godModeConnection then godModeConnection:Disconnect() end
         godModeConnection = hum.HealthChanged:Connect(function(newHealth)
             if Settings.GodMode and hum.Parent and newHealth < hum.MaxHealth then
@@ -847,13 +839,11 @@ local function setGodMode(state)
             godModeConnection:Disconnect()
             godModeConnection = nil
         end
-
         if originalMaxHealth then
             hum.MaxHealth = originalMaxHealth
             hum.Health    = originalMaxHealth
             originalMaxHealth = nil
         else
-            -- Fallback: restore default health values
             hum.MaxHealth = 100
             hum.Health    = math.min(hum.Health, 100)
         end
@@ -861,7 +851,7 @@ local function setGodMode(state)
 end
 
 -- ───────────────────────────────────────────────────────────────
--- FLY (BodyVelocity + BodyGyro, camera-relative)
+-- FLY
 -- ───────────────────────────────────────────────────────────────
 local flyVelocity, flyGyro
 
@@ -889,7 +879,6 @@ local function disableFly()
     if flyGyro     then flyGyro:Destroy();     flyGyro     = nil end
     local hum = getHumanoid()
     if hum then hum.PlatformStand = false end
-    -- Stop any residual velocity so the character doesn't slide
     local hrp = getHRP()
     if hrp then
         hrp.AssemblyLinearVelocity  = Vector3.zero
@@ -898,7 +887,7 @@ local function disableFly()
 end
 
 -- ───────────────────────────────────────────────────────────────
--- AUTO FARM (attack nearest bot with cooldown)
+-- AUTO FARM
 -- ───────────────────────────────────────────────────────────────
 local lastFarmTime = 0
 
@@ -916,15 +905,12 @@ local function doAutoFarm()
     local botModel, botHRP = getNearestBot()
     if not botHRP or not botModel then return end
 
-    -- Teleport close enough to hit
     local offset = (hrp.Position - botHRP.Position).Unit * 4
     hrp.CFrame = CFrame.new(botHRP.Position + offset + Vector3.new(0, 1, 0))
 
-    -- Try to fire equipped tool
     local tool = char:FindFirstChildOfClass("Tool")
     if tool then
         pcall(function() tool:Activate() end)
-        -- Also fire the tool's remote if one exists
         for _, v in ipairs(tool:GetDescendants()) do
             if v:IsA("RemoteEvent") then
                 pcall(function() v:FireServer() end)
@@ -933,7 +919,6 @@ local function doAutoFarm()
         end
     end
 
-    -- Fallback: try generic attack remotes in ReplicatedStorage
     local rs = game:GetService("ReplicatedStorage")
     for _, name in ipairs({
         "Attack", "Hit", "Damage", "DamageBot", "BotHit", "Strike",
@@ -951,14 +936,12 @@ end
 -- TABS
 -- ───────────────────────────────────────────────────────────────
 
--- ── TAB HOME ────────────────────────────────────────────────────
 local TabHome = Window:CreateTab(T("TabHome"), 4483362458)
 TabHome:CreateParagraph({
     Title   = T("CreditsTitle"),
     Content = T("CreditsContent"),
 })
 
--- ── TAB VISION ──────────────────────────────────────────────────
 local TabVision = Window:CreateTab(T("TabVision"), 4483362458)
 
 TabVision:CreateToggle({
@@ -984,7 +967,6 @@ TabVision:CreateButton({
     end,
 })
 
--- ── TAB MOVEMENT ────────────────────────────────────────────────
 local TabMovement = Window:CreateTab(T("TabMovement"), 4483362458)
 
 TabMovement:CreateToggle({
@@ -1013,7 +995,7 @@ TabMovement:CreateToggle({
     Callback     = function(v)
         Settings.NoClip = v
         if not v then
-            -- Restore collisions and stop residual velocity when disabling
+            -- Restore collisions and kill residual velocity
             local character = LocalPlayer.Character
             if character then
                 for _, part in ipairs(character:GetDescendants()) do
@@ -1044,7 +1026,6 @@ TabMovement:CreateSlider({
     end,
 })
 
--- ── TAB COMBAT ──────────────────────────────────────────────────
 local TabCombat = Window:CreateTab(T("TabCombat"), 4483362458)
 
 TabCombat:CreateToggle({
@@ -1080,14 +1061,21 @@ TabCombat:CreateToggle({
     Callback     = function(v)
         Settings.Hitbox_Enabled = v
         if not v then
-            -- restore original hitbox sizes
-            for _, obj in ipairs(Workspace:GetDescendants()) do
-                if isBot(obj) then
-                    local hrpB = obj:FindFirstChild("HumanoidRootPart")
-                    if hrpB and hrpB:FindFirstChild("_origSize") then
-                        hrpB.Size = hrpB._origSize.Value
-                        hrpB._origSize:Destroy()
-                        hrpB.Transparency = 1
+            -- Restore every bot's original hitbox size
+            local botsFolder = Workspace:FindFirstChild("Bots")
+            if botsFolder then
+                for _, obj in ipairs(botsFolder:GetDescendants()) do
+                    if isBot(obj) then
+                        local bhrp = obj:FindFirstChild("HumanoidRootPart")
+                        if bhrp then
+                            local orig = bhrp:FindFirstChild("_origSize")
+                            if orig then
+                                bhrp.Size = orig.Value
+                                bhrp.Transparency = 1
+                                bhrp.CanCollide = true
+                                orig:Destroy()
+                            end
+                        end
                     end
                 end
             end
@@ -1104,7 +1092,6 @@ TabCombat:CreateSlider({
     Callback     = function(v) Settings.HitboxSize = v end,
 })
 
--- ── TAB TOOLS ───────────────────────────────────────────────────
 local TabTools = Window:CreateTab(T("TabTools"), 4483362458)
 
 TabTools:CreateToggle({
@@ -1142,7 +1129,7 @@ TabTools:CreateDropdown({
 })
 
 -- ───────────────────────────────────────────────────────────────
--- MAIN LOOP (RenderStepped — every frame)
+-- MAIN LOOP
 -- ───────────────────────────────────────────────────────────────
 RunService.RenderStepped:Connect(function()
     local char = LocalPlayer.Character
@@ -1151,17 +1138,18 @@ RunService.RenderStepped:Connect(function()
     local hrp  = char:FindFirstChild("HumanoidRootPart")
     local hum  = char:FindFirstChildOfClass("Humanoid")
 
-    -- NOCLIP: disable collisions on all parts EXCEPT the HumanoidRootPart.
-    -- Keeping the root part collidable prevents the character from sliding.
+    -- NOCLIP: skip HumanoidRootPart so the character keeps ground grip
     if Settings.NoClip then
         for _, part in ipairs(char:GetDescendants()) do
-            if part:IsA("BasePart") and part.Name ~= "HumanoidRootPart" and part.CanCollide then
+            if part:IsA("BasePart")
+                and part.Name ~= "HumanoidRootPart"
+                and part.CanCollide then
                 part.CanCollide = false
             end
         end
     end
 
-    -- FLY: update velocity from input
+    -- FLY
     if Settings.Fly and flyVelocity and flyGyro and hrp then
         local cam   = Workspace.CurrentCamera
         local speed = Settings.FlySpeed
@@ -1191,13 +1179,13 @@ RunService.RenderStepped:Connect(function()
         flyGyro.CFrame = cam.CFrame
     end
 
-    -- ESP BOTS: add/refresh Highlight + BillboardGui
-    if Settings.ESP_Bots then
-        for _, obj in ipairs(Workspace:GetDescendants()) do
+    -- ESP BOTS (only Workspace.Bots)
+    local botsFolder = Workspace:FindFirstChild("Bots")
+    if Settings.ESP_Bots and botsFolder then
+        for _, obj in ipairs(botsFolder:GetDescendants()) do
             if isBot(obj) then
                 local botHum = obj:FindFirstChildOfClass("Humanoid")
 
-                -- Highlight
                 local hl = obj:FindFirstChild("_BotESP_Highlight")
                 if not hl then
                     hl = Instance.new("Highlight")
@@ -1208,7 +1196,6 @@ RunService.RenderStepped:Connect(function()
                     hl.Parent           = obj
                 end
 
-                -- BillboardGui (HP label)
                 local bhrp = obj:FindFirstChild("HumanoidRootPart")
                 if bhrp then
                     local bb = bhrp:FindFirstChild("_BotESP_BB")
@@ -1237,9 +1224,8 @@ RunService.RenderStepped:Connect(function()
                 end
             end
         end
-    else
-        -- Clean up ESP when disabled
-        for _, obj in ipairs(Workspace:GetDescendants()) do
+    elseif botsFolder then
+        for _, obj in ipairs(botsFolder:GetDescendants()) do
             local hl = obj:FindFirstChild("_BotESP_Highlight")
             if hl then hl:Destroy() end
             local bhrp = obj:FindFirstChild("HumanoidRootPart")
@@ -1250,19 +1236,24 @@ RunService.RenderStepped:Connect(function()
         end
     end
 
-    -- HITBOX: expand bot HRPs each frame
-    if Settings.Hitbox_Enabled then
-        for _, obj in ipairs(Workspace:GetDescendants()) do
+    -- HITBOX: only Workspace.Bots, never the local player
+    if Settings.Hitbox_Enabled and botsFolder then
+        for _, obj in ipairs(botsFolder:GetDescendants()) do
             if isBot(obj) then
                 local bhrp = obj:FindFirstChild("HumanoidRootPart")
-                if bhrp and not bhrp:FindFirstChild("_origSize") then
-                    local sv = Instance.new("Vector3Value")
-                    sv.Name  = "_origSize"
-                    sv.Value = bhrp.Size
-                    sv.Parent = bhrp
-                end
                 if bhrp then
-                    bhrp.Size         = Vector3.new(Settings.HitboxSize * 2, Settings.HitboxSize * 2, Settings.HitboxSize * 2)
+                    local orig = bhrp:FindFirstChild("_origSize")
+                    if not orig then
+                        orig = Instance.new("Vector3Value")
+                        orig.Name  = "_origSize"
+                        orig.Value = bhrp.Size
+                        orig.Parent = bhrp
+                    end
+                    bhrp.Size         = Vector3.new(
+                        Settings.HitboxSize * 2,
+                        Settings.HitboxSize * 2,
+                        Settings.HitboxSize * 2
+                    )
                     bhrp.Transparency = 0.6
                     bhrp.CanCollide   = false
                 end
@@ -1270,44 +1261,32 @@ RunService.RenderStepped:Connect(function()
         end
     end
 
-    -- WALKSPEED: re-apply after respawn
+    -- WALKSPEED
     if hum and hum.WalkSpeed ~= Settings.WalkSpeed and not Settings.Fly then
         hum.WalkSpeed = Settings.WalkSpeed
     end
 end)
 
--- ───────────────────────────────────────────────────────────────
--- AUTO FARM — dedicated heartbeat for attack timing
--- ───────────────────────────────────────────────────────────────
 RunService.Heartbeat:Connect(doAutoFarm)
 
--- ───────────────────────────────────────────────────────────────
--- ON RESPAWN: re-apply fly / godmode / walkspeed
--- ───────────────────────────────────────────────────────────────
 LocalPlayer.CharacterAdded:Connect(function(_character)
     task.wait(0.5)
 
-    -- Re-apply GodMode on the new Humanoid
     if Settings.GodMode then
-        originalMaxHealth = nil -- force re-capture on the new Humanoid
+        originalMaxHealth = nil
         setGodMode(true)
     end
 
-    -- Re-apply Fly
     if Settings.Fly then
         disableFly()
         task.wait(0.1)
         enableFly()
     end
 
-    -- Re-apply WalkSpeed
     local hum = getHumanoid()
     if hum then hum.WalkSpeed = Settings.WalkSpeed end
 end)
 
--- ───────────────────────────────────────────────────────────────
--- NOTIFICATION — Hub loaded
--- ───────────────────────────────────────────────────────────────
 Rayfield:Notify({
     Title    = T("WindowTitle"),
     Content  = T("Loaded"),
