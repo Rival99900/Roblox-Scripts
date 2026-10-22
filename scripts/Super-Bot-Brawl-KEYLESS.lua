@@ -4,28 +4,9 @@
     Created by Rival960 with the help of Claude
     Version: 1.0.0 | Languages: 21 | Rayfield UI
     ================================================================
-   Features:
-      - Silent Aim (hooks attack remotes, redirects to nearest bot)
-      - Auto Farm (attacks nearest bot with tool/remote, oriented correctly)
-      - ESP Bots (highlight + HP billboard on all NPCs)
-      - Teleport to Nearest Bot
-      - Fly (PC: WASD/Space/Shift | Mobile: joystick + on-screen ▲/▼)
-      - NoClip (pass through walls, anti-slide, anti-invisible-block)
-      - Walk Speed (adjustable)
-      - Fullbright (brightness boost, fixed clock)
-      - 21-language interface
-    ================================================================
---]]
-
---[[
-    ================================================================
-    Super Bot Brawl Hub — Super Bot Brawl
-    Created by Rival960 with the help of Claude
-    Version: 1.0.0 | Languages: 21 | Rayfield UI
-    ================================================================
     Features:
-      - Silent Aim (hooks attack remotes, redirects to nearest bot)
-      - Auto Farm (attacks nearest bot with tool/remote, oriented correctly)
+      - Silent Aim (hooks attack remotes, distance limit slider)
+      - Auto Farm (attacks nearest bot with tool/remote)
       - ESP Bots (highlight + HP billboard on all NPCs)
       - Teleport to Nearest Bot
       - Fly (PC: WASD/Space/Shift | Mobile: joystick + on-screen ▲/▼)
@@ -74,6 +55,7 @@ local Translations = {
         WalkSpeed       = "Walk Speed",
         SilentAim       = "Silent Aim",
         SilentAimDesc   = "Redirect attacks to the nearest bot",
+        SilentAimDist   = "Silent Aim Max Distance",
         AutoFarm        = "Auto Farm",
         AutoFarmDesc    = "Automatically attack the nearest bot",
         AutoFarmDelay   = "Farm Delay (s)",
@@ -107,6 +89,7 @@ local Translations = {
         WalkSpeed       = "Vitesse de marche",
         SilentAim       = "Silent Aim",
         SilentAimDesc   = "Redirige les attaques vers le bot le plus proche",
+        SilentAimDist   = "Distance Max Silent Aim",
         AutoFarm        = "Auto Farm",
         AutoFarmDesc    = "Attaque automatiquement le bot le plus proche",
         AutoFarmDelay   = "Délai farm (s)",
@@ -140,6 +123,7 @@ local Translations = {
         WalkSpeed       = "Laufgeschwindigkeit",
         SilentAim       = "Silent Aim",
         SilentAimDesc   = "Angriffe auf den nächsten Bot umleiten",
+        SilentAimDist   = "Silent Aim Max. Distanz",
         AutoFarm        = "Auto Farm",
         AutoFarmDesc    = "Greift automatisch den nächsten Bot an",
         AutoFarmDelay   = "Farm-Verzögerung (s)",
@@ -173,6 +157,7 @@ local Translations = {
         WalkSpeed       = "Velocidad de marcha",
         SilentAim       = "Silent Aim",
         SilentAimDesc   = "Redirigir ataques al bot más cercano",
+        SilentAimDist   = "Distancia Máx Silent Aim",
         AutoFarm        = "Auto Farm",
         AutoFarmDesc    = "Ataca automáticamente al bot más cercano",
         AutoFarmDelay   = "Retraso farm (s)",
@@ -206,6 +191,7 @@ local Translations = {
         WalkSpeed       = "Velocidade de caminhada",
         SilentAim       = "Silent Aim",
         SilentAimDesc   = "Redirecionar ataques para o bot mais próximo",
+        SilentAimDist   = "Distância Máx Silent Aim",
         AutoFarm        = "Auto Farm",
         AutoFarmDesc    = "Ataca automaticamente o bot mais próximo",
         AutoFarmDelay   = "Atraso do farm (s)",
@@ -239,6 +225,7 @@ local Translations = {
         WalkSpeed       = "Скорость ходьбы",
         SilentAim       = "Тихий прицел",
         SilentAimDesc   = "Перенаправлять атаки на ближайшего бота",
+        SilentAimDist   = "Макс. дистанция тихого прицела",
         AutoFarm        = "Авто фарм",
         AutoFarmDesc    = "Автоматически атаковать ближайшего бота",
         AutoFarmDelay   = "Задержка фарма (с)",
@@ -272,6 +259,7 @@ local Translations = {
         WalkSpeed       = "Velocità di camminata",
         SilentAim       = "Silent Aim",
         SilentAimDesc   = "Reindirizza gli attacchi al bot più vicino",
+        SilentAimDist   = "Distanza Max Silent Aim",
         AutoFarm        = "Auto Farm",
         AutoFarmDesc    = "Attacca automaticamente il bot più vicino",
         AutoFarmDelay   = "Ritardo farm (s)",
@@ -305,6 +293,7 @@ local Translations = {
         WalkSpeed       = "Loopsnelheid",
         SilentAim       = "Silent Aim",
         SilentAimDesc   = "Aanvallen omleiden naar de dichtstbijzijnde bot",
+        SilentAimDist   = "Silent Aim Max Afstand",
         AutoFarm        = "Auto Farm",
         AutoFarmDesc    = "Valt automatisch de dichtstbijzijnde bot aan",
         AutoFarmDelay   = "Farm vertraging (s)",
@@ -338,6 +327,7 @@ local Translations = {
         WalkSpeed       = "Prędkość chodzenia",
         SilentAim       = "Silent Aim",
         SilentAimDesc   = "Przekieruj ataki na najbliższego bota",
+        SilentAimDist   = "Maks. dystans Silent Aim",
         AutoFarm        = "Auto Farm",
         AutoFarmDesc    = "Automatycznie atakuje najbliższego bota",
         AutoFarmDelay   = "Opóźnienie farmu (s)",
@@ -371,6 +361,7 @@ local Translations = {
         WalkSpeed       = "移动速度",
         SilentAim       = "无声自瞄",
         SilentAimDesc   = "将攻击重定向至最近的机器人",
+        SilentAimDist   = "无声自瞄最大距离",
         AutoFarm        = "自动刷怪",
         AutoFarmDesc    = "自动攻击最近的机器人",
         AutoFarmDelay   = "刷怪延迟（秒）",
@@ -404,6 +395,7 @@ local Translations = {
         WalkSpeed       = "移動速度",
         SilentAim       = "サイレントエイム",
         SilentAimDesc   = "攻撃を最寄りのボットにリダイレクト",
+        SilentAimDist   = "サイレントエイム最大距離",
         AutoFarm        = "オートファーム",
         AutoFarmDesc    = "最も近いボットを自動攻撃",
         AutoFarmDelay   = "ファーム遅延（秒）",
@@ -437,6 +429,7 @@ local Translations = {
         WalkSpeed       = "Yürüyüş Hızı",
         SilentAim       = "Sessiz Nişan",
         SilentAimDesc   = "Saldırıları en yakın bota yönlendir",
+        SilentAimDist   = "Sessiz Nişan Maks. Mesafe",
         AutoFarm        = "Otomatik Farm",
         AutoFarmDesc    = "En yakın botu otomatik saldır",
         AutoFarmDelay   = "Farm gecikmesi (s)",
@@ -470,6 +463,7 @@ local Translations = {
         WalkSpeed       = "이동 속도",
         SilentAim       = "사일런트 에임",
         SilentAimDesc   = "공격을 가장 가까운 봇으로 리다이렉트",
+        SilentAimDist   = "사일런트 에임 최대 거리",
         AutoFarm        = "자동 파밍",
         AutoFarmDesc    = "가장 가까운 봇을 자동 공격",
         AutoFarmDelay   = "파밍 딜레이(초)",
@@ -503,6 +497,7 @@ local Translations = {
         WalkSpeed       = "سرعة المشي",
         SilentAim       = "التصويب الصامت",
         SilentAimDesc   = "إعادة توجيه الهجمات إلى أقرب روبوت",
+        SilentAimDist   = "أقصى مسافة للتصويب الصامت",
         AutoFarm        = "زراعة تلقائية",
         AutoFarmDesc    = "مهاجمة أقرب روبوت تلقائياً",
         AutoFarmDelay   = "تأخير الزراعة (ث)",
@@ -536,6 +531,7 @@ local Translations = {
         WalkSpeed       = "Tốc độ đi bộ",
         SilentAim       = "Silent Aim",
         SilentAimDesc   = "Chuyển hướng đòn tấn công đến bot gần nhất",
+        SilentAimDist   = "Khoảng cách tối đa Silent Aim",
         AutoFarm        = "Tự động Farm",
         AutoFarmDesc    = "Tự động tấn công bot gần nhất",
         AutoFarmDelay   = "Độ trễ farm (s)",
@@ -569,6 +565,7 @@ local Translations = {
         WalkSpeed       = "Gånghastighet",
         SilentAim       = "Silent Aim",
         SilentAimDesc   = "Omdirigera attacker till närmaste boten",
+        SilentAimDist   = "Silent Aim Max Avstånd",
         AutoFarm        = "Auto Farm",
         AutoFarmDesc    = "Attackera automatiskt närmaste boten",
         AutoFarmDelay   = "Farmfördröjning (s)",
@@ -602,6 +599,7 @@ local Translations = {
         WalkSpeed       = "Ταχύτητα Βαδίσματος",
         SilentAim       = "Silent Aim",
         SilentAimDesc   = "Ανακατεύθυνση επιθέσεων στο κοντινότερο bot",
+        SilentAimDist   = "Μέγιστη Απόσταση Silent Aim",
         AutoFarm        = "Αυτόματο Farm",
         AutoFarmDesc    = "Αυτόματη επίθεση στο κοντινότερο bot",
         AutoFarmDelay   = "Καθυστέρηση farm (δευτ.)",
@@ -635,6 +633,7 @@ local Translations = {
         WalkSpeed       = "Viteză de mers",
         SilentAim       = "Silent Aim",
         SilentAimDesc   = "Redirecționează atacurile către cel mai apropiat bot",
+        SilentAimDist   = "Distanță Max Silent Aim",
         AutoFarm        = "Auto Farm",
         AutoFarmDesc    = "Atacă automat cel mai apropiat bot",
         AutoFarmDelay   = "Întârziere farm (s)",
@@ -668,6 +667,7 @@ local Translations = {
         WalkSpeed       = "Швидкість ходьби",
         SilentAim       = "Тихий приціл",
         SilentAimDesc   = "Перенаправляти атаки на найближчого бота",
+        SilentAimDist   = "Макс. дистанція тихого прицілу",
         AutoFarm        = "Авто фарм",
         AutoFarmDesc    = "Автоматично атакує найближчого бота",
         AutoFarmDelay   = "Затримка фарму (с)",
@@ -701,6 +701,7 @@ local Translations = {
         WalkSpeed       = "Rychlost chůze",
         SilentAim       = "Silent Aim",
         SilentAimDesc   = "Přesměrovat útoky na nejbližšího bota",
+        SilentAimDist   = "Max. vzdálenost Silent Aim",
         AutoFarm        = "Auto Farm",
         AutoFarmDesc    = "Automaticky útočí na nejbližšího bota",
         AutoFarmDelay   = "Zpoždění farmu (s)",
@@ -734,6 +735,7 @@ local Translations = {
         WalkSpeed       = "Gåhastighed",
         SilentAim       = "Silent Aim",
         SilentAimDesc   = "Omdiriger angreb til den nærmeste bot",
+        SilentAimDist   = "Silent Aim Maks. Afstand",
         AutoFarm        = "Auto Farm",
         AutoFarmDesc    = "Angrib automatisk den nærmeste bot",
         AutoFarmDelay   = "Farm-forsinkelse (s)",
@@ -761,6 +763,7 @@ end
 -- ───────────────────────────────────────────────────────────────
 local Settings = {
     SilentAim       = false,
+    SilentAimMaxDist = 150,
     AutoFarm        = false,
     AutoFarmDelay   = 0.3,
     ESP_Bots        = false,
@@ -812,12 +815,13 @@ local function getHumanoid()
 end
 
 -- STRICT bot detection: only Models inside Workspace.Bots, live Humanoid,
--- and never a player character. Verified against Players:GetPlayerFromCharacter.
+-- and never a player character.
 local function isBot(model)
     if not model or not model:IsA("Model") then return false end
     local botsFolder = Workspace:FindFirstChild("Bots")
     if not botsFolder or not model:IsDescendantOf(botsFolder) then return false end
     if Players:GetPlayerFromCharacter(model) then return false end
+    if LocalPlayer.Character and model == LocalPlayer.Character then return false end
     local hum = model:FindFirstChildOfClass("Humanoid")
     if not hum or hum.Health <= 0 then return false end
     if not model:FindFirstChild("HumanoidRootPart") then return false end
@@ -845,19 +849,17 @@ local function getNearestBot()
 end
 
 -- ───────────────────────────────────────────────────────────────
--- SILENT AIM
+-- SILENT AIM (hooks all attack remotes, distance limit)
 -- ───────────────────────────────────────────────────────────────
 local silentAimConnection = nil
 local originalHooks = {}
-local attackRemoteNames = {
-    "Attack", "Hit", "Damage", "DamageBot", "BotHit", "Strike",
-    "SwordSlash", "Slash", "Melee", "AttackEvent", "Combat",
-    "SwingSword", "FireGun", "Shoot", "SwordAttack", "SwordSpin"
-}
+local attackRemoteKeywords = {"Attack", "Hit", "Damage", "Shoot", "Strike", "Slash", "Melee", "Swing", "Fire"}
 
 local function getClosestBotToCursor()
     local mouse = UserInputService:GetMouseLocation()
     local cam = Workspace.CurrentCamera
+    local hrp = getHRP()
+    if not hrp then return nil end
     local closest, minDist = nil, math.huge
     local botsFolder = Workspace:FindFirstChild("Bots")
     if not botsFolder then return nil end
@@ -865,12 +867,15 @@ local function getClosestBotToCursor()
         if isBot(obj) then
             local bhrp = obj:FindFirstChild("HumanoidRootPart")
             if bhrp then
-                local screenPos, onScreen = cam:WorldToViewportPoint(bhrp.Position)
-                if onScreen then
-                    local dist = (Vector2.new(screenPos.X, screenPos.Y) - mouse).Magnitude
-                    if dist < minDist then
-                        minDist = dist
-                        closest = bhrp
+                local worldDist = (bhrp.Position - hrp.Position).Magnitude
+                if worldDist <= Settings.SilentAimMaxDist then
+                    local screenPos, onScreen = cam:WorldToViewportPoint(bhrp.Position)
+                    if onScreen then
+                        local dist = (Vector2.new(screenPos.X, screenPos.Y) - mouse).Magnitude
+                        if dist < minDist then
+                            minDist = dist
+                            closest = bhrp
+                        end
                     end
                 end
             end
@@ -879,38 +884,46 @@ local function getClosestBotToCursor()
     return closest
 end
 
-local function hookAttackRemotes()
-    for _, name in ipairs(attackRemoteNames) do
-        local ev = ReplicatedStorage:FindFirstChild(name, true)
-        if ev and ev:IsA("RemoteEvent") and not originalHooks[ev] then
-            local old = ev.FireServer
-            originalHooks[ev] = old
-            ev.FireServer = function(self, ...)
-                if not Settings.SilentAim then
-                    return old(self, ...)
+local function hookAllAttackRemotes()
+    for _, obj in ipairs(ReplicatedStorage:GetDescendants()) do
+        if obj:IsA("RemoteEvent") then
+            local shouldHook = false
+            for _, kw in ipairs(attackRemoteKeywords) do
+                if obj.Name:lower():find(kw:lower()) then
+                    shouldHook = true
+                    break
                 end
-                local target = getClosestBotToCursor() or getNearestBot()
-                if not target then
-                    return old(self, ...)
+            end
+            if shouldHook and not originalHooks[obj] then
+                local old = obj.FireServer
+                originalHooks[obj] = old
+                obj.FireServer = function(self, ...)
+                    if not Settings.SilentAim then
+                        return old(self, ...)
+                    end
+                    local target = getClosestBotToCursor() or getNearestBot()
+                    if not target then
+                        return old(self, ...)
+                    end
+                    local args = {...}
+                    if #args >= 1 and typeof(args[1]) == "Instance" then
+                        args[1] = target
+                    else
+                        table.insert(args, 1, target)
+                    end
+                    return old(self, table.unpack(args))
                 end
-                local args = {...}
-                if #args >= 1 and typeof(args[1]) == "Instance" then
-                    args[1] = target
-                else
-                    table.insert(args, 1, target)
-                end
-                return old(self, table.unpack(args))
             end
         end
     end
 end
 
 local function enableSilentAim()
-    hookAttackRemotes()
+    hookAllAttackRemotes()
     if silentAimConnection then return end
     silentAimConnection = RunService.Heartbeat:Connect(function()
         if Settings.SilentAim then
-            hookAttackRemotes()
+            hookAllAttackRemotes()
         end
     end)
 end
@@ -929,7 +942,7 @@ local function disableSilentAim()
 end
 
 -- ───────────────────────────────────────────────────────────────
--- FLY (LinearVelocity + AlignOrientation)
+-- FLY (LinearVelocity + AlignOrientation, PC + Mobile)
 -- ───────────────────────────────────────────────────────────────
 local flyVelocity, flyGyro
 local flyMobileVertical = 0
@@ -945,19 +958,19 @@ local function createMobileFlyButtons()
 
     local function makeBtn(text, yOffset)
         local btn = Instance.new("TextButton")
-        btn.Size = UDim2.new(0, 50, 0, 50)
-        btn.Position = UDim2.new(1, -70, 0.5, yOffset)
+        btn.Size = UDim2.new(0, 55, 0, 55)
+        btn.Position = UDim2.new(1, -80, 0.5, yOffset)
         btn.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
         btn.BackgroundTransparency = 0.3
         btn.TextColor3 = Color3.new(1, 1, 1)
         btn.Text = text
-        btn.TextSize = 24
+        btn.TextSize = 26
         btn.Font = Enum.Font.GothamBold
         btn.Parent = gui
         return btn
     end
 
-    mobileUpBtn = makeBtn("▲", -60)
+    mobileUpBtn = makeBtn("▲", -70)
     mobileDownBtn = makeBtn("▼", 0)
 
     mobileUpBtn.MouseButton1Down:Connect(function() flyMobileVertical = 1 end)
@@ -1095,6 +1108,52 @@ local function disableNoClip()
 end
 
 -- ───────────────────────────────────────────────────────────────
+-- HITBOX (reapplied every frame, bots only)
+-- ───────────────────────────────────────────────────────────────
+local hitboxOriginalSizes = {}
+
+local function applyHitbox(obj)
+    local bhrp = obj:FindFirstChild("HumanoidRootPart")
+    if not bhrp then return end
+    if not hitboxOriginalSizes[bhrp] then
+        hitboxOriginalSizes[bhrp] = bhrp.Size
+    end
+    bhrp.Size = Vector3.new(
+        Settings.HitboxSize * 2,
+        Settings.HitboxSize * 2,
+        Settings.HitboxSize * 2
+    )
+    bhrp.Transparency = 0.6
+    bhrp.CanCollide = false
+end
+
+local function resetHitbox(obj)
+    local bhrp = obj:FindFirstChild("HumanoidRootPart")
+    if not bhrp then return end
+    local orig = hitboxOriginalSizes[bhrp]
+    if orig then
+        bhrp.Size = orig
+        hitboxOriginalSizes[bhrp] = nil
+    else
+        bhrp.Size = Vector3.new(2, 2, 1)
+    end
+    bhrp.Transparency = 1
+    bhrp.CanCollide = true
+end
+
+local function resetAllHitboxes()
+    for bhrp, _ in pairs(hitboxOriginalSizes) do
+        if bhrp and bhrp.Parent then
+            local orig = hitboxOriginalSizes[bhrp]
+            bhrp.Size = orig or Vector3.new(2, 2, 1)
+            bhrp.Transparency = 1
+            bhrp.CanCollide = true
+        end
+    end
+    hitboxOriginalSizes = {}
+end
+
+-- ───────────────────────────────────────────────────────────────
 -- AUTO FARM
 -- ───────────────────────────────────────────────────────────────
 local lastFarmTime = 0
@@ -1142,7 +1201,7 @@ local function doAutoFarm()
         end
     end
 
-    for _, name in ipairs(attackRemoteNames) do
+    for _, name in ipairs(attackRemoteKeywords) do
         local ev = ReplicatedStorage:FindFirstChild(name, true)
         if ev and ev:IsA("RemoteEvent") then
             pcall(function() ev:FireServer(botHum) end)
@@ -1242,6 +1301,15 @@ TabCombat:CreateToggle({
     end,
 })
 
+TabCombat:CreateSlider({
+    Name         = T("SilentAimDist"),
+    Range        = {10, 500},
+    Increment    = 10,
+    CurrentValue = Settings.SilentAimMaxDist,
+    Flag         = "SilentAimMaxDist",
+    Callback     = function(v) Settings.SilentAimMaxDist = v end,
+})
+
 TabCombat:CreateToggle({
     Name         = T("AutoFarm"),
     CurrentValue = Settings.AutoFarm,
@@ -1265,25 +1333,7 @@ TabCombat:CreateToggle({
     Callback     = function(v)
         Settings.Hitbox_Enabled = v
         if not v then
-            local botsFolder = Workspace:FindFirstChild("Bots")
-            if botsFolder then
-                for _, obj in ipairs(botsFolder:GetDescendants()) do
-                    if isBot(obj) then
-                        local bhrp = obj:FindFirstChild("HumanoidRootPart")
-                        if bhrp then
-                            local orig = bhrp:GetAttribute("HitboxOriginalSize")
-                            if orig then
-                                bhrp.Size = orig
-                                bhrp:SetAttribute("HitboxOriginalSize", nil)
-                            else
-                                bhrp.Size = Vector3.new(2, 2, 1)
-                            end
-                            bhrp.Transparency = 1
-                            bhrp.CanCollide = true
-                        end
-                    end
-                end
-            end
+            resetAllHitboxes()
         end
     end,
 })
@@ -1440,25 +1490,13 @@ RunService.RenderStepped:Connect(function()
         end
     end
 
-    -- Hitbox (bots only)
+    -- Hitbox (reapplied every frame)
     if Settings.Hitbox_Enabled then
         local botsFolder = Workspace:FindFirstChild("Bots")
         if botsFolder then
             for _, obj in ipairs(botsFolder:GetDescendants()) do
                 if isBot(obj) then
-                    local bhrp = obj:FindFirstChild("HumanoidRootPart")
-                    if bhrp then
-                        if not bhrp:GetAttribute("HitboxOriginalSize") then
-                            bhrp:SetAttribute("HitboxOriginalSize", bhrp.Size)
-                        end
-                        bhrp.Size = Vector3.new(
-                            Settings.HitboxSize * 2,
-                            Settings.HitboxSize * 2,
-                            Settings.HitboxSize * 2
-                        )
-                        bhrp.Transparency = 0.6
-                        bhrp.CanCollide   = false
-                    end
+                    applyHitbox(obj)
                 end
             end
         end
