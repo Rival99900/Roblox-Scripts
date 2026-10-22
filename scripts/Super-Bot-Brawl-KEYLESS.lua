@@ -6,7 +6,7 @@
     ================================================================
     Features:
       - Silent Aim (hooks attack remotes, distance limit slider)
-      - Auto Farm (attacks nearest bot with tool/remote)
+      - Auto Farm (attacks nearest bot from above, no cooldown)
       - ESP Bots (highlight + HP billboard on all NPCs)
       - Teleport to Nearest Bot
       - Fly (PC: WASD/Space/Shift | Mobile: joystick + on-screen ▲/▼)
@@ -762,18 +762,18 @@ end
 -- SETTINGS
 -- ───────────────────────────────────────────────────────────────
 local Settings = {
-    SilentAim       = false,
+    SilentAim        = false,
     SilentAimMaxDist = 150,
-    AutoFarm        = false,
-    AutoFarmDelay   = 0.3,
-    ESP_Bots        = false,
-    Fly             = false,
-    FlySpeed        = 60,
-    NoClip          = false,
-    WalkSpeed       = 16,
-    Fullbright      = false,
-    Hitbox_Enabled  = false,
-    HitboxSize      = 3,
+    AutoFarm         = false,
+    AutoFarmDelay    = 0.3,
+    ESP_Bots         = false,
+    Fly              = false,
+    FlySpeed         = 60,
+    NoClip           = false,
+    WalkSpeed        = 16,
+    Fullbright       = false,
+    Hitbox_Enabled   = false,
+    HitboxSize       = 3,
 }
 
 local isMobile = UserInputService.TouchEnabled and not UserInputService.KeyboardEnabled
@@ -849,7 +849,7 @@ local function getNearestBot()
 end
 
 -- ───────────────────────────────────────────────────────────────
--- SILENT AIM (hooks all attack remotes, distance limit)
+-- SILENT AIM (hooks attack remotes, distance limit)
 -- ───────────────────────────────────────────────────────────────
 local silentAimConnection = nil
 local originalHooks = {}
@@ -911,7 +911,12 @@ local function hookAllAttackRemotes()
                     else
                         table.insert(args, 1, target)
                     end
-                    return old(self, table.unpack(args))
+                    local successCall, err = pcall(function()
+                        return old(self, table.unpack(args))
+                    end)
+                    if not successCall then
+                        return old(self, ...)
+                    end
                 end
             end
         end
@@ -942,7 +947,7 @@ local function disableSilentAim()
 end
 
 -- ───────────────────────────────────────────────────────────────
--- FLY (LinearVelocity + AlignOrientation, PC + Mobile)
+-- FLY (BodyVelocity + BodyGyro, PC + Mobile)
 -- ───────────────────────────────────────────────────────────────
 local flyVelocity, flyGyro
 local flyMobileVertical = 0
@@ -985,15 +990,14 @@ local function enableFly()
     local hrp = getHRP()
     if not hrp then return end
 
-    flyVelocity = Instance.new("LinearVelocity")
-    flyVelocity.VelocityConstraintMode = Enum.VelocityConstraintMode.Vector
-    flyVelocity.MaxForce = math.huge
-    flyVelocity.VectorVelocity = Vector3.zero
+    flyVelocity = Instance.new("BodyVelocity")
+    flyVelocity.Velocity = Vector3.zero
+    flyVelocity.MaxForce = Vector3.new(1e9, 1e9, 1e9)
     flyVelocity.Parent = hrp
 
-    flyGyro = Instance.new("AlignOrientation")
-    flyGyro.MaxTorque = math.huge
-    flyGyro.Responsiveness = 100
+    flyGyro = Instance.new("BodyGyro")
+    flyGyro.MaxTorque = Vector3.new(1e9, 1e9, 1e9)
+    flyGyro.P = 1e4
     flyGyro.CFrame = hrp.CFrame
     flyGyro.Parent = hrp
 
@@ -1127,20 +1131,6 @@ local function applyHitbox(obj)
     bhrp.CanCollide = false
 end
 
-local function resetHitbox(obj)
-    local bhrp = obj:FindFirstChild("HumanoidRootPart")
-    if not bhrp then return end
-    local orig = hitboxOriginalSizes[bhrp]
-    if orig then
-        bhrp.Size = orig
-        hitboxOriginalSizes[bhrp] = nil
-    else
-        bhrp.Size = Vector3.new(2, 2, 1)
-    end
-    bhrp.Transparency = 1
-    bhrp.CanCollide = true
-end
-
 local function resetAllHitboxes()
     for bhrp, _ in pairs(hitboxOriginalSizes) do
         if bhrp and bhrp.Parent then
@@ -1154,7 +1144,7 @@ local function resetAllHitboxes()
 end
 
 -- ───────────────────────────────────────────────────────────────
--- AUTO FARM
+-- AUTO FARM (attacks from above, no cooldown)
 -- ───────────────────────────────────────────────────────────────
 local lastFarmTime = 0
 
@@ -1173,9 +1163,9 @@ local function doAutoFarm()
     local botModel, botHRP = getNearestBot()
     if not botHRP or not botModel then return end
 
-    local botPos = botHRP.Position
-    local front = botPos + Vector3.new(0, 0, 3)
-    hrp.CFrame = CFrame.lookAt(front, botPos)
+    -- Teleport above the bot (10 studs higher)
+    local above = botHRP.Position + Vector3.new(0, 10, 0)
+    hrp.CFrame = CFrame.lookAt(above, botHRP.Position)
 
     local tool = char:FindFirstChildOfClass("Tool")
     if not tool then
@@ -1193,6 +1183,15 @@ local function doAutoFarm()
     local botHum = botModel:FindFirstChildOfClass("Humanoid")
 
     if tool then
+        -- No cooldown: Set the cooldown values to 0
+        for _, v in ipairs(tool:GetDescendants()) do
+            if v:IsA("NumberValue") or v:IsA("IntValue") then
+                local n = v.Name:lower()
+                if n:find("cooldown") or n:find("firerate") or n:find("delay") or n:find("reload") then
+                    v.Value = 0
+                end
+            end
+        end
         pcall(function() tool:Activate() end)
         for _, v in ipairs(tool:GetDescendants()) do
             if v:IsA("RemoteEvent") then
@@ -1427,7 +1426,7 @@ RunService.RenderStepped:Connect(function()
             end
         end
 
-        flyVelocity.VectorVelocity = dir.Magnitude > 0 and dir.Unit * speed or Vector3.zero
+        flyVelocity.Velocity = dir.Magnitude > 0 and dir.Unit * speed or Vector3.zero
         flyGyro.CFrame = cam.CFrame
     end
 
