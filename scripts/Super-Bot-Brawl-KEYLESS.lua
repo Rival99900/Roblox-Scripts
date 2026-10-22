@@ -5,7 +5,7 @@
     Version: 1.0.0 | Languages: 21 | Rayfield UI
     ================================================================
     Features:
-      - God Mode (MaxHealth + HealthChanged + Dead state block)
+      - God Mode (MaxHealth + HealthChanged + safety loop)
       - Auto Farm (auto-attack nearest bot with cooldown)
       - ESP Bots (highlight + HP billboard on all NPCs)
       - Teleport to Nearest Bot
@@ -769,8 +769,9 @@ local function getHumanoid()
     return char:FindFirstChildOfClass("Humanoid")
 end
 
--- Broad bot detection: any Model with a live Humanoid, not a player character,
--- and not the local player. Works whether bots are in Workspace.Bots or not.
+-- STRICT bot detection: only Models with a live Humanoid that are NOT
+-- the local player's character and NOT any other player's character.
+-- This guarantees the hitbox NEVER affects the player.
 local function isBot(model)
     if not model or not model:IsA("Model") then return false end
     if LocalPlayer.Character and (model == LocalPlayer.Character or model:IsDescendantOf(LocalPlayer.Character)) then
@@ -804,10 +805,11 @@ local function getNearestBot()
 end
 
 -- ───────────────────────────────────────────────────────────────
--- GOD MODE
+-- GOD MODE (MaxHealth first, then Health + HealthChanged)
 -- ───────────────────────────────────────────────────────────────
 local godModeConnection = nil
 local originalMaxHealth = nil
+local godModeLoopRunning = false
 
 local function setGodMode(state)
     local hum = getHumanoid()
@@ -817,17 +819,25 @@ local function setGodMode(state)
         if originalMaxHealth == nil then
             originalMaxHealth = hum.MaxHealth
         end
-        hum.MaxHealth = math.huge
-        hum.Health    = math.huge
+
+        -- Set MaxHealth FIRST, then Health (critical for the effect to stick)
+        hum.MaxHealth = 1e9
+        hum.Health    = 1e9
         hum:SetStateEnabled(Enum.HumanoidStateType.Dead, false)
 
-        task.spawn(function()
-            while Settings.GodMode and hum.Parent do
-                hum.MaxHealth = math.huge
-                hum.Health    = math.huge
-                task.wait()
-            end
-        end)
+        if not godModeLoopRunning then
+            godModeLoopRunning = true
+            task.spawn(function()
+                while Settings.GodMode and hum.Parent do
+                    hum.MaxHealth = 1e9
+                    if hum.Health < hum.MaxHealth then
+                        hum.Health = hum.MaxHealth
+                    end
+                    task.wait()
+                end
+                godModeLoopRunning = false
+            end)
+        end
 
         if godModeConnection then godModeConnection:Disconnect() end
         godModeConnection = hum.HealthChanged:Connect(function(newHealth)
@@ -853,7 +863,7 @@ local function setGodMode(state)
 end
 
 -- ───────────────────────────────────────────────────────────────
--- FLY
+-- FLY (PC + Mobile)
 -- ───────────────────────────────────────────────────────────────
 local flyVelocity, flyGyro
 local flyMobileVertical = 0
@@ -931,31 +941,25 @@ local function disableFly()
 end
 
 -- ───────────────────────────────────────────────────────────────
--- NOCLIP WATCHDOG
+-- NOCLIP (same logic as the working SCP script: disable CanCollide
+-- on every BasePart, including HumanoidRootPart, and leave it off)
 -- ───────────────────────────────────────────────────────────────
-local noclipHooks = {}
-
-local function clearNoclipHooks()
-    for part, conn in pairs(noclipHooks) do
-        if conn then conn:Disconnect() end
-        if part and part.Parent then
-            part.CanCollide = true
+local function applyNoClip(state)
+    local char = LocalPlayer.Character
+    if not char then return end
+    for _, part in ipairs(char:GetDescendants()) do
+        if part:IsA("BasePart") then
+            part.CanCollide = not state
         end
     end
-    noclipHooks = {}
-end
-
-local function addNoclipHook(part)
-    if not part or not part:IsA("BasePart") or part.Name == "HumanoidRootPart" then
-        return
-    end
-    if noclipHooks[part] then return end
-    part.CanCollide = false
-    noclipHooks[part] = part:GetPropertyChangedSignal("CanCollide"):Connect(function()
-        if Settings.NoClip and part.CanCollide then
-            part.CanCollide = false
+    if state then
+        -- Also stop any residual sliding when enabling
+        local hrp = char:FindFirstChild("HumanoidRootPart")
+        if hrp then
+            hrp.AssemblyLinearVelocity  = Vector3.zero
+            hrp.AssemblyAngularVelocity = Vector3.zero
         end
-    end)
+    end
 end
 
 -- ───────────────────────────────────────────────────────────────
@@ -1054,30 +1058,7 @@ TabMovement:CreateToggle({
     Flag         = "NoClip",
     Callback     = function(v)
         Settings.NoClip = v
-        if v then
-            local char = LocalPlayer.Character
-            if char then
-                for _, part in ipairs(char:GetDescendants()) do
-                    addNoclipHook(part)
-                end
-                char.DescendantAdded:Connect(function(part)
-                    if Settings.NoClip then addNoclipHook(part) end
-                end)
-            end
-        else
-            clearNoclipHooks()
-            local char = LocalPlayer.Character
-            if char then
-                for _, part in ipairs(char:GetDescendants()) do
-                    if part:IsA("BasePart") then part.CanCollide = true end
-                end
-                local hrp = char:FindFirstChild("HumanoidRootPart")
-                if hrp then
-                    hrp.AssemblyLinearVelocity  = Vector3.zero
-                    hrp.AssemblyAngularVelocity = Vector3.zero
-                end
-            end
-        end
+        applyNoClip(v)
     end,
 })
 
@@ -1129,6 +1110,7 @@ TabCombat:CreateToggle({
     Callback     = function(v)
         Settings.Hitbox_Enabled = v
         if not v then
+            -- Restore all bot hitboxes
             for _, obj in ipairs(Workspace:GetDescendants()) do
                 if isBot(obj) then
                     local bhrp = obj:FindFirstChild("HumanoidRootPart")
@@ -1204,26 +1186,24 @@ RunService.RenderStepped:Connect(function()
     local hrp  = char:FindFirstChild("HumanoidRootPart")
     local hum  = char:FindFirstChildOfClass("Humanoid")
 
-    -- NOCLIP: hook new parts if needed
+    -- NoClip: re-apply every frame (same as SCP script)
     if Settings.NoClip then
         for _, part in ipairs(char:GetDescendants()) do
-            if part:IsA("BasePart") and part.Name ~= "HumanoidRootPart" then
-                addNoclipHook(part)
+            if part:IsA("BasePart") then
+                part.CanCollide = false
             end
         end
     end
 
-    -- FLY
+    -- Fly
     if Settings.Fly and flyVelocity and flyGyro and hrp then
         local cam   = Workspace.CurrentCamera
         local speed = Settings.FlySpeed
         local dir   = Vector3.zero
 
         if isMobile then
-            -- Horizontal from joystick (MoveDirection is already camera-relative)
             local move = hum and hum.MoveDirection or Vector3.zero
             dir = move
-            -- Vertical from on-screen buttons
             if flyMobileVertical ~= 0 then
                 dir = dir + Vector3.new(0, flyMobileVertical, 0)
             end
@@ -1253,7 +1233,7 @@ RunService.RenderStepped:Connect(function()
         flyGyro.CFrame = cam.CFrame
     end
 
-    -- ESP BOTS
+    -- ESP (only bots)
     if Settings.ESP_Bots then
         for _, obj in ipairs(Workspace:GetDescendants()) do
             if isBot(obj) then
@@ -1353,14 +1333,7 @@ LocalPlayer.CharacterAdded:Connect(function(_character)
     end
 
     if Settings.NoClip then
-        -- Re-hook the new character
-        clearNoclipHooks()
-        local char = LocalPlayer.Character
-        if char then
-            for _, part in ipairs(char:GetDescendants()) do
-                addNoclipHook(part)
-            end
-        end
+        applyNoClip(true)
     end
 
     local hum = getHumanoid()
@@ -1370,5 +1343,5 @@ end)
 Rayfield:Notify({
     Title    = T("WindowTitle"),
     Content  = T("Loaded"),
-    Duration = 4,
+    Duration     = 4,
 })
