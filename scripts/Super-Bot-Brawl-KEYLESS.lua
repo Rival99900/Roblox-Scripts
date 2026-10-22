@@ -5,11 +5,11 @@
     Version: 1.0.0 | Languages: 21 | Rayfield UI
     ================================================================
     Features:
-      - God Mode (MaxHealth + HealthChanged + safety loop)
+      - God Mode (MaxHealth + HealthChanged + Dead state block)
       - Auto Farm (auto-attack nearest bot with cooldown)
       - ESP Bots (highlight + HP billboard on all NPCs)
       - Teleport to Nearest Bot
-      - Fly (WASD + Space/Shift, camera-relative, adjustable speed)
+      - Fly (PC: WASD/Space/Shift | Mobile: joystick + on-screen ▲/▼)
       - NoClip (pass through walls — HumanoidRootPart stays collidable)
       - Walk Speed (adjustable)
       - Fullbright (brightness boost, fixed clock)
@@ -731,6 +731,8 @@ local Settings = {
     HitboxSize      = 3,
 }
 
+local isMobile = UserInputService.TouchEnabled and not UserInputService.KeyboardEnabled
+
 -- ───────────────────────────────────────────────────────────────
 -- LOAD RAYFIELD (keyless)
 -- ───────────────────────────────────────────────────────────────
@@ -767,19 +769,19 @@ local function getHumanoid()
     return char:FindFirstChildOfClass("Humanoid")
 end
 
--- Strict bot check: only models inside Workspace.Bots, with a live Humanoid,
--- and never the local player's own character.
+-- Broad bot detection: any Model with a live Humanoid, not a player character,
+-- and not the local player. Works whether bots are in Workspace.Bots or not.
 local function isBot(model)
     if not model or not model:IsA("Model") then return false end
-    -- Must be a descendant of Workspace.Bots
-    local botsFolder = Workspace:FindFirstChild("Bots")
-    if not botsFolder or not model:IsDescendantOf(botsFolder) then return false end
-    -- Never target the local player
     if LocalPlayer.Character and (model == LocalPlayer.Character or model:IsDescendantOf(LocalPlayer.Character)) then
         return false
     end
+    for _, p in ipairs(Players:GetPlayers()) do
+        if p.Character == model then return false end
+    end
     local hum = model:FindFirstChildOfClass("Humanoid")
     if not hum or hum.Health <= 0 then return false end
+    if not model:FindFirstChild("HumanoidRootPart") then return false end
     return true
 end
 
@@ -787,9 +789,7 @@ local function getNearestBot()
     local hrp = getHRP()
     if not hrp then return nil, nil end
     local bestDist, bestBot, bestHRP = math.huge, nil, nil
-    local botsFolder = Workspace:FindFirstChild("Bots")
-    if not botsFolder then return nil, nil end
-    for _, obj in ipairs(botsFolder:GetDescendants()) do
+    for _, obj in ipairs(Workspace:GetDescendants()) do
         if isBot(obj) then
             local bhrp = obj:FindFirstChild("HumanoidRootPart")
             if bhrp then
@@ -819,6 +819,7 @@ local function setGodMode(state)
         end
         hum.MaxHealth = math.huge
         hum.Health    = math.huge
+        hum:SetStateEnabled(Enum.HumanoidStateType.Dead, false)
 
         task.spawn(function()
             while Settings.GodMode and hum.Parent do
@@ -839,6 +840,7 @@ local function setGodMode(state)
             godModeConnection:Disconnect()
             godModeConnection = nil
         end
+        hum:SetStateEnabled(Enum.HumanoidStateType.Dead, true)
         if originalMaxHealth then
             hum.MaxHealth = originalMaxHealth
             hum.Health    = originalMaxHealth
@@ -854,6 +856,41 @@ end
 -- FLY
 -- ───────────────────────────────────────────────────────────────
 local flyVelocity, flyGyro
+local flyMobileVertical = 0
+local mobileFlyGui = nil
+local mobileUpBtn, mobileDownBtn
+
+local function createMobileFlyButtons()
+    if mobileFlyGui then return end
+    local gui = Instance.new("ScreenGui")
+    gui.Name = "_SB_MobileFly"
+    gui.ResetOnSpawn = false
+    gui.Parent = LocalPlayer:WaitForChild("PlayerGui")
+
+    local function makeBtn(text, yOffset)
+        local btn = Instance.new("TextButton")
+        btn.Size = UDim2.new(0, 50, 0, 50)
+        btn.Position = UDim2.new(1, -70, 0.5, yOffset)
+        btn.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+        btn.BackgroundTransparency = 0.3
+        btn.TextColor3 = Color3.new(1, 1, 1)
+        btn.Text = text
+        btn.TextSize = 24
+        btn.Font = Enum.Font.GothamBold
+        btn.Parent = gui
+        return btn
+    end
+
+    mobileUpBtn = makeBtn("▲", -60)
+    mobileDownBtn = makeBtn("▼", 0)
+
+    mobileUpBtn.MouseButton1Down:Connect(function() flyMobileVertical = 1 end)
+    mobileUpBtn.MouseButton1Up:Connect(function() flyMobileVertical = 0 end)
+    mobileDownBtn.MouseButton1Down:Connect(function() flyMobileVertical = -1 end)
+    mobileDownBtn.MouseButton1Up:Connect(function() flyMobileVertical = 0 end)
+
+    mobileFlyGui = gui
+end
 
 local function enableFly()
     local hrp = getHRP()
@@ -872,6 +909,11 @@ local function enableFly()
 
     local hum = getHumanoid()
     if hum then hum.PlatformStand = true end
+
+    if isMobile then
+        createMobileFlyButtons()
+        if mobileFlyGui then mobileFlyGui.Enabled = true end
+    end
 end
 
 local function disableFly()
@@ -884,6 +926,36 @@ local function disableFly()
         hrp.AssemblyLinearVelocity  = Vector3.zero
         hrp.AssemblyAngularVelocity = Vector3.zero
     end
+    flyMobileVertical = 0
+    if mobileFlyGui then mobileFlyGui.Enabled = false end
+end
+
+-- ───────────────────────────────────────────────────────────────
+-- NOCLIP WATCHDOG
+-- ───────────────────────────────────────────────────────────────
+local noclipHooks = {}
+
+local function clearNoclipHooks()
+    for part, conn in pairs(noclipHooks) do
+        if conn then conn:Disconnect() end
+        if part and part.Parent then
+            part.CanCollide = true
+        end
+    end
+    noclipHooks = {}
+end
+
+local function addNoclipHook(part)
+    if not part or not part:IsA("BasePart") or part.Name == "HumanoidRootPart" then
+        return
+    end
+    if noclipHooks[part] then return end
+    part.CanCollide = false
+    noclipHooks[part] = part:GetPropertyChangedSignal("CanCollide"):Connect(function()
+        if Settings.NoClip and part.CanCollide then
+            part.CanCollide = false
+        end
+    end)
 end
 
 -- ───────────────────────────────────────────────────────────────
@@ -916,18 +988,6 @@ local function doAutoFarm()
                 pcall(function() v:FireServer() end)
                 break
             end
-        end
-    end
-
-    local rs = game:GetService("ReplicatedStorage")
-    for _, name in ipairs({
-        "Attack", "Hit", "Damage", "DamageBot", "BotHit", "Strike",
-        "SwordSlash", "Slash", "Melee", "AttackEvent", "Combat"
-    }) do
-        local ev = rs:FindFirstChild(name, true)
-        if ev and ev:IsA("RemoteEvent") then
-            pcall(function() ev:FireServer(botModel) end)
-            break
         end
     end
 end
@@ -994,16 +1054,24 @@ TabMovement:CreateToggle({
     Flag         = "NoClip",
     Callback     = function(v)
         Settings.NoClip = v
-        if not v then
-            -- Restore collisions and kill residual velocity
-            local character = LocalPlayer.Character
-            if character then
-                for _, part in ipairs(character:GetDescendants()) do
-                    if part:IsA("BasePart") then
-                        part.CanCollide = true
-                    end
+        if v then
+            local char = LocalPlayer.Character
+            if char then
+                for _, part in ipairs(char:GetDescendants()) do
+                    addNoclipHook(part)
                 end
-                local hrp = character:FindFirstChild("HumanoidRootPart")
+                char.DescendantAdded:Connect(function(part)
+                    if Settings.NoClip then addNoclipHook(part) end
+                end)
+            end
+        else
+            clearNoclipHooks()
+            local char = LocalPlayer.Character
+            if char then
+                for _, part in ipairs(char:GetDescendants()) do
+                    if part:IsA("BasePart") then part.CanCollide = true end
+                end
+                local hrp = char:FindFirstChild("HumanoidRootPart")
                 if hrp then
                     hrp.AssemblyLinearVelocity  = Vector3.zero
                     hrp.AssemblyAngularVelocity = Vector3.zero
@@ -1061,21 +1129,19 @@ TabCombat:CreateToggle({
     Callback     = function(v)
         Settings.Hitbox_Enabled = v
         if not v then
-            -- Restore every bot's original hitbox size
-            local botsFolder = Workspace:FindFirstChild("Bots")
-            if botsFolder then
-                for _, obj in ipairs(botsFolder:GetDescendants()) do
-                    if isBot(obj) then
-                        local bhrp = obj:FindFirstChild("HumanoidRootPart")
-                        if bhrp then
-                            local orig = bhrp:FindFirstChild("_origSize")
-                            if orig then
-                                bhrp.Size = orig.Value
-                                bhrp.Transparency = 1
-                                bhrp.CanCollide = true
-                                orig:Destroy()
-                            end
+            for _, obj in ipairs(Workspace:GetDescendants()) do
+                if isBot(obj) then
+                    local bhrp = obj:FindFirstChild("HumanoidRootPart")
+                    if bhrp then
+                        local orig = bhrp:GetAttribute("HitboxOriginalSize")
+                        if orig then
+                            bhrp.Size = orig
+                            bhrp:SetAttribute("HitboxOriginalSize", nil)
+                        else
+                            bhrp.Size = Vector3.new(2, 2, 1)
                         end
+                        bhrp.Transparency = 1
+                        bhrp.CanCollide = true
                     end
                 end
             end
@@ -1138,13 +1204,11 @@ RunService.RenderStepped:Connect(function()
     local hrp  = char:FindFirstChild("HumanoidRootPart")
     local hum  = char:FindFirstChildOfClass("Humanoid")
 
-    -- NOCLIP: skip HumanoidRootPart so the character keeps ground grip
+    -- NOCLIP: hook new parts if needed
     if Settings.NoClip then
         for _, part in ipairs(char:GetDescendants()) do
-            if part:IsA("BasePart")
-                and part.Name ~= "HumanoidRootPart"
-                and part.CanCollide then
-                part.CanCollide = false
+            if part:IsA("BasePart") and part.Name ~= "HumanoidRootPart" then
+                addNoclipHook(part)
             end
         end
     end
@@ -1154,35 +1218,44 @@ RunService.RenderStepped:Connect(function()
         local cam   = Workspace.CurrentCamera
         local speed = Settings.FlySpeed
         local dir   = Vector3.zero
-        local uis   = UserInputService
 
-        if uis:IsKeyDown(Enum.KeyCode.W) or uis:IsKeyDown(Enum.KeyCode.Up) then
-            dir = dir + cam.CFrame.LookVector
-        end
-        if uis:IsKeyDown(Enum.KeyCode.S) or uis:IsKeyDown(Enum.KeyCode.Down) then
-            dir = dir - cam.CFrame.LookVector
-        end
-        if uis:IsKeyDown(Enum.KeyCode.A) or uis:IsKeyDown(Enum.KeyCode.Left) then
-            dir = dir - cam.CFrame.RightVector
-        end
-        if uis:IsKeyDown(Enum.KeyCode.D) or uis:IsKeyDown(Enum.KeyCode.Right) then
-            dir = dir + cam.CFrame.RightVector
-        end
-        if uis:IsKeyDown(Enum.KeyCode.Space) then
-            dir = dir + Vector3.new(0, 1, 0)
-        end
-        if uis:IsKeyDown(Enum.KeyCode.LeftShift) or uis:IsKeyDown(Enum.KeyCode.RightShift) then
-            dir = dir - Vector3.new(0, 1, 0)
+        if isMobile then
+            -- Horizontal from joystick (MoveDirection is already camera-relative)
+            local move = hum and hum.MoveDirection or Vector3.zero
+            dir = move
+            -- Vertical from on-screen buttons
+            if flyMobileVertical ~= 0 then
+                dir = dir + Vector3.new(0, flyMobileVertical, 0)
+            end
+        else
+            local uis = UserInputService
+            if uis:IsKeyDown(Enum.KeyCode.W) or uis:IsKeyDown(Enum.KeyCode.Up) then
+                dir = dir + cam.CFrame.LookVector
+            end
+            if uis:IsKeyDown(Enum.KeyCode.S) or uis:IsKeyDown(Enum.KeyCode.Down) then
+                dir = dir - cam.CFrame.LookVector
+            end
+            if uis:IsKeyDown(Enum.KeyCode.A) or uis:IsKeyDown(Enum.KeyCode.Left) then
+                dir = dir - cam.CFrame.RightVector
+            end
+            if uis:IsKeyDown(Enum.KeyCode.D) or uis:IsKeyDown(Enum.KeyCode.Right) then
+                dir = dir + cam.CFrame.RightVector
+            end
+            if uis:IsKeyDown(Enum.KeyCode.Space) then
+                dir = dir + Vector3.new(0, 1, 0)
+            end
+            if uis:IsKeyDown(Enum.KeyCode.LeftShift) or uis:IsKeyDown(Enum.KeyCode.RightShift) then
+                dir = dir - Vector3.new(0, 1, 0)
+            end
         end
 
         flyVelocity.Velocity = dir.Magnitude > 0 and dir.Unit * speed or Vector3.zero
         flyGyro.CFrame = cam.CFrame
     end
 
-    -- ESP BOTS (only Workspace.Bots)
-    local botsFolder = Workspace:FindFirstChild("Bots")
-    if Settings.ESP_Bots and botsFolder then
-        for _, obj in ipairs(botsFolder:GetDescendants()) do
+    -- ESP BOTS
+    if Settings.ESP_Bots then
+        for _, obj in ipairs(Workspace:GetDescendants()) do
             if isBot(obj) then
                 local botHum = obj:FindFirstChildOfClass("Humanoid")
 
@@ -1224,8 +1297,8 @@ RunService.RenderStepped:Connect(function()
                 end
             end
         end
-    elseif botsFolder then
-        for _, obj in ipairs(botsFolder:GetDescendants()) do
+    else
+        for _, obj in ipairs(Workspace:GetDescendants()) do
             local hl = obj:FindFirstChild("_BotESP_Highlight")
             if hl then hl:Destroy() end
             local bhrp = obj:FindFirstChild("HumanoidRootPart")
@@ -1236,20 +1309,16 @@ RunService.RenderStepped:Connect(function()
         end
     end
 
-    -- HITBOX: only Workspace.Bots, never the local player
-    if Settings.Hitbox_Enabled and botsFolder then
-        for _, obj in ipairs(botsFolder:GetDescendants()) do
+    -- HITBOX: only bots, never the local player
+    if Settings.Hitbox_Enabled then
+        for _, obj in ipairs(Workspace:GetDescendants()) do
             if isBot(obj) then
                 local bhrp = obj:FindFirstChild("HumanoidRootPart")
                 if bhrp then
-                    local orig = bhrp:FindFirstChild("_origSize")
-                    if not orig then
-                        orig = Instance.new("Vector3Value")
-                        orig.Name  = "_origSize"
-                        orig.Value = bhrp.Size
-                        orig.Parent = bhrp
+                    if not bhrp:GetAttribute("HitboxOriginalSize") then
+                        bhrp:SetAttribute("HitboxOriginalSize", bhrp.Size)
                     end
-                    bhrp.Size         = Vector3.new(
+                    bhrp.Size = Vector3.new(
                         Settings.HitboxSize * 2,
                         Settings.HitboxSize * 2,
                         Settings.HitboxSize * 2
@@ -1281,6 +1350,17 @@ LocalPlayer.CharacterAdded:Connect(function(_character)
         disableFly()
         task.wait(0.1)
         enableFly()
+    end
+
+    if Settings.NoClip then
+        -- Re-hook the new character
+        clearNoclipHooks()
+        local char = LocalPlayer.Character
+        if char then
+            for _, part in ipairs(char:GetDescendants()) do
+                addNoclipHook(part)
+            end
+        end
     end
 
     local hum = getHumanoid()
