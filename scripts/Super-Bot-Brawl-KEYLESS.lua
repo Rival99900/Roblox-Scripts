@@ -1,14 +1,14 @@
 --[[
     ================================================================
     Super Bot Brawl Hub — Super Bot Brawl
-    Created by Rival960 with the help of Claude and DeepSeek
+    Created by Rival960 & Claude, DeepSeek
     Version: 1.0.0 | Languages: 21 | Rayfield UI
     ================================================================
     Features:
       - Auto Farm (feet on bot head, PlatformStand, 0.1s default)
-      - Bot Magnet (gathers all bots in one place for easy farming)
+      - Bot Magnet (uses Humanoid:MoveTo, damage-friendly)
       - Anti Ragdoll (event-driven, blocks Ragdoll/Physics/FallingDown/Dead)
-      - No Animation (universal R6/R15/custom + weapon animations)
+      - No Animation (universal R6/R15/custom, no LoadAnimation hook)
       - ESP Bots (highlight + HP billboard on all NPCs)
       - Teleport to Nearest Bot
       - Fly (PC: WASD/Space/Shift | Mobile: joystick + on-screen ▲/▼)
@@ -19,9 +19,6 @@
     ================================================================
 --]]
 
--- ───────────────────────────────────────────────────────────────
--- SERVICES
--- ───────────────────────────────────────────────────────────────
 local Players          = game:GetService("Players")
 local RunService       = game:GetService("RunService")
 local UserInputService = game:GetService("UserInputService")
@@ -45,7 +42,7 @@ local Translations = {
         AntiRagdoll = "Anti Ragdoll", NoAnimation = "No Animation",
         Fullbright = "Fullbright", LangSelect = "Language",
         CreditsTitle = "Super Bot Brawl Hub",
-        CreditsContent = "Created by Rival960\nWith the help of Claude (AI)\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — First release",
+        CreditsContent = "Created by Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — First release",
         Loaded = "Hub loaded! Fight smarter.", NoBot = "No bot found nearby.",
     },
     FR = {
@@ -57,7 +54,7 @@ local Translations = {
         AntiRagdoll = "Anti Ragdoll", NoAnimation = "Sans Animation",
         Fullbright = "Luminosité max", LangSelect = "Langue",
         CreditsTitle = "Super Bot Brawl Hub",
-        CreditsContent = "Créé par Rival960\nAvec l'aide de Claude (IA)\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — Première version",
+        CreditsContent = "Créé par Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — Première version",
         Loaded = "Hub chargé ! Combats plus intelligemment.", NoBot = "Aucun bot trouvé à proximité.",
     },
     DE = {
@@ -69,7 +66,7 @@ local Translations = {
         AntiRagdoll = "Anti Ragdoll", NoAnimation = "Keine Animation",
         Fullbright = "Vollhell", LangSelect = "Sprache",
         CreditsTitle = "Super Bot Brawl Hub",
-        CreditsContent = "Erstellt von Rival960\nMit Hilfe von Claude (KI)\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — Erste Version",
+        CreditsContent = "Erstellt von Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — Erste Version",
         Loaded = "Hub geladen! Kämpfe klüger.", NoBot = "Kein Bot in der Nähe gefunden.",
     },
     ES = {
@@ -81,7 +78,7 @@ local Translations = {
         AntiRagdoll = "Anti Ragdoll", NoAnimation = "Sin Animación",
         Fullbright = "Brillo máximo", LangSelect = "Idioma",
         CreditsTitle = "Super Bot Brawl Hub",
-        CreditsContent = "Creado por Rival960\nCon la ayuda de Claude (IA)\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — Primera versión",
+        CreditsContent = "Creado por Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — Primera versión",
         Loaded = "¡Hub cargado! Lucha de forma más inteligente.", NoBot = "No se encontró ningún bot cerca.",
     },
     PT = {
@@ -93,7 +90,7 @@ local Translations = {
         AntiRagdoll = "Anti Ragdoll", NoAnimation = "Sem Animação",
         Fullbright = "Brilho máximo", LangSelect = "Idioma",
         CreditsTitle = "Super Bot Brawl Hub",
-        CreditsContent = "Criado por Rival960\nCom a ajuda de Claude (IA)\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — Primeira versão",
+        CreditsContent = "Criado por Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — Primeira versão",
         Loaded = "Hub carregado! Lute de forma mais inteligente.", NoBot = "Nenhum bot encontrado por perto.",
     },
     RU = {
@@ -105,7 +102,7 @@ local Translations = {
         AntiRagdoll = "Анти-рагдолл", NoAnimation = "Без анимации",
         Fullbright = "Максяркость", LangSelect = "Язык",
         CreditsTitle = "Super Bot Brawl Hub",
-        CreditsContent = "Создано Rival960\nПри помощи Claude (ИИ)\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — Первый выпуск",
+        CreditsContent = "Создано Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — Первый выпуск",
         Loaded = "Хаб загружен! Сражайся умнее.", NoBot = "Рядом нет ботов.",
     },
     IT = {
@@ -117,7 +114,7 @@ local Translations = {
         AntiRagdoll = "Anti Ragdoll", NoAnimation = "Nessuna Animazione",
         Fullbright = "Luminosità massima", LangSelect = "Lingua",
         CreditsTitle = "Super Bot Brawl Hub",
-        CreditsContent = "Creato da Rival960\nCon l'aiuto di Claude (IA)\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — Prima versione",
+        CreditsContent = "Creato da Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — Prima versione",
         Loaded = "Hub caricato! Combatti in modo più intelligente.", NoBot = "Nessun bot trovato nelle vicinanze.",
     },
     NL = {
@@ -129,7 +126,7 @@ local Translations = {
         AntiRagdoll = "Anti Ragdoll", NoAnimation = "Geen Animatie",
         Fullbright = "Maximale helderheid", LangSelect = "Taal",
         CreditsTitle = "Super Bot Brawl Hub",
-        CreditsContent = "Gemaakt door Rival960\nMet hulp van Claude (AI)\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — Eerste versie",
+        CreditsContent = "Gemaakt door Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — Eerste versie",
         Loaded = "Hub geladen! Vecht slimmer.", NoBot = "Geen bot in de buurt gevonden.",
     },
     PL = {
@@ -141,7 +138,7 @@ local Translations = {
         AntiRagdoll = "Anti Ragdoll", NoAnimation = "Bez Animacji",
         Fullbright = "Pełna jasność", LangSelect = "Język",
         CreditsTitle = "Super Bot Brawl Hub",
-        CreditsContent = "Stworzone przez Rival960\nZ pomocą Claude (AI)\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — Pierwsza wersja",
+        CreditsContent = "Stworzone przez Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — Pierwsza wersja",
         Loaded = "Hub załadowany! Walcz mądrzej.", NoBot = "Nie znaleziono bota w pobliżu.",
     },
     ZH = {
@@ -153,7 +150,7 @@ local Translations = {
         AntiRagdoll = "防布娃娃", NoAnimation = "无动画",
         Fullbright = "全亮", LangSelect = "语言",
         CreditsTitle = "超级机器人乱斗Hub",
-        CreditsContent = "由 Rival960 创建\n在 Claude (AI) 的帮助下\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — 首次发布",
+        CreditsContent = "由 Rival960 创建\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — 首次发布",
         Loaded = "Hub已加载！更智慧地战斗。", NoBot = "附近没有找到机器人。",
     },
     JA = {
@@ -165,7 +162,7 @@ local Translations = {
         AntiRagdoll = "アンチラグドール", NoAnimation = "アニメーションなし",
         Fullbright = "フルブライト", LangSelect = "言語",
         CreditsTitle = "スーパーボットブロールHub",
-        CreditsContent = "Rival960 作\nClaude (AI) の協力による\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — 初回リリース",
+        CreditsContent = "Rival960 作\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — 初回リリース",
         Loaded = "Hub読み込み完了！より賢く戦おう。", NoBot = "近くにボットが見つかりません。",
     },
     TR = {
@@ -177,7 +174,7 @@ local Translations = {
         AntiRagdoll = "Anti Ragdoll", NoAnimation = "Animasyonsuz",
         Fullbright = "Tam Parlaklık", LangSelect = "Dil",
         CreditsTitle = "Super Bot Brawl Hub",
-        CreditsContent = "Rival960 tarafından oluşturuldu\nClaude (AI) yardımıyla\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — İlk sürüm",
+        CreditsContent = "Rival960 tarafından oluşturuldu\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — İlk sürüm",
         Loaded = "Hub yüklendi! Daha akıllıca savaş.", NoBot = "Yakında bot bulunamadı.",
     },
     KO = {
@@ -189,7 +186,7 @@ local Translations = {
         AntiRagdoll = "안티 래그돌", NoAnimation = "애니메이션 없음",
         Fullbright = "풀브라이트", LangSelect = "언어",
         CreditsTitle = "슈퍼 봇 브롤 허브",
-        CreditsContent = "Rival960 제작\nClaude (AI)의 도움으로\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — 첫 번째 릴리스",
+        CreditsContent = "Rival960 제작\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — 첫 번째 릴리스",
         Loaded = "허브 로드 완료! 더 스마트하게 싸우자.", NoBot = "근처에 봇이 없습니다.",
     },
     AR = {
@@ -201,7 +198,7 @@ local Translations = {
         AntiRagdoll = "مضاد الراجدول", NoAnimation = "بدون رسوم متحركة",
         Fullbright = "إضاءة كاملة", LangSelect = "اللغة",
         CreditsTitle = "سوبر بوت برول هاب",
-        CreditsContent = "أنشأه Rival960\nبمساعدة Claude (AI)\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — الإصدار الأول",
+        CreditsContent = "أنشأه Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — الإصدار الأول",
         Loaded = "تم تحميل الهاب! قاتل بذكاء.", NoBot = "لم يتم العثور على روبوت قريب.",
     },
     VI = {
@@ -213,7 +210,7 @@ local Translations = {
         AntiRagdoll = "Chống Ragdoll", NoAnimation = "Không Hoạt Ảnh",
         Fullbright = "Sáng tối đa", LangSelect = "Ngôn ngữ",
         CreditsTitle = "Super Bot Brawl Hub",
-        CreditsContent = "Tạo bởi Rival960\nVới sự trợ giúp của Claude (AI)\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — Phiên bản đầu tiên",
+        CreditsContent = "Tạo bởi Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — Phiên bản đầu tiên",
         Loaded = "Hub đã tải! Chiến đấu thông minh hơn.", NoBot = "Không tìm thấy bot nào gần đây.",
     },
     SV = {
@@ -225,7 +222,7 @@ local Translations = {
         AntiRagdoll = "Anti Ragdoll", NoAnimation = "Ingen Animation",
         Fullbright = "Fullbright", LangSelect = "Språk",
         CreditsTitle = "Super Bot Brawl Hub",
-        CreditsContent = "Skapad av Rival960\nMed hjälp av Claude (AI)\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — Första utgåvan",
+        CreditsContent = "Skapad av Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — Första utgåvan",
         Loaded = "Hub laddad! Kämpa smartare.", NoBot = "Ingen bot hittades i närheten.",
     },
     EL = {
@@ -237,7 +234,7 @@ local Translations = {
         AntiRagdoll = "Anti Ragdoll", NoAnimation = "Χωρίς Animation",
         Fullbright = "Πλήρης Φωτεινότητα", LangSelect = "Γλώσσα",
         CreditsTitle = "Super Bot Brawl Hub",
-        CreditsContent = "Δημιουργήθηκε από τον Rival960\nΜε βοήθεια του Claude (AI)\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — Πρώτη έκδοση",
+        CreditsContent = "Δημιουργήθηκε από τον Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — Πρώτη έκδοση",
         Loaded = "Hub φορτώθηκε! Μάχου εξυπνότερα.", NoBot = "Δεν βρέθηκε bot κοντά.",
     },
     RO = {
@@ -249,7 +246,7 @@ local Translations = {
         AntiRagdoll = "Anti Ragdoll", NoAnimation = "Fără Animație",
         Fullbright = "Luminozitate maximă", LangSelect = "Limbă",
         CreditsTitle = "Super Bot Brawl Hub",
-        CreditsContent = "Creat de Rival960\nCu ajutorul lui Claude (AI)\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — Prima versiune",
+        CreditsContent = "Creat de Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — Prima versiune",
         Loaded = "Hub încărcat! Luptă mai inteligent.", NoBot = "Niciun bot găsit în apropiere.",
     },
     UK = {
@@ -261,7 +258,7 @@ local Translations = {
         AntiRagdoll = "Анти-рагдол", NoAnimation = "Без анімації",
         Fullbright = "Повна яскравість", LangSelect = "Мова",
         CreditsTitle = "Super Bot Brawl Hub",
-        CreditsContent = "Створено Rival960\nЗа допомогою Claude (AI)\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — Перший випуск",
+        CreditsContent = "Створено Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — Перший випуск",
         Loaded = "Hub завантажено! Бийся розумніше.", NoBot = "Поруч немає ботів.",
     },
     CS = {
@@ -273,7 +270,7 @@ local Translations = {
         AntiRagdoll = "Anti Ragdoll", NoAnimation = "Bez Animace",
         Fullbright = "Plné světlo", LangSelect = "Jazyk",
         CreditsTitle = "Super Bot Brawl Hub",
-        CreditsContent = "Vytvořil Rival960\nS pomocí Claude (AI)\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — První verze",
+        CreditsContent = "Vytvořil Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — První verze",
         Loaded = "Hub načten! Bojuj chytřeji.", NoBot = "V okolí nebyl nalezen žádný bot.",
     },
     DA = {
@@ -285,7 +282,7 @@ local Translations = {
         AntiRagdoll = "Anti Ragdoll", NoAnimation = "Ingen Animation",
         Fullbright = "Fuld lysstyrke", LangSelect = "Sprog",
         CreditsTitle = "Super Bot Brawl Hub",
-        CreditsContent = "Oprettet af Rival960\nMed hjælp fra Claude (AI)\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — Første udgivelse",
+        CreditsContent = "Oprettet af Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — Første udgivelse",
         Loaded = "Hub indlæst! Kæmp klogere.", NoBot = "Ingen bot fundet i nærheden.",
     },
 }
@@ -296,12 +293,9 @@ local function T(key)
         or key
 end
 
--- ───────────────────────────────────────────────────────────────
--- SETTINGS
--- ───────────────────────────────────────────────────────────────
 local Settings = {
     AutoFarm         = false,
-    AutoFarmDelay    = 0.1,  -- 0.1s default
+    AutoFarmDelay    = 0.1,
     BotMagnet        = false,
     ESP_Bots         = false,
     Fly              = false,
@@ -315,9 +309,6 @@ local Settings = {
 
 local isMobile = UserInputService.TouchEnabled and not UserInputService.KeyboardEnabled
 
--- ───────────────────────────────────────────────────────────────
--- LOAD RAYFIELD (keyless)
--- ───────────────────────────────────────────────────────────────
 local success, Rayfield = pcall(function()
     return loadstring(game:HttpGet("https://sirius.menu/rayfield"))()
 end)
@@ -329,15 +320,11 @@ end
 local Window = Rayfield:CreateWindow({
     Name            = T("WindowTitle"),
     LoadingTitle    = "Loading Hub...",
-    LoadingSubtitle = "Created by Rival960 & Claude and DeepSeek",
+    LoadingSubtitle = "Created by Rival960 & Claude, DeepSeek",
     ConfigurationSaving = { Enabled = false },
     Discord         = { Enabled = false },
     KeySystem       = false,
 })
-
--- ───────────────────────────────────────────────────────────────
--- HELPERS
--- ───────────────────────────────────────────────────────────────
 
 local function getHRP()
     local char = LocalPlayer.Character
@@ -487,14 +474,12 @@ local function enableNoClip()
     originalCanCollide = {}
     local char = LocalPlayer.Character
     if not char then return end
-
     for _, part in ipairs(char:GetDescendants()) do
         if part:IsA("BasePart") then
             originalCanCollide[part] = part.CanCollide
             part.CanCollide = false
         end
     end
-
     noclipConnection = RunService.Heartbeat:Connect(function()
         if not Settings.NoClip then return end
         local c = LocalPlayer.Character
@@ -532,7 +517,7 @@ local function disableNoClip()
 end
 
 -- ───────────────────────────────────────────────────────────────
--- ANTI RAGDOLL (event-driven only, no forced state)
+-- ANTI RAGDOLL
 -- ───────────────────────────────────────────────────────────────
 local antiRagdollConn = nil
 local ragdollConstraintConn = nil
@@ -589,17 +574,27 @@ local function disableAntiRagdoll()
 end
 
 -- ───────────────────────────────────────────────────────────────
--- NO ANIMATION (universal + weapons + no callback)
+-- NO ANIMATION (no LoadAnimation hook, no callback errors)
+-- Stops all tracks on character Animator AND tool Animator each frame
 -- ───────────────────────────────────────────────────────────────
 local noAnimConnection = nil
 local originalPlayAnimations = nil
-local originalLoadAnimation = nil
-local trackedTracks = {}
 
 local function getAnimator()
     local hum = getHumanoid()
     if not hum then return nil end
     return hum:FindFirstChildOfClass("Animator")
+end
+
+local function stopTracksSafe(animator)
+    if not animator then return end
+    local ok, tracks = pcall(function()
+        return animator:GetPlayingAnimationTracks()
+    end)
+    if not ok or not tracks then return end
+    for _, track in ipairs(tracks) do
+        pcall(function() track:Stop(0) end)
+    end
 end
 
 local function enableNoAnimation()
@@ -608,99 +603,67 @@ local function enableNoAnimation()
     local char = LocalPlayer.Character
     if char then
         local animateScript = char:FindFirstChild("Animate")
-        if animateScript then animateScript.Disabled = true end
+        if animateScript then
+            pcall(function() animateScript.Disabled = true end)
+        end
     end
 
     local animator = getAnimator()
     if animator then
         originalPlayAnimations = animator.PlayAnimations
-        animator.PlayAnimations = false
-
-        if not originalLoadAnimation then
-            originalLoadAnimation = animator.LoadAnimation
-            animator.LoadAnimation = function(self, animation)
-                local track
-                local ok, result = pcall(function()
-                    return originalLoadAnimation(self, animation)
-                end)
-                if ok and result then
-                    track = result
-                    if Settings.NoAnimation then
-                        pcall(function() track:Stop(0) end)
-                        table.insert(trackedTracks, track)
-                        task.spawn(function()
-                            while Settings.NoAnimation and track do
-                                pcall(function()
-                                    if track.IsPlaying then
-                                        track:Stop(0)
-                                    end
-                                end)
-                                task.wait()
-                            end
-                        end)
-                    end
-                end
-                return track or result
-            end
-        end
+        pcall(function() animator.PlayAnimations = false end)
     end
 
     noAnimConnection = RunService.Heartbeat:Connect(function()
         if not Settings.NoAnimation then return end
-        pcall(function()
-            local c = LocalPlayer.Character
-            if c then
-                local animateScript = c:FindFirstChild("Animate")
-                if animateScript and not animateScript.Disabled then
-                    animateScript.Disabled = true
-                end
+        local c = LocalPlayer.Character
+        if not c then return end
+
+        local animateScript = c:FindFirstChild("Animate")
+        if animateScript and not animateScript.Disabled then
+            pcall(function() animateScript.Disabled = true end)
+        end
+
+        local a = getAnimator()
+        if a then
+            if a.PlayAnimations then
+                pcall(function() a.PlayAnimations = false end)
             end
-            local a = getAnimator()
-            if a then
-                if a.PlayAnimations then a.PlayAnimations = false end
-                for _, track in ipairs(a:GetPlayingAnimationTracks()) do
-                    pcall(function() track:Stop(0) end)
-                end
+            stopTracksSafe(a)
+        end
+
+        local tool = c:FindFirstChildOfClass("Tool")
+        if tool then
+            local toolAnimator = tool:FindFirstChildOfClass("Animator")
+            if toolAnimator then
+                stopTracksSafe(toolAnimator)
             end
-            -- Prune dead tracks
-            for i = #trackedTracks, 1, -1 do
-                local t = trackedTracks[i]
-                if not t or not t.IsPlaying then
-                    table.remove(trackedTracks, i)
-                end
-            end
-        end)
+        end
     end)
 end
 
 local function disableNoAnimation()
     if noAnimConnection then noAnimConnection:Disconnect(); noAnimConnection = nil end
-
     local char = LocalPlayer.Character
     if char then
         local animateScript = char:FindFirstChild("Animate")
-        if animateScript then animateScript.Disabled = false end
+        if animateScript then
+            pcall(function() animateScript.Disabled = false end)
+        end
     end
-
     local animator = getAnimator()
-    if animator then
-        if originalPlayAnimations ~= nil then
-            animator.PlayAnimations = originalPlayAnimations
-            originalPlayAnimations = nil
-        end
-        if originalLoadAnimation then
-            pcall(function() animator.LoadAnimation = originalLoadAnimation end)
-            originalLoadAnimation = nil
-        end
+    if animator and originalPlayAnimations ~= nil then
+        pcall(function() animator.PlayAnimations = originalPlayAnimations end)
+        originalPlayAnimations = nil
     end
-    trackedTracks = {}
 end
 
 -- ───────────────────────────────────────────────────────────────
--- BOT MAGNET (gather all bots in one spot, including new spawns)
+-- BOT MAGNET (MoveTo approach — preserves server-side position, damage works)
 -- ───────────────────────────────────────────────────────────────
 local botMagnetConnection = nil
 local magnetAnchor = nil
+local lastMagnetTick = 0
 
 local function doBotMagnet()
     if not Settings.BotMagnet then
@@ -708,43 +671,44 @@ local function doBotMagnet()
         return
     end
 
+    local now = tick()
+    if now - lastMagnetTick < 0.25 then return end
+    lastMagnetTick = now
+
     local hrp = getHRP()
     if not hrp then return end
 
-    -- Anchor the center 8 studs in front of the player (only update if player moved away)
     if not magnetAnchor or (hrp.Position - magnetAnchor).Magnitude > 40 then
-        magnetAnchor = hrp.Position + hrp.CFrame.LookVector * 8
+        magnetAnchor = hrp.Position + hrp.CFrame.LookVector * 12
     end
 
     local botsFolder = Workspace:FindFirstChild("Bots")
     if not botsFolder then return end
 
-    local bots = {}
+    local idx = 0
     for _, obj in ipairs(botsFolder:GetDescendants()) do
         if isBot(obj) then
             local bhrp = obj:FindFirstChild("HumanoidRootPart")
-            if bhrp then
-                table.insert(bots, bhrp)
+            local bhum = obj:FindFirstChildOfClass("Humanoid")
+            if bhrp and bhum then
+                local row = math.floor(idx / 5)
+                local col = idx % 5
+                local targetX = magnetAnchor.X + (col - 2) * 6
+                local targetZ = magnetAnchor.Z + row * 6
+                local targetPos = Vector3.new(targetX, bhrp.Position.Y, targetZ)
+                if (bhrp.Position - targetPos).Magnitude > 4 then
+                    pcall(function() bhum:MoveTo(targetPos) end)
+                end
+                idx = idx + 1
             end
         end
-    end
-
-    -- Arrange in a 5-wide grid in front of the anchor
-    for i, bhrp in ipairs(bots) do
-        local idx = i - 1
-        local row = math.floor(idx / 5)
-        local col = idx % 5
-        local targetX = magnetAnchor.X + (col - 2) * 4
-        local targetZ = magnetAnchor.Z + row * 4
-        pcall(function()
-            bhrp.CFrame = CFrame.new(targetX, bhrp.Position.Y, targetZ)
-        end)
     end
 end
 
 local function enableBotMagnet()
     if botMagnetConnection then return end
     magnetAnchor = nil
+    lastMagnetTick = 0
     botMagnetConnection = RunService.Heartbeat:Connect(function()
         if not Settings.BotMagnet then return end
         pcall(doBotMagnet)
@@ -760,7 +724,7 @@ local function disableBotMagnet()
 end
 
 -- ───────────────────────────────────────────────────────────────
--- AUTO FARM (feet on bot head, PlatformStand, size-independent)
+-- AUTO FARM
 -- ───────────────────────────────────────────────────────────────
 local lastFarmTime = 0
 local farmActive = false
@@ -795,7 +759,7 @@ local function doAutoFarm()
 
     local botHeight  = getBotHeight(botModel)
     local charHeight = getCharacterHeight()
-    local targetY = botHRP.Position.Y + (botHeight / 2) + (charHeight / 2) + 1
+    local targetY = botHRP.Position.Y + (botHeight / 2) + (charHeight / 2) + 3
 
     local sideOffset = (hrp.Position - botHRP.Position)
     sideOffset = Vector3.new(sideOffset.X, 0, sideOffset.Z)
@@ -912,7 +876,6 @@ RunService.RenderStepped:Connect(function()
     local hrp = char:FindFirstChild("HumanoidRootPart")
     local hum = char:FindFirstChildOfClass("Humanoid")
 
-    -- Fly
     if Settings.Fly and flyVelocity and flyGyro and hrp then
         local cam = Workspace.CurrentCamera
         local speed = Settings.FlySpeed
@@ -936,7 +899,6 @@ RunService.RenderStepped:Connect(function()
         flyGyro.CFrame = cam.CFrame
     end
 
-    -- ESP
     if Settings.ESP_Bots then
         local botsFolder = Workspace:FindFirstChild("Bots")
         if botsFolder then
