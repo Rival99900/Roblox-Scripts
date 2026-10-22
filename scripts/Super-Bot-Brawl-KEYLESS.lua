@@ -5,10 +5,10 @@
     Version: 1.0.0 | Languages: 21 | Rayfield UI
     ================================================================
     Features:
-      - Auto Farm (teleports high above bot, anti-touch, anti-ragdoll)
-      - Anti Touch (CanTouch=false + TouchInterest removed on player & bots)
-      - Anti Ragdoll (blocks Ragdoll/Physics/FallingDown/Dead states)
-      - No Animation (universal R6/R15/custom, stops all tracks)
+      - Auto Farm (feet on bot head, PlatformStand, works for all sizes)
+      - Anti Touch (CanTouch=false on player and bots)
+      - Anti Ragdoll (event-driven, blocks Ragdoll/Physics/FallingDown/Dead)
+      - No Animation (universal R6/R15/custom)
       - ESP Bots (highlight + HP billboard on all NPCs)
       - Teleport to Nearest Bot
       - Fly (PC: WASD/Space/Shift | Mobile: joystick + on-screen ▲/▼)
@@ -619,7 +619,7 @@ local function disableFly()
     if flyVelocity then flyVelocity:Destroy(); flyVelocity = nil end
     if flyGyro     then flyGyro:Destroy();     flyGyro     = nil end
     local hum = getHumanoid()
-    if hum then hum.PlatformStand = false end
+    if hum and not Settings.AutoFarm then hum.PlatformStand = false end
     local hrp = getHRP()
     if hrp then
         hrp.AssemblyLinearVelocity  = Vector3.zero
@@ -687,7 +687,7 @@ local function disableNoClip()
 end
 
 -- ───────────────────────────────────────────────────────────────
--- ANTI TOUCH (player + bots: CanTouch=false, TouchInterest removed)
+-- ANTI TOUCH (player + bots, CanTouch=false + TouchInterest removed)
 -- ───────────────────────────────────────────────────────────────
 local antiTouchConnection = nil
 
@@ -703,7 +703,6 @@ local function enableAntiTouch()
     antiTouchConnection = RunService.Heartbeat:Connect(function()
         if not Settings.AntiTouch then return end
 
-        -- Player parts
         local char = LocalPlayer.Character
         if char then
             for _, part in ipairs(char:GetDescendants()) do
@@ -713,7 +712,6 @@ local function enableAntiTouch()
             end
         end
 
-        -- Bot parts (critical: bots must not be able to trigger touch)
         local botsFolder = Workspace:FindFirstChild("Bots")
         if botsFolder then
             for _, obj in ipairs(botsFolder:GetDescendants()) do
@@ -745,10 +743,10 @@ local function disableAntiTouch()
 end
 
 -- ───────────────────────────────────────────────────────────────
--- ANTI RAGDOLL (blocks Ragdoll/Physics/FallingDown/Dead states)
+-- ANTI RAGDOLL (event-driven, minimal reset)
 -- ───────────────────────────────────────────────────────────────
 local antiRagdollConnection = nil
-local bannedConstraints = { "BallSocketConstraint", "HingeConstraint", "NoCollisionConstraint" }
+local ragdollCleanupConn = nil
 local blockedStates = {
     [Enum.HumanoidStateType.Ragdoll] = true,
     [Enum.HumanoidStateType.FallingDown] = true,
@@ -756,23 +754,13 @@ local blockedStates = {
     [Enum.HumanoidStateType.Dead] = true,
 }
 
-local function cleanRagdoll(char)
-    local hum = char:FindFirstChildOfClass("Humanoid")
-    if not hum then return end
-
-    if hum.PlatformStand then hum.PlatformStand = false end
-    if hum.Sit then hum.Sit = false end
-
-    local state = hum:GetState()
-    if blockedStates[state] then
-        hum:ChangeState(Enum.HumanoidStateType.Running)
-    end
-
+local function cleanRagdollMinimal(char)
+    -- Only re-enable motors and remove constraints, do NOT force any state
     for _, v in ipairs(char:GetDescendants()) do
-        if table.find(bannedConstraints, v.ClassName) then
+        if v:IsA("Motor6D") and not v.Enabled then
+            pcall(function() v.Enabled = true end)
+        elseif v:IsA("BallSocketConstraint") or v:IsA("HingeConstraint") then
             pcall(function() v:Destroy() end)
-        elseif v:IsA("Motor6D") and not v.Enabled then
-            v.Enabled = true
         end
     end
 end
@@ -780,25 +768,33 @@ end
 local function enableAntiRagdoll()
     if antiRagdollConnection then return end
     local char = LocalPlayer.Character
-    if char then
-        local hum = char:FindFirstChildOfClass("Humanoid")
-        if hum then
-            for state in pairs(blockedStates) do
-                pcall(function() hum:SetStateEnabled(state, false) end)
-            end
-            hum.StateChanged:Connect(function(_, newState)
-                if Settings.AntiRagdoll and blockedStates[newState] then
-                    cleanRagdoll(char)
-                end
-            end)
-        end
+    if not char then return end
+    local hum = char:FindFirstChildOfClass("Humanoid")
+    if not hum then return end
+
+    for state in pairs(blockedStates) do
+        pcall(function() hum:SetStateEnabled(state, false) end)
     end
 
-    antiRagdollConnection = RunService.Heartbeat:Connect(function()
+    -- Only react to actual state changes, not every frame
+    antiRagdollConnection = hum.StateChanged:Connect(function(_, newState)
         if not Settings.AntiRagdoll then return end
-        local c = LocalPlayer.Character
-        if not c then return end
-        cleanRagdoll(c)
+        if blockedStates[newState] then
+            local c = LocalPlayer.Character
+            if c then
+                cleanRagdollMinimal(c)
+            end
+        end
+    end)
+
+    -- Also catch ragdoll constraints being created by the game
+    ragdollCleanupConn = char.DescendantAdded:Connect(function(desc)
+        if not Settings.AntiRagdoll then return end
+        if desc:IsA("BallSocketConstraint") or desc:IsA("HingeConstraint") then
+            task.defer(function()
+                pcall(function() desc:Destroy() end)
+            end)
+        end
     end)
 end
 
@@ -806,6 +802,10 @@ local function disableAntiRagdoll()
     if antiRagdollConnection then
         antiRagdollConnection:Disconnect()
         antiRagdollConnection = nil
+    end
+    if ragdollCleanupConn then
+        ragdollCleanupConn:Disconnect()
+        ragdollCleanupConn = nil
     end
     local hum = getHumanoid()
     if hum then
@@ -816,7 +816,7 @@ local function disableAntiRagdoll()
 end
 
 -- ───────────────────────────────────────────────────────────────
--- NO ANIMATION (universal R6/R15/custom)
+-- NO ANIMATION (universal)
 -- ───────────────────────────────────────────────────────────────
 local noAnimConnection = nil
 local animatorHook = nil
@@ -827,14 +827,6 @@ local function getAnimator()
     local hum = getHumanoid()
     if not hum then return nil end
     return hum:FindFirstChildOfClass("Animator")
-end
-
-local function stopAllTracks()
-    local animator = getAnimator()
-    if not animator then return end
-    for _, track in ipairs(animator:GetPlayingAnimationTracks()) do
-        pcall(function() track:Stop(0) end)
-    end
 end
 
 local function enableNoAnimation()
@@ -861,8 +853,6 @@ local function enableNoAnimation()
             end
         end)
     end
-
-    stopAllTracks()
 
     noAnimConnection = RunService.Heartbeat:Connect(function()
         if not Settings.NoAnimation then return end
@@ -914,12 +904,26 @@ local function disableNoAnimation()
 end
 
 -- ───────────────────────────────────────────────────────────────
--- AUTO FARM (teleports high above bot, size-adapted)
+-- AUTO FARM (feet on bot head, PlatformStand, size-independent)
 -- ───────────────────────────────────────────────────────────────
 local lastFarmTime = 0
+local farmActive = false
+
+local function restoreFarmState()
+    farmActive = false
+    local hum = getHumanoid()
+    if hum then
+        hum.PlatformStand = false
+    end
+end
 
 local function doAutoFarm()
-    if not Settings.AutoFarm then return end
+    if not Settings.AutoFarm then
+        if farmActive then restoreFarmState() end
+        return
+    end
+    farmActive = true
+
     local now = tick()
     if now - lastFarmTime < Settings.AutoFarmDelay then return end
     lastFarmTime = now
@@ -933,17 +937,34 @@ local function doAutoFarm()
     local botModel, botHRP = getNearestBot()
     if not botHRP or not botModel then return end
 
-    local charHeight = getCharacterHeight()
+    -- PlatformStand so gravity doesn't pull us down between farm ticks
+    hum.PlatformStand = true
+
+    -- Place HRP so player's feet are just above bot's head
+    -- HRP.y = botHRP.y + botHeight/2 + charHeight/2 + 1
     local botHeight  = getBotHeight(botModel)
-    -- Bigger margin so even tiny characters stay out of reach
-    local margin = 12
-    local offsetAbove = (botHeight / 2) + (charHeight / 2) + margin
-    offsetAbove = math.clamp(offsetAbove, 15, 60)
+    local charHeight = getCharacterHeight()
+    local targetY = botHRP.Position.Y + (botHeight / 2) + (charHeight / 2) + 1
 
-    local targetPos = botHRP.Position + Vector3.new(0, offsetAbove, 0)
+    -- Small horizontal offset so we're not perfectly centered (avoids overlap glitch)
+    local sideOffset = (hrp.Position - botHRP.Position)
+    sideOffset = Vector3.new(sideOffset.X, 0, sideOffset.Z)
+    if sideOffset.Magnitude < 0.1 then
+        sideOffset = Vector3.new(1, 0, 0)
+    end
+    sideOffset = sideOffset.Unit * 1.5
+
+    local targetPos = Vector3.new(
+        botHRP.Position.X + sideOffset.X,
+        targetY,
+        botHRP.Position.Z + sideOffset.Z
+    )
+
     hrp.CFrame = CFrame.lookAt(targetPos, botHRP.Position)
+    hrp.AssemblyLinearVelocity = Vector3.zero
+    hrp.AssemblyAngularVelocity = Vector3.zero
 
-    -- Ensure anti-touch while farming
+    -- Anti-touch on player during farm
     for _, part in ipairs(char:GetDescendants()) do
         if part:IsA("BasePart") then
             part.CanTouch = false
@@ -1016,7 +1037,7 @@ TabMovement:CreateToggle({ Name = T("NoClip"), CurrentValue = Settings.NoClip, F
 TabMovement:CreateSlider({ Name = T("WalkSpeed"), Range = {16, 250}, Increment = 1, CurrentValue = Settings.WalkSpeed, Flag = "WalkSpeed", Callback = function(v) Settings.WalkSpeed = v; local hum = getHumanoid(); if hum then hum.WalkSpeed = v end end })
 
 local TabCombat = Window:CreateTab(T("TabCombat"), 4483362458)
-TabCombat:CreateToggle({ Name = T("AutoFarm"), CurrentValue = Settings.AutoFarm, Flag = "AutoFarm", Callback = function(v) Settings.AutoFarm = v end })
+TabCombat:CreateToggle({ Name = T("AutoFarm"), CurrentValue = Settings.AutoFarm, Flag = "AutoFarm", Callback = function(v) Settings.AutoFarm = v; if not v then restoreFarmState() end end })
 TabCombat:CreateSlider({ Name = T("AutoFarmDelay"), Range = {0.1, 2.0}, Increment = 0.1, CurrentValue = Settings.AutoFarmDelay, Flag = "AutoFarmDelay", Callback = function(v) Settings.AutoFarmDelay = v end })
 TabCombat:CreateToggle({ Name = T("AntiTouch"), CurrentValue = Settings.AntiTouch, Flag = "AntiTouch", Callback = function(v) Settings.AntiTouch = v; if v then enableAntiTouch() else disableAntiTouch() end end })
 TabCombat:CreateToggle({ Name = T("AntiRagdoll"), CurrentValue = Settings.AntiRagdoll, Flag = "AntiRagdoll", Callback = function(v) Settings.AntiRagdoll = v; if v then enableAntiRagdoll() else disableAntiRagdoll() end end })
@@ -1134,7 +1155,7 @@ RunService.RenderStepped:Connect(function()
     end
 
     -- WalkSpeed
-    if hum and hum.WalkSpeed ~= Settings.WalkSpeed and not Settings.Fly then
+    if hum and hum.WalkSpeed ~= Settings.WalkSpeed and not Settings.Fly and not Settings.AutoFarm then
         hum.WalkSpeed = Settings.WalkSpeed
     end
 end)
