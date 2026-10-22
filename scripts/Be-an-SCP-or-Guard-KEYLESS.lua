@@ -1,1129 +1,906 @@
 --[[
     ================================================================
-    Super Bot Brawl Hub — Super Bot Brawl
-    Created by Rival960 with the help of Claude
-    Version: 1.0.0 | Languages: 21 | Rayfield UI
-    ================================================================
-    Features:
-      - God Mode (MaxHealth + HealthChanged + safety loop)
-      - Auto Farm (auto-attack nearest bot with cooldown)
-      - ESP Bots (highlight + HP billboard on all NPCs)
-      - Teleport to Nearest Bot
-      - Fly (PC: WASD/Space/Shift | Mobile: joystick + on-screen ▲/▼)
-      - NoClip (pass through walls — HumanoidRootPart stays collidable)
-      - Walk Speed (adjustable)
-      - Fullbright (brightness boost, fixed clock)
-      - 21-language interface
+    ADMIN PANEL — Be an SCP or Guard (Fully Fixed & Expanded)
+    Created by Rival960 with the help of AI
+    Languages: 21 Languages | Rayfield UI
     ================================================================
 --]]
 
--- ───────────────────────────────────────────────────────────────
--- SERVICES
--- ───────────────────────────────────────────────────────────────
-local Players       = game:GetService("Players")
-local RunService    = game:GetService("RunService")
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
 local UserInputService = game:GetService("UserInputService")
-local Workspace     = game:GetService("Workspace")
-local Lighting      = game:GetService("Lighting")
+local Workspace = game:GetService("Workspace")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Lighting = game:GetService("Lighting")
 
-local LocalPlayer   = Players.LocalPlayer
+local LocalPlayer = Players.LocalPlayer
 
--- ───────────────────────────────────────────────────────────────
--- 21-LANGUAGE SYSTEM
--- ───────────────────────────────────────────────────────────────
+-- -----------------------------------------------------------------
+-- 1. MULTILINGUAL SYSTEMS (21 LANGUAGES)
+-- -----------------------------------------------------------------
 local CurrentLang = "EN"
 
 local Translations = {
     EN = {
-        WindowTitle     = "Super Bot Brawl Hub",
-        TabHome         = "Home",
-        TabVision       = "Vision",
-        TabMovement     = "Movement",
-        TabCombat       = "Combat",
-        TabTools        = "Tools",
-        ESPBots         = "ESP Bots",
-        ESPBotsDesc     = "Highlight nearby bots and show their HP",
-        TPNearestBot    = "TP to Nearest Bot",
-        TPNearestDesc   = "Teleport in front of the closest bot",
-        Fly             = "Fly",
-        FlyDesc         = "Toggle flight mode",
-        FlySpeed        = "Fly Speed",
-        NoClip          = "NoClip",
-        NoClipDesc      = "Pass through walls and obstacles",
-        WalkSpeed       = "Walk Speed",
-        GodMode         = "God Mode",
-        GodModeDesc     = "Continuously restore HP — almost indestructible",
-        AutoFarm        = "Auto Farm",
-        AutoFarmDesc    = "Automatically attack the nearest bot",
-        AutoFarmDelay   = "Farm Delay (s)",
-        HitboxToggle    = "Expand Hitboxes",
-        HitboxDesc      = "Increase bot hitbox size to hit more easily",
-        HitboxSize      = "Hitbox Size",
-        Fullbright      = "Fullbright",
-        FullbrightDesc  = "Raise brightness and disable shadows",
-        LangSelect      = "Language",
-        CreditsTitle    = "Super Bot Brawl Hub",
-        CreditsContent  = "Created by Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — First release",
-        Loaded          = "Hub loaded! Fight smarter.",
+        WindowTitle = "SCP vs Guard Hub",
+        TabHome = "Home",
+        TabVision = "Vision & ESP",
+        TabMovement = "Movement & Fly",
+        TabCombat = "Combat & Silent Aim",
+        TabDoors = "Doors Control",
+        TabTools = "Tools & Visuals",
+        ESPDynamic = "Dynamic Enemy ESP (Strict Team Filter)",
+        TPClosest = "TP to Closest Enemy",
+        Fly = "Fly (PC & Mobile)",
+        FlySpeed = "Fly Speed",
+        NoClip = "NoClip (Walk through walls)",
+        WalkSpeed = "WalkSpeed",
+        SilentAim = "Balanced Silent Aim (Weapon Fire Trigger)",
+        SilentAimDist = "Silent Aim Max Distance",
+        SilentAimFOV = "Silent Aim FOV Size",
+        FreezeAmmo = "Freeze Ammo (Infinite)",
+        Fullbright = "Fullbright (No Darkness)",
+        AntiBan = "Anti-Ban Protection",
+        HitboxToggle = "Enable Clean Hitboxes",
+        HitboxSize = "Hitbox Size (Up to 10x)",
+        OpenAllDoors = "Open All Doors",
+        CloseAllDoors = "Close All Doors",
+        CreditsTitle = "Creator & Credits",
+        CreditsContent = "Discord: rival960\nGitHub: Rival99900\nYouTube: rival9607",
+        LangSelect = "Select Language",
+        Loaded = "Hub Loaded Successfully!"
     },
     FR = {
-        WindowTitle     = "Super Bot Brawl Hub",
-        TabHome         = "Accueil",
-        TabVision       = "Vision",
-        TabMovement     = "Mouvement",
-        TabCombat       = "Combat",
-        TabTools        = "Outils",
-        ESPBots         = "ESP Bots",
-        ESPBotsDesc     = "Surligner les bots proches et afficher leurs PV",
-        TPNearestBot    = "TP au Bot le plus proche",
-        TPNearestDesc   = "Se téléporter devant le bot le plus proche",
-        Fly             = "Vol",
-        FlyDesc         = "Activer le mode vol",
-        FlySpeed        = "Vitesse de vol",
-        NoClip          = "NoClip",
-        NoClipDesc      = "Passer à travers les murs et obstacles",
-        WalkSpeed       = "Vitesse de marche",
-        GodMode         = "Mode Dieu",
-        GodModeDesc     = "Restaure les PV en continu — quasi invincible",
-        AutoFarm        = "Auto Farm",
-        AutoFarmDesc    = "Attaque automatiquement le bot le plus proche",
-        AutoFarmDelay   = "Délai farm (s)",
-        HitboxToggle    = "Agrandir les Hitboxes",
-        HitboxDesc      = "Agrandir la hitbox des bots pour frapper plus facilement",
-        HitboxSize      = "Taille Hitbox",
-        Fullbright      = "Luminosité max",
-        FullbrightDesc  = "Augmenter la luminosité et désactiver les ombres",
-        LangSelect      = "Langue",
-        CreditsTitle    = "Super Bot Brawl Hub",
-        CreditsContent  = "Créé par Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — Première version",
-        Loaded          = "Hub chargé ! Combats plus intelligemment.",
+        WindowTitle = "SCP vs Guard Hub",
+        TabHome = "Accueil",
+        TabVision = "Vision & ESP",
+        TabMovement = "Mouvements & Vol",
+        TabCombat = "Combat & Silent Aim",
+        TabDoors = "Contrôle des Portes",
+        TabTools = "Outils & Visuels",
+        ESPDynamic = "ESP Ennemis Dynamique (Filtre Strict)",
+        TPClosest = "TP vers l'Ennemi le plus proche",
+        Fly = "Voler (PC & Mobile)",
+        FlySpeed = "Vitesse de Vol",
+        NoClip = "NoClip (Traverser les murs)",
+        WalkSpeed = "Vitesse de marche",
+        SilentAim = "Silent Aim Équilibré (Sur Bouton de Tir)",
+        SilentAimDist = "Portée Max Silent Aim",
+        SilentAimFOV = "Taille du FOV Silent Aim",
+        FreezeAmmo = "Freeze Munitions (Infini)",
+        Fullbright = "Fullbright (Supprimer l'obscurité)",
+        AntiBan = "Protection Anti-Ban",
+        HitboxToggle = "Activer les Hitboxes Propres",
+        HitboxSize = "Taille Hitbox (Jusqu'à 10x)",
+        OpenAllDoors = "Ouvrir Toutes les Portes",
+        CloseAllDoors = "Fermer Toutes les Portes",
+        CreditsTitle = "Créateur & Crédits",
+        CreditsContent = "Discord : rival960\nGitHub : Rival99900\nYouTube : rival9607",
+        LangSelect = "Sélectionner la langue",
+        Loaded = "Hub chargé avec succès !"
     },
     DE = {
-        WindowTitle     = "Super Bot Brawl Hub",
-        TabHome         = "Start",
-        TabVision       = "Sicht",
-        TabMovement     = "Bewegung",
-        TabCombat       = "Kampf",
-        TabTools        = "Werkzeuge",
-        ESPBots         = "ESP Bots",
-        ESPBotsDesc     = "Nahe Bots hervorheben und HP anzeigen",
-        TPNearestBot    = "TP zum nächsten Bot",
-        TPNearestDesc   = "Zum nächsten Bot teleportieren",
-        Fly             = "Fliegen",
-        FlyDesc         = "Flugmodus umschalten",
-        FlySpeed        = "Fluggeschwindigkeit",
-        NoClip          = "NoClip",
-        NoClipDesc      = "Durch Wände und Hindernisse gehen",
-        WalkSpeed       = "Laufgeschwindigkeit",
-        GodMode         = "Gottmodus",
-        GodModeDesc     = "HP kontinuierlich wiederherstellen — fast unverwundbar",
-        AutoFarm        = "Auto Farm",
-        AutoFarmDesc    = "Greift automatisch den nächsten Bot an",
-        AutoFarmDelay   = "Farm-Verzögerung (s)",
-        HitboxToggle    = "Hitboxen vergrößern",
-        HitboxDesc      = "Bot-Hitboxen vergrößern, um leichter zu treffen",
-        HitboxSize      = "Hitbox-Größe",
-        Fullbright      = "Vollhell",
-        FullbrightDesc  = "Helligkeit erhöhen und Schatten deaktivieren",
-        LangSelect      = "Sprache",
-        CreditsTitle    = "Super Bot Brawl Hub",
-        CreditsContent  = "Erstellt von Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — Erste Version",
-        Loaded          = "Hub geladen! Kämpfe klüger.",
+        WindowTitle = "SCP vs Guard Hub",
+        TabHome = "Startseite",
+        TabVision = "Sicht & ESP",
+        TabMovement = "Bewegung & Flug",
+        TabCombat = "Kampf & Silent Aim",
+        TabDoors = "Türsteuerung",
+        TabTools = "Werkzeuge & Visuals",
+        ESPDynamic = "Dynamisches Gegner-ESP",
+        TPClosest = "TP zum nächsten Ziel",
+        Fly = "Fliegen (PC & Mobile)",
+        FlySpeed = "Fluggeschwindigkeit",
+        NoClip = "NoClip (Durch Wände gehen)",
+        WalkSpeed = "Gehgeschwindigkeit",
+        SilentAim = "Ausgeglichenes Silent Aim",
+        SilentAimDist = "Silent Aim Max. Distanz",
+        SilentAimFOV = "Silent Aim FOV Größe",
+        FreezeAmmo = "Munition einfrieren",
+        Fullbright = "Fullbright (Keine Finsternis)",
+        AntiBan = "Anti-Ban Schutz",
+        HitboxToggle = "Saubere Hitboxes aktivieren",
+        HitboxSize = "Hitbox-Größe (bis 10x)",
+        OpenAllDoors = "Alle Türen öffnen",
+        CloseAllDoors = "Alle Türen schließen",
+        CreditsTitle = "Ersteller & Credits",
+        CreditsContent = "Discord: rival960\nGitHub: Rival99900\nYouTube: rival9607",
+        LangSelect = "Sprache auswählen",
+        Loaded = "Hub erfolgreich geladen!"
     },
     ES = {
-        WindowTitle     = "Super Bot Brawl Hub",
-        TabHome         = "Inicio",
-        TabVision       = "Visión",
-        TabMovement     = "Movimiento",
-        TabCombat       = "Combate",
-        TabTools        = "Herramientas",
-        ESPBots         = "ESP Bots",
-        ESPBotsDesc     = "Resaltar bots cercanos y mostrar su HP",
-        TPNearestBot    = "TP al Bot más cercano",
-        TPNearestDesc   = "Teletransportarse frente al bot más cercano",
-        Fly             = "Volar",
-        FlyDesc         = "Activar modo vuelo",
-        FlySpeed        = "Velocidad de vuelo",
-        NoClip          = "NoClip",
-        NoClipDesc      = "Atravesar paredes y obstáculos",
-        WalkSpeed       = "Velocidad de marcha",
-        GodMode         = "Modo Dios",
-        GodModeDesc     = "Restaurar HP continuamente — casi indestructible",
-        AutoFarm        = "Auto Farm",
-        AutoFarmDesc    = "Ataca automáticamente al bot más cercano",
-        AutoFarmDelay   = "Retraso farm (s)",
-        HitboxToggle    = "Ampliar Hitboxes",
-        HitboxDesc      = "Aumentar el tamaño del hitbox de los bots",
-        HitboxSize      = "Tamaño Hitbox",
-        Fullbright      = "Brillo máximo",
-        FullbrightDesc  = "Aumentar brillo y desactivar sombras",
-        LangSelect      = "Idioma",
-        CreditsTitle    = "Super Bot Brawl Hub",
-        CreditsContent  = "Creado por Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — Primera versión",
-        Loaded          = "¡Hub cargado! Lucha de forma más inteligente.",
+        WindowTitle = "SCP vs Guard Hub",
+        TabHome = "Inicio",
+        TabVision = "Visión y ESP",
+        TabMovement = "Movimiento y Vuelo",
+        TabCombat = "Combate y Silent Aim",
+        TabDoors = "Control de Puertas",
+        TabTools = "Herramientas",
+        ESPDynamic = "ESP Enemigos Dinámico",
+        TPClosest = "TP al Enemigo más cercano",
+        Fly = "Volar (PC y Móvil)",
+        FlySpeed = "Velocidad de vuelo",
+        NoClip = "NoClip (Atravesar paredes)",
+        WalkSpeed = "Velocidad al caminar",
+        SilentAim = "Silent Aim Equilibrado",
+        SilentAimDist = "Distancia Máx Silent Aim",
+        SilentAimFOV = "Tamaño FOV Silent Aim",
+        FreezeAmmo = "Congelar Munición",
+        Fullbright = "Fullbright (Sin oscuridad)",
+        AntiBan = "Protección Anti-Ban",
+        HitboxToggle = "Activar Hitboxes Limpias",
+        HitboxSize = "Tamaño Hitbox (Hasta 10x)",
+        OpenAllDoors = "Abrir Todas las Puertas",
+        CloseAllDoors = "Cerrar Todas las Puertas",
+        CreditsTitle = "Creador y Créditos",
+        CreditsContent = "Discord: rival960\nGitHub: Rival99900\nYouTube: rival9607",
+        LangSelect = "Seleccionar Idioma",
+        Loaded = "¡Hub cargado con éxito!"
     },
     PT = {
-        WindowTitle     = "Super Bot Brawl Hub",
-        TabHome         = "Início",
-        TabVision       = "Visão",
-        TabMovement     = "Movimento",
-        TabCombat       = "Combate",
-        TabTools        = "Ferramentas",
-        ESPBots         = "ESP Bots",
-        ESPBotsDesc     = "Destacar bots próximos e mostrar HP",
-        TPNearestBot    = "TP para o Bot mais próximo",
-        TPNearestDesc   = "Teleportar para o bot mais próximo",
-        Fly             = "Voar",
-        FlyDesc         = "Ativar modo de voo",
-        FlySpeed        = "Velocidade de voo",
-        NoClip          = "NoClip",
-        NoClipDesc      = "Atravessar paredes e obstáculos",
-        WalkSpeed       = "Velocidade de caminhada",
-        GodMode         = "Modo Deus",
-        GodModeDesc     = "Restaurar HP continuamente — quase indestrutível",
-        AutoFarm        = "Auto Farm",
-        AutoFarmDesc    = "Ataca automaticamente o bot mais próximo",
-        AutoFarmDelay   = "Atraso do farm (s)",
-        HitboxToggle    = "Expandir Hitboxes",
-        HitboxDesc      = "Aumentar o tamanho da hitbox dos bots",
-        HitboxSize      = "Tamanho Hitbox",
-        Fullbright      = "Brilho máximo",
-        FullbrightDesc  = "Aumentar brilho e desativar sombras",
-        LangSelect      = "Idioma",
-        CreditsTitle    = "Super Bot Brawl Hub",
-        CreditsContent  = "Criado por Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — Primeira versão",
-        Loaded          = "Hub carregado! Lute de forma mais inteligente.",
+        WindowTitle = "SCP vs Guard Hub",
+        TabHome = "Início",
+        TabVision = "Visão & ESP",
+        TabMovement = "Movimento & Voo",
+        TabCombat = "Combate & Silent Aim",
+        TabDoors = "Controle de Portas",
+        TabTools = "Ferramentas & UI",
+        ESPDynamic = "ESP de Inimigos Dinâmico",
+        TPClosest = "TP para o Inimigo mais próximo",
+        Fly = "Voar (PC & Celular)",
+        FlySpeed = "Velocidade de Voo",
+        NoClip = "NoClip (Atravessar paredes)",
+        WalkSpeed = "Velocidade de Caminhada",
+        SilentAim = "Silent Aim Equilibrado",
+        SilentAimDist = "Distância Máx Silent Aim",
+        SilentAimFOV = "Tamanho do FOV Silent Aim",
+        FreezeAmmo = "Congelar Munição",
+        Fullbright = "Fullbright (Sem Escuridão)",
+        AntiBan = "Proteção Anti-Ban",
+        HitboxToggle = "Ativar Hitboxes Limpas",
+        HitboxSize = "Tamanho da Hitbox (Até 10x)",
+        OpenAllDoors = "Abrir Todas as Portas",
+        CloseAllDoors = "Fechar Todas as Portas",
+        CreditsTitle = "Criador & Créditos",
+        CreditsContent = "Discord: rival960\nGitHub: Rival99900\nYouTube: rival9607",
+        LangSelect = "Selecionar Idioma",
+        Loaded = "Hub carregado com sucesso!"
     },
     RU = {
-        WindowTitle     = "Super Bot Brawl Hub",
-        TabHome         = "Главная",
-        TabVision       = "Зрение",
-        TabMovement     = "Движение",
-        TabCombat       = "Бой",
-        TabTools        = "Инструменты",
-        ESPBots         = "ESP ботов",
-        ESPBotsDesc     = "Выделить ближайших ботов и показать их HP",
-        TPNearestBot    = "ТП к ближайшему боту",
-        TPNearestDesc   = "Телепортироваться к ближайшему боту",
-        Fly             = "Полёт",
-        FlyDesc         = "Включить режим полёта",
-        FlySpeed        = "Скорость полёта",
-        NoClip          = "Ноклип",
-        NoClipDesc      = "Проходить сквозь стены и препятствия",
-        WalkSpeed       = "Скорость ходьбы",
-        GodMode         = "Режим Бога",
-        GodModeDesc     = "Непрерывно восстанавливать HP — почти неуязвим",
-        AutoFarm        = "Авто фарм",
-        AutoFarmDesc    = "Автоматически атаковать ближайшего бота",
-        AutoFarmDelay   = "Задержка фарма (с)",
-        HitboxToggle    = "Расширить хитбоксы",
-        HitboxDesc      = "Увеличить хитбокс ботов для лёгкого попадания",
-        HitboxSize      = "Размер хитбокса",
-        Fullbright      = "Максяркость",
-        FullbrightDesc  = "Увеличить яркость и отключить тени",
-        LangSelect      = "Язык",
-        CreditsTitle    = "Super Bot Brawl Hub",
-        CreditsContent  = "Создано Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — Первый выпуск",
-        Loaded          = "Хаб загружен! Сражайся умнее.",
+        WindowTitle = "SCP vs Guard Hub",
+        TabHome = "Главная",
+        TabVision = "Зрение и ESP",
+        TabMovement = "Движение и Полет",
+        TabCombat = "Бой и Silent Aim",
+        TabDoors = "Управление дверями",
+        TabTools = "Инструменты",
+        ESPDynamic = "Динамический ESP врагов",
+        TPClosest = "ТП к ближайшему врагу",
+        Fly = "Полет (ПК и Телефон)",
+        FlySpeed = "Скорость полета",
+        NoClip = "NoClip (Ходьба сквозь стены)",
+        WalkSpeed = "Скорость бега",
+        SilentAim = "Сбалансированный Silent Aim",
+        SilentAimDist = "Макс. дистанция Silent Aim",
+        SilentAimFOV = "Размер FOV Silent Aim",
+        FreezeAmmo = "Заморозка патронов",
+        Fullbright = "Fullbright (Без темноты)",
+        AntiBan = "Защита от банов",
+        HitboxToggle = "Включить чистые хитбоксы",
+        HitboxSize = "Размер хитбокса (до 10x)",
+        OpenAllDoors = "Открыть все двери",
+        CloseAllDoors = "Закрыть все двери",
+        CreditsTitle = "Создатель и кредиты",
+        CreditsContent = "Discord: rival960\nGitHub: Rival99900\nYouTube: rival9607",
+        LangSelect = "Выберите язык",
+        Loaded = "Скрипт успешно загружен!"
     },
     IT = {
-        WindowTitle     = "Super Bot Brawl Hub",
-        TabHome         = "Home",
-        TabVision       = "Visione",
-        TabMovement     = "Movimento",
-        TabCombat       = "Combattimento",
-        TabTools        = "Strumenti",
-        ESPBots         = "ESP Bot",
-        ESPBotsDesc     = "Evidenziare i bot vicini e mostrare i loro HP",
-        TPNearestBot    = "TP al Bot più vicino",
-        TPNearestDesc   = "Teletrasportarsi davanti al bot più vicino",
-        Fly             = "Volare",
-        FlyDesc         = "Attivare modalità volo",
-        FlySpeed        = "Velocità di volo",
-        NoClip          = "NoClip",
-        NoClipDesc      = "Attraversare muri e ostacoli",
-        WalkSpeed       = "Velocità di camminata",
-        GodMode         = "Modalità Dio",
-        GodModeDesc     = "Ripristino continuo HP — quasi indistruttibile",
-        AutoFarm        = "Auto Farm",
-        AutoFarmDesc    = "Attacca automaticamente il bot più vicino",
-        AutoFarmDelay   = "Ritardo farm (s)",
-        HitboxToggle    = "Espandi Hitbox",
-        HitboxDesc      = "Aumenta la hitbox dei bot per colpire più facilmente",
-        HitboxSize      = "Dimensione Hitbox",
-        Fullbright      = "Luminosità massima",
-        FullbrightDesc  = "Aumenta luminosità e disattiva ombre",
-        LangSelect      = "Lingua",
-        CreditsTitle    = "Super Bot Brawl Hub",
-        CreditsContent  = "Creato da Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — Prima versione",
-        Loaded          = "Hub caricato! Combatti in modo più intelligente.",
+        WindowTitle = "SCP vs Guard Hub",
+        TabHome = "Home",
+        TabVision = "Visione & ESP",
+        TabMovement = "Movimento & Volo",
+        TabCombat = "Combattimento & Silent Aim",
+        TabDoors = "Controllo Porte",
+        TabTools = "Strumenti",
+        ESPDynamic = "ESP Nemici Dinamico",
+        TPClosest = "TP al Nemico più vicino",
+        Fly = "Vola (PC & Cellulare)",
+        FlySpeed = "Velocità di volo",
+        NoClip = "NoClip (Attraversa i muri)",
+        WalkSpeed = "Velocità camminata",
+        SilentAim = "Silent Aim Bilanciato",
+        SilentAimDist = "Distanza Max Silent Aim",
+        SilentAimFOV = "Dimensione FOV Silent Aim",
+        FreezeAmmo = "Congela Munizioni",
+        Fullbright = "Fullbright (Senza buio)",
+        AntiBan = "Protezione Anti-Ban",
+        HitboxToggle = "Attiva Hitbox Pulite",
+        HitboxSize = "Dimensione Hitbox (Fino a 10x)",
+        OpenAllDoors = "Apri Tutte le Porte",
+        CloseAllDoors = "Chiudi Tutte le Porte",
+        CreditsTitle = "Creatore & Crediti",
+        CreditsContent = "Discord: rival960\nGitHub: Rival99900\nYouTube: rival9607",
+        LangSelect = "Seleziona Lingua",
+        Loaded = "Hub caricato con successo!"
     },
     NL = {
-        WindowTitle     = "Super Bot Brawl Hub",
-        TabHome         = "Start",
-        TabVision       = "Zicht",
-        TabMovement     = "Beweging",
-        TabCombat       = "Gevecht",
-        TabTools        = "Hulpmiddelen",
-        ESPBots         = "ESP Bots",
-        ESPBotsDesc     = "Nabijgelegen bots markeren en HP weergeven",
-        TPNearestBot    = "TP naar dichtstbijzijnde Bot",
-        TPNearestDesc   = "Teleporteer naar de dichtstbijzijnde bot",
-        Fly             = "Vliegen",
-        FlyDesc         = "Vliegmodus in-/uitschakelen",
-        FlySpeed        = "Vliegsnelheid",
-        NoClip          = "NoClip",
-        NoClipDesc      = "Door muren en obstakels lopen",
-        WalkSpeed       = "Loopsnelheid",
-        GodMode         = "Godmodus",
-        GodModeDesc     = "HP continu herstellen — bijna onverwoestbaar",
-        AutoFarm        = "Auto Farm",
-        AutoFarmDesc    = "Valt automatisch de dichtstbijzijnde bot aan",
-        AutoFarmDelay   = "Farm vertraging (s)",
-        HitboxToggle    = "Hitboxen vergroten",
-        HitboxDesc      = "Hitbox van bots vergroten voor gemakkelijker treffen",
-        HitboxSize      = "Hitbox grootte",
-        Fullbright      = "Maximale helderheid",
-        FullbrightDesc  = "Helderheid verhogen en schaduwen uitschakelen",
-        LangSelect      = "Taal",
-        CreditsTitle    = "Super Bot Brawl Hub",
-        CreditsContent  = "Gemaakt door Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — Eerste versie",
-        Loaded          = "Hub geladen! Vecht slimmer.",
+        WindowTitle = "SCP vs Guard Hub",
+        TabHome = "Home",
+        TabVision = "Vision & ESP",
+        TabMovement = "Beweging & Vlucht",
+        TabCombat = "Gevecht & Silent Aim",
+        TabDoors = "Deurbeheer",
+        TabTools = "Tools & UI",
+        ESPDynamic = "Dynamisch Vijand ESP",
+        TPClosest = "TP naar dichtstbijzijnde vijand",
+        Fly = "Vliegen (PC & Mobiel)",
+        FlySpeed = "Vliegsnelheid",
+        NoClip = "NoClip (Door muren lopen)",
+        WalkSpeed = "Loopssnelheid",
+        SilentAim = "Gebalanceerd Silent Aim",
+        SilentAimDist = "Silent Aim Max Afstand",
+        SilentAimFOV = "Silent Aim FOV",
+        FreezeAmmo = "Bevries Munitie",
+        Fullbright = "Fullbright (Geen duisternis)",
+        AntiBan = "Anti-Ban Bescherming",
+        HitboxToggle = "Schone Hitboxes Inschakelen",
+        HitboxSize = "Hitbox Grootte (Tot 10x)",
+        OpenAllDoors = "Open Alle Deuren",
+        CloseAllDoors = "Sluit Alle Deuren",
+        CreditsTitle = "Maker & Credits",
+        CreditsContent = "Discord: rival960\nGitHub: Rival99900\nYouTube: rival9607",
+        LangSelect = "Selecteer Taal",
+        Loaded = "Hub succesvol geladen!"
     },
     PL = {
-        WindowTitle     = "Super Bot Brawl Hub",
-        TabHome         = "Główna",
-        TabVision       = "Wzrok",
-        TabMovement     = "Ruch",
-        TabCombat       = "Walka",
-        TabTools        = "Narzędzia",
-        ESPBots         = "ESP Boty",
-        ESPBotsDesc     = "Podświetl pobliskie boty i pokaż ich HP",
-        TPNearestBot    = "TP do najbliższego Bota",
-        TPNearestDesc   = "Teleportuj się do najbliższego bota",
-        Fly             = "Latanie",
-        FlyDesc         = "Włącz tryb lotu",
-        FlySpeed        = "Prędkość lotu",
-        NoClip          = "NoClip",
-        NoClipDesc      = "Przechodzić przez ściany i przeszkody",
-        WalkSpeed       = "Prędkość chodzenia",
-        GodMode         = "Tryb Boga",
-        GodModeDesc     = "Ciągłe przywracanie HP — prawie niezniszczalny",
-        AutoFarm        = "Auto Farm",
-        AutoFarmDesc    = "Automatycznie atakuje najbliższego bota",
-        AutoFarmDelay   = "Opóźnienie farmu (s)",
-        HitboxToggle    = "Rozszerz Hitboxy",
-        HitboxDesc      = "Zwiększ hitbox botów dla łatwiejszych trafień",
-        HitboxSize      = "Rozmiar Hitboxa",
-        Fullbright      = "Pełna jasność",
-        FullbrightDesc  = "Zwiększ jasność i wyłącz cienie",
-        LangSelect      = "Język",
-        CreditsTitle    = "Super Bot Brawl Hub",
-        CreditsContent  = "Stworzone przez Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — Pierwsza wersja",
-        Loaded          = "Hub załadowany! Walcz mądrzej.",
+        WindowTitle = "SCP vs Guard Hub",
+        TabHome = "Start",
+        TabVision = "Wizja i ESP",
+        TabMovement = "Ruch i Lot",
+        TabCombat = "Walka i Silent Aim",
+        TabDoors = "Kontrola Drzwi",
+        TabTools = "Narzędzia",
+        ESPDynamic = "Dynamiczne ESP Wrogów",
+        TPClosest = "TP do najbliższego wroga",
+        Fly = "Lot (PC i Telefon)",
+        FlySpeed = "Prędkość lotu",
+        NoClip = "NoClip (Przechodzenie przez ściany)",
+        WalkSpeed = "Prędkość chodu",
+        SilentAim = "Zrównoważony Silent Aim",
+        SilentAimDist = "Maks. dystans Silent Aim",
+        SilentAimFOV = "Rozmiar FOV Silent Aim",
+        FreezeAmmo = "Zamroź Amunicję",
+        Fullbright = "Fullbright (Bez ciemności)",
+        AntiBan = "Ochrona Anti-Ban",
+        HitboxToggle = "Włącz czyste hitboxy",
+        HitboxSize = "Rozmiar Hitboxa (do 10x)",
+        OpenAllDoors = "Otwórz Wszystkie Drzwi",
+        CloseAllDoors = "Zamknij Wszystkie Drzwi",
+        CreditsTitle = "Twórca i Kredyty",
+        CreditsContent = "Discord: rival960\nGitHub: Rival99900\nYouTube: rival9607",
+        LangSelect = "Wybierz Język",
+        Loaded = "Pomyślnie załadowano Hub!"
     },
     ZH = {
-        WindowTitle     = "超级机器人乱斗Hub",
-        TabHome         = "主页",
-        TabVision       = "视野",
-        TabMovement     = "移动",
-        TabCombat       = "战斗",
-        TabTools        = "工具",
-        ESPBots         = "ESP机器人",
-        ESPBotsDesc     = "高亮附近机器人并显示HP",
-        TPNearestBot    = "传送至最近机器人",
-        TPNearestDesc   = "传送到最近的机器人前方",
-        Fly             = "飞行",
-        FlyDesc         = "切换飞行模式",
-        FlySpeed        = "飞行速度",
-        NoClip          = "穿墙",
-        NoClipDesc      = "穿过墙壁和障碍物",
-        WalkSpeed       = "移动速度",
-        GodMode         = "无敌模式",
-        GodModeDesc     = "持续恢复HP — 几乎无敌",
-        AutoFarm        = "自动刷怪",
-        AutoFarmDesc    = "自动攻击最近的机器人",
-        AutoFarmDelay   = "刷怪延迟（秒）",
-        HitboxToggle    = "扩大判定框",
-        HitboxDesc      = "扩大机器人的判定框以便更容易命中",
-        HitboxSize      = "判定框大小",
-        Fullbright      = "全亮",
-        FullbrightDesc  = "提高亮度并关闭阴影",
-        LangSelect      = "语言",
-        CreditsTitle    = "超级机器人乱斗Hub",
-        CreditsContent  = "由 Rival960 创建\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — 首次发布",
-        Loaded          = "Hub已加载！更智慧地战斗。",
+        WindowTitle = "SCP vs Guard Hub",
+        TabHome = "主页",
+        TabVision = "透视与ESP",
+        TabMovement = "移动与飞行",
+        TabCombat = "战斗与无声自瞄",
+        TabDoors = "大门控制",
+        TabTools = "工具与视觉",
+        ESPDynamic = "动态敌方透视 (严格队伍过滤)",
+        TPClosest = "传送到最近的敌人",
+        Fly = "飞行 (电脑与手机)",
+        FlySpeed = "飞行速度",
+        NoClip = "穿墙 (NoClip)",
+        WalkSpeed = "移动速度",
+        SilentAim = "平衡无声自瞄 (开火键触发)",
+        SilentAimDist = "自瞄最大距离",
+        SilentAimFOV = "自瞄视野范围",
+        FreezeAmmo = "无限子弹",
+        Fullbright = "全局全亮",
+        AntiBan = "防封禁保护",
+        HitboxToggle = "开启整洁判定箱",
+        HitboxSize = "判定箱大小 (最高10倍)",
+        OpenAllDoors = "打开所有大门",
+        CloseAllDoors = "关闭所有大门",
+        CreditsTitle = "作者与鸣谢",
+        CreditsContent = "Discord: rival960\nGitHub: Rival99900\nYouTube: rival9607",
+        LangSelect = "选择语言",
+        Loaded = "脚本加载成功！"
     },
     JA = {
-        WindowTitle     = "スーパーボットブロールHub",
-        TabHome         = "ホーム",
-        TabVision       = "視覚",
-        TabMovement     = "移動",
-        TabCombat       = "戦闘",
-        TabTools        = "ツール",
-        ESPBots         = "ESPボット",
-        ESPBotsDesc     = "近くのボットをハイライトしてHPを表示",
-        TPNearestBot    = "最近のボットにTP",
-        TPNearestDesc   = "最も近いボットの前にテレポート",
-        Fly             = "飛行",
-        FlyDesc         = "飛行モードを切り替える",
-        FlySpeed        = "飛行速度",
-        NoClip          = "ノークリップ",
-        NoClipDesc      = "壁や障害物を通り抜ける",
-        WalkSpeed       = "移動速度",
-        GodMode         = "神モード",
-        GodModeDesc     = "継続的にHPを回復 — ほぼ無敵",
-        AutoFarm        = "オートファーム",
-        AutoFarmDesc    = "最も近いボットを自動攻撃",
-        AutoFarmDelay   = "ファーム遅延（秒）",
-        HitboxToggle    = "ヒットボックス拡張",
-        HitboxDesc      = "ボットのヒットボックスを拡大して当てやすく",
-        HitboxSize      = "ヒットボックスサイズ",
-        Fullbright      = "フルブライト",
-        FullbrightDesc  = "明るさを上げてシャドウを無効化",
-        LangSelect      = "言語",
-        CreditsTitle    = "スーパーボットブロールHub",
-        CreditsContent  = "Rival960 作\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — 初回リリース",
-        Loaded          = "Hub読み込み完了！より賢く戦おう。",
+        WindowTitle = "SCP vs Guard Hub",
+        TabHome = "ホーム",
+        TabVision = "ビジョン & ESP",
+        TabMovement = "移動 & 飛行",
+        TabCombat = "戦闘 & サイレントエイム",
+        TabDoors = "ドア制御",
+        TabTools = "ツール & UI",
+        ESPDynamic = "ダイナミック敵ESP",
+        TPClosest = "最寄りの敵へテレポート",
+        Fly = "飛行 (PC & モバイル)",
+        FlySpeed = "飛行速度",
+        NoClip = "ノークリップ (壁抜け)",
+        WalkSpeed = "歩行速度",
+        SilentAim = "バランス型サイレントエイム",
+        SilentAimDist = "最大距離",
+        SilentAimFOV = "視野サイズ",
+        FreezeAmmo = "弾薬無限",
+        Fullbright = "フルブライト (暗闇なし)",
+        AntiBan = "アンチバン保護",
+        HitboxToggle = "クリーンヒットボックス有効化",
+        HitboxSize = "ヒットボックスサイズ (最大10x)",
+        OpenAllDoors = "すべてのドアを開く",
+        CloseAllDoors = "すべてのドアを閉じる",
+        CreditsTitle = "制作者 & クレジット",
+        CreditsContent = "Discord: rival960\nGitHub: Rival99900\nYouTube: rival9607",
+        LangSelect = "言語を選択",
+        Loaded = "ハブの読み込みに成功しました！"
     },
     TR = {
-        WindowTitle     = "Super Bot Brawl Hub",
-        TabHome         = "Ana Sayfa",
-        TabVision       = "Görüş",
-        TabMovement     = "Hareket",
-        TabCombat       = "Savaş",
-        TabTools        = "Araçlar",
-        ESPBots         = "ESP Botlar",
-        ESPBotsDesc     = "Yakındaki botları vurgula ve HP göster",
-        TPNearestBot    = "En Yakın Bota TP",
-        TPNearestDesc   = "En yakın botun önüne ışınlan",
-        Fly             = "Uçuş",
-        FlyDesc         = "Uçuş modunu aç/kapat",
-        FlySpeed        = "Uçuş Hızı",
-        NoClip          = "NoClip",
-        NoClipDesc      = "Duvarlardan ve engellerden geç",
-        WalkSpeed       = "Yürüyüş Hızı",
-        GodMode         = "Tanrı Modu",
-        GodModeDesc     = "HP'yi sürekli yenile — neredeyse yok edilemez",
-        AutoFarm        = "Otomatik Farm",
-        AutoFarmDesc    = "En yakın botu otomatik saldır",
-        AutoFarmDelay   = "Farm gecikmesi (s)",
-        HitboxToggle    = "Hitbox Genişlet",
-        HitboxDesc      = "Bot hitboxlarını büyüt — daha kolay vur",
-        HitboxSize      = "Hitbox Boyutu",
-        Fullbright      = "Tam Parlaklık",
-        FullbrightDesc  = "Parlaklığı artır ve gölgeleri devre dışı bırak",
-        LangSelect      = "Dil",
-        CreditsTitle    = "Super Bot Brawl Hub",
-        CreditsContent  = "Rival960 tarafından oluşturuldu\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — İlk sürüm",
-        Loaded          = "Hub yüklendi! Daha akıllıca savaş.",
+        WindowTitle = "SCP vs Guard Hub",
+        TabHome = "Ana Sayfa",
+        TabVision = "Görüş & ESP",
+        TabMovement = "Hareket & Uçuş",
+        TabCombat = "Savaş & Silent Aim",
+        TabDoors = "Kapı Kontrolü",
+        TabTools = "Araçlar",
+        ESPDynamic = "Dinamik Düşman ESP",
+        TPClosest = "En Yakın Düşmana TP",
+        Fly = "Uçuş (PC & Mobil)",
+        FlySpeed = "Uçuş Hızı",
+        NoClip = "NoClip (Duvarlardan Geçme)",
+        WalkSpeed = "Yürüme Hızı",
+        SilentAim = "Dengelenmiş Silent Aim",
+        SilentAimDist = "Maks. Mesafe",
+        SilentAimFOV = "Görüş Açısı",
+        FreezeAmmo = "Mühimmatı Dondur",
+        Fullbright = "Fullbright (Karanlığı Kaldır)",
+        AntiBan = "Ban Koruması",
+        HitboxToggle = "Temiz Hitbox'ları Etkinleştir",
+        HitboxSize = "Hitbox Boyutu (10x'e kadar)",
+        OpenAllDoors = "Tüm Kapıları Aç",
+        CloseAllDoors = "Tüm Kapıları Kapat",
+        CreditsTitle = "Yapımcı ve Krediler",
+        CreditsContent = "Discord: rival960\nGitHub: Rival99900\nYouTube: rival9607",
+        LangSelect = "Dil Seçin",
+        Loaded = "Hub Başarıyla Yüklendi!"
     },
     KO = {
-        WindowTitle     = "슈퍼 봇 브롤 허브",
-        TabHome         = "홈",
-        TabVision       = "시야",
-        TabMovement     = "이동",
-        TabCombat       = "전투",
-        TabTools        = "도구",
-        ESPBots         = "ESP 봇",
-        ESPBotsDesc     = "근처 봇 강조 표시 및 HP 표시",
-        TPNearestBot    = "가장 가까운 봇으로 TP",
-        TPNearestDesc   = "가장 가까운 봇 앞으로 순간이동",
-        Fly             = "비행",
-        FlyDesc         = "비행 모드 전환",
-        FlySpeed        = "비행 속도",
-        NoClip          = "노클립",
-        NoClipDesc      = "벽과 장애물을 통과",
-        WalkSpeed       = "이동 속도",
-        GodMode         = "갓 모드",
-        GodModeDesc     = "HP 지속 회복 — 거의 불사",
-        AutoFarm        = "자동 파밍",
-        AutoFarmDesc    = "가장 가까운 봇을 자동 공격",
-        AutoFarmDelay   = "파밍 딜레이(초)",
-        HitboxToggle    = "히트박스 확장",
-        HitboxDesc      = "봇 히트박스 확대로 더 쉽게 타격",
-        HitboxSize      = "히트박스 크기",
-        Fullbright      = "풀브라이트",
-        FullbrightDesc  = "밝기 증가 및 그림자 비활성화",
-        LangSelect      = "언어",
-        CreditsTitle    = "슈퍼 봇 브롤 허브",
-        CreditsContent  = "Rival960 제작\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — 첫 번째 릴리스",
-        Loaded          = "허브 로드 완료! 더 스마트하게 싸우자.",
+        WindowTitle = "SCP vs Guard Hub",
+        TabHome = "홈",
+        TabVision = "비전 & ESP",
+        TabMovement = "이동 & 비행",
+        TabCombat = "전투 & 사일런트 에임",
+        TabDoors = "문 제어",
+        TabTools = "도구 & 비주얼",
+        ESPDynamic = "동적 적 ESP (엄격한 팀 필터)",
+        TPClosest = "가장 가까운 적에게 텔레포트",
+        Fly = "비행 (PC 및 모바일)",
+        FlySpeed = "비행 속도",
+        NoClip = "노클립 (벽 통과)",
+        WalkSpeed = "이동 속도",
+        SilentAim = "밸런스형 사일런트 에임",
+        SilentAimDist = "최대 거리",
+        SilentAimFOV = "FOV 크기",
+        FreezeAmmo = "탄약 무한",
+        Fullbright = "풀브라이트 (어둠 제거)",
+        AntiBan = "밴 방지 보호",
+        HitboxToggle = "깔끔한 히트박스 켜기",
+        HitboxSize = "히트박스 크기 (최대 10배)",
+        OpenAllDoors = "모든 문 열기",
+        CloseAllDoors = "모든 문 닫기",
+        CreditsTitle = "제작자 및 크레딧",
+        CreditsContent = "Discord: rival960\nGitHub: Rival99900\nYouTube: rival9607",
+        LangSelect = "언어 선택",
+        Loaded = "허브가 성공적으로 로드되었습니다!"
     },
     AR = {
-        WindowTitle     = "سوبر بوت برول هاب",
-        TabHome         = "الرئيسية",
-        TabVision       = "الرؤية",
-        TabMovement     = "الحركة",
-        TabCombat       = "القتال",
-        TabTools        = "الأدوات",
-        ESPBots         = "ESP الروبوتات",
-        ESPBotsDesc     = "تمييز الروبوتات القريبة وعرض HP",
-        TPNearestBot    = "انتقال إلى أقرب روبوت",
-        TPNearestDesc   = "الانتقال أمام أقرب روبوت",
-        Fly             = "الطيران",
-        FlyDesc         = "تبديل وضع الطيران",
-        FlySpeed        = "سرعة الطيران",
-        NoClip          = "نوكليب",
-        NoClipDesc      = "المرور عبر الجدران والعوائق",
-        WalkSpeed       = "سرعة المشي",
-        GodMode         = "وضع الإله",
-        GodModeDesc     = "استعادة HP بشكل مستمر — شبه لا يُهزم",
-        AutoFarm        = "زراعة تلقائية",
-        AutoFarmDesc    = "مهاجمة أقرب روبوت تلقائياً",
-        AutoFarmDelay   = "تأخير الزراعة (ث)",
-        HitboxToggle    = "توسيع Hitbox",
-        HitboxDesc      = "تكبير Hitbox الروبوتات للإصابة بسهولة",
-        HitboxSize      = "حجم Hitbox",
-        Fullbright      = "إضاءة كاملة",
-        FullbrightDesc  = "رفع السطوع وتعطيل الظلال",
-        LangSelect      = "اللغة",
-        CreditsTitle    = "سوبر بوت برول هاب",
-        CreditsContent  = "أنشأه Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — الإصدار الأول",
-        Loaded          = "تم تحميل الهاب! قاتل بذكاء.",
+        WindowTitle = "SCP vs Guard Hub",
+        TabHome = "الرئيسية",
+        TabVision = "الرؤية و ESP",
+        TabMovement = "الحركة والطيران",
+        TabCombat = "القتال والتصويب الصامت",
+        TabDoors = "تحكم الأبواب",
+        TabTools = "الأدوات والمظهر",
+        ESPDynamic = "ESP الأعداء الديناميكي",
+        TPClosest = "الانتقال لأقرب عدو",
+        Fly = "طيران (كمبيوتر وموبايل)",
+        FlySpeed = "سرعة الطيران",
+        NoClip = "NoClip (مرور عبر الجدران)",
+        WalkSpeed = "سرعة المشي",
+        SilentAim = "Silent Aim متوازن",
+        SilentAimDist = "أقصى مسافة",
+        SilentAimFOV = "حجم FOV",
+        FreezeAmmo = "تجميد الذخيرة",
+        Fullbright = "إضاءة كاملة",
+        AntiBan = "حماية من الحظر",
+        HitboxToggle = "تفعيل Hitbox النظيفة",
+        HitboxSize = "حجم Hitbox (حتى 10x)",
+        OpenAllDoors = "فتح جميع الأبواب",
+        CloseAllDoors = "إغلاق جميع الأبواب",
+        CreditsTitle = "المطور والاعتمادات",
+        CreditsContent = "Discord: rival960\nGitHub: Rival99900\nYouTube: rival9607",
+        LangSelect = "اختر اللغة",
+        Loaded = "تم تحميل القائمة بنجاح!"
     },
     VI = {
-        WindowTitle     = "Super Bot Brawl Hub",
-        TabHome         = "Trang chủ",
-        TabVision       = "Tầm nhìn",
-        TabMovement     = "Di chuyển",
-        TabCombat       = "Chiến đấu",
-        TabTools        = "Công cụ",
-        ESPBots         = "ESP Bots",
-        ESPBotsDesc     = "Làm nổi bật bot gần đó và hiển thị HP",
-        TPNearestBot    = "TP đến Bot gần nhất",
-        TPNearestDesc   = "Dịch chuyển đến phía trước bot gần nhất",
-        Fly             = "Bay",
-        FlyDesc         = "Bật/tắt chế độ bay",
-        FlySpeed        = "Tốc độ bay",
-        NoClip          = "NoClip",
-        NoClipDesc      = "Đi xuyên tường và chướng ngại vật",
-        WalkSpeed       = "Tốc độ đi bộ",
-        GodMode         = "Chế độ Thần",
-        GodModeDesc     = "Liên tục hồi HP — gần như bất tử",
-        AutoFarm        = "Tự động Farm",
-        AutoFarmDesc    = "Tự động tấn công bot gần nhất",
-        AutoFarmDelay   = "Độ trễ farm (s)",
-        HitboxToggle    = "Mở rộng Hitbox",
-        HitboxDesc      = "Tăng kích thước hitbox của bot để dễ trúng hơn",
-        HitboxSize      = "Kích thước Hitbox",
-        Fullbright      = "Sáng tối đa",
-        FullbrightDesc  = "Tăng độ sáng và tắt bóng",
-        LangSelect      = "Ngôn ngữ",
-        CreditsTitle    = "Super Bot Brawl Hub",
-        CreditsContent  = "Tạo bởi Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — Phiên bản đầu tiên",
-        Loaded          = "Hub đã tải! Chiến đấu thông minh hơn.",
+        WindowTitle = "SCP vs Guard Hub",
+        TabHome = "Trang chủ",
+        TabVision = "Tầm nhìn & ESP",
+        TabMovement = "Di chuyển & Bay",
+        TabCombat = "Chiến đấu & Silent Aim",
+        TabDoors = "Điều khiển cửa",
+        TabTools = "Công cụ & Giao diện",
+        ESPDynamic = "ESP Kẻ địch động",
+        TPClosest = "Dịch chuyển đến kẻ địch gần nhất",
+        Fly = "Bay (PC & Di động)",
+        FlySpeed = "Tốc độ bay",
+        NoClip = "NoClip (Đi xuyên tường)",
+        WalkSpeed = "Tốc độ đi bộ",
+        SilentAim = "Silent Aim Cân bằng",
+        SilentAimDist = "Khoảng cách tối đa",
+        SilentAimFOV = "Kích thước FOV",
+        FreezeAmmo = "Đóng băng đạn",
+        Fullbright = "Sáng toàn bộ",
+        AntiBan = "Bảo vệ chống ban",
+        HitboxToggle = "Bật Hitbox sạch",
+        HitboxSize = "Kích thước Hitbox (Lên đến 10x)",
+        OpenAllDoors = "Mở tất cả cửa",
+        CloseAllDoors = "Đóng tất cả cửa",
+        CreditsTitle = "Tác giả & Tín dụng",
+        CreditsContent = "Discord: rival960\nGitHub: Rival99900\nYouTube: rival9607",
+        LangSelect = "Chọn ngôn ngữ",
+        Loaded = "Đã tải Hub thành công!"
     },
     SV = {
-        WindowTitle     = "Super Bot Brawl Hub",
-        TabHome         = "Hem",
-        TabVision       = "Syn",
-        TabMovement     = "Rörelse",
-        TabCombat       = "Strid",
-        TabTools        = "Verktyg",
-        ESPBots         = "ESP Botar",
-        ESPBotsDesc     = "Markera närliggande botar och visa deras HP",
-        TPNearestBot    = "TP till närmaste Bot",
-        TPNearestDesc   = "Teleportera framför närmaste boten",
-        Fly             = "Flyg",
-        FlyDesc         = "Aktivera flygläge",
-        FlySpeed        = "Flyghastighet",
-        NoClip          = "NoClip",
-        NoClipDesc      = "Gå igenom väggar och hinder",
-        WalkSpeed       = "Gånghastighet",
-        GodMode         = "Gudläge",
-        GodModeDesc     = "Återställ HP kontinuerligt — nästan ounerstörbar",
-        AutoFarm        = "Auto Farm",
-        AutoFarmDesc    = "Attackera automatiskt närmaste boten",
-        AutoFarmDelay   = "Farmfördröjning (s)",
-        HitboxToggle    = "Utöka Hitboxes",
-        HitboxDesc      = "Öka hitbox på botar för lättare träff",
-        HitboxSize      = "Hitbox-storlek",
-        Fullbright      = "Fullbright",
-        FullbrightDesc  = "Öka ljusstyrka och inaktivera skuggor",
-        LangSelect      = "Språk",
-        CreditsTitle    = "Super Bot Brawl Hub",
-        CreditsContent  = "Skapad av Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — Första utgåvan",
-        Loaded          = "Hub laddad! Kämpa smartare.",
+        WindowTitle = "SCP vs Guard Hub",
+        TabHome = "Hem",
+        TabVision = "Vision & ESP",
+        TabMovement = "Rörelse & Flyg",
+        TabCombat = "Strid & Silent Aim",
+        TabDoors = "Dörrkontroll",
+        TabTools = "Verktyg",
+        ESPDynamic = "Dynamisk Fiende-ESP",
+        TPClosest = "TP till närmaste fiende",
+        Fly = "Flyga (PC & Mobil)",
+        FlySpeed = "Flyghastighet",
+        NoClip = "NoClip (Gå genom väggar)",
+        WalkSpeed = "Gånghastighet",
+        SilentAim = "Balanserat Silent Aim",
+        SilentAimDist = "Max avstånd",
+        SilentAimFOV = "FOV storlek",
+        FreezeAmmo = "Frys ammunition",
+        Fullbright = "Fullbright (Inget mörker)",
+        AntiBan = "Anti-Ban Skydd",
+        HitboxToggle = "Aktivera rena Hitboxes",
+        HitboxSize = "Hitbox Storlek (Upp till 10x)",
+        OpenAllDoors = "Öppna alla dörrar",
+        CloseAllDoors = "Stäng alla dörrar",
+        CreditsTitle = "Skapare & Credits",
+        CreditsContent = "Discord: rival960\nGitHub: Rival99900\nYouTube: rival9607",
+        LangSelect = "Välj språk",
+        Loaded = "Hubb laddad framgångsrikt!"
     },
     EL = {
-        WindowTitle     = "Super Bot Brawl Hub",
-        TabHome         = "Αρχική",
-        TabVision       = "Όραση",
-        TabMovement     = "Κίνηση",
-        TabCombat       = "Μάχη",
-        TabTools        = "Εργαλεία",
-        ESPBots         = "ESP Bots",
-        ESPBotsDesc     = "Επισήμανση κοντινών bots και εμφάνιση HP",
-        TPNearestBot    = "TP στο Κοντινότερο Bot",
-        TPNearestDesc   = "Τηλεμεταφορά μπροστά στο κοντινότερο bot",
-        Fly             = "Πτήση",
-        FlyDesc         = "Εναλλαγή λειτουργίας πτήσης",
-        FlySpeed        = "Ταχύτητα Πτήσης",
-        NoClip          = "NoClip",
-        NoClipDesc      = "Περνάς μέσα από τοίχους και εμπόδια",
-        WalkSpeed       = "Ταχύτητα Βαδίσματος",
-        GodMode         = "Λειτουργία Θεού",
-        GodModeDesc     = "Συνεχής αναπλήρωση HP — σχεδόν άτρωτος",
-        AutoFarm        = "Αυτόματο Farm",
-        AutoFarmDesc    = "Αυτόματη επίθεση στο κοντινότερο bot",
-        AutoFarmDelay   = "Καθυστέρηση farm (δευτ.)",
-        HitboxToggle    = "Επέκταση Hitbox",
-        HitboxDesc      = "Μεγέθυνση hitbox bots για ευκολότερη επαφή",
-        HitboxSize      = "Μέγεθος Hitbox",
-        Fullbright      = "Πλήρης Φωτεινότητα",
-        FullbrightDesc  = "Αύξηση φωτεινότητας και απενεργοποίηση σκιών",
-        LangSelect      = "Γλώσσα",
-        CreditsTitle    = "Super Bot Brawl Hub",
-        CreditsContent  = "Δημιουργήθηκε από τον Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — Πρώτη έκδοση",
-        Loaded          = "Hub φορτώθηκε! Μάχου εξυπνότερα.",
+        WindowTitle = "SCP vs Guard Hub",
+        TabHome = "Аρχική",
+        TabVision = "Όραση & ESP",
+        TabMovement = "Κίνηση & Πτήση",
+        TabCombat = "Μάχη & Silent Aim",
+        TabDoors = "Έλεγχος Πορτών",
+        TabTools = "Εργαλεία",
+        ESPDynamic = "Δυναμικό ESP Εχθρών",
+        TPClosest = "TP στον πλησιέστερο εχθρό",
+        Fly = "Πτήση (PC & Κινητό)",
+        FlySpeed = "Ταχύτητα πτήσης",
+        NoClip = "NoClip (Δίοδος από τοίχους)",
+        WalkSpeed = "Ταχύτητα περπατήματος",
+        SilentAim = "Ισορροπημένο Silent Aim",
+        SilentAimDist = "Μέγιστη απόσταση",
+        SilentAimFOV = "Μέγεθος FOV",
+        FreezeAmmo = "Παγοποίηση πυρομαχικών",
+        Fullbright = "Fullbright (Χωρίς σκοτάδι)",
+        AntiBan = "Προστασία Anti-Ban",
+        HitboxToggle = "Ενεργοποίηση καθαρών Hitboxes",
+        HitboxSize = "Мέγεθος Hitbox (Έως 10x)",
+        OpenAllDoors = "Άνοιγμα όλων των θυρών",
+        CloseAllDoors = "Κλείσιμο όλων των θυρών",
+        CreditsTitle = "Δημιουργός & Συντελεστές",
+        CreditsContent = "Discord: rival960\nGitHub: Rival99900\nYouTube: rival9607",
+        LangSelect = "Επιλογή γλώσσας",
+        Loaded = "Το Hub φορτώθηκε επιτυχώς!"
     },
     RO = {
-        WindowTitle     = "Super Bot Brawl Hub",
-        TabHome         = "Acasă",
-        TabVision       = "Viziune",
-        TabMovement     = "Mișcare",
-        TabCombat       = "Luptă",
-        TabTools        = "Instrumente",
-        ESPBots         = "ESP Boți",
-        ESPBotsDesc     = "Evidențiază boții din apropiere și arată HP",
-        TPNearestBot    = "TP la Cel Mai Aproape Bot",
-        TPNearestDesc   = "Teleportare în fața celui mai apropiat bot",
-        Fly             = "Zbor",
-        FlyDesc         = "Activează modul de zbor",
-        FlySpeed        = "Viteza de zbor",
-        NoClip          = "NoClip",
-        NoClipDesc      = "Treci prin pereți și obstacole",
-        WalkSpeed       = "Viteză de mers",
-        GodMode         = "Modul Dumnezeu",
-        GodModeDesc     = "Restaurează HP continuu — aproape de neînvins",
-        AutoFarm        = "Auto Farm",
-        AutoFarmDesc    = "Atacă automat cel mai apropiat bot",
-        AutoFarmDelay   = "Întârziere farm (s)",
-        HitboxToggle    = "Extinde Hitbox",
-        HitboxDesc      = "Mărește hitbox-ul boților pentru lovituri mai ușoare",
-        HitboxSize      = "Dimensiune Hitbox",
-        Fullbright      = "Luminozitate maximă",
-        FullbrightDesc  = "Crește luminozitatea și dezactivează umbrele",
-        LangSelect      = "Limbă",
-        CreditsTitle    = "Super Bot Brawl Hub",
-        CreditsContent  = "Creat de Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — Prima versiune",
-        Loaded          = "Hub încărcat! Luptă mai inteligent.",
+        WindowTitle = "SCP vs Guard Hub",
+        TabHome = "Acasă",
+        TabVision = "Viziune & ESP",
+        TabMovement = "Mișcare & Zbor",
+        TabCombat = "Luptă & Silent Aim",
+        TabDoors = "Control Uși",
+        TabTools = "Unelte",
+        ESPDynamic = "ESP Inamici Dinamic",
+        TPClosest = "TP la cel mai apropiat inamic",
+        Fly = "Zbor (PC & Mobil)",
+        FlySpeed = "Viteză Zbor",
+        NoClip = "NoClip (Treci prin pereți)",
+        WalkSpeed = "Viteză Mers",
+        SilentAim = "Silent Aim Echilibrat",
+        SilentAimDist = "Distanță Maximă",
+        SilentAimFOV = "Dimensiune FOV",
+        FreezeAmmo = "Înghețare Muniție",
+        Fullbright = "Fullbright (Fără întuneric)",
+        AntiBan = "Protecție Anti-Ban",
+        HitboxToggle = "Activează Hitbox-uri Curate",
+        HitboxSize = "Dimensiune Hitbox (Până la 10x)",
+        OpenAllDoors = "Deschide Toate Ușile",
+        CloseAllDoors = "Închide Toate Ușile",
+        CreditsTitle = "Creator & Credite",
+        CreditsContent = "Discord: rival960\nGitHub: Rival99900\nYouTube: rival9607",
+        LangSelect = "Selectează Limba",
+        Loaded = "Hub încărcat cu succes!"
     },
     UK = {
-        WindowTitle     = "Super Bot Brawl Hub",
-        TabHome         = "Головна",
-        TabVision       = "Зір",
-        TabMovement     = "Рух",
-        TabCombat       = "Бій",
-        TabTools        = "Інструменти",
-        ESPBots         = "ESP ботів",
-        ESPBotsDesc     = "Підсвічувати ближніх ботів і показувати HP",
-        TPNearestBot    = "ТП до найближчого бота",
-        TPNearestDesc   = "Телепортуватися до найближчого бота",
-        Fly             = "Політ",
-        FlyDesc         = "Увімкнути режим польоту",
-        FlySpeed        = "Швидкість польоту",
-        NoClip          = "Нокліп",
-        NoClipDesc      = "Проходити крізь стіни й перешкоди",
-        WalkSpeed       = "Швидкість ходьби",
-        GodMode         = "Режим Бога",
-        GodModeDesc     = "Безперервне відновлення HP — майже невразливий",
-        AutoFarm        = "Авто фарм",
-        AutoFarmDesc    = "Автоматично атакує найближчого бота",
-        AutoFarmDelay   = "Затримка фарму (с)",
-        HitboxToggle    = "Розширити хітбокси",
-        HitboxDesc      = "Збільшити хітбокс ботів для легшого попадання",
-        HitboxSize      = "Розмір хітбоксу",
-        Fullbright      = "Повна яскравість",
-        FullbrightDesc  = "Збільшити яскравість і вимкнути тіні",
-        LangSelect      = "Мова",
-        CreditsTitle    = "Super Bot Brawl Hub",
-        CreditsContent  = "Створено Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — Перший випуск",
-        Loaded          = "Hub завантажено! Бийся розумніше.",
+        WindowTitle = "SCP vs Guard Hub",
+        TabHome = "Головна",
+        TabVision = "Зріст та ESP",
+        TabMovement = "Рух та Політ",
+        TabCombat = "Бій та Silent Aim",
+        TabDoors = "Керування дверима",
+        TabTools = "Інструменти",
+        ESPDynamic = "Динамічний ESP ворогів",
+        TPClosest = "ТП до найближчого ворога",
+        Fly = "Політ (ПК та Телефон)",
+        FlySpeed = "Швидкість польоту",
+        NoClip = "NoClip (Ходьба крізь стіни)",
+        WalkSpeed = "Швидкість ходьби",
+        SilentAim = "Збалансований Silent Aim",
+        SilentAimDist = "Макс. дистанція",
+        SilentAimFOV = "Розмір FOV",
+        FreezeAmmo = "Заморозка патронів",
+        Fullbright = "Fullbright (Без темряви)",
+        AntiBan = "Захист від банів",
+        HitboxToggle = "Увімкнути чисті хитбокси",
+        HitboxSize = "Розмір хитбокса (до 10x)",
+        OpenAllDoors = "Відчинити всі двері",
+        CloseAllDoors = "Зачинити всі двері",
+        CreditsTitle = "Створювач і Кредити",
+        CreditsContent = "Discord: rival960\nGitHub: Rival99900\nYouTube: rival9607",
+        LangSelect = "Виберіть мову",
+        Loaded = "Хаб успішно завантажено!"
     },
     CS = {
-        WindowTitle     = "Super Bot Brawl Hub",
-        TabHome         = "Domů",
-        TabVision       = "Vidění",
-        TabMovement     = "Pohyb",
-        TabCombat       = "Boj",
-        TabTools        = "Nástroje",
-        ESPBots         = "ESP Boti",
-        ESPBotsDesc     = "Zvýraznit blízké boty a zobrazit jejich HP",
-        TPNearestBot    = "TP k nejbližšímu Botovi",
-        TPNearestDesc   = "Přesuň se před nejbližšího bota",
-        Fly             = "Létání",
-        FlyDesc         = "Přepnout letový režim",
-        FlySpeed        = "Rychlost letu",
-        NoClip          = "NoClip",
-        NoClipDesc      = "Procházet zdmi a překážkami",
-        WalkSpeed       = "Rychlost chůze",
-        GodMode         = "Bůh mód",
-        GodModeDesc     = "Průběžná obnova HP — téměř nezničitelný",
-        AutoFarm        = "Auto Farm",
-        AutoFarmDesc    = "Automaticky útočí na nejbližšího bota",
-        AutoFarmDelay   = "Zpoždění farmu (s)",
-        HitboxToggle    = "Rozšířit Hitboxy",
-        HitboxDesc      = "Zvětšit hitbox botů pro snazší zásah",
-        HitboxSize      = "Velikost Hitboxu",
-        Fullbright      = "Plné světlo",
-        FullbrightDesc  = "Zvýšit jas a vypnout stíny",
-        LangSelect      = "Jazyk",
-        CreditsTitle    = "Super Bot Brawl Hub",
-        CreditsContent  = "Vytvořil Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — První verze",
-        Loaded          = "Hub načten! Bojuj chytřeji.",
+        WindowTitle = "SCP vs Guard Hub",
+        TabHome = "Domů",
+        TabVision = "Vize & ESP",
+        TabMovement = "Pohyb & Let",
+        TabCombat = "Boj & Silent Aim",
+        TabDoors = "Ovládání dveří",
+        TabTools = "Nástroje",
+        ESPDynamic = "Dynamické ESP nepřátel",
+        TPClosest = "TP k nejbližšímu nepříteli",
+        Fly = "Letět (PC & Mobil)",
+        FlySpeed = "Rychlost letu",
+        NoClip = "NoClip (Procházení zdmi)",
+        WalkSpeed = "Rychlost chůze",
+        SilentAim = "Vyvážené Silent Aim",
+        SilentAimDist = "Max vzdálenost",
+        SilentAimFOV = "Velikost FOV",
+        FreezeAmmo = "Zmrazit munici",
+        Fullbright = "Fullbright (Bez tmy)",
+        AntiBan = "Anti-Ban Ochrana",
+        HitboxToggle = "Povolit čisté hitboxy",
+        HitboxSize = "Velikost Hitboxu (Až 10x)",
+        OpenAllDoors = "Otevřít všechny dveře",
+        CloseAllDoors = "Zavřít všechny dveře",
+        CreditsTitle = "Tvůrce a Kredity",
+        CreditsContent = "Discord: rival960\nGitHub: Rival99900\nYouTube: rival9607",
+        LangSelect = "Vybrat jazyk",
+        Loaded = "Hub úspěšně načten!"
     },
     DA = {
-        WindowTitle     = "Super Bot Brawl Hub",
-        TabHome         = "Hjem",
-        TabVision       = "Syn",
-        TabMovement     = "Bevægelse",
-        TabCombat       = "Kamp",
-        TabTools        = "Værktøjer",
-        ESPBots         = "ESP Bots",
-        ESPBotsDesc     = "Fremhæv nærliggende bots og vis deres HP",
-        TPNearestBot    = "TP til nærmeste Bot",
-        TPNearestDesc   = "Teleportér foran den nærmeste bot",
-        Fly             = "Fly",
-        FlyDesc         = "Slå flytilstand til/fra",
-        FlySpeed        = "Flyhastighed",
-        NoClip          = "NoClip",
-        NoClipDesc      = "Gå igennem vægge og forhindringer",
-        WalkSpeed       = "Gåhastighed",
-        GodMode         = "Gudstilstand",
-        GodModeDesc     = "Genopret HP kontinuerligt — næsten uforgængelig",
-        AutoFarm        = "Auto Farm",
-        AutoFarmDesc    = "Angrib automatisk den nærmeste bot",
-        AutoFarmDelay   = "Farm-forsinkelse (s)",
-        HitboxToggle    = "Udvid Hitboxes",
-        HitboxDesc      = "Forstør bot-hitboxes for lettere at ramme",
-        HitboxSize      = "Hitbox-størrelse",
-        Fullbright      = "Fuld lysstyrke",
-        FullbrightDesc  = "Øg lysstyrke og deaktiver skygger",
-        LangSelect      = "Sprog",
-        CreditsTitle    = "Super Bot Brawl Hub",
-        CreditsContent  = "Oprettet af Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — Første udgivelse",
-        Loaded          = "Hub indlæst! Kæmp klogere.",
-    },
+        WindowTitle = "SCP vs Guard Hub",
+        TabHome = "Hjem",
+        TabVision = "Syn & ESP",
+        TabMovement = "Bevægelse & Flyvning",
+        TabCombat = "Kamp & Silent Aim",
+        TabDoors = "Dørkontrol",
+        TabTools = "Værktøjer",
+        ESPDynamic = "Dynamisk Fjende-ESP",
+        TPClosest = "TP til nærmeste fjende",
+        Fly = "Flyv (PC & Mobil)",
+        FlySpeed = "Flyvehastighed",
+        NoClip = "NoClip (Gå gennem vægge)",
+        WalkSpeed = "Gåhastighet",
+        SilentAim = "Balanceret Silent Aim",
+        SilentAimDist = "Maks afstand",
+        SilentAimFOV = "FOV størrelse",
+        FreezeAmmo = "Frys ammunition",
+        Fullbright = "Fullbright (Ingen mørke)",
+        AntiBan = "Anti-Ban Beskyttelse",
+        HitboxToggle = "Aktiver rene Hitboxes",
+        HitboxSize = "Hitbox Størrelse (Op til 10x)",
+        OpenAllDoors = "Åbn alle døre",
+        CloseAllDoors = "Luk alle døre",
+        CreditsTitle = "Skaber & Credits",
+        CreditsContent = "Discord: rival960\nGitHub: Rival99900\nYouTube: rival9607",
+        LangSelect = "Vælg sprog",
+        Loaded = "Hub indlæst succesfuldt!"
+    }
 }
 
 local function T(key)
-    return (Translations[CurrentLang] and Translations[CurrentLang][key])
-        or Translations["EN"][key]
-        or key
+    return Translations[CurrentLang][key] or Translations["EN"][key] or key
 end
 
--- ───────────────────────────────────────────────────────────────
--- SETTINGS
--- ───────────────────────────────────────────────────────────────
-local Settings = {
-    GodMode         = false,
-    AutoFarm        = false,
-    AutoFarmDelay   = 0.3,
-    ESP_Bots        = false,
-    Fly             = false,
-    FlySpeed        = 60,
-    NoClip          = false,
-    WalkSpeed       = 16,
-    Fullbright      = false,
-    Hitbox_Enabled  = false,
-    HitboxSize      = 3,
-}
-
-local isMobile = UserInputService.TouchEnabled and not UserInputService.KeyboardEnabled
-
--- ───────────────────────────────────────────────────────────────
--- LOAD RAYFIELD (keyless)
--- ───────────────────────────────────────────────────────────────
+-- -----------------------------------------------------------------
+-- 2. RAYFIELD UI LOADING
+-- -----------------------------------------------------------------
 local success, Rayfield = pcall(function()
     return loadstring(game:HttpGet("https://sirius.menu/rayfield"))()
 end)
-if not success or not Rayfield then
-    warn("[SuperBotBrawlHub] Failed to load Rayfield.")
-    return
-end
+
+if not success or not Rayfield then return end
 
 local Window = Rayfield:CreateWindow({
-    Name            = T("WindowTitle"),
-    LoadingTitle    = "Loading Hub...",
-    LoadingSubtitle = "Created by Rival960 & Claude",
+    Name = T("WindowTitle"),
+    LoadingTitle = "Loading System...",
+    LoadingSubtitle = "Created by Rival960 & AI",
     ConfigurationSaving = { Enabled = false },
-    Discord         = { Enabled = false },
-    KeySystem       = false,
+    Discord = { Enabled = false },
+    KeySystem = false
 })
 
--- ───────────────────────────────────────────────────────────────
--- HELPERS
--- ───────────────────────────────────────────────────────────────
+-- -----------------------------------------------------------------
+-- 3. CONFIGURATION & STATES
+-- -----------------------------------------------------------------
+local Settings = {
+    ESP_Dynamic = true,
+    Fly = false,
+    FlySpeed = 50,
+    NoClip = false,
+    Fullbright = false,
+    SilentAim = false,
+    SilentAimMaxDist = 120,
+    SilentAimFov = 60,
+    FreezeAmmo = true,
+    AntiBan = true,
+    Hitbox_Enabled = false,
+    HitboxSize = 2,
+    WalkSpeed = 16,
+}
 
-local function getHRP()
-    local char = LocalPlayer.Character
-    if not char then return nil end
-    return char:FindFirstChild("HumanoidRootPart")
-end
+local FlyBodyVel, FlyBodyGyro
+local Camera = Workspace.CurrentCamera
+local isWeaponFiring = false
 
-local function getHumanoid()
-    local char = LocalPlayer.Character
-    if not char then return nil end
-    return char:FindFirstChildOfClass("Humanoid")
-end
+local GunShotEvent = nil
+pcall(function()
+    GunShotEvent = ReplicatedStorage:WaitForChild("Events"):WaitForChild("GunShot", 3)
+end)
 
--- STRICT bot detection: only Models with a live Humanoid that are NOT
--- the local player's character and NOT any other player's character.
--- This guarantees the hitbox NEVER affects the player.
-local function isBot(model)
-    if not model or not model:IsA("Model") then return false end
-    if LocalPlayer.Character and (model == LocalPlayer.Character or model:IsDescendantOf(LocalPlayer.Character)) then
-        return false
+local BroadcastBanEvent = nil
+pcall(function()
+    BroadcastBanEvent = ReplicatedStorage:WaitForChild("Events"):WaitForChild("BroadcastBan", 3)
+end)
+
+local function MakeBulletBuffer()
+    local bytes = {1, 104, 86, 27, 195, 24, 68, 51, 194, 109, 193, 173, 195, 200, 137, 25, 195, 68, 105, 50, 194, 244, 233, 172, 195}
+    local str = string.char(table.unpack(bytes))
+    if buffer and buffer.fromstring then
+        return buffer.fromstring(str)
     end
-    for _, p in ipairs(Players:GetPlayers()) do
-        if p.Character == model then return false end
-    end
-    local hum = model:FindFirstChildOfClass("Humanoid")
-    if not hum or hum.Health <= 0 then return false end
-    if not model:FindFirstChild("HumanoidRootPart") then return false end
-    return true
+    return str
 end
 
-local function getNearestBot()
-    local hrp = getHRP()
-    if not hrp then return nil, nil end
-    local bestDist, bestBot, bestHRP = math.huge, nil, nil
-    for _, obj in ipairs(Workspace:GetDescendants()) do
-        if isBot(obj) then
-            local bhrp = obj:FindFirstChild("HumanoidRootPart")
-            if bhrp then
-                local d = (bhrp.Position - hrp.Position).Magnitude
-                if d < bestDist then
-                    bestDist, bestBot, bestHRP = d, obj, bhrp
-                end
-            end
+local function isPlayerSCP(player)
+    if not player or not player.Character then return false end
+    local team = player.Team
+    if team and (team.Name:lower():find("scp") or team.Name:lower():find("containment") or team.Name:lower():find("anomaly")) then 
+        return true 
+    end
+    local pName = player.Name:lower()
+    local cName = player.Character.Name:lower()
+    if pName:find("scp") or cName:find("scp") or pName:find("045") or pName:find("173") or pName:find("096") or pName:find("106") or pName:find("939") or pName:find("049") or pName:find("682") or pName:find("457") then
+        return true
+    end
+    for _, child in pairs(player.Character:GetChildren()) do
+        if child.Name:lower():find("scp") or child.Name:lower():find("045") or child.Name:lower():find("457") then
+            return true
         end
     end
-    return bestBot, bestHRP
+    return false
 end
 
--- ───────────────────────────────────────────────────────────────
--- GOD MODE (MaxHealth first, then Health + HealthChanged)
--- ───────────────────────────────────────────────────────────────
-local godModeConnection = nil
-local originalMaxHealth = nil
-local godModeLoopRunning = false
+-- Strict Enemy Function (Ensures teammates are never targeted or impacted)
+local function isEnemy(player)
+    if not player or player == LocalPlayer or not player.Character then return false end
+    local localIsSCP = isPlayerSCP(LocalPlayer)
+    local targetIsSCP = isPlayerSCP(player)
+    return localIsSCP ~= targetIsSCP
+end
 
-local function setGodMode(state)
-    local hum = getHumanoid()
-    if not hum then return end
-
-    if state then
-        if originalMaxHealth == nil then
-            originalMaxHealth = hum.MaxHealth
-        end
-
-        -- Set MaxHealth FIRST, then Health (critical for the effect to stick)
-        hum.MaxHealth = 1e9
-        hum.Health    = 1e9
-        hum:SetStateEnabled(Enum.HumanoidStateType.Dead, false)
-
-        if not godModeLoopRunning then
-            godModeLoopRunning = true
-            task.spawn(function()
-                while Settings.GodMode and hum.Parent do
-                    hum.MaxHealth = 1e9
-                    if hum.Health < hum.MaxHealth then
-                        hum.Health = hum.MaxHealth
-                    end
-                    task.wait()
-                end
-                godModeLoopRunning = false
+-- Track Tool Activation for Official Game Shoot Button (PC & Mobile)
+local function setupToolTracking(char)
+    char.ChildAdded:Connect(function(child)
+        if child:IsA("Tool") then
+            child.Activated:Connect(function()
+                isWeaponFiring = true
+                task.delay(0.2, function() isWeaponFiring = false end)
             end)
         end
-
-        if godModeConnection then godModeConnection:Disconnect() end
-        godModeConnection = hum.HealthChanged:Connect(function(newHealth)
-            if Settings.GodMode and hum.Parent and newHealth < hum.MaxHealth then
-                hum.Health = hum.MaxHealth
-            end
+    end)
+    local currentTool = char:FindFirstChildOfClass("Tool")
+    if currentTool then
+        currentTool.Activated:Connect(function()
+            isWeaponFiring = true
+            task.delay(0.2, function() isWeaponFiring = false end)
         end)
-    else
-        if godModeConnection then
-            godModeConnection:Disconnect()
-            godModeConnection = nil
+    end
+end
+
+LocalPlayer.CharacterAdded:Connect(function(char)
+    local hum = char:WaitForChild("Humanoid", 5)
+    if hum then
+        hum.WalkSpeed = Settings.WalkSpeed
+    end
+    setupToolTracking(char)
+end)
+
+if LocalPlayer.Character then
+    setupToolTracking(LocalPlayer.Character)
+end
+
+-- -----------------------------------------------------------------
+-- 4. ANTI-BAN & ANTI-KICK PROTECTION
+-- -----------------------------------------------------------------
+
+-- Search for ban/kick remotes
+local BanRemote = nil
+local KickRemote = nil
+
+pcall(function()
+    -- Try different locations
+    local remotes = ReplicatedStorage:FindFirstChild("Remotes") or game:FindFirstChild("Remotes")
+    if remotes then
+        BanRemote = remotes:FindFirstChild("Ban") or remotes:FindFirstChild("BanPlayer")
+        KickRemote = remotes:FindFirstChild("Kick") or remotes:FindFirstChild("KickPlayer")
+    end
+end)
+
+-- Block any remotes found
+if BanRemote then
+    local OrigBan = BanRemote.FireServer
+    BanRemote.FireServer = function(self, ...)
+        local args = {...}
+        if Settings.AntiBan and (args[1] == LocalPlayer.Name or args[1] == LocalPlayer.DisplayName) then
+            print("[Anti-Ban] Blocked ban remote:", args[1])
+            return
         end
-        hum:SetStateEnabled(Enum.HumanoidStateType.Dead, true)
-        if originalMaxHealth then
-            hum.MaxHealth = originalMaxHealth
-            hum.Health    = originalMaxHealth
-            originalMaxHealth = nil
-        else
-            hum.MaxHealth = 100
-            hum.Health    = math.min(hum.Health, 100)
+        return OrigBan(self, ...)
+    end
+end
+
+if KickRemote then
+    local OrigKick = KickRemote.FireServer
+    KickRemote.FireServer = function(self, ...)
+        local args = {...}
+        if Settings.AntiBan and (args[1] == LocalPlayer.Name or args[1] == LocalPlayer.DisplayName) then
+            print("[Anti-Kick] Blocked kick remote:", args[1])
+            return
         end
+        return OrigKick(self, ...)
     end
 end
 
--- ───────────────────────────────────────────────────────────────
--- FLY (PC + Mobile)
--- ───────────────────────────────────────────────────────────────
-local flyVelocity, flyGyro
-local flyMobileVertical = 0
-local mobileFlyGui = nil
-local mobileUpBtn, mobileDownBtn
-
-local function createMobileFlyButtons()
-    if mobileFlyGui then return end
-    local gui = Instance.new("ScreenGui")
-    gui.Name = "_SB_MobileFly"
-    gui.ResetOnSpawn = false
-    gui.Parent = LocalPlayer:WaitForChild("PlayerGui")
-
-    local function makeBtn(text, yOffset)
-        local btn = Instance.new("TextButton")
-        btn.Size = UDim2.new(0, 50, 0, 50)
-        btn.Position = UDim2.new(1, -70, 0.5, yOffset)
-        btn.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-        btn.BackgroundTransparency = 0.3
-        btn.TextColor3 = Color3.new(1, 1, 1)
-        btn.Text = text
-        btn.TextSize = 24
-        btn.Font = Enum.Font.GothamBold
-        btn.Parent = gui
-        return btn
-    end
-
-    mobileUpBtn = makeBtn("▲", -60)
-    mobileDownBtn = makeBtn("▼", 0)
-
-    mobileUpBtn.MouseButton1Down:Connect(function() flyMobileVertical = 1 end)
-    mobileUpBtn.MouseButton1Up:Connect(function() flyMobileVertical = 0 end)
-    mobileDownBtn.MouseButton1Down:Connect(function() flyMobileVertical = -1 end)
-    mobileDownBtn.MouseButton1Up:Connect(function() flyMobileVertical = 0 end)
-
-    mobileFlyGui = gui
-end
-
-local function enableFly()
-    local hrp = getHRP()
-    if not hrp then return end
-
-    flyVelocity = Instance.new("BodyVelocity")
-    flyVelocity.Velocity    = Vector3.zero
-    flyVelocity.MaxForce    = Vector3.new(1e5, 1e5, 1e5)
-    flyVelocity.Parent      = hrp
-
-    flyGyro = Instance.new("BodyGyro")
-    flyGyro.MaxTorque       = Vector3.new(1e5, 1e5, 1e5)
-    flyGyro.P               = 1e4
-    flyGyro.CFrame          = hrp.CFrame
-    flyGyro.Parent          = hrp
-
-    local hum = getHumanoid()
-    if hum then hum.PlatformStand = true end
-
-    if isMobile then
-        createMobileFlyButtons()
-        if mobileFlyGui then mobileFlyGui.Enabled = true end
-    end
-end
-
-local function disableFly()
-    if flyVelocity then flyVelocity:Destroy(); flyVelocity = nil end
-    if flyGyro     then flyGyro:Destroy();     flyGyro     = nil end
-    local hum = getHumanoid()
-    if hum then hum.PlatformStand = false end
-    local hrp = getHRP()
-    if hrp then
-        hrp.AssemblyLinearVelocity  = Vector3.zero
-        hrp.AssemblyAngularVelocity = Vector3.zero
-    end
-    flyMobileVertical = 0
-    if mobileFlyGui then mobileFlyGui.Enabled = false end
-end
-
--- ───────────────────────────────────────────────────────────────
--- NOCLIP (same logic as the working SCP script: disable CanCollide
--- on every BasePart, including HumanoidRootPart, and leave it off)
--- ───────────────────────────────────────────────────────────────
-local function applyNoClip(state)
-    local char = LocalPlayer.Character
-    if not char then return end
-    for _, part in ipairs(char:GetDescendants()) do
-        if part:IsA("BasePart") then
-            part.CanCollide = not state
-        end
-    end
-    if state then
-        -- Also stop any residual sliding when enabling
-        local hrp = char:FindFirstChild("HumanoidRootPart")
-        if hrp then
-            hrp.AssemblyLinearVelocity  = Vector3.zero
-            hrp.AssemblyAngularVelocity = Vector3.zero
-        end
-    end
-end
-
--- ───────────────────────────────────────────────────────────────
--- AUTO FARM
--- ───────────────────────────────────────────────────────────────
-local lastFarmTime = 0
-
-local function doAutoFarm()
-    if not Settings.AutoFarm then return end
-    local now = tick()
-    if now - lastFarmTime < Settings.AutoFarmDelay then return end
-    lastFarmTime = now
-
-    local char = LocalPlayer.Character
-    if not char then return end
-    local hrp = char:FindFirstChild("HumanoidRootPart")
-    if not hrp then return end
-
-    local botModel, botHRP = getNearestBot()
-    if not botHRP or not botModel then return end
-
-    local offset = (hrp.Position - botHRP.Position).Unit * 4
-    hrp.CFrame = CFrame.new(botHRP.Position + offset + Vector3.new(0, 1, 0))
-
-    local tool = char:FindFirstChildOfClass("Tool")
-    if tool then
-        pcall(function() tool:Activate() end)
-        for _, v in ipairs(tool:GetDescendants()) do
-            if v:IsA("RemoteEvent") then
-                pcall(function() v:FireServer() end)
-                break
+-- Detect and respond to ban/kick broadcasts
+if BroadcastBanEvent then
+    BroadcastBanEvent.OnClientEvent:Connect(function(username, reason)
+        if Settings.AntiBan then
+            if username == LocalPlayer.Name or username == LocalPlayer.DisplayName then
+                print("[Anti-Ban] Ban broadcast detected! Reason:", reason)
+                
+                -- Notify the player
+                Rayfield:Notify({
+                    Title = "🚨 Ban Detected",
+                    Content = "Ban attempt: " .. reason,
+                    Duration = 5,
+                    Image = 4483362458,
+                })
+                
+                -- Option: Log out before the ban takes effect
+                -- LocalPlayer:Kick("[Protected] Disconnecting to prevent ban")
             end
         end
-    end
+    end)
 end
 
--- ───────────────────────────────────────────────────────────────
--- TABS
--- ───────────────────────────────────────────────────────────────
-
-local TabHome = Window:CreateTab(T("TabHome"), 4483362458)
-TabHome:CreateParagraph({
-    Title   = T("CreditsTitle"),
-    Content = T("CreditsContent"),
-})
-
-local TabVision = Window:CreateTab(T("TabVision"), 4483362458)
-
-TabVision:CreateToggle({
-    Name        = T("ESPBots"),
-    CurrentValue = Settings.ESP_Bots,
-    Flag        = "ESP_Bots",
-    Callback    = function(v) Settings.ESP_Bots = v end,
-})
-
-TabVision:CreateButton({
-    Name     = T("TPNearestBot"),
-    Callback = function()
-        local hrp = getHRP()
-        if not hrp then return end
-        local _, botHRP = getNearestBot()
-        if botHRP then
-            local dir = (hrp.Position - botHRP.Position).Unit
-            hrp.CFrame = CFrame.new(botHRP.Position + dir * 4 + Vector3.new(0, 1, 0))
-            Rayfield:Notify({ Title = T("TPNearestBot"), Content = T("TPNearestDesc"), Duration = 2 })
-        else
-            Rayfield:Notify({ Title = T("TPNearestBot"), Content = "No bot found nearby.", Duration = 2 })
+-- Disable detection scripts
+if Settings.AntiBan then
+    task.spawn(function()
+        for _, obj in pairs(game:GetDescendants()) do
+            if obj:IsA("LocalScript") and obj.Name:find("Detect") or obj.Name:find("Anti") or obj.Name:find("Ban") then
+                obj.Disabled = true
+            end
         end
-    end,
-})
+    end)
+end
 
+-- -----------------------------------------------------------------
+-- 5. DOORS CONTROL
+-- -----------------------------------------------------------------
+local function OperateDoors(openState)
+    local count = 0
+    for _, obj in ipairs(Workspace:GetDescendants()) do
+        local name = obj.Name:lower()
+        if name:find("door") or name:find("gate") or name:find("porte") or name:find("checkpoint") then
+            pcall(function()
+                local prompt = obj:FindFirstChildOfClass("ProximityPrompt")
+                if prompt then
+                    fireproximityprompt(prompt)
+                    count = count + 1
+                end
+                local cd = obj:FindFirstChildOfClass("ClickDetector")
+                if cd then
+                    fireclickdetector(cd)
+                    count = count + 1
+                end
+                local remote = obj:FindFirstChildWhichIsA("RemoteEvent") or obj:FindFirstChildWhichIsA("RemoteFunction")
+                if remote then
+                    remote:FireServer(openState)
+                    count = count + 1
+                end
+                for _, child in ipairs(obj:GetDescendants()) do
+                    if child:IsA("ProximityPrompt") then
+                        fireproximityprompt(child)
+                        count = count + 1
+                    elseif child:IsA("ClickDetector") then
+                        fireclickdetector(child)
+                        count = count + 1
+                    elseif child:IsA("RemoteEvent") or child:IsA("RemoteFunction") then
+                        child:FireServer(openState)
+                        count = count + 1
+                    end
+                end
+            end)
+        end
+    end
+    local msg = openState and ("Doors opened ("..count..")") or ("Doors closed ("..count..")")
+    Rayfield:Notify({Title = "Doors Control", Content = msg, Duration = 2})
+end
+
+-- -----------------------------------------------------------------
+-- 6. TABS CREATION
+-- -----------------------------------------------------------------
+local TabHome = Window:CreateTab(T("TabHome"), 4483362458)
+local TabMain = Window:CreateTab(T("TabVision"), 4483362458)
 local TabMovement = Window:CreateTab(T("TabMovement"), 4483362458)
-
-TabMovement:CreateToggle({
-    Name         = T("Fly"),
-    CurrentValue = Settings.Fly,
-    Flag         = "Fly",
-    Callback     = function(v)
-        Settings.Fly = v
-        if v then enableFly() else disableFly() end
-    end,
-})
-
-TabMovement:CreateSlider({
-    Name         = T("FlySpeed"),
-    Range        = {10, 300},
-    Increment    = 5,
-    CurrentValue = Settings.FlySpeed,
-    Flag         = "FlySpeed",
-    Callback     = function(v) Settings.FlySpeed = v end,
-})
-
-TabMovement:CreateToggle({
-    Name         = T("NoClip"),
-    CurrentValue = Settings.NoClip,
-    Flag         = "NoClip",
-    Callback     = function(v)
-        Settings.NoClip = v
-        applyNoClip(v)
-    end,
-})
-
-TabMovement:CreateSlider({
-    Name         = T("WalkSpeed"),
-    Range        = {16, 250},
-    Increment    = 1,
-    CurrentValue = Settings.WalkSpeed,
-    Flag         = "WalkSpeed",
-    Callback     = function(v)
-        Settings.WalkSpeed = v
-        local hum = getHumanoid()
-        if hum then hum.WalkSpeed = v end
-    end,
-})
-
 local TabCombat = Window:CreateTab(T("TabCombat"), 4483362458)
+local TabDoors = Window:CreateTab(T("TabDoors"), 4483362458)
+local TabTools = Window:CreateTab(T("TabTools"), 4483362458)
 
-TabCombat:CreateToggle({
-    Name         = T("GodMode"),
-    CurrentValue = Settings.GodMode,
-    Flag         = "GodMode",
-    Callback     = function(v)
-        Settings.GodMode = v
-        setGodMode(v)
-    end,
+-- --- HOME / CREDITS ---
+TabHome:CreateParagraph({
+    Title = T("CreditsTitle"),
+    Content = T("CreditsContent")
 })
 
-TabCombat:CreateToggle({
-    Name         = T("AutoFarm"),
-    CurrentValue = Settings.AutoFarm,
-    Flag         = "AutoFarm",
-    Callback     = function(v) Settings.AutoFarm = v end,
-})
-
-TabCombat:CreateSlider({
-    Name         = T("AutoFarmDelay"),
-    Range        = {0.1, 2.0},
-    Increment    = 0.1,
-    CurrentValue = Settings.AutoFarmDelay,
-    Flag         = "AutoFarmDelay",
-    Callback     = function(v) Settings.AutoFarmDelay = v end,
-})
-
-TabCombat:CreateToggle({
-    Name         = T("HitboxToggle"),
-    CurrentValue = Settings.Hitbox_Enabled,
-    Flag         = "Hitbox_Enabled",
-    Callback     = function(v)
-        Settings.Hitbox_Enabled = v
-        if not v then
-            -- Restore all bot hitboxes
-            for _, obj in ipairs(Workspace:GetDescendants()) do
-                if isBot(obj) then
-                    local bhrp = obj:FindFirstChild("HumanoidRootPart")
-                    if bhrp then
-                        local orig = bhrp:GetAttribute("HitboxOriginalSize")
-                        if orig then
-                            bhrp.Size = orig
-                            bhrp:SetAttribute("HitboxOriginalSize", nil)
-                        else
-                            bhrp.Size = Vector3.new(2, 2, 1)
-                        end
-                        bhrp.Transparency = 1
-                        bhrp.CanCollide = true
+-- --- ESP ---
+TabMain:CreateToggle({
+    Name = T("ESPDynamic"),
+    CurrentValue = true,
+    Flag = "ESP_Dynamic_Toggle",
+    Callback = function(Value)
+        Settings.ESP_Dynamic = Value
+        if not Value then
+            for _, p in pairs(Players:GetPlayers()) do
+                if p.Character then
+                    if p.Character:FindFirstChild("DynamicEnemyESP") then p.Character.DynamicEnemyESP:Destroy() end
+                    if p.Character:FindFirstChild("Head") and p.Character.Head:FindFirstChild("ESPInfoTag") then
+                        p.Character.Head.ESPInfoTag:Destroy()
                     end
                 end
             end
@@ -1131,217 +908,430 @@ TabCombat:CreateToggle({
     end,
 })
 
-TabCombat:CreateSlider({
-    Name         = T("HitboxSize"),
-    Range        = {2, 10},
-    Increment    = 1,
-    CurrentValue = Settings.HitboxSize,
-    Flag         = "HitboxSize",
-    Callback     = function(v) Settings.HitboxSize = v end,
-})
-
-local TabTools = Window:CreateTab(T("TabTools"), 4483362458)
-
-TabTools:CreateToggle({
-    Name         = T("Fullbright"),
-    CurrentValue = Settings.Fullbright,
-    Flag         = "Fullbright",
-    Callback     = function(v)
-        Settings.Fullbright = v
-        if v then
-            Lighting.Brightness     = 2
-            Lighting.ClockTime      = 14
-            Lighting.GlobalShadows  = false
+TabMain:CreateButton({
+    Name = T("TPClosest"),
+    Callback = function()
+        local char = LocalPlayer.Character
+        if not char or not char:FindFirstChild("HumanoidRootPart") then return end
+        local hrp = char.HumanoidRootPart
+        
+        local target, minDist = nil, math.huge
+        for _, p in pairs(Players:GetPlayers()) do
+            if isEnemy(p) and p.Character and p.Character:FindFirstChild("HumanoidRootPart") then
+                local hum = p.Character:FindFirstChildOfClass("Humanoid")
+                if hum and hum.Health > 0 then
+                    local dist = (p.Character.HumanoidRootPart.Position - hrp.Position).Magnitude
+                    if dist < minDist then
+                        minDist = dist
+                        target = p.Character.HumanoidRootPart
+                    end
+                end
+            end
+        end
+        if target then
+            hrp.CFrame = target.CFrame * CFrame.new(0, 0, 3)
+            Rayfield:Notify({Title = "Teleport", Content = "TP successful!", Duration = 2})
         else
-            Lighting.Brightness     = 1
-            Lighting.ClockTime      = 14
-            Lighting.GlobalShadows  = true
+            Rayfield:Notify({Title = "Teleport", Content = "No enemy found nearby.", Duration = 2})
         end
     end,
 })
 
-local langOptions = {"EN","FR","DE","ES","PT","RU","IT","NL","PL","ZH","JA","TR","KO","AR","VI","SV","EL","RO","UK","CS","DA"}
-TabTools:CreateDropdown({
-    Name    = T("LangSelect"),
-    Options = langOptions,
-    CurrentOption = {CurrentLang},
-    Flag    = "Language",
-    Callback = function(selected)
-        CurrentLang = selected[1] or selected
-        Rayfield:Notify({
-            Title   = "Language",
-            Content = "Re-execute the script to apply the new language.",
-            Duration = 4,
-        })
+-- --- MOVEMENT ---
+TabMovement:CreateToggle({
+    Name = T("Fly"),
+    CurrentValue = false,
+    Flag = "Fly_Toggle",
+    Callback = function(Value)
+        Settings.Fly = Value
+        local char = LocalPlayer.Character
+        if not char then return end
+        local hrp = char:FindFirstChild("HumanoidRootPart")
+        
+        if Value then
+            if not hrp then return end
+            FlyBodyVel = Instance.new("BodyVelocity")
+            FlyBodyVel.MaxForce = Vector3.new(1e9, 1e9, 1e9)
+            FlyBodyVel.Velocity = Vector3.zero
+            FlyBodyVel.Parent = hrp
+            
+            FlyBodyGyro = Instance.new("BodyGyro")
+            FlyBodyGyro.MaxTorque = Vector3.new(1e9, 1e9, 1e9)
+            FlyBodyGyro.CFrame = hrp.CFrame
+            FlyBodyGyro.Parent = hrp
+        else
+            if FlyBodyVel then FlyBodyVel:Destroy() end
+            if FlyBodyGyro then FlyBodyGyro:Destroy() end
+        end
     end,
 })
 
--- ───────────────────────────────────────────────────────────────
--- MAIN LOOP
--- ───────────────────────────────────────────────────────────────
+TabMovement:CreateSlider({
+    Name = T("FlySpeed"),
+    Range = {10, 300},
+    Increment = 5,
+    Suffix = "studs/s",
+    CurrentValue = 50,
+    Flag = "FlySpeed_Slider",
+    Callback = function(Value)
+        Settings.FlySpeed = Value
+    end,
+})
+
+TabMovement:CreateToggle({
+    Name = T("NoClip"),
+    CurrentValue = false,
+    Flag = "NoClip_Toggle",
+    Callback = function(Value)
+        Settings.NoClip = Value
+        local char = LocalPlayer.Character
+        if not Value and char then
+            local validBodyParts = {
+                ["Head"] = true, ["Torso"] = true, ["UpperTorso"] = true, ["LowerTorso"] = true,
+                ["LeftArm"] = true, ["RightArm"] = true, ["LeftLeg"] = true, ["RightLeg"] = true,
+                ["LeftUpperArm"] = true, ["LeftLowerArm"] = true, ["LeftHand"] = true,
+                ["RightUpperArm"] = true, ["RightLowerArm"] = true, ["RightHand"] = true,
+                ["LeftUpperLeg"] = true, ["LeftLowerLeg"] = true, ["LeftFoot"] = true,
+                ["RightUpperLeg"] = true, ["RightLowerLeg"] = true, ["RightFoot"] = true
+            }
+            for _, part in pairs(char:GetDescendants()) do
+                if part:IsA("BasePart") then
+                    if validBodyParts[part.Name] then
+                        part.CanCollide = true
+                    elseif part.Name == "HumanoidRootPart" then
+                        part.CanCollide = false
+                    end
+                end
+            end
+        end
+    end,
+})
+
+TabMovement:CreateSlider({
+    Name = T("WalkSpeed"),
+    Range = {16, 250},
+    Increment = 1,
+    Suffix = "speed",
+    CurrentValue = 16,
+    Flag = "Speed_Slider",
+    Callback = function(Value)
+        Settings.WalkSpeed = Value
+        if LocalPlayer.Character and LocalPlayer.Character:FindFirstChildOfClass("Humanoid") then
+            LocalPlayer.Character:FindFirstChildOfClass("Humanoid").WalkSpeed = Value
+        end
+    end,
+})
+
+-- --- COMBAT & SILENT AIM ---
+TabCombat:CreateToggle({
+    Name = T("SilentAim"),
+    CurrentValue = false,
+    Flag = "SilentAim_Toggle",
+    Callback = function(Value)
+        Settings.SilentAim = Value
+    end,
+})
+
+TabCombat:CreateSlider({
+    Name = T("SilentAimDist"),
+    Range = {20, 300},
+    Increment = 10,
+    Suffix = "studs",
+    CurrentValue = 120,
+    Flag = "SilentAimDist_Slider",
+    Callback = function(Value)
+        Settings.SilentAimMaxDist = Value
+    end,
+})
+
+TabCombat:CreateSlider({
+    Name = T("SilentAimFOV"),
+    Range = {10, 200},
+    Increment = 5,
+    Suffix = "px",
+    CurrentValue = 60,
+    Flag = "SilentAimFOV_Slider",
+    Callback = function(Value)
+        Settings.SilentAimFov = Value
+    end,
+})
+
+TabCombat:CreateToggle({
+    Name = T("FreezeAmmo"),
+    CurrentValue = true,
+    Flag = "FreezeAmmo_Toggle",
+    Callback = function(Value)
+        Settings.FreezeAmmo = Value
+    end,
+})
+
+TabCombat:CreateToggle({
+    Name = T("AntiBan"),
+    CurrentValue = true,
+    Flag = "AntiBan_Toggle",
+    Callback = function(Value)
+        Settings.AntiBan = Value
+    end,
+})
+
+TabCombat:CreateToggle({
+    Name = T("HitboxToggle"),
+    CurrentValue = false,
+    Flag = "Hitbox_Toggle",
+    Callback = function(Value)
+        Settings.Hitbox_Enabled = Value
+        if not Value then
+            for _, p in pairs(Players:GetPlayers()) do
+                if p.Character and p.Character:FindFirstChild("HumanoidRootPart") then
+                    local hrp = p.Character.HumanoidRootPart
+                    hrp.Size = Vector3.new(2, 2, 1)
+                    hrp.Transparency = 1
+                    hrp.CanCollide = false
+                end
+            end
+        end
+    end,
+})
+
+TabCombat:CreateSlider({
+    Name = T("HitboxSize"),
+    Range = {2, 10},
+    Increment = 1,
+    Suffix = "x",
+    CurrentValue = 2,
+    Flag = "Hitbox_Slider",
+    Callback = function(Value)
+        Settings.HitboxSize = Value
+    end,
+})
+
+-- --- DOORS ---
+TabDoors:CreateButton({
+    Name = T("OpenAllDoors"),
+    Callback = function()
+        OperateDoors(true)
+    end,
+})
+
+TabDoors:CreateButton({
+    Name = T("CloseAllDoors"),
+    Callback = function()
+        OperateDoors(false)
+    end,
+})
+
+-- --- TOOLS & VISUALS ---
+TabTools:CreateToggle({
+    Name = T("Fullbright"),
+    CurrentValue = false,
+    Flag = "Fullbright_Toggle",
+    Callback = function(Value)
+        Settings.Fullbright = Value
+        if Value then
+            Lighting.Brightness = 2
+            Lighting.ClockTime = 14
+            Lighting.GlobalShadows = false
+        else
+            Lighting.Brightness = 1
+            Lighting.GlobalShadows = true
+        end
+    end,
+})
+
+TabTools:CreateDropdown({
+    Name = T("LangSelect"),
+    Options = {"English", "Français", "Deutsch", "Español", "Português", "Русский", "Italiano", "Nederlands", "Polski", "中文", "日本語", "Türkçe", "한국어", "العربية", "Tiếng Việt", "Svenska", "Ελληνικά", "Română", "Українська", "Čeština", "Dansk"},
+    CurrentOption = "Français",
+    Flag = "LangDropdown",
+    Callback = function(Option)
+        local mapping = {
+            ["English"] = "EN", ["Français"] = "FR", ["Deutsch"] = "DE", ["Español"] = "ES",
+            ["Português"] = "PT", ["Русский"] = "RU", ["Italiano"] = "IT", ["Nederlands"] = "NL",
+            ["Polski"] = "PL", ["中文"] = "ZH", ["日本語"] = "JA", ["Türkçe"] = "TR",
+            ["한국어"] = "KO", ["العربية"] = "AR", ["Tiếng Việt"] = "VI", ["Svenska"] = "SV",
+            ["Ελληνικά"] = "EL", ["Română"] = "RO", ["Українська"] = "UK", ["Čeština"] = "CS", ["Dansk"] = "DA"
+        }
+        if mapping[Option] then
+            CurrentLang = mapping[Option]
+            Rayfield:Notify({Title = "Language", Content = "Language changed. Re-execute script to apply.", Duration = 3})
+        end
+    end,
+})
+
+-- -----------------------------------------------------------------
+-- 7. EVENTS & MAIN LOOP (RENDERSTEPPED - OPTIMIZED)
+-- -----------------------------------------------------------------
 RunService.RenderStepped:Connect(function()
     local char = LocalPlayer.Character
     if not char then return end
+    local hrp = char:FindFirstChild("HumanoidRootPart")
+    local humanoid = char:FindFirstChildOfClass("Humanoid")
+    local localIsSCP = isPlayerSCP(LocalPlayer)
 
-    local hrp  = char:FindFirstChild("HumanoidRootPart")
-    local hum  = char:FindFirstChildOfClass("Humanoid")
+    -- Universal Fly
+    if Settings.Fly and hrp and FlyBodyVel and FlyBodyGyro then
+        local moveDir = Vector3.zero
+        if humanoid and humanoid.MoveDirection.Magnitude > 0 then
+            moveDir = humanoid.MoveDirection
+        end
+        
+        if UserInputService:IsKeyDown(Enum.KeyCode.W) or UserInputService:IsKeyDown(Enum.KeyCode.Up) then moveDir = moveDir + Camera.CFrame.LookVector end
+        if UserInputService:IsKeyDown(Enum.KeyCode.S) or UserInputService:IsKeyDown(Enum.KeyCode.Down) then moveDir = moveDir - Camera.CFrame.LookVector end
+        if UserInputService:IsKeyDown(Enum.KeyCode.A) or UserInputService:IsKeyDown(Enum.KeyCode.Left) then moveDir = moveDir - Camera.CFrame.RightVector end
+        if UserInputService:IsKeyDown(Enum.KeyCode.D) or UserInputService:IsKeyDown(Enum.KeyCode.Right) then moveDir = moveDir + Camera.CFrame.RightVector end
+        if UserInputService:IsKeyDown(Enum.KeyCode.Space) then moveDir = moveDir + Vector3.new(0, 1, 0) end
+        if UserInputService:IsKeyDown(Enum.KeyCode.LeftShift) then moveDir = moveDir - Vector3.new(0, 1, 0) end
 
-    -- NoClip: re-apply every frame (same as SCP script)
+        FlyBodyVel.Velocity = moveDir * Settings.FlySpeed
+        FlyBodyGyro.CFrame = Camera.CFrame
+    end
+
+    -- NoClip
     if Settings.NoClip then
-        for _, part in ipairs(char:GetDescendants()) do
+        for _, part in pairs(char:GetDescendants()) do
             if part:IsA("BasePart") then
                 part.CanCollide = false
             end
         end
     end
 
-    -- Fly
-    if Settings.Fly and flyVelocity and flyGyro and hrp then
-        local cam   = Workspace.CurrentCamera
-        local speed = Settings.FlySpeed
-        local dir   = Vector3.zero
-
-        if isMobile then
-            local move = hum and hum.MoveDirection or Vector3.zero
-            dir = move
-            if flyMobileVertical ~= 0 then
-                dir = dir + Vector3.new(0, flyMobileVertical, 0)
-            end
-        else
-            local uis = UserInputService
-            if uis:IsKeyDown(Enum.KeyCode.W) or uis:IsKeyDown(Enum.KeyCode.Up) then
-                dir = dir + cam.CFrame.LookVector
-            end
-            if uis:IsKeyDown(Enum.KeyCode.S) or uis:IsKeyDown(Enum.KeyCode.Down) then
-                dir = dir - cam.CFrame.LookVector
-            end
-            if uis:IsKeyDown(Enum.KeyCode.A) or uis:IsKeyDown(Enum.KeyCode.Left) then
-                dir = dir - cam.CFrame.RightVector
-            end
-            if uis:IsKeyDown(Enum.KeyCode.D) or uis:IsKeyDown(Enum.KeyCode.Right) then
-                dir = dir + cam.CFrame.RightVector
-            end
-            if uis:IsKeyDown(Enum.KeyCode.Space) then
-                dir = dir + Vector3.new(0, 1, 0)
-            end
-            if uis:IsKeyDown(Enum.KeyCode.LeftShift) or uis:IsKeyDown(Enum.KeyCode.RightShift) then
-                dir = dir - Vector3.new(0, 1, 0)
+    -- Freeze Ammo (Optimized to target strictly ammunition without breaking weapon charging states)
+    if Settings.FreezeAmmo then
+        if GunShotEvent then
+            pcall(function()
+                firesignal(GunShotEvent.OnClientEvent, "ammo", 999, 999)
+            end)
+        end
+        local equippedTool = char:FindFirstChildOfClass("Tool")
+        if equippedTool then
+            for _, desc in pairs(equippedTool:GetDescendants()) do
+                if desc:IsA("IntValue") or desc:IsA("NumberValue") then
+                    local n = desc.Name:lower()
+                    if n == "ammo" or n == "mag" or n == "clip" or n == "storedammo" or n == "currentammo" then
+                        desc.Value = 999
+                    end
+                end
             end
         end
-
-        flyVelocity.Velocity = dir.Magnitude > 0 and dir.Unit * speed or Vector3.zero
-        flyGyro.CFrame = cam.CFrame
     end
 
-    -- ESP (only bots)
-    if Settings.ESP_Bots then
-        for _, obj in ipairs(Workspace:GetDescendants()) do
-            if isBot(obj) then
-                local botHum = obj:FindFirstChildOfClass("Humanoid")
+    -- Clean Hitboxes (Safe scaling of HumanoidRootPart without freezing custom SCP rigs)
+    for _, p in pairs(Players:GetPlayers()) do
+        if p.Character and p.Character:FindFirstChild("HumanoidRootPart") then
+            local enemy = isEnemy(p)
+            local targetHrp = p.Character.HumanoidRootPart
+            
+            if Settings.Hitbox_Enabled and Settings.HitboxSize > 2 and enemy then
+                pcall(function()
+                    targetHrp.Size = Vector3.new(Settings.HitboxSize * 2, Settings.HitboxSize * 2, Settings.HitboxSize * 2)
+                    targetHrp.Transparency = 0.5
+                    targetHrp.CanCollide = false
+                end)
+            else
+                pcall(function()
+                    targetHrp.Size = Vector3.new(2, 2, 1)
+                    targetHrp.Transparency = 1
+                    targetHrp.CanCollide = true
+                end)
+            end
+        end
+    end
 
-                local hl = obj:FindFirstChild("_BotESP_Highlight")
-                if not hl then
-                    hl = Instance.new("Highlight")
-                    hl.Name             = "_BotESP_Highlight"
-                    hl.FillColor        = Color3.fromRGB(255, 60, 60)
-                    hl.OutlineColor     = Color3.fromRGB(255, 200, 0)
-                    hl.FillTransparency = 0.4
-                    hl.Parent           = obj
+    -- Strict Team ESP & Info Tags (Ensures teammates never get highlighted)
+    for _, p in pairs(Players:GetPlayers()) do
+        if p ~= LocalPlayer and p.Character then
+            local enemy = isEnemy(p)
+            local head = p.Character:FindFirstChild("Head")
+            local hum = p.Character:FindFirstChildOfClass("Humanoid")
+            
+            if Settings.ESP_Dynamic and enemy then
+                if not p.Character:FindFirstChild("DynamicEnemyESP") then
+                    local hl = Instance.new("Highlight")
+                    hl.Name = "DynamicEnemyESP"
+                    hl.FillColor = localIsSCP and Color3.fromRGB(0, 150, 255) or Color3.fromRGB(255, 30, 30)
+                    hl.OutlineColor = Color3.fromRGB(255, 255, 255)
+                    hl.FillTransparency = 0.35
+                    hl.Parent = p.Character
                 end
 
-                local bhrp = obj:FindFirstChild("HumanoidRootPart")
-                if bhrp then
-                    local bb = bhrp:FindFirstChild("_BotESP_BB")
+                if head and hum then
+                    local bb = head:FindFirstChild("ESPInfoTag")
                     if not bb then
                         bb = Instance.new("BillboardGui")
-                        bb.Name          = "_BotESP_BB"
-                        bb.Size          = UDim2.new(0, 120, 0, 40)
-                        bb.StudsOffset   = Vector3.new(0, 3, 0)
-                        bb.AlwaysOnTop   = true
-                        bb.Parent        = bhrp
-
-                        local lbl = Instance.new("TextLabel")
-                        lbl.Name            = "Label"
-                        lbl.Size            = UDim2.new(1, 0, 1, 0)
-                        lbl.BackgroundTransparency = 1
-                        lbl.TextColor3      = Color3.fromRGB(255, 240, 100)
-                        lbl.TextStrokeTransparency = 0
-                        lbl.TextScaled      = true
-                        lbl.Font            = Enum.Font.GothamBold
-                        lbl.Parent          = bb
+                        bb.Name = "ESPInfoTag"
+                        bb.Size = UDim2.new(0, 200, 0, 50)
+                        bb.StudsOffset = Vector3.new(0, 2.5, 0)
+                        bb.AlwaysOnTop = true
+                        bb.Parent = head
+                        
+                        local txt = Instance.new("TextLabel")
+                        txt.Name = "InfoText"
+                        txt.Size = UDim2.new(1, 0, 1, 0)
+                        txt.BackgroundTransparency = 1
+                        txt.TextColor3 = Color3.fromRGB(255, 255, 255)
+                        txt.TextStrokeTransparency = 0
+                        txt.TextSize = 13
+                        txt.Font = Enum.Font.GothamBold
+                        txt.Parent = bb
                     end
-                    local lbl = bb:FindFirstChild("Label")
-                    if lbl and botHum then
-                        lbl.Text = string.format("%s\nHP: %d/%d", obj.Name, math.floor(botHum.Health), math.floor(botHum.MaxHealth))
+                    local txt = bb:FindFirstChild("InfoText")
+                    if txt then
+                        local isTargetSCP = isPlayerSCP(p)
+                        local role = isTargetSCP and "[SCP]" or "[Human]"
+                        txt.Text = string.format("%s %s\nHP: %d/%d", role, p.Name, math.floor(hum.Health), math.floor(hum.MaxHealth))
                     end
                 end
-            end
-        end
-    else
-        for _, obj in ipairs(Workspace:GetDescendants()) do
-            local hl = obj:FindFirstChild("_BotESP_Highlight")
-            if hl then hl:Destroy() end
-            local bhrp = obj:FindFirstChild("HumanoidRootPart")
-            if bhrp then
-                local bb = bhrp:FindFirstChild("_BotESP_BB")
-                if bb then bb:Destroy() end
-            end
-        end
-    end
-
-    -- HITBOX: only bots, never the local player
-    if Settings.Hitbox_Enabled then
-        for _, obj in ipairs(Workspace:GetDescendants()) do
-            if isBot(obj) then
-                local bhrp = obj:FindFirstChild("HumanoidRootPart")
-                if bhrp then
-                    if not bhrp:GetAttribute("HitboxOriginalSize") then
-                        bhrp:SetAttribute("HitboxOriginalSize", bhrp.Size)
-                    end
-                    bhrp.Size = Vector3.new(
-                        Settings.HitboxSize * 2,
-                        Settings.HitboxSize * 2,
-                        Settings.HitboxSize * 2
-                    )
-                    bhrp.Transparency = 0.6
-                    bhrp.CanCollide   = false
+            else
+                if p.Character:FindFirstChild("DynamicEnemyESP") then
+                    p.Character.DynamicEnemyESP:Destroy()
+                end
+                if head and head:FindFirstChild("ESPInfoTag") then
+                    head.ESPInfoTag:Destroy()
                 end
             end
         end
     end
 
-    -- WALKSPEED
-    if hum and hum.WalkSpeed ~= Settings.WalkSpeed and not Settings.Fly then
-        hum.WalkSpeed = Settings.WalkSpeed
+    -- Balanced Silent Aim (Triggered instantly on official weapon fire button with smooth FOV targeting)
+    if Settings.SilentAim and hrp and GunShotEvent and isWeaponFiring then
+        local targetP, targetHead = nil, nil
+        local minDist = Settings.SilentAimFov
+        local mousePos = UserInputService:GetMouseLocation()
+
+        for _, p in pairs(Players:GetPlayers()) do
+            if isEnemy(p) and p.Character then
+                local hum = p.Character:FindFirstChildOfClass("Humanoid")
+                local head = p.Character:FindFirstChild("Head")
+                local targetHrp = p.Character:FindFirstChild("HumanoidRootPart")
+
+                if hum and hum.Health > 0 and head and targetHrp then
+                    local worldDist = (targetHrp.Position - hrp.Position).Magnitude
+                    if worldDist <= Settings.SilentAimMaxDist then
+                        local headPos, onScreen = Camera:WorldToViewportPoint(head.Position)
+                        if onScreen then
+                            local screenDist = (Vector2.new(headPos.X, headPos.Y) - mousePos).Magnitude
+                            if screenDist < minDist then
+                                minDist = screenDist
+                                targetP = p
+                                targetHead = head
+                            end
+                        end
+                    end
+                end
+            end
+        end
+
+        if targetP and targetHead then
+            pcall(function()
+                local bullet = MakeBulletBuffer()
+                GunShotEvent:FireServer("shoot", bullet, {targetP}, {targetHead})
+            end)
+        end
     end
-end)
-
-RunService.Heartbeat:Connect(doAutoFarm)
-
-LocalPlayer.CharacterAdded:Connect(function(_character)
-    task.wait(0.5)
-
-    if Settings.GodMode then
-        originalMaxHealth = nil
-        setGodMode(true)
-    end
-
-    if Settings.Fly then
-        disableFly()
-        task.wait(0.1)
-        enableFly()
-    end
-
-    if Settings.NoClip then
-        applyNoClip(true)
-    end
-
-    local hum = getHumanoid()
-    if hum then hum.WalkSpeed = Settings.WalkSpeed end
 end)
 
 Rayfield:Notify({
-    Title    = T("WindowTitle"),
-    Content  = T("Loaded"),
-    Duration     = 4,
+    Title = "Hub Loaded",
+    Content = T("Loaded"),
+    Duration = 3
 })
