@@ -1,16 +1,15 @@
 --[[
-    ============================================================
+    ================================================================
     SCP vs Guards — Universal Script
     Game: https://www.roblox.com/games/98590766682303/SCP-vs-Guards
     UI:   Rayfield
     Features:
-      - ESP (dynamic, team-aware: guards see SCPs, SCPs see guards,
-             players + bots, box/name/health/distance)
+      - ESP (Players + Bots, Team-aware)
       - Silent Aim (hooks fireWeapon.FireServer)
-      - Infinite Ammo (experimental, tool-based)
-      - Noclip / Fly / WalkSpeed / JumpPower
-      - Full Bright / Reset / Unload
-    ============================================================
+      - Infinite Ammo (via getgc)
+      - Noclip / Fly (PC & Mobile) / WalkSpeed
+      - Full Bright / Reset
+    ================================================================
 ]]
 
 -- ======================= LOAD RAYFIELD =======================
@@ -47,9 +46,6 @@ local Config = {
     Fly = false,
     FlySpeed = 50,
     WalkSpeed = 16,
-    JumpPower = 50,
-    -- Misc
-    FullBright = false,
 }
 
 -- ======================== TEAM HELPERS =======================
@@ -301,42 +297,39 @@ oldNamecall = hookmetamethod(game, "__namecall", function(self, ...)
     return oldNamecall(self, ...)
 end)
 
--- ==================== INFINITE AMMO (experimental) ===========
--- Ammo is *not* in the fireWeapon args → it's stored client-side,
--- most likely inside the equipped Tool. We try two generic tricks:
---   1) rewrite common ammo-related property reads via __index
---   2) reset ammo NumberValue/IntValue on the equipped tool every frame
-local function installAmmoIndexHook()
-    local ok, mt = pcall(getrawmetatable, game)
-    if not ok or not mt then return end
-    local oldIndex = mt.__index
-    pcall(setreadonly, mt, false)
-    mt.__index = newcclosure(function(self, key)
-        if Config.InfiniteAmmo and type(self) == "userdata" then
-            if key == "Ammo" or key == "CurrentAmmo" or key == "AmmoCount"
-               or key == "MaxAmmo" or key == "ReserveAmmo" or key == "Clip" then
-                return 999
-            end
-        end
-        return oldIndex(self, key)
-    end)
-    pcall(setreadonly, mt, true)
+-- ==================== INFINITE AMMO (getgc) ===================
+-- Ammo is not in the fireWeapon args -> it's stored client-side.
+-- We scan the garbage collector for tables containing typical ammo
+-- keys and force them to a huge value. This covers most Roblox
+-- weapon frameworks that keep a local stats table.
+local ammoCache = nil
+
+local function applyInfiniteAmmo()
+    if not getgc then return end
+    if not ammoCache then
+        ammoCache = getgc({ "MagAmmo", "Ammo", "CurrentAmmo", "Clip", "MaxAmmo" })
+    end
+    if applygc then
+        applygc(ammoCache, {
+            MagAmmo = 9999,
+            Ammo = 9999,
+            CurrentAmmo = 9999,
+            Clip = 9999,
+            MaxAmmo = 9999,
+        })
+    end
 end
-installAmmoIndexHook()
+
+-- Re-scan on respawn / weapon change because tables get rebuilt.
+LocalPlayer.CharacterAdded:Connect(function()
+    ammoCache = nil
+    task.wait(1.5)
+    if Config.InfiniteAmmo then applyInfiniteAmmo() end
+end)
 
 RunService.Heartbeat:Connect(function()
-    if not Config.InfiniteAmmo then return end
-    local char = LocalPlayer.Character
-    if not char then return end
-    local tool = char:FindFirstChildOfClass("Tool")
-    if not tool then return end
-    for _, v in ipairs(tool:GetDescendants()) do
-        if v:IsA("NumberValue") or v:IsA("IntValue") then
-            local n = v.Name:lower()
-            if n:find("ammo") or n:find("clip") or n:find("mag") then
-                v.Value = 999
-            end
-        end
+    if Config.InfiniteAmmo then
+        applyInfiniteAmmo()
     end
 end)
 
@@ -431,8 +424,14 @@ CombatTab:CreateToggle({
     Callback = function(v) Config.ShowFOV = v end
 })
 CombatTab:CreateToggle({
-    Name = "Infinite Ammo (experimental)", CurrentValue = false, Flag = "InfiniteAmmo",
-    Callback = function(v) Config.InfiniteAmmo = v end
+    Name = "Infinite Ammo", CurrentValue = false, Flag = "InfiniteAmmo",
+    Callback = function(v)
+        Config.InfiniteAmmo = v
+        if v then
+            ammoCache = nil
+            applyInfiniteAmmo()
+        end
+    end
 })
 
 -- --- Movement ---
@@ -463,23 +462,12 @@ MoveTab:CreateSlider({
         if hum then hum.WalkSpeed = v end
     end
 })
-MoveTab:CreateSlider({
-    Name = "JumpPower", Range = {50, 500}, Increment = 5, Suffix = "power",
-    CurrentValue = 50, Flag = "JumpPower",
-    Callback = function(v)
-        Config.JumpPower = v
-        local char = LocalPlayer.Character
-        local hum  = char and char:FindFirstChildOfClass("Humanoid")
-        if hum then hum.JumpPower = v end
-    end
-})
 
 -- --- Misc ---
 local MiscTab = Window:CreateTab("Misc", 4483362458)
 MiscTab:CreateToggle({
     Name = "Full Bright", CurrentValue = false, Flag = "FullBright",
     Callback = function(v)
-        Config.FullBright = v
         if v then
             Lighting.Ambient        = Color3.fromRGB(255, 255, 255)
             Lighting.OutdoorAmbient = Color3.fromRGB(255, 255, 255)
