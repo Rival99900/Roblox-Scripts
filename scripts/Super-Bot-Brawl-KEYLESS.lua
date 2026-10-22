@@ -6,13 +6,13 @@
     ================================================================
     Features:
       - Silent Aim (hooks attack remotes, distance limit slider)
-      - Auto Farm (attacks nearest bot from above, no cooldown)
+      - Auto Farm (attacks nearest bot from above, anti-touch)
       - ESP Bots (highlight + HP billboard on all NPCs)
       - Teleport to Nearest Bot
       - Fly (PC: WASD/Space/Shift | Mobile: joystick + on-screen ▲/▼)
-      - NoClip (pass through walls, anti-slide, anti-invisible-block)
+      - NoClip (pass through walls, fully cleans up on disable)
       - Walk Speed (adjustable)
-      - No Cooldown (sets tool cooldown values to 0)
+      - No Cooldown (hook task.wait & set tool values to 0)
       - Fullbright (brightness boost, fixed clock)
       - 21-language interface
     ================================================================
@@ -59,13 +59,15 @@ local Translations = {
         AutoFarm        = "Auto Farm",
         AutoFarmDesc    = "Automatically attack the nearest bot",
         AutoFarmDelay   = "Farm Delay (s)",
+        AntiTouch       = "Anti Touch",
+        AntiTouchDesc   = "Prevent bots from dealing touch damage to you",
         NoCooldown      = "No Cooldown",
-        NoCooldownDesc  = "Set equipped tool cooldowns to 0",
+        NoCooldownDesc  = "Set equipped tool cooldowns to 0 and hook waits",
         Fullbright      = "Fullbright",
         FullbrightDesc  = "Raise brightness and disable shadows",
         LangSelect      = "Language",
         CreditsTitle    = "Super Bot Brawl Hub",
-        CreditsContent  = "Created by Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.0 — NoClip & Cooldown fixes",
+        CreditsContent  = "Created by Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — First release",
         Loaded          = "Hub loaded! Fight smarter.",
         NoBot           = "No bot found nearby.",
     },
@@ -92,13 +94,15 @@ local Translations = {
         AutoFarm        = "Auto Farm",
         AutoFarmDesc    = "Attaque automatiquement le bot le plus proche",
         AutoFarmDelay   = "Délai farm (s)",
+        AntiTouch       = "Anti Touche",
+        AntiTouchDesc   = "Empêche les bots de vous infliger des dégâts de contact",
         NoCooldown      = "Pas de Cooldown",
-        NoCooldownDesc  = "Met à zéro les cooldowns de l'outil équipé",
+        NoCooldownDesc  = "Met à zéro les cooldowns et intercepte les délais",
         Fullbright      = "Luminosité max",
         FullbrightDesc  = "Augmenter la luminosité et désactiver les ombres",
         LangSelect      = "Langue",
         CreditsTitle    = "Super Bot Brawl Hub",
-        CreditsContent  = "Créé par Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.0 — Corrections NoClip & Cooldown",
+        CreditsContent  = "Créé par Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — Première version",
         Loaded          = "Hub chargé ! Combats plus intelligemment.",
         NoBot           = "Aucun bot trouvé à proximité.",
     },
@@ -125,13 +129,15 @@ local Translations = {
         AutoFarm        = "Auto Farm",
         AutoFarmDesc    = "Greift automatisch den nächsten Bot an",
         AutoFarmDelay   = "Farm-Verzögerung (s)",
+        AntiTouch       = "Anti Touch",
+        AntiTouchDesc   = "Verhindert Kontaktschaden durch Bots",
         NoCooldown      = "Kein Cooldown",
-        NoCooldownDesc  = "Setzt Abklingzeiten des Werkzeugs auf 0",
+        NoCooldownDesc  = "Setzt Abklingzeiten auf 0 und hookt Wartezeiten",
         Fullbright      = "Vollhell",
         FullbrightDesc  = "Helligkeit erhöhen und Schatten deaktivieren",
         LangSelect      = "Sprache",
         CreditsTitle    = "Super Bot Brawl Hub",
-        CreditsContent  = "Erstellt von Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.0 — NoClip & Cooldown Korrekturen",
+        CreditsContent  = "Erstellt von Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — Erste Version",
         Loaded          = "Hub geladen! Kämpfe klüger.",
         NoBot           = "Kein Bot in der Nähe gefunden.",
     },
@@ -158,13 +164,15 @@ local Translations = {
         AutoFarm        = "Auto Farm",
         AutoFarmDesc    = "Ataca automáticamente al bot más cercano",
         AutoFarmDelay   = "Retraso farm (s)",
+        AntiTouch       = "Anti Contacto",
+        AntiTouchDesc   = "Evita que los bots te causen daño por contacto",
         NoCooldown      = "Sin Cooldown",
-        NoCooldownDesc  = "Pone a cero los cooldowns de la herramienta",
+        NoCooldownDesc  = "Pone a cero los cooldowns e intercepta las esperas",
         Fullbright      = "Brillo máximo",
         FullbrightDesc  = "Aumentar brillo y desactivar sombras",
         LangSelect      = "Idioma",
         CreditsTitle    = "Super Bot Brawl Hub",
-        CreditsContent  = "Creado por Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.0 — Correcciones NoClip y Cooldown",
+        CreditsContent  = "Creado por Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — Primera versión",
         Loaded          = "¡Hub cargado! Lucha de forma más inteligente.",
         NoBot           = "No se encontró ningún bot cerca.",
     },
@@ -191,13 +199,15 @@ local Translations = {
         AutoFarm        = "Auto Farm",
         AutoFarmDesc    = "Ataca automaticamente o bot mais próximo",
         AutoFarmDelay   = "Atraso do farm (s)",
+        AntiTouch       = "Anti Toque",
+        AntiTouchDesc   = "Impede que os bots causem dano de contato",
         NoCooldown      = "Sem Cooldown",
-        NoCooldownDesc  = "Zera os cooldowns da ferramenta equipada",
+        NoCooldownDesc  = "Zera os cooldowns e intercepta as esperas",
         Fullbright      = "Brilho máximo",
         FullbrightDesc  = "Aumentar brilho e desativar sombras",
         LangSelect      = "Idioma",
         CreditsTitle    = "Super Bot Brawl Hub",
-        CreditsContent  = "Criado por Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.0 — Correções NoClip e Cooldown",
+        CreditsContent  = "Criado por Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — Primeira versão",
         Loaded          = "Hub carregado! Lute de forma mais inteligente.",
         NoBot           = "Nenhum bot encontrado por perto.",
     },
@@ -224,13 +234,15 @@ local Translations = {
         AutoFarm        = "Авто фарм",
         AutoFarmDesc    = "Автоматически атаковать ближайшего бота",
         AutoFarmDelay   = "Задержка фарма (с)",
+        AntiTouch       = "Анти-касание",
+        AntiTouchDesc   = "Предотвращает контактный урон от ботов",
         NoCooldown      = "Без перезарядки",
-        NoCooldownDesc  = "Сбрасывает перезарядку инструмента на 0",
+        NoCooldownDesc  = "Сбрасывает перезарядку и перехватывает задержки",
         Fullbright      = "Максяркость",
         FullbrightDesc  = "Увеличить яркость и отключить тени",
         LangSelect      = "Язык",
         CreditsTitle    = "Super Bot Brawl Hub",
-        CreditsContent  = "Создано Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.0 — Исправления NoClip и Cooldown",
+        CreditsContent  = "Создано Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — Первый выпуск",
         Loaded          = "Хаб загружен! Сражайся умнее.",
         NoBot           = "Рядом нет ботов.",
     },
@@ -257,13 +269,15 @@ local Translations = {
         AutoFarm        = "Auto Farm",
         AutoFarmDesc    = "Attacca automaticamente il bot più vicino",
         AutoFarmDelay   = "Ritardo farm (s)",
+        AntiTouch       = "Anti Contatto",
+        AntiTouchDesc   = "Impedisce ai bot di infliggere danni da contatto",
         NoCooldown      = "Nessun Cooldown",
-        NoCooldownDesc  = "Azzera i cooldown dello strumento equipaggiato",
+        NoCooldownDesc  = "Azzera i cooldown e intercetta le attese",
         Fullbright      = "Luminosità massima",
         FullbrightDesc  = "Aumenta luminosità e disattiva ombre",
         LangSelect      = "Lingua",
         CreditsTitle    = "Super Bot Brawl Hub",
-        CreditsContent  = "Creato da Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.0 — Correzioni NoClip e Cooldown",
+        CreditsContent  = "Creato da Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — Prima versione",
         Loaded          = "Hub caricato! Combatti in modo più intelligente.",
         NoBot           = "Nessun bot trovato nelle vicinanze.",
     },
@@ -290,13 +304,15 @@ local Translations = {
         AutoFarm        = "Auto Farm",
         AutoFarmDesc    = "Valt automatisch de dichtstbijzijnde bot aan",
         AutoFarmDelay   = "Farm vertraging (s)",
+        AntiTouch       = "Anti Aanraking",
+        AntiTouchDesc   = "Voorkomt aanrakingsschade van bots",
         NoCooldown      = "Geen Cooldown",
-        NoCooldownDesc  = "Zet cooldowns van uitgerust gereedschap op 0",
+        NoCooldownDesc  = "Zet cooldowns op 0 en onderschept wachttijden",
         Fullbright      = "Maximale helderheid",
         FullbrightDesc  = "Helderheid verhogen en schaduwen uitschakelen",
         LangSelect      = "Taal",
         CreditsTitle    = "Super Bot Brawl Hub",
-        CreditsContent  = "Gemaakt door Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.0 — NoClip & Cooldown fixes",
+        CreditsContent  = "Gemaakt door Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — Eerste versie",
         Loaded          = "Hub geladen! Vecht slimmer.",
         NoBot           = "Geen bot in de buurt gevonden.",
     },
@@ -323,13 +339,15 @@ local Translations = {
         AutoFarm        = "Auto Farm",
         AutoFarmDesc    = "Automatycznie atakuje najbliższego bota",
         AutoFarmDelay   = "Opóźnienie farmu (s)",
+        AntiTouch       = "Anti Dotyk",
+        AntiTouchDesc   = "Zapobiega obrażeniom od kontaktu z botami",
         NoCooldown      = "Brak Cooldownu",
-        NoCooldownDesc  = "Zeruje cooldowny wyposażonego narzędzia",
+        NoCooldownDesc  = "Zeruje cooldowny i przechwytuje opóźnienia",
         Fullbright      = "Pełna jasność",
         FullbrightDesc  = "Zwiększ jasność i wyłącz cienie",
         LangSelect      = "Język",
         CreditsTitle    = "Super Bot Brawl Hub",
-        CreditsContent  = "Stworzone przez Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.0 — Poprawki NoClip i Cooldown",
+        CreditsContent  = "Stworzone przez Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — Pierwsza wersja",
         Loaded          = "Hub załadowany! Walcz mądrzej.",
         NoBot           = "Nie znaleziono bota w pobliżu.",
     },
@@ -356,13 +374,15 @@ local Translations = {
         AutoFarm        = "自动刷怪",
         AutoFarmDesc    = "自动攻击最近的机器人",
         AutoFarmDelay   = "刷怪延迟（秒）",
+        AntiTouch       = "防触摸",
+        AntiTouchDesc   = "防止机器人对你造成接触伤害",
         NoCooldown      = "无冷却",
-        NoCooldownDesc  = "将装备工具的冷却时间设为0",
+        NoCooldownDesc  = "将装备冷却设为0并拦截等待",
         Fullbright      = "全亮",
         FullbrightDesc  = "提高亮度并关闭阴影",
         LangSelect      = "语言",
         CreditsTitle    = "超级机器人乱斗Hub",
-        CreditsContent  = "由 Rival960 创建\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.0 — 穿墙与冷却修复",
+        CreditsContent  = "由 Rival960 创建\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — 首次发布",
         Loaded          = "Hub已加载！更智慧地战斗。",
         NoBot           = "附近没有找到机器人。",
     },
@@ -389,13 +409,15 @@ local Translations = {
         AutoFarm        = "オートファーム",
         AutoFarmDesc    = "最も近いボットを自動攻撃",
         AutoFarmDelay   = "ファーム遅延（秒）",
+        AntiTouch       = "アンチタッチ",
+        AntiTouchDesc   = "ボットからの接触ダメージを防ぐ",
         NoCooldown      = "クールダウンなし",
-        NoCooldownDesc  = "装備ツールのクールダウンを0に設定",
+        NoCooldownDesc  = "ツールのクールダウンを0にし、待機をフックする",
         Fullbright      = "フルブライト",
         FullbrightDesc  = "明るさを上げてシャドウを無効化",
         LangSelect      = "言語",
         CreditsTitle    = "スーパーボットブロールHub",
-        CreditsContent  = "Rival960 作\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.0 — NoClip & Cooldown 修正",
+        CreditsContent  = "Rival960 作\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — 初回リリース",
         Loaded          = "Hub読み込み完了！より賢く戦おう。",
         NoBot           = "近くにボットが見つかりません。",
     },
@@ -422,13 +444,15 @@ local Translations = {
         AutoFarm        = "Otomatik Farm",
         AutoFarmDesc    = "En yakın botu otomatik saldır",
         AutoFarmDelay   = "Farm gecikmesi (s)",
+        AntiTouch       = "Anti Dokunma",
+        AntiTouchDesc   = "Botların sana temas hasarı vermesini engeller",
         NoCooldown      = "Bekleme Yok",
-        NoCooldownDesc  = "Kuşanılan aracın bekleme sürelerini 0 yapar",
+        NoCooldownDesc  = "Bekleme sürelerini sıfırlar ve gecikmeleri engeller",
         Fullbright      = "Tam Parlaklık",
         FullbrightDesc  = "Parlaklığı artır ve gölgeleri devre dışı bırak",
         LangSelect      = "Dil",
         CreditsTitle    = "Super Bot Brawl Hub",
-        CreditsContent  = "Rival960 tarafından oluşturuldu\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.0 — NoClip & Cooldown düzeltmeleri",
+        CreditsContent  = "Rival960 tarafından oluşturuldu\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — İlk sürüm",
         Loaded          = "Hub yüklendi! Daha akıllıca savaş.",
         NoBot           = "Yakında bot bulunamadı.",
     },
@@ -455,13 +479,15 @@ local Translations = {
         AutoFarm        = "자동 파밍",
         AutoFarmDesc    = "가장 가까운 봇을 자동 공격",
         AutoFarmDelay   = "파밍 딜레이(초)",
+        AntiTouch       = "안티 터치",
+        AntiTouchDesc   = "봇의 접촉 피해를 방지합니다",
         NoCooldown      = "쿨다운 없음",
-        NoCooldownDesc  = "장착한 도구의 쿨다운을 0으로 설정",
+        NoCooldownDesc  = "장착 도구 쿨다운을 0으로 하고 대기를 차단합니다",
         Fullbright      = "풀브라이트",
         FullbrightDesc  = "밝기 증가 및 그림자 비활성화",
         LangSelect      = "언어",
         CreditsTitle    = "슈퍼 봇 브롤 허브",
-        CreditsContent  = "Rival960 제작\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.0 — 노클립 및 쿨다운 수정",
+        CreditsContent  = "Rival960 제작\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — 첫 번째 릴리스",
         Loaded          = "허브 로드 완료! 더 스마트하게 싸우자.",
         NoBot           = "근처에 봇이 없습니다.",
     },
@@ -488,13 +514,15 @@ local Translations = {
         AutoFarm        = "زراعة تلقائية",
         AutoFarmDesc    = "مهاجمة أقرب روبوت تلقائياً",
         AutoFarmDelay   = "تأخير الزراعة (ث)",
+        AntiTouch       = "مضاد اللمس",
+        AntiTouchDesc   = "يمنع الروبوتات من إلحاق ضرر اللمس بك",
         NoCooldown      = "بدون تبريد",
-        NoCooldownDesc  = "تصفير أوقات التبريد للأداة المجهزة",
+        NoCooldownDesc  = "تصفير أوقات التبريد واعتراض فترات الانتظار",
         Fullbright      = "إضاءة كاملة",
         FullbrightDesc  = "رفع السطوع وتعطيل الظلال",
         LangSelect      = "اللغة",
         CreditsTitle    = "سوبر بوت برول هاب",
-        CreditsContent  = "أنشأه Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.0 — إصلاحات NoClip والتبريد",
+        CreditsContent  = "أنشأه Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — الإصدار الأول",
         Loaded          = "تم تحميل الهاب! قاتل بذكاء.",
         NoBot           = "لم يتم العثور على روبوت قريب.",
     },
@@ -521,13 +549,15 @@ local Translations = {
         AutoFarm        = "Tự động Farm",
         AutoFarmDesc    = "Tự động tấn công bot gần nhất",
         AutoFarmDelay   = "Độ trễ farm (s)",
+        AntiTouch       = "Chống chạm",
+        AntiTouchDesc   = "Ngăn bot gây sát thương chạm cho bạn",
         NoCooldown      = "Không hồi chiêu",
-        NoCooldownDesc  = "Đặt thời gian hồi chiêu của công cụ về 0",
+        NoCooldownDesc  = "Đặt hồi chiêu về 0 và chặn thời gian chờ",
         Fullbright      = "Sáng tối đa",
         FullbrightDesc  = "Tăng độ sáng và tắt bóng",
         LangSelect      = "Ngôn ngữ",
         CreditsTitle    = "Super Bot Brawl Hub",
-        CreditsContent  = "Tạo bởi Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.0 — Sửa lỗi NoClip & Cooldown",
+        CreditsContent  = "Tạo bởi Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — Phiên bản đầu tiên",
         Loaded          = "Hub đã tải! Chiến đấu thông minh hơn.",
         NoBot           = "Không tìm thấy bot nào gần đây.",
     },
@@ -554,13 +584,15 @@ local Translations = {
         AutoFarm        = "Auto Farm",
         AutoFarmDesc    = "Attackera automatiskt närmaste boten",
         AutoFarmDelay   = "Farmfördröjning (s)",
+        AntiTouch       = "Anti Beröring",
+        AntiTouchDesc   = "Förhindrar att botar ger dig beröringsskada",
         NoCooldown      = "Ingen Cooldown",
-        NoCooldownDesc  = "Nollställer cooldowns för utrustat verktyg",
+        NoCooldownDesc  = "Nollställer cooldowns och fångar upp väntetider",
         Fullbright      = "Fullbright",
         FullbrightDesc  = "Öka ljusstyrka och inaktivera skuggor",
         LangSelect      = "Språk",
         CreditsTitle    = "Super Bot Brawl Hub",
-        CreditsContent  = "Skapad av Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.0 — NoClip & Cooldown-fixar",
+        CreditsContent  = "Skapad av Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — Första utgåvan",
         Loaded          = "Hub laddad! Kämpa smartare.",
         NoBot           = "Ingen bot hittades i närheten.",
     },
@@ -587,13 +619,15 @@ local Translations = {
         AutoFarm        = "Αυτόματο Farm",
         AutoFarmDesc    = "Αυτόματη επίθεση στο κοντινότερο bot",
         AutoFarmDelay   = "Καθυστέρηση farm (δευτ.)",
+        AntiTouch       = "Anti Touch",
+        AntiTouchDesc   = "Αποτρέπει τα bots από το να σου προκαλούν ζημιά επαφής",
         NoCooldown      = "Χωρίς Cooldown",
-        NoCooldownDesc  = "Μηδενίζει τα cooldown του εξοπλισμένου εργαλείου",
+        NoCooldownDesc  = "Μηδενίζει τα cooldown και ανακόπτει τις αναμονές",
         Fullbright      = "Πλήρης Φωτεινότητα",
         FullbrightDesc  = "Αύξηση φωτεινότητας και απενεργοποίηση σκιών",
         LangSelect      = "Γλώσσα",
         CreditsTitle    = "Super Bot Brawl Hub",
-        CreditsContent  = "Δημιουργήθηκε από τον Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.0 — Διορθώσεις NoClip & Cooldown",
+        CreditsContent  = "Δημιουργήθηκε από τον Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — Πρώτη έκδοση",
         Loaded          = "Hub φορτώθηκε! Μάχου εξυπνότερα.",
         NoBot           = "Δεν βρέθηκε bot κοντά.",
     },
@@ -620,13 +654,15 @@ local Translations = {
         AutoFarm        = "Auto Farm",
         AutoFarmDesc    = "Atacă automat cel mai apropiat bot",
         AutoFarmDelay   = "Întârziere farm (s)",
+        AntiTouch       = "Anti Atingere",
+        AntiTouchDesc   = "Împiedică boții să-ți provoace daune de contact",
         NoCooldown      = "Fără Cooldown",
-        NoCooldownDesc  = "Setează la 0 timpii de reîncărcare ai uneltei",
+        NoCooldownDesc  = "Setează la 0 timpii de reîncărcare și interceptează așteptările",
         Fullbright      = "Luminozitate maximă",
         FullbrightDesc  = "Crește luminozitatea și dezactivează umbrele",
         LangSelect      = "Limbă",
         CreditsTitle    = "Super Bot Brawl Hub",
-        CreditsContent  = "Creat de Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.0 — Corecții NoClip & Cooldown",
+        CreditsContent  = "Creat de Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — Prima versiune",
         Loaded          = "Hub încărcat! Luptă mai inteligent.",
         NoBot           = "Niciun bot găsit în apropiere.",
     },
@@ -653,13 +689,15 @@ local Translations = {
         AutoFarm        = "Авто фарм",
         AutoFarmDesc    = "Автоматично атакує найближчого бота",
         AutoFarmDelay   = "Затримка фарму (с)",
+        AntiTouch       = "Анти-дотик",
+        AntiTouchDesc   = "Запобігає контактній шкоді від ботів",
         NoCooldown      = "Без перезарядки",
-        NoCooldownDesc  = "Скидає перезарядку інструмента на 0",
+        NoCooldownDesc  = "Скидає перезарядку та перехоплює затримки",
         Fullbright      = "Повна яскравість",
         FullbrightDesc  = "Збільшити яскравість і вимкнути тіні",
         LangSelect      = "Мова",
         CreditsTitle    = "Super Bot Brawl Hub",
-        CreditsContent  = "Створено Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.0 — Виправлення NoClip та Cooldown",
+        CreditsContent  = "Створено Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — Перший випуск",
         Loaded          = "Hub завантажено! Бийся розумніше.",
         NoBot           = "Поруч немає ботів.",
     },
@@ -686,13 +724,15 @@ local Translations = {
         AutoFarm        = "Auto Farm",
         AutoFarmDesc    = "Automaticky útočí na nejbližšího bota",
         AutoFarmDelay   = "Zpoždění farmu (s)",
+        AntiTouch       = "Anti Dotyk",
+        AntiTouchDesc   = "Zabraňuje poškození kontaktem od botů",
         NoCooldown      = "Bez Cooldownu",
-        NoCooldownDesc  = "Nastaví cooldowny vybaveného nástroje na 0",
+        NoCooldownDesc  = "Nastaví cooldowny na 0 a zachytí čekání",
         Fullbright      = "Plné světlo",
         FullbrightDesc  = "Zvýšit jas a vypnout stíny",
         LangSelect      = "Jazyk",
         CreditsTitle    = "Super Bot Brawl Hub",
-        CreditsContent  = "Vytvořil Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.0 — Opravy NoClip a Cooldown",
+        CreditsContent  = "Vytvořil Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — První verze",
         Loaded          = "Hub načten! Bojuj chytřeji.",
         NoBot           = "V okolí nebyl nalezen žádný bot.",
     },
@@ -719,13 +759,15 @@ local Translations = {
         AutoFarm        = "Auto Farm",
         AutoFarmDesc    = "Angrib automatisk den nærmeste bot",
         AutoFarmDelay   = "Farm-forsinkelse (s)",
+        AntiTouch       = "Anti Berøring",
+        AntiTouchDesc   = "Forhindrer bots i at give dig berøringsskade",
         NoCooldown      = "Ingen Cooldown",
-        NoCooldownDesc  = "Sætter cooldowns for det udstyrede værktøj til 0",
+        NoCooldownDesc  = "Sætter cooldowns til 0 og opsnapper ventetider",
         Fullbright      = "Fuld lysstyrke",
         FullbrightDesc  = "Øg lysstyrke og deaktiver skygger",
         LangSelect      = "Sprog",
         CreditsTitle    = "Super Bot Brawl Hub",
-        CreditsContent  = "Oprettet af Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.0 — NoClip & Cooldown rettelser",
+        CreditsContent  = "Oprettet af Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — Første udgivelse",
         Loaded          = "Hub indlæst! Kæmp klogere.",
         NoBot           = "Ingen bot fundet i nærheden.",
     },
@@ -751,6 +793,7 @@ local Settings = {
     NoClip           = false,
     WalkSpeed        = 16,
     NoCooldown       = false,
+    AntiTouch        = false,
     Fullbright       = false,
 }
 
@@ -792,8 +835,6 @@ local function getHumanoid()
     return char:FindFirstChildOfClass("Humanoid")
 end
 
--- STRICT bot detection: only Models inside Workspace.Bots, live Humanoid,
--- and never a player character.
 local function isBot(model)
     if not model or not model:IsA("Model") then return false end
     local botsFolder = Workspace:FindFirstChild("Bots")
@@ -827,10 +868,10 @@ local function getNearestBot()
 end
 
 -- ───────────────────────────────────────────────────────────────
--- SILENT AIM (hooks attack remotes, distance limit)
+-- SILENT AIM (hookmetamethod __namecall)
 -- ───────────────────────────────────────────────────────────────
 local silentAimConnection = nil
-local originalHooks = {}
+local originalNamecall = nil
 local attackRemoteKeywords = {"Attack", "Hit", "Damage", "Shoot", "Strike", "Slash", "Melee", "Swing", "Fire"}
 
 local function getClosestBotToCursor()
@@ -862,66 +903,51 @@ local function getClosestBotToCursor()
     return closest
 end
 
-local function hookAllAttackRemotes()
-    for _, obj in ipairs(ReplicatedStorage:GetDescendants()) do
-        if obj:IsA("RemoteEvent") then
-            local shouldHook = false
-            for _, kw in ipairs(attackRemoteKeywords) do
-                if obj.Name:lower():find(kw:lower()) then
-                    shouldHook = true
-                    break
-                end
-            end
-            if shouldHook and not originalHooks[obj] then
-                local old = obj.FireServer
-                originalHooks[obj] = old
-                obj.FireServer = function(self, ...)
-                    if not Settings.SilentAim then
-                        return old(self, ...)
-                    end
-                    local target = getClosestBotToCursor() or getNearestBot()
-                    if not target then
-                        return old(self, ...)
-                    end
-                    local args = {...}
-                    if #args >= 1 and typeof(args[1]) == "Instance" then
-                        args[1] = target
-                    else
-                        table.insert(args, 1, target)
-                    end
-                    local successCall, err = pcall(function()
-                        return old(self, table.unpack(args))
-                    end)
-                    if not successCall then
-                        return old(self, ...)
-                    end
-                end
-            end
-        end
-    end
-end
-
 local function enableSilentAim()
-    hookAllAttackRemotes()
-    if silentAimConnection then return end
-    silentAimConnection = RunService.Heartbeat:Connect(function()
-        if Settings.SilentAim then
-            hookAllAttackRemotes()
+    if originalNamecall then return end
+
+    local mt = getrawmetatable(game)
+    local oldNamecall = mt.__namecall
+    setreadonly(mt, false)
+    originalNamecall = oldNamecall
+    mt.__namecall = newcclosure(function(self, ...)
+        local method = getnamecallmethod()
+        if method == "FireServer" and not checkcaller() and Settings.SilentAim then
+            local args = {...}
+            if self:IsA("RemoteEvent") then
+                local shouldHook = false
+                for _, kw in ipairs(attackRemoteKeywords) do
+                    if self.Name:lower():find(kw:lower()) then
+                        shouldHook = true
+                        break
+                    end
+                end
+                if shouldHook then
+                    local target = getClosestBotToCursor()
+                    if target then
+                        if #args >= 1 and typeof(args[1]) == "Instance" then
+                            args[1] = target
+                        else
+                            table.insert(args, 1, target)
+                        end
+                    end
+                end
+            end
+            return oldNamecall(self, table.unpack(args))
         end
+        return oldNamecall(self, ...)
     end)
+    setreadonly(mt, true)
 end
 
 local function disableSilentAim()
-    if silentAimConnection then
-        silentAimConnection:Disconnect()
-        silentAimConnection = nil
+    if originalNamecall then
+        local mt = getrawmetatable(game)
+        setreadonly(mt, false)
+        mt.__namecall = originalNamecall
+        setreadonly(mt, true)
+        originalNamecall = nil
     end
-    for ev, old in pairs(originalHooks) do
-        if ev and ev.Parent then
-            ev.FireServer = old
-        end
-    end
-    originalHooks = {}
 end
 
 -- ───────────────────────────────────────────────────────────────
@@ -1003,41 +1029,33 @@ local function disableFly()
 end
 
 -- ───────────────────────────────────────────────────────────────
--- NOCLIP (Robust loop-based, based on provided scripts)
+-- NOCLIP (Robust, fully cleans up)
 -- ───────────────────────────────────────────────────────────────
 local noclipConnection = nil
-local noclipTrackedParts = {}
-
-local function getCharacterParts()
-    local char = LocalPlayer.Character
-    if not char then return {} end
-    local parts = {}
-    for _, v in ipairs(char:GetDescendants()) do
-        if v:IsA("BasePart") then
-            table.insert(parts, v)
-        end
-    end
-    return parts
-end
+local originalCollisions = {} -- Stores [Part] = original CanCollide
 
 local function enableNoClip()
     if noclipConnection then return end
+    originalCollisions = {}
+    local char = LocalPlayer.Character
+    if not char then return end
 
-    -- Populate initial parts
-    noclipTrackedParts = getCharacterParts()
+    for _, part in ipairs(char:GetDescendants()) do
+        if part:IsA("BasePart") then
+            originalCollisions[part] = part.CanCollide
+            part.CanCollide = false
+        end
+    end
 
     noclipConnection = RunService.Heartbeat:Connect(function()
         if not Settings.NoClip then return end
-        local char = LocalPlayer.Character
-        if not char then return end
-
-        -- Refresh parts if new ones were added (e.g., tool equip)
-        if #noclipTrackedParts == 0 or #char:GetDescendants() ~= #noclipTrackedParts then
-            noclipTrackedParts = getCharacterParts()
-        end
-
-        for _, part in ipairs(noclipTrackedParts) do
-            if part and part.Parent and part.CanCollide then
+        local c = LocalPlayer.Character
+        if not c then return end
+        for _, part in ipairs(c:GetDescendants()) do
+            if part:IsA("BasePart") and part.CanCollide then
+                if originalCollisions[part] == nil then
+                    originalCollisions[part] = part.CanCollide
+                end
                 part.CanCollide = false
             end
         end
@@ -1049,7 +1067,16 @@ local function disableNoClip()
         noclipConnection:Disconnect()
         noclipConnection = nil
     end
-    -- Re-enable collision on all current parts
+
+    -- Restore original collision states
+    for part, originalState in pairs(originalCollisions) do
+        if part and part.Parent then
+            part.CanCollide = originalState
+        end
+    end
+    originalCollisions = {}
+
+    -- Safety: force CanCollide = true on all current parts
     local char = LocalPlayer.Character
     if char then
         for _, part in ipairs(char:GetDescendants()) do
@@ -1058,13 +1085,70 @@ local function disableNoClip()
             end
         end
     end
-    noclipTrackedParts = {}
 end
 
 -- ───────────────────────────────────────────────────────────────
--- NO COOLDOWN (Button action)
+-- ANTI TOUCH (Disables touch damage from bots)
 -- ───────────────────────────────────────────────────────────────
+local antiTouchConnection = nil
+
+local function enableAntiTouch()
+    if antiTouchConnection then return end
+    antiTouchConnection = RunService.Heartbeat:Connect(function()
+        if not Settings.AntiTouch then return end
+        local char = LocalPlayer.Character
+        if not char then return end
+        for _, part in ipairs(char:GetDescendants()) do
+            if part:IsA("BasePart") and part.CanTouch then
+                part.CanTouch = false
+            end
+        end
+    end)
+end
+
+local function disableAntiTouch()
+    if antiTouchConnection then
+        antiTouchConnection:Disconnect()
+        antiTouchConnection = nil
+    end
+    local char = LocalPlayer.Character
+    if char then
+        for _, part in ipairs(char:GetDescendants()) do
+            if part:IsA("BasePart") then
+                part.CanTouch = true
+            end
+        end
+    end
+end
+
+-- ───────────────────────────────────────────────────────────────
+-- NO COOLDOWN (Hook waits + set tool values to 0)
+-- ───────────────────────────────────────────────────────────────
+local originalWait = nil
+local originalTaskWait = nil
+
 local function applyNoCooldown()
+    -- 1. Hook global waits
+    if not originalWait then
+        originalWait = wait
+        wait = function(seconds)
+            if Settings.NoCooldown then
+                return originalWait(0)
+            end
+            return originalWait(seconds)
+        end
+    end
+    if not originalTaskWait then
+        originalTaskWait = task.wait
+        task.wait = function(seconds)
+            if Settings.NoCooldown then
+                return originalTaskWait(0)
+            end
+            return originalTaskWait(seconds)
+        end
+    end
+
+    -- 2. Set tool values to 0
     local char = LocalPlayer.Character
     if not char then return end
     local tool = char:FindFirstChildOfClass("Tool")
@@ -1086,8 +1170,19 @@ local function applyNoCooldown()
     end
 end
 
+local function removeNoCooldownHooks()
+    if originalWait then
+        wait = originalWait
+        originalWait = nil
+    end
+    if originalTaskWait then
+        task.wait = originalTaskWait
+        originalTaskWait = nil
+    end
+end
+
 -- ───────────────────────────────────────────────────────────────
--- AUTO FARM (attacks from above, no cooldown)
+-- AUTO FARM (attacks from above)
 -- ───────────────────────────────────────────────────────────────
 local lastFarmTime = 0
 
@@ -1126,7 +1221,6 @@ local function doAutoFarm()
     local botHum = botModel:FindFirstChildOfClass("Humanoid")
 
     if tool then
-        -- Apply no-cooldown instantly during farm
         for _, v in ipairs(tool:GetDescendants()) do
             if v:IsA("NumberValue") or v:IsA("IntValue") then
                 local n = v.Name:lower()
@@ -1266,6 +1360,16 @@ TabCombat:CreateSlider({
     CurrentValue = Settings.AutoFarmDelay,
     Flag         = "AutoFarmDelay",
     Callback     = function(v) Settings.AutoFarmDelay = v end,
+})
+
+TabCombat:CreateToggle({
+    Name         = T("AntiTouch"),
+    CurrentValue = Settings.AntiTouch,
+    Flag         = "AntiTouch",
+    Callback     = function(v)
+        Settings.AntiTouch = v
+        if v then enableAntiTouch() else disableAntiTouch() end
+    end,
 })
 
 TabCombat:CreateButton({
@@ -1446,6 +1550,10 @@ LocalPlayer.CharacterAdded:Connect(function(_character)
 
     if Settings.SilentAim then
         enableSilentAim()
+    end
+
+    if Settings.AntiTouch then
+        enableAntiTouch()
     end
 
     local hum = getHumanoid()
