@@ -5,9 +5,9 @@
     Version: 1.0.0 | Languages: 21 | Rayfield UI
     ================================================================
     Features:
-      - Auto Farm (teleports above bot, disables bot touch damage)
-      - Anti Touch (disables TouchInterest on both player and bots)
-      - No Animation (hooks Animator to stop attack animations)
+      - Auto Farm (teleports above bot, scaled to character size)
+      - Anti Touch (CanTouch=false on player and bots)
+      - No Animation (stops all animation tracks every frame)
       - ESP Bots (highlight + HP billboard on all NPCs)
       - Teleport to Nearest Bot
       - Fly (PC: WASD/Space/Shift | Mobile: joystick + on-screen ▲/▼)
@@ -508,6 +508,33 @@ local function getNearestBot()
     return bestBot, bestHRP
 end
 
+-- Returns the local character's height, adapted to any character size
+local function getCharacterHeight()
+    local char = LocalPlayer.Character
+    if not char then return 5 end
+    local ok, size = pcall(function()
+        local _, sz = char:GetBoundingBox()
+        return sz
+    end)
+    if ok and size then
+        return size.Y
+    end
+    return 5
+end
+
+-- Returns the bot's height (for placing the player above without touching)
+local function getBotHeight(botModel)
+    if not botModel then return 5 end
+    local ok, size = pcall(function()
+        local _, sz = botModel:GetBoundingBox()
+        return sz
+    end)
+    if ok and size then
+        return size.Y
+    end
+    return 5
+end
+
 -- ───────────────────────────────────────────────────────────────
 -- FLY (BodyVelocity + BodyGyro, PC + Mobile)
 -- ───────────────────────────────────────────────────────────────
@@ -590,7 +617,7 @@ end
 -- NOCLIP (save/restore original CanCollide)
 -- ───────────────────────────────────────────────────────────────
 local noclipConnection = nil
-local originalCanCollide = {} -- [Part] = original state
+local originalCanCollide = {}
 
 local function enableNoClip()
     if noclipConnection then return end
@@ -635,51 +662,37 @@ local function disableNoClip()
         noclipConnection:Disconnect()
         noclipConnection = nil
     end
-
-    -- Restore exactly the original state
     for part, originalState in pairs(originalCanCollide) do
         if part and part.Parent then
             part.CanCollide = originalState
         end
     end
     originalCanCollide = {}
-
-    -- Safety: parts that were added during noclip get their default state back
-    local char = LocalPlayer.Character
-    if char then
-        for _, part in ipairs(char:GetDescendants()) do
-            if part:IsA("BasePart") and originalCanCollide[part] == nil then
-                -- Don't force true; leave whatever the game set
-            end
-        end
-    end
 end
 
 -- ───────────────────────────────────────────────────────────────
--- ANTI TOUCH (disables TouchInterest on player + bots)
+-- ANTI TOUCH (CanTouch=false on player + bots, destroy TouchInterest)
 -- ───────────────────────────────────────────────────────────────
 local antiTouchConnection = nil
-local originalTouchInterest = {}
 
-local function disableTouchInterest(part)
+local function disablePartTouch(part)
     if not part or not part:IsA("BasePart") then return end
+    part.CanTouch = false
     local ti = part:FindFirstChildOfClass("TouchInterest")
-    if ti and not originalTouchInterest[part] then
-        originalTouchInterest[part] = ti
+    if ti then
         ti:Destroy()
     end
 end
 
 local function enableAntiTouch()
     if antiTouchConnection then return end
-    originalTouchInterest = {}
     antiTouchConnection = RunService.Heartbeat:Connect(function()
         if not Settings.AntiTouch then return end
         local char = LocalPlayer.Character
         if char then
             for _, part in ipairs(char:GetDescendants()) do
                 if part:IsA("BasePart") then
-                    disableTouchInterest(part)
+                    disablePartTouch(part)
                 end
             end
         end
@@ -689,7 +702,7 @@ local function enableAntiTouch()
                 if isBot(obj) then
                     for _, part in ipairs(obj:GetDescendants()) do
                         if part:IsA("BasePart") then
-                            disableTouchInterest(part)
+                            disablePartTouch(part)
                         end
                     end
                 end
@@ -703,30 +716,66 @@ local function disableAntiTouch()
         antiTouchConnection:Disconnect()
         antiTouchConnection = nil
     end
-    -- TouchInterest cannot be easily recreated; leave it destroyed
-    originalTouchInterest = {}
+    local char = LocalPlayer.Character
+    if char then
+        for _, part in ipairs(char:GetDescendants()) do
+            if part:IsA("BasePart") then
+                part.CanTouch = true
+            end
+        end
+    end
 end
 
 -- ───────────────────────────────────────────────────────────────
--- NO ANIMATION (stops attack animations)
+-- NO ANIMATION (loop + PlayAnimations=false + AnimationPlayed hook)
 -- ───────────────────────────────────────────────────────────────
 local noAnimConnection = nil
+local animatorHook = nil
 local originalPlayAnimations = nil
+
+local function getAnimator()
+    local hum = getHumanoid()
+    if not hum then return nil end
+    return hum:FindFirstChildOfClass("Animator")
+end
 
 local function enableNoAnimation()
     if noAnimConnection then return end
-    local hum = getHumanoid()
-    if not hum then return end
-    local animator = hum:FindFirstChildOfClass("Animator")
-    if not animator then return end
 
-    originalPlayAnimations = animator.PlayAnimations
-    animator.PlayAnimations = false
+    local function setupAnimator()
+        local animator = getAnimator()
+        if not animator then return end
+        originalPlayAnimations = animator.PlayAnimations
+        animator.PlayAnimations = false
 
-    -- Also stop any currently playing tracks
-    for _, track in ipairs(animator:GetPlayingAnimationTracks()) do
-        pcall(function() track:Stop(0) end)
+        if animatorHook then
+            animatorHook:Disconnect()
+            animatorHook = nil
+        end
+        animatorHook = animator.AnimationPlayed:Connect(function(track)
+            if Settings.NoAnimation then
+                pcall(function() track:Stop(0) end)
+            end
+        end)
     end
+
+    setupAnimator()
+
+    -- Loop that keeps stopping all tracks every frame (catches everything)
+    noAnimConnection = RunService.Heartbeat:Connect(function()
+        if not Settings.NoAnimation then return end
+        local animator = getAnimator()
+        if not animator then
+            setupAnimator()
+            return
+        end
+        if animator.PlayAnimations then
+            animator.PlayAnimations = false
+        end
+        for _, track in ipairs(animator:GetPlayingAnimationTracks()) do
+            pcall(function() track:Stop(0) end)
+        end
+    end)
 end
 
 local function disableNoAnimation()
@@ -734,18 +783,19 @@ local function disableNoAnimation()
         noAnimConnection:Disconnect()
         noAnimConnection = nil
     end
-    local hum = getHumanoid()
-    if hum then
-        local animator = hum:FindFirstChildOfClass("Animator")
-        if animator and originalPlayAnimations ~= nil then
-            animator.PlayAnimations = originalPlayAnimations
-            originalPlayAnimations = nil
-        end
+    if animatorHook then
+        animatorHook:Disconnect()
+        animatorHook = nil
+    end
+    local animator = getAnimator()
+    if animator and originalPlayAnimations ~= nil then
+        animator.PlayAnimations = originalPlayAnimations
+        originalPlayAnimations = nil
     end
 end
 
 -- ───────────────────────────────────────────────────────────────
--- AUTO FARM (teleports above bot, ensures anti-touch)
+-- AUTO FARM (adapts to character size, teleports above bot)
 -- ───────────────────────────────────────────────────────────────
 local lastFarmTime = 0
 
@@ -764,13 +814,23 @@ local function doAutoFarm()
     local botModel, botHRP = getNearestBot()
     if not botHRP or not botModel then return end
 
-    -- Teleport 25 studs above the bot (safely out of reach)
-    local above = botHRP.Position + Vector3.new(0, 25, 0)
-    hrp.CFrame = CFrame.lookAt(above, botHRP.Position)
+    -- Adapt offset to character size so feet stay above the bot's top
+    local charHeight = getCharacterHeight()
+    local botHeight  = getBotHeight(botModel)
+    -- HRP is at character center. Placing HRP at:
+    --   botHRP.Y + botHeight/2 + charHeight/2 + margin
+    -- ensures feet are above the bot's top.
+    local margin     = 3
+    local offsetAbove = (botHeight / 2) + (charHeight / 2) + margin
+    offsetAbove = math.clamp(offsetAbove, 8, 40)
 
-    -- Ensure anti-touch is active on the player while farming
+    local targetPos = botHRP.Position + Vector3.new(0, offsetAbove, 0)
+    hrp.CFrame = CFrame.lookAt(targetPos, botHRP.Position)
+
+    -- Safety: ensure anti-touch stays active on the player while farming
     for _, part in ipairs(char:GetDescendants()) do
         if part:IsA("BasePart") then
+            part.CanTouch = false
             local ti = part:FindFirstChildOfClass("TouchInterest")
             if ti then ti:Destroy() end
         end
@@ -783,7 +843,7 @@ local function doAutoFarm()
             local newTool = backpack:FindFirstChildOfClass("Tool")
             if newTool then
                 hum:EquipTool(newTool)
-                task.wait(0.1)
+                task.wait(0.05)
                 tool = newTool
             end
         end
