@@ -8,7 +8,6 @@
       - Auto Farm (feet on bot head, PlatformStand, 0.1s default)
       - Bot Magnet (uses Humanoid:MoveTo, damage-friendly)
       - Anti Ragdoll (event-driven, blocks Ragdoll/Physics/FallingDown/Dead)
-      - No Animation (universal R6/R15/custom, no LoadAnimation hook)
       - ESP Bots (highlight + HP billboard on all NPCs)
       - Teleport to Nearest Bot
       - Fly (PC: WASD/Space/Shift | Mobile: joystick + on-screen ▲/▼)
@@ -39,7 +38,7 @@ local Translations = {
         Fly = "Fly", FlySpeed = "Fly Speed", NoClip = "NoClip", WalkSpeed = "Walk Speed",
         AutoFarm = "Auto Farm", AutoFarmDelay = "Farm Delay (s)",
         BotMagnet = "Bot Magnet", BotMagnetDesc = "Gather all bots in one spot",
-        AntiRagdoll = "Anti Ragdoll", NoAnimation = "No Animation",
+        AntiRagdoll = "Anti Ragdoll",
         Fullbright = "Fullbright", LangSelect = "Language",
         CreditsTitle = "Super Bot Brawl Hub",
         CreditsContent = "Created by Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — First release",
@@ -51,7 +50,7 @@ local Translations = {
         Fly = "Vol", FlySpeed = "Vitesse de vol", NoClip = "NoClip", WalkSpeed = "Vitesse de marche",
         AutoFarm = "Auto Farm", AutoFarmDelay = "Délai farm (s)",
         BotMagnet = "Aimant à Bots", BotMagnetDesc = "Regroupe tous les bots en un point",
-        AntiRagdoll = "Anti Ragdoll", NoAnimation = "Sans Animation",
+        AntiRagdoll = "Anti Ragdoll",
         Fullbright = "Luminosité max", LangSelect = "Langue",
         CreditsTitle = "Super Bot Brawl Hub",
         CreditsContent = "Créé par Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — Première version",
@@ -63,7 +62,7 @@ local Translations = {
         Fly = "Fliegen", FlySpeed = "Fluggeschwindigkeit", NoClip = "NoClip", WalkSpeed = "Laufgeschwindigkeit",
         AutoFarm = "Auto Farm", AutoFarmDelay = "Farm-Verzögerung (s)",
         BotMagnet = "Bot-Magnet", BotMagnetDesc = "Sammelt alle Bots an einem Ort",
-        AntiRagdoll = "Anti Ragdoll", NoAnimation = "Keine Animation",
+        AntiRagdoll = "Anti Ragdoll",
         Fullbright = "Vollhell", LangSelect = "Sprache",
         CreditsTitle = "Super Bot Brawl Hub",
         CreditsContent = "Erstellt von Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — Erste Version",
@@ -75,7 +74,7 @@ local Translations = {
         Fly = "Volar", FlySpeed = "Velocidad de vuelo", NoClip = "NoClip", WalkSpeed = "Velocidad de marcha",
         AutoFarm = "Auto Farm", AutoFarmDelay = "Retraso farm (s)",
         BotMagnet = "Imán de Bots", BotMagnetDesc = "Reúne todos los bots en un punto",
-        AntiRagdoll = "Anti Ragdoll", NoAnimation = "Sin Animación",
+        AntiRagdoll = "Anti Ragdoll",
         Fullbright = "Brillo máximo", LangSelect = "Idioma",
         CreditsTitle = "Super Bot Brawl Hub",
         CreditsContent = "Creado por Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — Primera versión",
@@ -87,7 +86,7 @@ local Translations = {
         Fly = "Voar", FlySpeed = "Velocidade de voo", NoClip = "NoClip", WalkSpeed = "Velocidade de caminhada",
         AutoFarm = "Auto Farm", AutoFarmDelay = "Atraso do farm (s)",
         BotMagnet = "Ímã de Bots", BotMagnetDesc = "Reúne todos os bots em um só lugar",
-        AntiRagdoll = "Anti Ragdoll", NoAnimation = "Sem Animação",
+        AntiRagdoll = "Anti Ragdoll",
         Fullbright = "Brilho máximo", LangSelect = "Idioma",
         CreditsTitle = "Super Bot Brawl Hub",
         CreditsContent = "Criado por Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — Primeira versão",
@@ -99,7 +98,7 @@ local Translations = {
         Fly = "Полёт", FlySpeed = "Скорость полёта", NoClip = "Ноклип", WalkSpeed = "Скорость ходьбы",
         AutoFarm = "Авто фарм", AutoFarmDelay = "Задержка фарма (с)",
         BotMagnet = "Магнит ботов", BotMagnetDesc = "Собирает всех ботов в одно место",
-        AntiRagdoll = "Анти-рагдолл", NoAnimation = "Без анимации",
+        AntiRagdoll = "Анти-рагдолл",
         Fullbright = "Максяркость", LangSelect = "Язык",
         CreditsTitle = "Super Bot Brawl Hub",
         CreditsContent = "Создано Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — Первый выпуск",
@@ -111,7 +110,7 @@ local Translations = {
         Fly = "Volare", FlySpeed = "Velocità di volo", NoClip = "NoClip", WalkSpeed = "Velocità di camminata",
         AutoFarm = "Auto Farm", AutoFarmDelay = "Ritardo farm (s)",
         BotMagnet = "Calamita Bot", BotMagnetDesc = "Raccoglie tutti i bot in un punto",
-        AntiRagdoll = "Anti Ragdoll", NoAnimation = "Nessuna Animazione",
+        AntiRagdoll = "Anti Ragdoll",
         Fullbright = "Luminosità massima", LangSelect = "Lingua",
         CreditsTitle = "Super Bot Brawl Hub",
         CreditsContent = "Creato da Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — Prima versione",
@@ -123,7 +122,7 @@ local Translations = {
         Fly = "Vliegen", FlySpeed = "Vliegsnelheid", NoClip = "NoClip", WalkSpeed = "Loopsnelheid",
         AutoFarm = "Auto Farm", AutoFarmDelay = "Farm vertraging (s)",
         BotMagnet = "Bot Magneet", BotMagnetDesc = "Verzamelt alle bots op één plek",
-        AntiRagdoll = "Anti Ragdoll", NoAnimation = "Geen Animatie",
+        AntiRagdoll = "Anti Ragdoll",
         Fullbright = "Maximale helderheid", LangSelect = "Taal",
         CreditsTitle = "Super Bot Brawl Hub",
         CreditsContent = "Gemaakt door Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — Eerste versie",
@@ -135,7 +134,7 @@ local Translations = {
         Fly = "Latanie", FlySpeed = "Prędkość lotu", NoClip = "NoClip", WalkSpeed = "Prędkość chodzenia",
         AutoFarm = "Auto Farm", AutoFarmDelay = "Opóźnienie farmu (s)",
         BotMagnet = "Magnes na Boty", BotMagnetDesc = "Gromadzi wszystkie boty w jednym miejscu",
-        AntiRagdoll = "Anti Ragdoll", NoAnimation = "Bez Animacji",
+        AntiRagdoll = "Anti Ragdoll",
         Fullbright = "Pełna jasność", LangSelect = "Język",
         CreditsTitle = "Super Bot Brawl Hub",
         CreditsContent = "Stworzone przez Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — Pierwsza wersja",
@@ -147,7 +146,7 @@ local Translations = {
         Fly = "飞行", FlySpeed = "飞行速度", NoClip = "穿墙", WalkSpeed = "移动速度",
         AutoFarm = "自动刷怪", AutoFarmDelay = "刷怪延迟（秒）",
         BotMagnet = "机器人磁铁", BotMagnetDesc = "将所有机器人聚集到一个地方",
-        AntiRagdoll = "防布娃娃", NoAnimation = "无动画",
+        AntiRagdoll = "防布娃娃",
         Fullbright = "全亮", LangSelect = "语言",
         CreditsTitle = "超级机器人乱斗Hub",
         CreditsContent = "由 Rival960 创建\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — 首次发布",
@@ -159,7 +158,7 @@ local Translations = {
         Fly = "飛行", FlySpeed = "飛行速度", NoClip = "ノークリップ", WalkSpeed = "移動速度",
         AutoFarm = "オートファーム", AutoFarmDelay = "ファーム遅延（秒）",
         BotMagnet = "ボットマグネット", BotMagnetDesc = "すべてのボットを1か所に集める",
-        AntiRagdoll = "アンチラグドール", NoAnimation = "アニメーションなし",
+        AntiRagdoll = "アンチラグドール",
         Fullbright = "フルブライト", LangSelect = "言語",
         CreditsTitle = "スーパーボットブロールHub",
         CreditsContent = "Rival960 作\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — 初回リリース",
@@ -171,7 +170,7 @@ local Translations = {
         Fly = "Uçuş", FlySpeed = "Uçuş Hızı", NoClip = "NoClip", WalkSpeed = "Yürüyüş Hızı",
         AutoFarm = "Otomatik Farm", AutoFarmDelay = "Farm gecikmesi (s)",
         BotMagnet = "Bot Mıknatısı", BotMagnetDesc = "Tüm botları tek bir yerde toplar",
-        AntiRagdoll = "Anti Ragdoll", NoAnimation = "Animasyonsuz",
+        AntiRagdoll = "Anti Ragdoll",
         Fullbright = "Tam Parlaklık", LangSelect = "Dil",
         CreditsTitle = "Super Bot Brawl Hub",
         CreditsContent = "Rival960 tarafından oluşturuldu\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — İlk sürüm",
@@ -183,7 +182,7 @@ local Translations = {
         Fly = "비행", FlySpeed = "비행 속도", NoClip = "노클립", WalkSpeed = "이동 속도",
         AutoFarm = "자동 파밍", AutoFarmDelay = "파밍 딜레이(초)",
         BotMagnet = "봇 자석", BotMagnetDesc = "모든 봇을 한 곳에 모읍니다",
-        AntiRagdoll = "안티 래그돌", NoAnimation = "애니메이션 없음",
+        AntiRagdoll = "안티 래그돌",
         Fullbright = "풀브라이트", LangSelect = "언어",
         CreditsTitle = "슈퍼 봇 브롤 허브",
         CreditsContent = "Rival960 제작\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — 첫 번째 릴리스",
@@ -195,7 +194,7 @@ local Translations = {
         Fly = "الطيران", FlySpeed = "سرعة الطيران", NoClip = "نوكليب", WalkSpeed = "سرعة المشي",
         AutoFarm = "زراعة تلقائية", AutoFarmDelay = "تأخير الزراعة (ث)",
         BotMagnet = "مغناطيس الروبوتات", BotMagnetDesc = "يجمع كل الروبوتات في مكان واحد",
-        AntiRagdoll = "مضاد الراجدول", NoAnimation = "بدون رسوم متحركة",
+        AntiRagdoll = "مضاد الراجدول",
         Fullbright = "إضاءة كاملة", LangSelect = "اللغة",
         CreditsTitle = "سوبر بوت برول هاب",
         CreditsContent = "أنشأه Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — الإصدار الأول",
@@ -207,7 +206,7 @@ local Translations = {
         Fly = "Bay", FlySpeed = "Tốc độ bay", NoClip = "NoClip", WalkSpeed = "Tốc độ đi bộ",
         AutoFarm = "Tự động Farm", AutoFarmDelay = "Độ trễ farm (s)",
         BotMagnet = "Nam Châm Bot", BotMagnetDesc = "Tập hợp tất cả bot ở một nơi",
-        AntiRagdoll = "Chống Ragdoll", NoAnimation = "Không Hoạt Ảnh",
+        AntiRagdoll = "Chống Ragdoll",
         Fullbright = "Sáng tối đa", LangSelect = "Ngôn ngữ",
         CreditsTitle = "Super Bot Brawl Hub",
         CreditsContent = "Tạo bởi Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — Phiên bản đầu tiên",
@@ -219,7 +218,7 @@ local Translations = {
         Fly = "Flyg", FlySpeed = "Flyghastighet", NoClip = "NoClip", WalkSpeed = "Gånghastighet",
         AutoFarm = "Auto Farm", AutoFarmDelay = "Farmfördröjning (s)",
         BotMagnet = "Botmagnet", BotMagnetDesc = "Samlar alla botar på en plats",
-        AntiRagdoll = "Anti Ragdoll", NoAnimation = "Ingen Animation",
+        AntiRagdoll = "Anti Ragdoll",
         Fullbright = "Fullbright", LangSelect = "Språk",
         CreditsTitle = "Super Bot Brawl Hub",
         CreditsContent = "Skapad av Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — Första utgåvan",
@@ -231,7 +230,7 @@ local Translations = {
         Fly = "Πτήση", FlySpeed = "Ταχύτητα Πτήσης", NoClip = "NoClip", WalkSpeed = "Ταχύτητα Βαδίσματος",
         AutoFarm = "Αυτόματο Farm", AutoFarmDelay = "Καθυστέρηση farm (δευτ.)",
         BotMagnet = "Μαγνήτης Bot", BotMagnetDesc = "Συγκεντρώνει όλα τα bots σε ένα σημείο",
-        AntiRagdoll = "Anti Ragdoll", NoAnimation = "Χωρίς Animation",
+        AntiRagdoll = "Anti Ragdoll",
         Fullbright = "Πλήρης Φωτεινότητα", LangSelect = "Γλώσσα",
         CreditsTitle = "Super Bot Brawl Hub",
         CreditsContent = "Δημιουργήθηκε από τον Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — Πρώτη έκδοση",
@@ -243,7 +242,7 @@ local Translations = {
         Fly = "Zbor", FlySpeed = "Viteza de zbor", NoClip = "NoClip", WalkSpeed = "Viteză de mers",
         AutoFarm = "Auto Farm", AutoFarmDelay = "Întârziere farm (s)",
         BotMagnet = "Magnet de Boți", BotMagnetDesc = "Adună toți boții într-un singur loc",
-        AntiRagdoll = "Anti Ragdoll", NoAnimation = "Fără Animație",
+        AntiRagdoll = "Anti Ragdoll",
         Fullbright = "Luminozitate maximă", LangSelect = "Limbă",
         CreditsTitle = "Super Bot Brawl Hub",
         CreditsContent = "Creat de Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — Prima versiune",
@@ -255,7 +254,7 @@ local Translations = {
         Fly = "Політ", FlySpeed = "Швидкість польоту", NoClip = "Нокліп", WalkSpeed = "Швидкість ходьби",
         AutoFarm = "Авто фарм", AutoFarmDelay = "Затримка фарму (с)",
         BotMagnet = "Магніт ботів", BotMagnetDesc = "Збирає всіх ботів в одному місці",
-        AntiRagdoll = "Анти-рагдол", NoAnimation = "Без анімації",
+        AntiRagdoll = "Анти-рагдол",
         Fullbright = "Повна яскравість", LangSelect = "Мова",
         CreditsTitle = "Super Bot Brawl Hub",
         CreditsContent = "Створено Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — Перший випуск",
@@ -267,7 +266,7 @@ local Translations = {
         Fly = "Létání", FlySpeed = "Rychlost letu", NoClip = "NoClip", WalkSpeed = "Rychlost chůze",
         AutoFarm = "Auto Farm", AutoFarmDelay = "Zpoždění farmu (s)",
         BotMagnet = "Magnet na Boty", BotMagnetDesc = "Shromažďuje všechny boty na jednom místě",
-        AntiRagdoll = "Anti Ragdoll", NoAnimation = "Bez Animace",
+        AntiRagdoll = "Anti Ragdoll",
         Fullbright = "Plné světlo", LangSelect = "Jazyk",
         CreditsTitle = "Super Bot Brawl Hub",
         CreditsContent = "Vytvořil Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — První verze",
@@ -279,7 +278,7 @@ local Translations = {
         Fly = "Fly", FlySpeed = "Flyhastighed", NoClip = "NoClip", WalkSpeed = "Gåhastighed",
         AutoFarm = "Auto Farm", AutoFarmDelay = "Farm-forsinkelse (s)",
         BotMagnet = "Bot-Magnet", BotMagnetDesc = "Samler alle bots på ét sted",
-        AntiRagdoll = "Anti Ragdoll", NoAnimation = "Ingen Animation",
+        AntiRagdoll = "Anti Ragdoll",
         Fullbright = "Fuld lysstyrke", LangSelect = "Sprog",
         CreditsTitle = "Super Bot Brawl Hub",
         CreditsContent = "Oprettet af Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — Første udgivelse",
@@ -303,7 +302,6 @@ local Settings = {
     NoClip           = false,
     WalkSpeed        = 16,
     AntiRagdoll      = false,
-    NoAnimation      = false,
     Fullbright       = false,
 }
 
@@ -574,92 +572,7 @@ local function disableAntiRagdoll()
 end
 
 -- ───────────────────────────────────────────────────────────────
--- NO ANIMATION (no LoadAnimation hook, no callback errors)
--- Stops all tracks on character Animator AND tool Animator each frame
--- ───────────────────────────────────────────────────────────────
-local noAnimConnection = nil
-local originalPlayAnimations = nil
-
-local function getAnimator()
-    local hum = getHumanoid()
-    if not hum then return nil end
-    return hum:FindFirstChildOfClass("Animator")
-end
-
-local function stopTracksSafe(animator)
-    if not animator then return end
-    local ok, tracks = pcall(function()
-        return animator:GetPlayingAnimationTracks()
-    end)
-    if not ok or not tracks then return end
-    for _, track in ipairs(tracks) do
-        pcall(function() track:Stop(0) end)
-    end
-end
-
-local function enableNoAnimation()
-    if noAnimConnection then return end
-
-    local char = LocalPlayer.Character
-    if char then
-        local animateScript = char:FindFirstChild("Animate")
-        if animateScript then
-            pcall(function() animateScript.Disabled = true end)
-        end
-    end
-
-    local animator = getAnimator()
-    if animator then
-        originalPlayAnimations = animator.PlayAnimations
-        pcall(function() animator.PlayAnimations = false end)
-    end
-
-    noAnimConnection = RunService.Heartbeat:Connect(function()
-        if not Settings.NoAnimation then return end
-        local c = LocalPlayer.Character
-        if not c then return end
-
-        local animateScript = c:FindFirstChild("Animate")
-        if animateScript and not animateScript.Disabled then
-            pcall(function() animateScript.Disabled = true end)
-        end
-
-        local a = getAnimator()
-        if a then
-            if a.PlayAnimations then
-                pcall(function() a.PlayAnimations = false end)
-            end
-            stopTracksSafe(a)
-        end
-
-        local tool = c:FindFirstChildOfClass("Tool")
-        if tool then
-            local toolAnimator = tool:FindFirstChildOfClass("Animator")
-            if toolAnimator then
-                stopTracksSafe(toolAnimator)
-            end
-        end
-    end)
-end
-
-local function disableNoAnimation()
-    if noAnimConnection then noAnimConnection:Disconnect(); noAnimConnection = nil end
-    local char = LocalPlayer.Character
-    if char then
-        local animateScript = char:FindFirstChild("Animate")
-        if animateScript then
-            pcall(function() animateScript.Disabled = false end)
-        end
-    end
-    local animator = getAnimator()
-    if animator and originalPlayAnimations ~= nil then
-        pcall(function() animator.PlayAnimations = originalPlayAnimations end)
-        originalPlayAnimations = nil
-    end
-end
-
--- ───────────────────────────────────────────────────────────────
--- BOT MAGNET (MoveTo approach — preserves server-side position, damage works)
+-- BOT MAGNET (MoveTo approach)
 -- ───────────────────────────────────────────────────────────────
 local botMagnetConnection = nil
 local magnetAnchor = nil
@@ -724,10 +637,12 @@ local function disableBotMagnet()
 end
 
 -- ───────────────────────────────────────────────────────────────
--- AUTO FARM
+-- AUTO FARM (feet on bot head, works for any size, throttled teleport)
 -- ───────────────────────────────────────────────────────────────
 local lastFarmTime = 0
+local lastTeleportTime = 0
 local farmActive = false
+local botHeights = setmetatable({}, { __mode = "k" })
 
 local function restoreFarmState()
     farmActive = false
@@ -757,27 +672,49 @@ local function doAutoFarm()
 
     hum.PlatformStand = true
 
-    local botHeight  = getBotHeight(botModel)
-    local charHeight = getCharacterHeight()
-    local targetY = botHRP.Position.Y + (botHeight / 2) + (charHeight / 2) + 3
-
-    local sideOffset = (hrp.Position - botHRP.Position)
-    sideOffset = Vector3.new(sideOffset.X, 0, sideOffset.Z)
-    if sideOffset.Magnitude < 0.1 then
-        sideOffset = Vector3.new(1, 0, 0)
+    -- Cache bot height once per model (avoid drift from animations)
+    local botHeight = botHeights[botModel]
+    if not botHeight then
+        botHeight = getBotHeight(botModel)
+        botHeights[botModel] = botHeight
     end
-    sideOffset = sideOffset.Unit * 1.5
+    local charHeight = getCharacterHeight()
 
-    local targetPos = Vector3.new(
-        botHRP.Position.X + sideOffset.X,
-        targetY,
-        botHRP.Position.Z + sideOffset.Z
-    )
+    -- Place FEET just above bot's HEAD so the tool at chest level overlaps bot's body
+    -- targetY = botHRP.Y + botHeight/2 (feet at bot's head) - charHeight/2 would place feet at bot's HRP
+    -- To have tool hit, we want hand ~botHRP.Y. Hand ≈ HRP.Y + 1 (small) to +3 (large).
+    -- So we want HRP.Y ≈ botHRP.Y + 1..2 for tool alignment regardless of size.
+    -- Strategy: put HRP.Y slightly ABOVE botHRP.Y (by 2 studs), independent of char/bot height.
+    local targetY = botHRP.Position.Y + 2
 
-    hrp.CFrame = CFrame.lookAt(targetPos, botHRP.Position)
-    hrp.AssemblyLinearVelocity = Vector3.zero
-    hrp.AssemblyAngularVelocity = Vector3.zero
+    -- Teleport only every 0.4s OR if drifted too far
+    local dist = (hrp.Position - botHRP.Position).Magnitude
+    if now - lastTeleportTime > 0.4 or dist > 8 then
+        lastTeleportTime = now
+        -- Horizontal offset from bot: keep at ~3 studs to be inside tool range
+        local flatDir = Vector3.new(hrp.Position.X - botHRP.Position.X, 0, hrp.Position.Z - botHRP.Position.Z)
+        if flatDir.Magnitude < 0.5 then
+            flatDir = Vector3.new(3, 0, 0)
+        else
+            flatDir = flatDir.Unit * 3
+        end
+        local targetPos = Vector3.new(
+            botHRP.Position.X + flatDir.X,
+            targetY,
+            botHRP.Position.Z + flatDir.Z
+        )
+        hrp.CFrame = CFrame.lookAt(targetPos, Vector3.new(botHRP.Position.X, targetY, botHRP.Position.Z))
+        hrp.AssemblyLinearVelocity = Vector3.zero
+        hrp.AssemblyAngularVelocity = Vector3.zero
+    else
+        -- Just face the bot on Y plane, no teleport
+        local flatDir = Vector3.new(botHRP.Position.X, hrp.Position.Y, botHRP.Position.Z)
+        if (hrp.Position - flatDir).Magnitude > 0.5 then
+            hrp.CFrame = CFrame.lookAt(hrp.Position, flatDir)
+        end
+    end
 
+    -- Equip tool
     local tool = char:FindFirstChildOfClass("Tool")
     if not tool then
         local backpack = LocalPlayer:FindFirstChild("Backpack")
@@ -794,6 +731,7 @@ local function doAutoFarm()
     local botHum = botModel:FindFirstChildOfClass("Humanoid")
 
     if tool then
+        -- Reset cooldowns
         for _, v in ipairs(tool:GetDescendants()) do
             if v:IsA("NumberValue") or v:IsA("IntValue") then
                 local n = v.Name:lower()
@@ -802,7 +740,9 @@ local function doAutoFarm()
                 end
             end
         end
+        -- Fire tool:Activate for visual (game may or may not register)
         pcall(function() tool:Activate() end)
+        -- Fire tool remotes directly with bot humanoid (bypass animation cooldown)
         for _, v in ipairs(tool:GetDescendants()) do
             if v:IsA("RemoteEvent") then
                 pcall(function() v:FireServer(botHum) end)
@@ -846,7 +786,6 @@ TabCombat:CreateToggle({ Name = T("AutoFarm"), CurrentValue = Settings.AutoFarm,
 TabCombat:CreateSlider({ Name = T("AutoFarmDelay"), Range = {0.1, 2.0}, Increment = 0.1, CurrentValue = Settings.AutoFarmDelay, Flag = "AutoFarmDelay", Callback = function(v) Settings.AutoFarmDelay = v end })
 TabCombat:CreateToggle({ Name = T("BotMagnet"), CurrentValue = Settings.BotMagnet, Flag = "BotMagnet", Callback = function(v) Settings.BotMagnet = v; if v then enableBotMagnet() else disableBotMagnet() end end })
 TabCombat:CreateToggle({ Name = T("AntiRagdoll"), CurrentValue = Settings.AntiRagdoll, Flag = "AntiRagdoll", Callback = function(v) Settings.AntiRagdoll = v; if v then enableAntiRagdoll() else disableAntiRagdoll() end end })
-TabCombat:CreateToggle({ Name = T("NoAnimation"), CurrentValue = Settings.NoAnimation, Flag = "NoAnimation", Callback = function(v) Settings.NoAnimation = v; if v then enableNoAnimation() else disableNoAnimation() end end })
 
 local TabTools = Window:CreateTab(T("TabTools"), 4483362458)
 TabTools:CreateToggle({ Name = T("Fullbright"), CurrentValue = Settings.Fullbright, Flag = "Fullbright", Callback = function(v)
@@ -966,7 +905,6 @@ LocalPlayer.CharacterAdded:Connect(function(_character)
     if Settings.Fly then disableFly(); task.wait(0.1); enableFly() end
     if Settings.NoClip then enableNoClip() end
     if Settings.AntiRagdoll then enableAntiRagdoll() end
-    if Settings.NoAnimation then enableNoAnimation() end
     local hum = getHumanoid()
     if hum then hum.WalkSpeed = Settings.WalkSpeed end
 end)
