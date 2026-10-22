@@ -6,7 +6,8 @@
     ================================================================
     Features:
       - Auto Farm (feet on bot head, PlatformStand, 0.1s default)
-      - Bot Magnet (uses Humanoid:MoveTo, damage-friendly)
+      - God Mode (HP forced every frame, auto-enabled with Auto Farm)
+      - Bot Magnet (MoveTo + high speed + no collision between bots)
       - Anti Ragdoll (event-driven, blocks Ragdoll/Physics/FallingDown/Dead)
       - ESP Bots (highlight + HP billboard on all NPCs)
       - Teleport to Nearest Bot
@@ -37,6 +38,7 @@ local Translations = {
         ESPBots = "ESP Bots", TPNearestBot = "TP to Nearest Bot", TPNearestDesc = "Teleport in front of the closest bot",
         Fly = "Fly", FlySpeed = "Fly Speed", NoClip = "NoClip", WalkSpeed = "Walk Speed",
         AutoFarm = "Auto Farm", AutoFarmDelay = "Farm Delay (s)",
+        GodMode = "God Mode", GodModeDesc = "Force HP every frame (auto with Auto Farm)",
         BotMagnet = "Bot Magnet", BotMagnetDesc = "Gather all bots in one spot",
         AntiRagdoll = "Anti Ragdoll",
         Fullbright = "Fullbright", LangSelect = "Language",
@@ -49,6 +51,7 @@ local Translations = {
         ESPBots = "ESP Bots", TPNearestBot = "TP au Bot le plus proche", TPNearestDesc = "Se téléporter devant le bot le plus proche",
         Fly = "Vol", FlySpeed = "Vitesse de vol", NoClip = "NoClip", WalkSpeed = "Vitesse de marche",
         AutoFarm = "Auto Farm", AutoFarmDelay = "Délai farm (s)",
+        GodMode = "Mode Dieu", GodModeDesc = "Force les PV à chaque frame (auto avec Auto Farm)",
         BotMagnet = "Aimant à Bots", BotMagnetDesc = "Regroupe tous les bots en un point",
         AntiRagdoll = "Anti Ragdoll",
         Fullbright = "Luminosité max", LangSelect = "Langue",
@@ -61,6 +64,7 @@ local Translations = {
         ESPBots = "ESP Bots", TPNearestBot = "TP zum nächsten Bot", TPNearestDesc = "Zum nächsten Bot teleportieren",
         Fly = "Fliegen", FlySpeed = "Fluggeschwindigkeit", NoClip = "NoClip", WalkSpeed = "Laufgeschwindigkeit",
         AutoFarm = "Auto Farm", AutoFarmDelay = "Farm-Verzögerung (s)",
+        GodMode = "Gottmodus", GodModeDesc = "HP jede Frame erzwingen (auto mit Auto Farm)",
         BotMagnet = "Bot-Magnet", BotMagnetDesc = "Sammelt alle Bots an einem Ort",
         AntiRagdoll = "Anti Ragdoll",
         Fullbright = "Vollhell", LangSelect = "Sprache",
@@ -73,6 +77,7 @@ local Translations = {
         ESPBots = "ESP Bots", TPNearestBot = "TP al Bot más cercano", TPNearestDesc = "Teletransportarse frente al bot más cercano",
         Fly = "Volar", FlySpeed = "Velocidad de vuelo", NoClip = "NoClip", WalkSpeed = "Velocidad de marcha",
         AutoFarm = "Auto Farm", AutoFarmDelay = "Retraso farm (s)",
+        GodMode = "Modo Dios", GodModeDesc = "Forzar HP cada frame (auto con Auto Farm)",
         BotMagnet = "Imán de Bots", BotMagnetDesc = "Reúne todos los bots en un punto",
         AntiRagdoll = "Anti Ragdoll",
         Fullbright = "Brillo máximo", LangSelect = "Idioma",
@@ -85,6 +90,7 @@ local Translations = {
         ESPBots = "ESP Bots", TPNearestBot = "TP para o Bot mais próximo", TPNearestDesc = "Teleportar para o bot mais próximo",
         Fly = "Voar", FlySpeed = "Velocidade de voo", NoClip = "NoClip", WalkSpeed = "Velocidade de caminhada",
         AutoFarm = "Auto Farm", AutoFarmDelay = "Atraso do farm (s)",
+        GodMode = "Modo Deus", GodModeDesc = "Forçar HP a cada frame (auto com Auto Farm)",
         BotMagnet = "Ímã de Bots", BotMagnetDesc = "Reúne todos os bots em um só lugar",
         AntiRagdoll = "Anti Ragdoll",
         Fullbright = "Brilho máximo", LangSelect = "Idioma",
@@ -97,6 +103,7 @@ local Translations = {
         ESPBots = "ESP ботов", TPNearestBot = "ТП к ближайшему боту", TPNearestDesc = "Телепортироваться к ближайшему боту",
         Fly = "Полёт", FlySpeed = "Скорость полёта", NoClip = "Ноклип", WalkSpeed = "Скорость ходьбы",
         AutoFarm = "Авто фарм", AutoFarmDelay = "Задержка фарма (с)",
+        GodMode = "Режим Бога", GodModeDesc = "Принудительно HP каждый кадр (авто с Auto Farm)",
         BotMagnet = "Магнит ботов", BotMagnetDesc = "Собирает всех ботов в одно место",
         AntiRagdoll = "Анти-рагдолл",
         Fullbright = "Максяркость", LangSelect = "Язык",
@@ -109,6 +116,7 @@ local Translations = {
         ESPBots = "ESP Bot", TPNearestBot = "TP al Bot più vicino", TPNearestDesc = "Teletrasportarsi davanti al bot più vicino",
         Fly = "Volare", FlySpeed = "Velocità di volo", NoClip = "NoClip", WalkSpeed = "Velocità di camminata",
         AutoFarm = "Auto Farm", AutoFarmDelay = "Ritardo farm (s)",
+        GodMode = "Modalità Dio", GodModeDesc = "Forza HP ogni frame (auto con Auto Farm)",
         BotMagnet = "Calamita Bot", BotMagnetDesc = "Raccoglie tutti i bot in un punto",
         AntiRagdoll = "Anti Ragdoll",
         Fullbright = "Luminosità massima", LangSelect = "Lingua",
@@ -121,6 +129,7 @@ local Translations = {
         ESPBots = "ESP Bots", TPNearestBot = "TP naar dichtstbijzijnde Bot", TPNearestDesc = "Teleporteer naar de dichtstbijzijnde bot",
         Fly = "Vliegen", FlySpeed = "Vliegsnelheid", NoClip = "NoClip", WalkSpeed = "Loopsnelheid",
         AutoFarm = "Auto Farm", AutoFarmDelay = "Farm vertraging (s)",
+        GodMode = "Godmodus", GodModeDesc = "Forceer HP elke frame (auto met Auto Farm)",
         BotMagnet = "Bot Magneet", BotMagnetDesc = "Verzamelt alle bots op één plek",
         AntiRagdoll = "Anti Ragdoll",
         Fullbright = "Maximale helderheid", LangSelect = "Taal",
@@ -133,6 +142,7 @@ local Translations = {
         ESPBots = "ESP Boty", TPNearestBot = "TP do najbliższego Bota", TPNearestDesc = "Teleportuj się do najbliższego bota",
         Fly = "Latanie", FlySpeed = "Prędkość lotu", NoClip = "NoClip", WalkSpeed = "Prędkość chodzenia",
         AutoFarm = "Auto Farm", AutoFarmDelay = "Opóźnienie farmu (s)",
+        GodMode = "Tryb Boga", GodModeDesc = "Wymuś HP każdą klatkę (auto z Auto Farm)",
         BotMagnet = "Magnes na Boty", BotMagnetDesc = "Gromadzi wszystkie boty w jednym miejscu",
         AntiRagdoll = "Anti Ragdoll",
         Fullbright = "Pełna jasność", LangSelect = "Język",
@@ -145,6 +155,7 @@ local Translations = {
         ESPBots = "ESP机器人", TPNearestBot = "传送至最近机器人", TPNearestDesc = "传送到最近的机器人前方",
         Fly = "飞行", FlySpeed = "飞行速度", NoClip = "穿墙", WalkSpeed = "移动速度",
         AutoFarm = "自动刷怪", AutoFarmDelay = "刷怪延迟（秒）",
+        GodMode = "无敌模式", GodModeDesc = "每帧强制HP（随Auto Farm自动）",
         BotMagnet = "机器人磁铁", BotMagnetDesc = "将所有机器人聚集到一个地方",
         AntiRagdoll = "防布娃娃",
         Fullbright = "全亮", LangSelect = "语言",
@@ -157,6 +168,7 @@ local Translations = {
         ESPBots = "ESPボット", TPNearestBot = "最近のボットにTP", TPNearestDesc = "最も近いボットの前にテレポート",
         Fly = "飛行", FlySpeed = "飛行速度", NoClip = "ノークリップ", WalkSpeed = "移動速度",
         AutoFarm = "オートファーム", AutoFarmDelay = "ファーム遅延（秒）",
+        GodMode = "ゴッドモード", GodModeDesc = "毎フレームHPを強制（Auto Farmで自動）",
         BotMagnet = "ボットマグネット", BotMagnetDesc = "すべてのボットを1か所に集める",
         AntiRagdoll = "アンチラグドール",
         Fullbright = "フルブライト", LangSelect = "言語",
@@ -169,6 +181,7 @@ local Translations = {
         ESPBots = "ESP Botlar", TPNearestBot = "En Yakın Bota TP", TPNearestDesc = "En yakın botun önüne ışınlan",
         Fly = "Uçuş", FlySpeed = "Uçuş Hızı", NoClip = "NoClip", WalkSpeed = "Yürüyüş Hızı",
         AutoFarm = "Otomatik Farm", AutoFarmDelay = "Farm gecikmesi (s)",
+        GodMode = "Tanrı Modu", GodModeDesc = "Her karede HP zorla (Auto Farm ile otomatik)",
         BotMagnet = "Bot Mıknatısı", BotMagnetDesc = "Tüm botları tek bir yerde toplar",
         AntiRagdoll = "Anti Ragdoll",
         Fullbright = "Tam Parlaklık", LangSelect = "Dil",
@@ -181,6 +194,7 @@ local Translations = {
         ESPBots = "ESP 봇", TPNearestBot = "가장 가까운 봇으로 TP", TPNearestDesc = "가장 가까운 봇 앞으로 순간이동",
         Fly = "비행", FlySpeed = "비행 속도", NoClip = "노클립", WalkSpeed = "이동 속도",
         AutoFarm = "자동 파밍", AutoFarmDelay = "파밍 딜레이(초)",
+        GodMode = "갓 모드", GodModeDesc = "매 프레임 HP 강제 (Auto Farm 시 자동)",
         BotMagnet = "봇 자석", BotMagnetDesc = "모든 봇을 한 곳에 모읍니다",
         AntiRagdoll = "안티 래그돌",
         Fullbright = "풀브라이트", LangSelect = "언어",
@@ -193,6 +207,7 @@ local Translations = {
         ESPBots = "ESP الروبوتات", TPNearestBot = "انتقال إلى أقرب روبوت", TPNearestDesc = "الانتقال أمام أقرب روبوت",
         Fly = "الطيران", FlySpeed = "سرعة الطيران", NoClip = "نوكليب", WalkSpeed = "سرعة المشي",
         AutoFarm = "زراعة تلقائية", AutoFarmDelay = "تأخير الزراعة (ث)",
+        GodMode = "وضع الإله", GodModeDesc = "فرض HP كل إطار (تلقائي مع Auto Farm)",
         BotMagnet = "مغناطيس الروبوتات", BotMagnetDesc = "يجمع كل الروبوتات في مكان واحد",
         AntiRagdoll = "مضاد الراجدول",
         Fullbright = "إضاءة كاملة", LangSelect = "اللغة",
@@ -205,6 +220,7 @@ local Translations = {
         ESPBots = "ESP Bots", TPNearestBot = "TP đến Bot gần nhất", TPNearestDesc = "Dịch chuyển đến phía trước bot gần nhất",
         Fly = "Bay", FlySpeed = "Tốc độ bay", NoClip = "NoClip", WalkSpeed = "Tốc độ đi bộ",
         AutoFarm = "Tự động Farm", AutoFarmDelay = "Độ trễ farm (s)",
+        GodMode = "Chế độ Thần", GodModeDesc = "Buộc HP mỗi frame (tự động với Auto Farm)",
         BotMagnet = "Nam Châm Bot", BotMagnetDesc = "Tập hợp tất cả bot ở một nơi",
         AntiRagdoll = "Chống Ragdoll",
         Fullbright = "Sáng tối đa", LangSelect = "Ngôn ngữ",
@@ -217,6 +233,7 @@ local Translations = {
         ESPBots = "ESP Botar", TPNearestBot = "TP till närmaste Bot", TPNearestDesc = "Teleportera framför närmaste boten",
         Fly = "Flyg", FlySpeed = "Flyghastighet", NoClip = "NoClip", WalkSpeed = "Gånghastighet",
         AutoFarm = "Auto Farm", AutoFarmDelay = "Farmfördröjning (s)",
+        GodMode = "Gudläge", GodModeDesc = "Tvinga HP varje frame (auto med Auto Farm)",
         BotMagnet = "Botmagnet", BotMagnetDesc = "Samlar alla botar på en plats",
         AntiRagdoll = "Anti Ragdoll",
         Fullbright = "Fullbright", LangSelect = "Språk",
@@ -229,6 +246,7 @@ local Translations = {
         ESPBots = "ESP Bots", TPNearestBot = "TP στο Κοντινότερο Bot", TPNearestDesc = "Τηλεμεταφορά μπροστά στο κοντινότερο bot",
         Fly = "Πτήση", FlySpeed = "Ταχύτητα Πτήσης", NoClip = "NoClip", WalkSpeed = "Ταχύτητα Βαδίσματος",
         AutoFarm = "Αυτόματο Farm", AutoFarmDelay = "Καθυστέρηση farm (δευτ.)",
+        GodMode = "Λειτουργία Θεού", GodModeDesc = "Επιβολή HP κάθε καρέ (αυτόματο με Auto Farm)",
         BotMagnet = "Μαγνήτης Bot", BotMagnetDesc = "Συγκεντρώνει όλα τα bots σε ένα σημείο",
         AntiRagdoll = "Anti Ragdoll",
         Fullbright = "Πλήρης Φωτεινότητα", LangSelect = "Γλώσσα",
@@ -241,6 +259,7 @@ local Translations = {
         ESPBots = "ESP Boți", TPNearestBot = "TP la Cel Mai Aproape Bot", TPNearestDesc = "Teleportare în fața celui mai apropiat bot",
         Fly = "Zbor", FlySpeed = "Viteza de zbor", NoClip = "NoClip", WalkSpeed = "Viteză de mers",
         AutoFarm = "Auto Farm", AutoFarmDelay = "Întârziere farm (s)",
+        GodMode = "Modul Dumnezeu", GodModeDesc = "Forțează HP la fiecare cadru (auto cu Auto Farm)",
         BotMagnet = "Magnet de Boți", BotMagnetDesc = "Adună toți boții într-un singur loc",
         AntiRagdoll = "Anti Ragdoll",
         Fullbright = "Luminozitate maximă", LangSelect = "Limbă",
@@ -253,6 +272,7 @@ local Translations = {
         ESPBots = "ESP ботів", TPNearestBot = "ТП до найближчого бота", TPNearestDesc = "Телепортуватися до найближчого бота",
         Fly = "Політ", FlySpeed = "Швидкість польоту", NoClip = "Нокліп", WalkSpeed = "Швидкість ходьби",
         AutoFarm = "Авто фарм", AutoFarmDelay = "Затримка фарму (с)",
+        GodMode = "Режим Бога", GodModeDesc = "Примусово HP щоразу (авто з Auto Farm)",
         BotMagnet = "Магніт ботів", BotMagnetDesc = "Збирає всіх ботів в одному місці",
         AntiRagdoll = "Анти-рагдол",
         Fullbright = "Повна яскравість", LangSelect = "Мова",
@@ -265,6 +285,7 @@ local Translations = {
         ESPBots = "ESP Boti", TPNearestBot = "TP k nejbližšímu Botovi", TPNearestDesc = "Přesuň se před nejbližšího bota",
         Fly = "Létání", FlySpeed = "Rychlost letu", NoClip = "NoClip", WalkSpeed = "Rychlost chůze",
         AutoFarm = "Auto Farm", AutoFarmDelay = "Zpoždění farmu (s)",
+        GodMode = "Bůh mód", GodModeDesc = "Vynutit HP každý snímek (auto s Auto Farm)",
         BotMagnet = "Magnet na Boty", BotMagnetDesc = "Shromažďuje všechny boty na jednom místě",
         AntiRagdoll = "Anti Ragdoll",
         Fullbright = "Plné světlo", LangSelect = "Jazyk",
@@ -277,6 +298,7 @@ local Translations = {
         ESPBots = "ESP Bots", TPNearestBot = "TP til nærmeste Bot", TPNearestDesc = "Teleportér foran den nærmeste bot",
         Fly = "Fly", FlySpeed = "Flyhastighed", NoClip = "NoClip", WalkSpeed = "Gåhastighed",
         AutoFarm = "Auto Farm", AutoFarmDelay = "Farm-forsinkelse (s)",
+        GodMode = "Gudstilstand", GodModeDesc = "Tving HP hver frame (auto med Auto Farm)",
         BotMagnet = "Bot-Magnet", BotMagnetDesc = "Samler alle bots på ét sted",
         AntiRagdoll = "Anti Ragdoll",
         Fullbright = "Fuld lysstyrke", LangSelect = "Sprog",
@@ -295,6 +317,7 @@ end
 local Settings = {
     AutoFarm         = false,
     AutoFarmDelay    = 0.1,
+    GodMode          = false,
     BotMagnet        = false,
     ESP_Bots         = false,
     Fly              = false,
@@ -324,6 +347,9 @@ local Window = Rayfield:CreateWindow({
     KeySystem       = false,
 })
 
+-- ───────────────────────────────────────────────────────────────
+-- HELPERS
+-- ───────────────────────────────────────────────────────────────
 local function getHRP()
     local char = LocalPlayer.Character
     if not char then return nil end
@@ -572,11 +598,59 @@ local function disableAntiRagdoll()
 end
 
 -- ───────────────────────────────────────────────────────────────
--- BOT MAGNET (MoveTo approach)
+-- GOD MODE (force HP every frame, auto-enabled with Auto Farm)
+-- ───────────────────────────────────────────────────────────────
+local godModeConn = nil
+local originalMaxHealth = nil
+
+local function enableGodMode()
+    if godModeConn then return end
+    local hum = getHumanoid()
+    if not hum then return end
+
+    originalMaxHealth = hum.MaxHealth
+    hum.MaxHealth = math.huge
+    hum.Health = math.huge
+
+    -- Instant heal on any damage
+    local healthConn = hum.HealthChanged:Connect(function(newHealth)
+        if Settings.GodMode and hum.Parent and newHealth < hum.MaxHealth then
+            hum.Health = hum.MaxHealth
+        end
+    end)
+
+    -- Per-frame enforcement
+    godModeConn = RunService.Heartbeat:Connect(function()
+        if not Settings.GodMode then return end
+        local h = getHumanoid()
+        if not h then return end
+        if h.MaxHealth ~= math.huge then h.MaxHealth = math.huge end
+        if h.Health < h.MaxHealth then h.Health = h.MaxHealth end
+    end)
+end
+
+local function disableGodMode()
+    if godModeConn then godModeConn:Disconnect(); godModeConn = nil end
+    local hum = getHumanoid()
+    if hum then
+        if originalMaxHealth then
+            hum.MaxHealth = originalMaxHealth
+            hum.Health = math.min(hum.Health, originalMaxHealth)
+            originalMaxHealth = nil
+        else
+            hum.MaxHealth = 100
+            hum.Health = math.min(hum.Health, 100)
+        end
+    end
+end
+
+-- ───────────────────────────────────────────────────────────────
+-- BOT MAGNET (MoveTo + high speed + no collisions)
 -- ───────────────────────────────────────────────────────────────
 local botMagnetConnection = nil
 local magnetAnchor = nil
 local lastMagnetTick = 0
+local magnetOriginalCollide = {}
 
 local function doBotMagnet()
     if not Settings.BotMagnet then
@@ -585,7 +659,7 @@ local function doBotMagnet()
     end
 
     local now = tick()
-    if now - lastMagnetTick < 0.25 then return end
+    if now - lastMagnetTick < 0.15 then return end
     lastMagnetTick = now
 
     local hrp = getHRP()
@@ -604,14 +678,39 @@ local function doBotMagnet()
             local bhrp = obj:FindFirstChild("HumanoidRootPart")
             local bhum = obj:FindFirstChildOfClass("Humanoid")
             if bhrp and bhum then
+                -- Unanchor if anchored
+                if bhrp.Anchored then
+                    bhrp.Anchored = false
+                end
+
+                -- Disable collisions between bots to avoid blocking
+                for _, part in ipairs(obj:GetDescendants()) do
+                    if part:IsA("BasePart") and part.CanCollide then
+                        if magnetOriginalCollide[part] == nil then
+                            magnetOriginalCollide[part] = true
+                        end
+                        part.CanCollide = false
+                    end
+                end
+
+                -- Boost walk speed
+                bhum.WalkSpeed = 80
+
                 local row = math.floor(idx / 5)
                 local col = idx % 5
                 local targetX = magnetAnchor.X + (col - 2) * 6
                 local targetZ = magnetAnchor.Z + row * 6
                 local targetPos = Vector3.new(targetX, bhrp.Position.Y, targetZ)
-                if (bhrp.Position - targetPos).Magnitude > 4 then
-                    pcall(function() bhum:MoveTo(targetPos) end)
+
+                -- If far, teleport partway to accelerate
+                if (bhrp.Position - targetPos).Magnitude > 25 then
+                    local mid = bhrp.Position:Lerp(targetPos, 0.5)
+                    pcall(function() obj:PivotTo(CFrame.new(mid)) end)
                 end
+
+                -- MoveTo to final position
+                pcall(function() bhum:MoveTo(targetPos) end)
+
                 idx = idx + 1
             end
         end
@@ -622,6 +721,7 @@ local function enableBotMagnet()
     if botMagnetConnection then return end
     magnetAnchor = nil
     lastMagnetTick = 0
+    magnetOriginalCollide = {}
     botMagnetConnection = RunService.Heartbeat:Connect(function()
         if not Settings.BotMagnet then return end
         pcall(doBotMagnet)
@@ -633,11 +733,18 @@ local function disableBotMagnet()
         botMagnetConnection:Disconnect()
         botMagnetConnection = nil
     end
+    -- Restore collisions
+    for part, _ in pairs(magnetOriginalCollide) do
+        if part and part.Parent then
+            part.CanCollide = true
+        end
+    end
+    magnetOriginalCollide = {}
     magnetAnchor = nil
 end
 
 -- ───────────────────────────────────────────────────────────────
--- AUTO FARM (feet on bot head, works for any size, throttled teleport)
+-- AUTO FARM
 -- ───────────────────────────────────────────────────────────────
 local lastFarmTime = 0
 local lastTeleportTime = 0
@@ -657,6 +764,12 @@ local function doAutoFarm()
     end
     farmActive = true
 
+    -- Auto-enable God Mode while farming
+    if not Settings.GodMode then
+        Settings.GodMode = true
+        enableGodMode()
+    end
+
     local now = tick()
     if now - lastFarmTime < Settings.AutoFarmDelay then return end
     lastFarmTime = now
@@ -672,7 +785,6 @@ local function doAutoFarm()
 
     hum.PlatformStand = true
 
-    -- Cache bot height once per model (avoid drift from animations)
     local botHeight = botHeights[botModel]
     if not botHeight then
         botHeight = getBotHeight(botModel)
@@ -680,18 +792,11 @@ local function doAutoFarm()
     end
     local charHeight = getCharacterHeight()
 
-    -- Place FEET just above bot's HEAD so the tool at chest level overlaps bot's body
-    -- targetY = botHRP.Y + botHeight/2 (feet at bot's head) - charHeight/2 would place feet at bot's HRP
-    -- To have tool hit, we want hand ~botHRP.Y. Hand ≈ HRP.Y + 1 (small) to +3 (large).
-    -- So we want HRP.Y ≈ botHRP.Y + 1..2 for tool alignment regardless of size.
-    -- Strategy: put HRP.Y slightly ABOVE botHRP.Y (by 2 studs), independent of char/bot height.
     local targetY = botHRP.Position.Y + 2
 
-    -- Teleport only every 0.4s OR if drifted too far
     local dist = (hrp.Position - botHRP.Position).Magnitude
     if now - lastTeleportTime > 0.4 or dist > 8 then
         lastTeleportTime = now
-        -- Horizontal offset from bot: keep at ~3 studs to be inside tool range
         local flatDir = Vector3.new(hrp.Position.X - botHRP.Position.X, 0, hrp.Position.Z - botHRP.Position.Z)
         if flatDir.Magnitude < 0.5 then
             flatDir = Vector3.new(3, 0, 0)
@@ -707,14 +812,12 @@ local function doAutoFarm()
         hrp.AssemblyLinearVelocity = Vector3.zero
         hrp.AssemblyAngularVelocity = Vector3.zero
     else
-        -- Just face the bot on Y plane, no teleport
         local flatDir = Vector3.new(botHRP.Position.X, hrp.Position.Y, botHRP.Position.Z)
         if (hrp.Position - flatDir).Magnitude > 0.5 then
             hrp.CFrame = CFrame.lookAt(hrp.Position, flatDir)
         end
     end
 
-    -- Equip tool
     local tool = char:FindFirstChildOfClass("Tool")
     if not tool then
         local backpack = LocalPlayer:FindFirstChild("Backpack")
@@ -731,7 +834,6 @@ local function doAutoFarm()
     local botHum = botModel:FindFirstChildOfClass("Humanoid")
 
     if tool then
-        -- Reset cooldowns
         for _, v in ipairs(tool:GetDescendants()) do
             if v:IsA("NumberValue") or v:IsA("IntValue") then
                 local n = v.Name:lower()
@@ -740,9 +842,7 @@ local function doAutoFarm()
                 end
             end
         end
-        -- Fire tool:Activate for visual (game may or may not register)
         pcall(function() tool:Activate() end)
-        -- Fire tool remotes directly with bot humanoid (bypass animation cooldown)
         for _, v in ipairs(tool:GetDescendants()) do
             if v:IsA("RemoteEvent") then
                 pcall(function() v:FireServer(botHum) end)
@@ -784,6 +884,7 @@ TabMovement:CreateSlider({ Name = T("WalkSpeed"), Range = {16, 250}, Increment =
 local TabCombat = Window:CreateTab(T("TabCombat"), 4483362458)
 TabCombat:CreateToggle({ Name = T("AutoFarm"), CurrentValue = Settings.AutoFarm, Flag = "AutoFarm", Callback = function(v) Settings.AutoFarm = v; if not v then restoreFarmState() end end })
 TabCombat:CreateSlider({ Name = T("AutoFarmDelay"), Range = {0.1, 2.0}, Increment = 0.1, CurrentValue = Settings.AutoFarmDelay, Flag = "AutoFarmDelay", Callback = function(v) Settings.AutoFarmDelay = v end })
+TabCombat:CreateToggle({ Name = T("GodMode"), CurrentValue = Settings.GodMode, Flag = "GodMode", Callback = function(v) Settings.GodMode = v; if v then enableGodMode() else disableGodMode() end end })
 TabCombat:CreateToggle({ Name = T("BotMagnet"), CurrentValue = Settings.BotMagnet, Flag = "BotMagnet", Callback = function(v) Settings.BotMagnet = v; if v then enableBotMagnet() else disableBotMagnet() end end })
 TabCombat:CreateToggle({ Name = T("AntiRagdoll"), CurrentValue = Settings.AntiRagdoll, Flag = "AntiRagdoll", Callback = function(v) Settings.AntiRagdoll = v; if v then enableAntiRagdoll() else disableAntiRagdoll() end end })
 
@@ -905,6 +1006,7 @@ LocalPlayer.CharacterAdded:Connect(function(_character)
     if Settings.Fly then disableFly(); task.wait(0.1); enableFly() end
     if Settings.NoClip then enableNoClip() end
     if Settings.AntiRagdoll then enableAntiRagdoll() end
+    if Settings.GodMode then enableGodMode() end
     local hum = getHumanoid()
     if hum then hum.WalkSpeed = Settings.WalkSpeed end
 end)
