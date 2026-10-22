@@ -4,14 +4,34 @@
     Created by Rival960 with the help of Claude
     Version: 1.0.0 | Languages: 21 | Rayfield UI
     ================================================================
-    Features:
-      - God Mode (MaxHealth + HealthChanged + Dead state disabled)
+   Features:
+      - Silent Aim (hooks attack remotes, redirects to nearest bot)
       - Auto Farm (attacks nearest bot with tool/remote, oriented correctly)
       - ESP Bots (highlight + HP billboard on all NPCs)
       - Teleport to Nearest Bot
       - Fly (PC: WASD/Space/Shift | Mobile: joystick + on-screen ▲/▼)
-      - NoClip (pass through walls, anti-slide)
+      - NoClip (pass through walls, anti-slide, anti-invisible-block)
       - Walk Speed (adjustable)
+      - Fullbright (brightness boost, fixed clock)
+      - 21-language interface
+    ================================================================
+--]]
+
+--[[
+    ================================================================
+    Super Bot Brawl Hub — Super Bot Brawl
+    Created by Rival960 with the help of Claude
+    Version: 1.0.0 | Languages: 21 | Rayfield UI
+    ================================================================
+    Features:
+      - Silent Aim (hooks attack remotes, redirects to nearest bot)
+      - Auto Farm (attacks nearest bot with tool/remote, oriented correctly)
+      - ESP Bots (highlight + HP billboard on all NPCs)
+      - Teleport to Nearest Bot
+      - Fly (PC: WASD/Space/Shift | Mobile: joystick + on-screen ▲/▼)
+      - NoClip (pass through walls, anti-slide, anti-invisible-block)
+      - Walk Speed (adjustable)
+      - Hitbox Expander (bots only, never players)
       - Fullbright (brightness boost, fixed clock)
       - 21-language interface
     ================================================================
@@ -20,13 +40,14 @@
 -- ───────────────────────────────────────────────────────────────
 -- SERVICES
 -- ───────────────────────────────────────────────────────────────
-local Players       = game:GetService("Players")
-local RunService    = game:GetService("RunService")
+local Players          = game:GetService("Players")
+local RunService       = game:GetService("RunService")
 local UserInputService = game:GetService("UserInputService")
-local Workspace     = game:GetService("Workspace")
-local Lighting      = game:GetService("Lighting")
+local Workspace        = game:GetService("Workspace")
+local Lighting         = game:GetService("Lighting")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
-local LocalPlayer   = Players.LocalPlayer
+local LocalPlayer = Players.LocalPlayer
 
 -- ───────────────────────────────────────────────────────────────
 -- 21-LANGUAGE SYSTEM
@@ -51,8 +72,8 @@ local Translations = {
         NoClip          = "NoClip",
         NoClipDesc      = "Pass through walls and obstacles",
         WalkSpeed       = "Walk Speed",
-        GodMode         = "God Mode",
-        GodModeDesc     = "Continuously restore HP — almost indestructible",
+        SilentAim       = "Silent Aim",
+        SilentAimDesc   = "Redirect attacks to the nearest bot",
         AutoFarm        = "Auto Farm",
         AutoFarmDesc    = "Automatically attack the nearest bot",
         AutoFarmDelay   = "Farm Delay (s)",
@@ -65,6 +86,7 @@ local Translations = {
         CreditsTitle    = "Super Bot Brawl Hub",
         CreditsContent  = "Created by Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — First release",
         Loaded          = "Hub loaded! Fight smarter.",
+        NoBot           = "No bot found nearby.",
     },
     FR = {
         WindowTitle     = "Super Bot Brawl Hub",
@@ -83,8 +105,8 @@ local Translations = {
         NoClip          = "NoClip",
         NoClipDesc      = "Passer à travers les murs et obstacles",
         WalkSpeed       = "Vitesse de marche",
-        GodMode         = "Mode Dieu",
-        GodModeDesc     = "Restaure les PV en continu — quasi invincible",
+        SilentAim       = "Silent Aim",
+        SilentAimDesc   = "Redirige les attaques vers le bot le plus proche",
         AutoFarm        = "Auto Farm",
         AutoFarmDesc    = "Attaque automatiquement le bot le plus proche",
         AutoFarmDelay   = "Délai farm (s)",
@@ -97,6 +119,7 @@ local Translations = {
         CreditsTitle    = "Super Bot Brawl Hub",
         CreditsContent  = "Créé par Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — Première version",
         Loaded          = "Hub chargé ! Combats plus intelligemment.",
+        NoBot           = "Aucun bot trouvé à proximité.",
     },
     DE = {
         WindowTitle     = "Super Bot Brawl Hub",
@@ -115,8 +138,8 @@ local Translations = {
         NoClip          = "NoClip",
         NoClipDesc      = "Durch Wände und Hindernisse gehen",
         WalkSpeed       = "Laufgeschwindigkeit",
-        GodMode         = "Gottmodus",
-        GodModeDesc     = "HP kontinuierlich wiederherstellen — fast unverwundbar",
+        SilentAim       = "Silent Aim",
+        SilentAimDesc   = "Angriffe auf den nächsten Bot umleiten",
         AutoFarm        = "Auto Farm",
         AutoFarmDesc    = "Greift automatisch den nächsten Bot an",
         AutoFarmDelay   = "Farm-Verzögerung (s)",
@@ -129,6 +152,7 @@ local Translations = {
         CreditsTitle    = "Super Bot Brawl Hub",
         CreditsContent  = "Erstellt von Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — Erste Version",
         Loaded          = "Hub geladen! Kämpfe klüger.",
+        NoBot           = "Kein Bot in der Nähe gefunden.",
     },
     ES = {
         WindowTitle     = "Super Bot Brawl Hub",
@@ -147,8 +171,8 @@ local Translations = {
         NoClip          = "NoClip",
         NoClipDesc      = "Atravesar paredes y obstáculos",
         WalkSpeed       = "Velocidad de marcha",
-        GodMode         = "Modo Dios",
-        GodModeDesc     = "Restaurar HP continuamente — casi indestructible",
+        SilentAim       = "Silent Aim",
+        SilentAimDesc   = "Redirigir ataques al bot más cercano",
         AutoFarm        = "Auto Farm",
         AutoFarmDesc    = "Ataca automáticamente al bot más cercano",
         AutoFarmDelay   = "Retraso farm (s)",
@@ -161,6 +185,7 @@ local Translations = {
         CreditsTitle    = "Super Bot Brawl Hub",
         CreditsContent  = "Creado por Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — Primera versión",
         Loaded          = "¡Hub cargado! Lucha de forma más inteligente.",
+        NoBot           = "No se encontró ningún bot cerca.",
     },
     PT = {
         WindowTitle     = "Super Bot Brawl Hub",
@@ -179,8 +204,8 @@ local Translations = {
         NoClip          = "NoClip",
         NoClipDesc      = "Atravessar paredes e obstáculos",
         WalkSpeed       = "Velocidade de caminhada",
-        GodMode         = "Modo Deus",
-        GodModeDesc     = "Restaurar HP continuamente — quase indestrutível",
+        SilentAim       = "Silent Aim",
+        SilentAimDesc   = "Redirecionar ataques para o bot mais próximo",
         AutoFarm        = "Auto Farm",
         AutoFarmDesc    = "Ataca automaticamente o bot mais próximo",
         AutoFarmDelay   = "Atraso do farm (s)",
@@ -193,6 +218,7 @@ local Translations = {
         CreditsTitle    = "Super Bot Brawl Hub",
         CreditsContent  = "Criado por Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — Primeira versão",
         Loaded          = "Hub carregado! Lute de forma mais inteligente.",
+        NoBot           = "Nenhum bot encontrado por perto.",
     },
     RU = {
         WindowTitle     = "Super Bot Brawl Hub",
@@ -211,8 +237,8 @@ local Translations = {
         NoClip          = "Ноклип",
         NoClipDesc      = "Проходить сквозь стены и препятствия",
         WalkSpeed       = "Скорость ходьбы",
-        GodMode         = "Режим Бога",
-        GodModeDesc     = "Непрерывно восстанавливать HP — почти неуязвим",
+        SilentAim       = "Тихий прицел",
+        SilentAimDesc   = "Перенаправлять атаки на ближайшего бота",
         AutoFarm        = "Авто фарм",
         AutoFarmDesc    = "Автоматически атаковать ближайшего бота",
         AutoFarmDelay   = "Задержка фарма (с)",
@@ -225,6 +251,7 @@ local Translations = {
         CreditsTitle    = "Super Bot Brawl Hub",
         CreditsContent  = "Создано Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — Первый выпуск",
         Loaded          = "Хаб загружен! Сражайся умнее.",
+        NoBot           = "Рядом нет ботов.",
     },
     IT = {
         WindowTitle     = "Super Bot Brawl Hub",
@@ -243,8 +270,8 @@ local Translations = {
         NoClip          = "NoClip",
         NoClipDesc      = "Attraversare muri e ostacoli",
         WalkSpeed       = "Velocità di camminata",
-        GodMode         = "Modalità Dio",
-        GodModeDesc     = "Ripristino continuo HP — quasi indistruttibile",
+        SilentAim       = "Silent Aim",
+        SilentAimDesc   = "Reindirizza gli attacchi al bot più vicino",
         AutoFarm        = "Auto Farm",
         AutoFarmDesc    = "Attacca automaticamente il bot più vicino",
         AutoFarmDelay   = "Ritardo farm (s)",
@@ -257,6 +284,7 @@ local Translations = {
         CreditsTitle    = "Super Bot Brawl Hub",
         CreditsContent  = "Creato da Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — Prima versione",
         Loaded          = "Hub caricato! Combatti in modo più intelligente.",
+        NoBot           = "Nessun bot trovato nelle vicinanze.",
     },
     NL = {
         WindowTitle     = "Super Bot Brawl Hub",
@@ -275,8 +303,8 @@ local Translations = {
         NoClip          = "NoClip",
         NoClipDesc      = "Door muren en obstakels lopen",
         WalkSpeed       = "Loopsnelheid",
-        GodMode         = "Godmodus",
-        GodModeDesc     = "HP continu herstellen — bijna onverwoestbaar",
+        SilentAim       = "Silent Aim",
+        SilentAimDesc   = "Aanvallen omleiden naar de dichtstbijzijnde bot",
         AutoFarm        = "Auto Farm",
         AutoFarmDesc    = "Valt automatisch de dichtstbijzijnde bot aan",
         AutoFarmDelay   = "Farm vertraging (s)",
@@ -289,6 +317,7 @@ local Translations = {
         CreditsTitle    = "Super Bot Brawl Hub",
         CreditsContent  = "Gemaakt door Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — Eerste versie",
         Loaded          = "Hub geladen! Vecht slimmer.",
+        NoBot           = "Geen bot in de buurt gevonden.",
     },
     PL = {
         WindowTitle     = "Super Bot Brawl Hub",
@@ -307,8 +336,8 @@ local Translations = {
         NoClip          = "NoClip",
         NoClipDesc      = "Przechodzić przez ściany i przeszkody",
         WalkSpeed       = "Prędkość chodzenia",
-        GodMode         = "Tryb Boga",
-        GodModeDesc     = "Ciągłe przywracanie HP — prawie niezniszczalny",
+        SilentAim       = "Silent Aim",
+        SilentAimDesc   = "Przekieruj ataki na najbliższego bota",
         AutoFarm        = "Auto Farm",
         AutoFarmDesc    = "Automatycznie atakuje najbliższego bota",
         AutoFarmDelay   = "Opóźnienie farmu (s)",
@@ -321,6 +350,7 @@ local Translations = {
         CreditsTitle    = "Super Bot Brawl Hub",
         CreditsContent  = "Stworzone przez Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — Pierwsza wersja",
         Loaded          = "Hub załadowany! Walcz mądrzej.",
+        NoBot           = "Nie znaleziono bota w pobliżu.",
     },
     ZH = {
         WindowTitle     = "超级机器人乱斗Hub",
@@ -339,8 +369,8 @@ local Translations = {
         NoClip          = "穿墙",
         NoClipDesc      = "穿过墙壁和障碍物",
         WalkSpeed       = "移动速度",
-        GodMode         = "无敌模式",
-        GodModeDesc     = "持续恢复HP — 几乎无敌",
+        SilentAim       = "无声自瞄",
+        SilentAimDesc   = "将攻击重定向至最近的机器人",
         AutoFarm        = "自动刷怪",
         AutoFarmDesc    = "自动攻击最近的机器人",
         AutoFarmDelay   = "刷怪延迟（秒）",
@@ -353,6 +383,7 @@ local Translations = {
         CreditsTitle    = "超级机器人乱斗Hub",
         CreditsContent  = "由 Rival960 创建\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — 首次发布",
         Loaded          = "Hub已加载！更智慧地战斗。",
+        NoBot           = "附近没有找到机器人。",
     },
     JA = {
         WindowTitle     = "スーパーボットブロールHub",
@@ -371,8 +402,8 @@ local Translations = {
         NoClip          = "ノークリップ",
         NoClipDesc      = "壁や障害物を通り抜ける",
         WalkSpeed       = "移動速度",
-        GodMode         = "神モード",
-        GodModeDesc     = "継続的にHPを回復 — ほぼ無敵",
+        SilentAim       = "サイレントエイム",
+        SilentAimDesc   = "攻撃を最寄りのボットにリダイレクト",
         AutoFarm        = "オートファーム",
         AutoFarmDesc    = "最も近いボットを自動攻撃",
         AutoFarmDelay   = "ファーム遅延（秒）",
@@ -385,6 +416,7 @@ local Translations = {
         CreditsTitle    = "スーパーボットブロールHub",
         CreditsContent  = "Rival960 作\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — 初回リリース",
         Loaded          = "Hub読み込み完了！より賢く戦おう。",
+        NoBot           = "近くにボットが見つかりません。",
     },
     TR = {
         WindowTitle     = "Super Bot Brawl Hub",
@@ -403,8 +435,8 @@ local Translations = {
         NoClip          = "NoClip",
         NoClipDesc      = "Duvarlardan ve engellerden geç",
         WalkSpeed       = "Yürüyüş Hızı",
-        GodMode         = "Tanrı Modu",
-        GodModeDesc     = "HP'yi sürekli yenile — neredeyse yok edilemez",
+        SilentAim       = "Sessiz Nişan",
+        SilentAimDesc   = "Saldırıları en yakın bota yönlendir",
         AutoFarm        = "Otomatik Farm",
         AutoFarmDesc    = "En yakın botu otomatik saldır",
         AutoFarmDelay   = "Farm gecikmesi (s)",
@@ -417,6 +449,7 @@ local Translations = {
         CreditsTitle    = "Super Bot Brawl Hub",
         CreditsContent  = "Rival960 tarafından oluşturuldu\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — İlk sürüm",
         Loaded          = "Hub yüklendi! Daha akıllıca savaş.",
+        NoBot           = "Yakında bot bulunamadı.",
     },
     KO = {
         WindowTitle     = "슈퍼 봇 브롤 허브",
@@ -435,8 +468,8 @@ local Translations = {
         NoClip          = "노클립",
         NoClipDesc      = "벽과 장애물을 통과",
         WalkSpeed       = "이동 속도",
-        GodMode         = "갓 모드",
-        GodModeDesc     = "HP 지속 회복 — 거의 불사",
+        SilentAim       = "사일런트 에임",
+        SilentAimDesc   = "공격을 가장 가까운 봇으로 리다이렉트",
         AutoFarm        = "자동 파밍",
         AutoFarmDesc    = "가장 가까운 봇을 자동 공격",
         AutoFarmDelay   = "파밍 딜레이(초)",
@@ -449,6 +482,7 @@ local Translations = {
         CreditsTitle    = "슈퍼 봇 브롤 허브",
         CreditsContent  = "Rival960 제작\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — 첫 번째 릴리스",
         Loaded          = "허브 로드 완료! 더 스마트하게 싸우자.",
+        NoBot           = "근처에 봇이 없습니다.",
     },
     AR = {
         WindowTitle     = "سوبر بوت برول هاب",
@@ -467,8 +501,8 @@ local Translations = {
         NoClip          = "نوكليب",
         NoClipDesc      = "المرور عبر الجدران والعوائق",
         WalkSpeed       = "سرعة المشي",
-        GodMode         = "وضع الإله",
-        GodModeDesc     = "استعادة HP بشكل مستمر — شبه لا يُهزم",
+        SilentAim       = "التصويب الصامت",
+        SilentAimDesc   = "إعادة توجيه الهجمات إلى أقرب روبوت",
         AutoFarm        = "زراعة تلقائية",
         AutoFarmDesc    = "مهاجمة أقرب روبوت تلقائياً",
         AutoFarmDelay   = "تأخير الزراعة (ث)",
@@ -481,6 +515,7 @@ local Translations = {
         CreditsTitle    = "سوبر بوت برول هاب",
         CreditsContent  = "أنشأه Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — الإصدار الأول",
         Loaded          = "تم تحميل الهاب! قاتل بذكاء.",
+        NoBot           = "لم يتم العثور على روبوت قريب.",
     },
     VI = {
         WindowTitle     = "Super Bot Brawl Hub",
@@ -499,8 +534,8 @@ local Translations = {
         NoClip          = "NoClip",
         NoClipDesc      = "Đi xuyên tường và chướng ngại vật",
         WalkSpeed       = "Tốc độ đi bộ",
-        GodMode         = "Chế độ Thần",
-        GodModeDesc     = "Liên tục hồi HP — gần như bất tử",
+        SilentAim       = "Silent Aim",
+        SilentAimDesc   = "Chuyển hướng đòn tấn công đến bot gần nhất",
         AutoFarm        = "Tự động Farm",
         AutoFarmDesc    = "Tự động tấn công bot gần nhất",
         AutoFarmDelay   = "Độ trễ farm (s)",
@@ -513,6 +548,7 @@ local Translations = {
         CreditsTitle    = "Super Bot Brawl Hub",
         CreditsContent  = "Tạo bởi Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — Phiên bản đầu tiên",
         Loaded          = "Hub đã tải! Chiến đấu thông minh hơn.",
+        NoBot           = "Không tìm thấy bot nào gần đây.",
     },
     SV = {
         WindowTitle     = "Super Bot Brawl Hub",
@@ -531,8 +567,8 @@ local Translations = {
         NoClip          = "NoClip",
         NoClipDesc      = "Gå igenom väggar och hinder",
         WalkSpeed       = "Gånghastighet",
-        GodMode         = "Gudläge",
-        GodModeDesc     = "Återställ HP kontinuerligt — nästan ounerstörbar",
+        SilentAim       = "Silent Aim",
+        SilentAimDesc   = "Omdirigera attacker till närmaste boten",
         AutoFarm        = "Auto Farm",
         AutoFarmDesc    = "Attackera automatiskt närmaste boten",
         AutoFarmDelay   = "Farmfördröjning (s)",
@@ -545,6 +581,7 @@ local Translations = {
         CreditsTitle    = "Super Bot Brawl Hub",
         CreditsContent  = "Skapad av Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — Första utgåvan",
         Loaded          = "Hub laddad! Kämpa smartare.",
+        NoBot           = "Ingen bot hittades i närheten.",
     },
     EL = {
         WindowTitle     = "Super Bot Brawl Hub",
@@ -563,8 +600,8 @@ local Translations = {
         NoClip          = "NoClip",
         NoClipDesc      = "Περνάς μέσα από τοίχους και εμπόδια",
         WalkSpeed       = "Ταχύτητα Βαδίσματος",
-        GodMode         = "Λειτουργία Θεού",
-        GodModeDesc     = "Συνεχής αναπλήρωση HP — σχεδόν άτρωτος",
+        SilentAim       = "Silent Aim",
+        SilentAimDesc   = "Ανακατεύθυνση επιθέσεων στο κοντινότερο bot",
         AutoFarm        = "Αυτόματο Farm",
         AutoFarmDesc    = "Αυτόματη επίθεση στο κοντινότερο bot",
         AutoFarmDelay   = "Καθυστέρηση farm (δευτ.)",
@@ -577,6 +614,7 @@ local Translations = {
         CreditsTitle    = "Super Bot Brawl Hub",
         CreditsContent  = "Δημιουργήθηκε από τον Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — Πρώτη έκδοση",
         Loaded          = "Hub φορτώθηκε! Μάχου εξυπνότερα.",
+        NoBot           = "Δεν βρέθηκε bot κοντά.",
     },
     RO = {
         WindowTitle     = "Super Bot Brawl Hub",
@@ -595,8 +633,8 @@ local Translations = {
         NoClip          = "NoClip",
         NoClipDesc      = "Treci prin pereți și obstacole",
         WalkSpeed       = "Viteză de mers",
-        GodMode         = "Modul Dumnezeu",
-        GodModeDesc     = "Restaurează HP continuu — aproape de neînvins",
+        SilentAim       = "Silent Aim",
+        SilentAimDesc   = "Redirecționează atacurile către cel mai apropiat bot",
         AutoFarm        = "Auto Farm",
         AutoFarmDesc    = "Atacă automat cel mai apropiat bot",
         AutoFarmDelay   = "Întârziere farm (s)",
@@ -609,6 +647,7 @@ local Translations = {
         CreditsTitle    = "Super Bot Brawl Hub",
         CreditsContent  = "Creat de Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — Prima versiune",
         Loaded          = "Hub încărcat! Luptă mai inteligent.",
+        NoBot           = "Niciun bot găsit în apropiere.",
     },
     UK = {
         WindowTitle     = "Super Bot Brawl Hub",
@@ -627,8 +666,8 @@ local Translations = {
         NoClip          = "Нокліп",
         NoClipDesc      = "Проходити крізь стіни й перешкоди",
         WalkSpeed       = "Швидкість ходьби",
-        GodMode         = "Режим Бога",
-        GodModeDesc     = "Безперервне відновлення HP — майже невразливий",
+        SilentAim       = "Тихий приціл",
+        SilentAimDesc   = "Перенаправляти атаки на найближчого бота",
         AutoFarm        = "Авто фарм",
         AutoFarmDesc    = "Автоматично атакує найближчого бота",
         AutoFarmDelay   = "Затримка фарму (с)",
@@ -641,6 +680,7 @@ local Translations = {
         CreditsTitle    = "Super Bot Brawl Hub",
         CreditsContent  = "Створено Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — Перший випуск",
         Loaded          = "Hub завантажено! Бийся розумніше.",
+        NoBot           = "Поруч немає ботів.",
     },
     CS = {
         WindowTitle     = "Super Bot Brawl Hub",
@@ -659,8 +699,8 @@ local Translations = {
         NoClip          = "NoClip",
         NoClipDesc      = "Procházet zdmi a překážkami",
         WalkSpeed       = "Rychlost chůze",
-        GodMode         = "Bůh mód",
-        GodModeDesc     = "Průběžná obnova HP — téměř nezničitelný",
+        SilentAim       = "Silent Aim",
+        SilentAimDesc   = "Přesměrovat útoky na nejbližšího bota",
         AutoFarm        = "Auto Farm",
         AutoFarmDesc    = "Automaticky útočí na nejbližšího bota",
         AutoFarmDelay   = "Zpoždění farmu (s)",
@@ -673,6 +713,7 @@ local Translations = {
         CreditsTitle    = "Super Bot Brawl Hub",
         CreditsContent  = "Vytvořil Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — První verze",
         Loaded          = "Hub načten! Bojuj chytřeji.",
+        NoBot           = "V okolí nebyl nalezen žádný bot.",
     },
     DA = {
         WindowTitle     = "Super Bot Brawl Hub",
@@ -691,8 +732,8 @@ local Translations = {
         NoClip          = "NoClip",
         NoClipDesc      = "Gå igennem vægge og forhindringer",
         WalkSpeed       = "Gåhastighed",
-        GodMode         = "Gudstilstand",
-        GodModeDesc     = "Genopret HP kontinuerligt — næsten uforgængelig",
+        SilentAim       = "Silent Aim",
+        SilentAimDesc   = "Omdiriger angreb til den nærmeste bot",
         AutoFarm        = "Auto Farm",
         AutoFarmDesc    = "Angrib automatisk den nærmeste bot",
         AutoFarmDelay   = "Farm-forsinkelse (s)",
@@ -705,6 +746,7 @@ local Translations = {
         CreditsTitle    = "Super Bot Brawl Hub",
         CreditsContent  = "Oprettet af Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — Første udgivelse",
         Loaded          = "Hub indlæst! Kæmp klogere.",
+        NoBot           = "Ingen bot fundet i nærheden.",
     },
 }
 
@@ -718,7 +760,7 @@ end
 -- SETTINGS
 -- ───────────────────────────────────────────────────────────────
 local Settings = {
-    GodMode         = false,
+    SilentAim       = false,
     AutoFarm        = false,
     AutoFarmDelay   = 0.3,
     ESP_Bots        = false,
@@ -769,11 +811,12 @@ local function getHumanoid()
     return char:FindFirstChildOfClass("Humanoid")
 end
 
--- STRICT bot detection: any Model with a live Humanoid that is NOT a player
--- and NOT the local player's character. Uses Players:GetPlayerFromCharacter
--- to reliably exclude every player.
+-- STRICT bot detection: only Models inside Workspace.Bots, live Humanoid,
+-- and never a player character. Verified against Players:GetPlayerFromCharacter.
 local function isBot(model)
     if not model or not model:IsA("Model") then return false end
+    local botsFolder = Workspace:FindFirstChild("Bots")
+    if not botsFolder or not model:IsDescendantOf(botsFolder) then return false end
     if Players:GetPlayerFromCharacter(model) then return false end
     local hum = model:FindFirstChildOfClass("Humanoid")
     if not hum or hum.Health <= 0 then return false end
@@ -785,7 +828,9 @@ local function getNearestBot()
     local hrp = getHRP()
     if not hrp then return nil, nil end
     local bestDist, bestBot, bestHRP = math.huge, nil, nil
-    for _, obj in ipairs(Workspace:GetDescendants()) do
+    local botsFolder = Workspace:FindFirstChild("Bots")
+    if not botsFolder then return nil, nil end
+    for _, obj in ipairs(botsFolder:GetDescendants()) do
         if isBot(obj) then
             local bhrp = obj:FindFirstChild("HumanoidRootPart")
             if bhrp then
@@ -800,76 +845,91 @@ local function getNearestBot()
 end
 
 -- ───────────────────────────────────────────────────────────────
--- GOD MODE (MaxHealth + Dead disabled + per-frame enforcement)
+-- SILENT AIM
 -- ───────────────────────────────────────────────────────────────
-local godModeConnection = nil
-local originalMaxHealth = nil
-local godModeLoopRunning = false
+local silentAimConnection = nil
+local originalHooks = {}
+local attackRemoteNames = {
+    "Attack", "Hit", "Damage", "DamageBot", "BotHit", "Strike",
+    "SwordSlash", "Slash", "Melee", "AttackEvent", "Combat",
+    "SwingSword", "FireGun", "Shoot", "SwordAttack", "SwordSpin"
+}
 
-local function setGodMode(state)
-    local hum = getHumanoid()
-    if not hum then return end
-
-    if state then
-        if originalMaxHealth == nil then
-            originalMaxHealth = hum.MaxHealth
-        end
-
-        hum.MaxHealth = 1e9
-        hum.Health    = 1e9
-        hum:SetStateEnabled(Enum.HumanoidStateType.Dead, false)
-
-        if not godModeLoopRunning then
-            godModeLoopRunning = true
-            task.spawn(function()
-                while Settings.GodMode and hum.Parent do
-                    hum.MaxHealth = 1e9
-                    if hum.Health < hum.MaxHealth then
-                        hum.Health = hum.MaxHealth
+local function getClosestBotToCursor()
+    local mouse = UserInputService:GetMouseLocation()
+    local cam = Workspace.CurrentCamera
+    local closest, minDist = nil, math.huge
+    local botsFolder = Workspace:FindFirstChild("Bots")
+    if not botsFolder then return nil end
+    for _, obj in ipairs(botsFolder:GetDescendants()) do
+        if isBot(obj) then
+            local bhrp = obj:FindFirstChild("HumanoidRootPart")
+            if bhrp then
+                local screenPos, onScreen = cam:WorldToViewportPoint(bhrp.Position)
+                if onScreen then
+                    local dist = (Vector2.new(screenPos.X, screenPos.Y) - mouse).Magnitude
+                    if dist < minDist then
+                        minDist = dist
+                        closest = bhrp
                     end
-                    task.wait()
-                end
-                godModeLoopRunning = false
-            end)
-        end
-
-        if godModeConnection then godModeConnection:Disconnect() end
-        godModeConnection = hum.HealthChanged:Connect(function(newHealth)
-            if Settings.GodMode and hum.Parent and newHealth < hum.MaxHealth then
-                hum.Health = hum.MaxHealth
-            end
-        end)
-
-        -- Re-apply if the humanoid dies for any reason
-        hum.Died:Connect(function()
-            if Settings.GodMode then
-                task.wait(0.1)
-                local newHum = getHumanoid()
-                if newHum then
-                    originalMaxHealth = nil
-                    setGodMode(true)
                 end
             end
-        end)
-    else
-        if godModeConnection then
-            godModeConnection:Disconnect()
-            godModeConnection = nil
         end
-        hum:SetStateEnabled(Enum.HumanoidStateType.Dead, true)
-        if originalMaxHealth then
-            hum.MaxHealth = originalMaxHealth
-            hum.Health    = originalMaxHealth
-            originalMaxHealth = nil
-        else
-            hum.MaxHealth = 100
-            hum.Health    = math.min(hum.Health, 100)
+    end
+    return closest
+end
+
+local function hookAttackRemotes()
+    for _, name in ipairs(attackRemoteNames) do
+        local ev = ReplicatedStorage:FindFirstChild(name, true)
+        if ev and ev:IsA("RemoteEvent") and not originalHooks[ev] then
+            local old = ev.FireServer
+            originalHooks[ev] = old
+            ev.FireServer = function(self, ...)
+                if not Settings.SilentAim then
+                    return old(self, ...)
+                end
+                local target = getClosestBotToCursor() or getNearestBot()
+                if not target then
+                    return old(self, ...)
+                end
+                local args = {...}
+                if #args >= 1 and typeof(args[1]) == "Instance" then
+                    args[1] = target
+                else
+                    table.insert(args, 1, target)
+                end
+                return old(self, table.unpack(args))
+            end
         end
     end
 end
 
+local function enableSilentAim()
+    hookAttackRemotes()
+    if silentAimConnection then return end
+    silentAimConnection = RunService.Heartbeat:Connect(function()
+        if Settings.SilentAim then
+            hookAttackRemotes()
+        end
+    end)
+end
+
+local function disableSilentAim()
+    if silentAimConnection then
+        silentAimConnection:Disconnect()
+        silentAimConnection = nil
+    end
+    for ev, old in pairs(originalHooks) do
+        if ev and ev.Parent then
+            ev.FireServer = old
+        end
+    end
+    originalHooks = {}
+end
+
 -- ───────────────────────────────────────────────────────────────
--- FLY (PC + Mobile)
+-- FLY (LinearVelocity + AlignOrientation)
 -- ───────────────────────────────────────────────────────────────
 local flyVelocity, flyGyro
 local flyMobileVertical = 0
@@ -912,16 +972,17 @@ local function enableFly()
     local hrp = getHRP()
     if not hrp then return end
 
-    flyVelocity = Instance.new("BodyVelocity")
-    flyVelocity.Velocity    = Vector3.zero
-    flyVelocity.MaxForce    = Vector3.new(1e5, 1e5, 1e5)
-    flyVelocity.Parent      = hrp
+    flyVelocity = Instance.new("LinearVelocity")
+    flyVelocity.VelocityConstraintMode = Enum.VelocityConstraintMode.Vector
+    flyVelocity.MaxForce = math.huge
+    flyVelocity.VectorVelocity = Vector3.zero
+    flyVelocity.Parent = hrp
 
-    flyGyro = Instance.new("BodyGyro")
-    flyGyro.MaxTorque       = Vector3.new(1e5, 1e5, 1e5)
-    flyGyro.P               = 1e4
-    flyGyro.CFrame          = hrp.CFrame
-    flyGyro.Parent          = hrp
+    flyGyro = Instance.new("AlignOrientation")
+    flyGyro.MaxTorque = math.huge
+    flyGyro.Responsiveness = 100
+    flyGyro.CFrame = hrp.CFrame
+    flyGyro.Parent = hrp
 
     local hum = getHumanoid()
     if hum then hum.PlatformStand = true end
@@ -947,49 +1008,52 @@ local function disableFly()
 end
 
 -- ───────────────────────────────────────────────────────────────
--- NOCLIP (disable CanCollide on ALL parts, anti-slide)
+-- NOCLIP (all parts + anti-slide + watchdog)
 -- ───────────────────────────────────────────────────────────────
 local noclipConnection = nil
+local noclipHooks = {}
+local noclipDescConn = nil
 
-local function applyNoClip(state)
-    if noclipConnection then
-        noclipConnection:Disconnect()
-        noclipConnection = nil
-    end
-
-    if not state then
-        local char = LocalPlayer.Character
-        if char then
-            for _, part in ipairs(char:GetDescendants()) do
-                if part:IsA("BasePart") then
-                    part.CanCollide = true
-                end
-            end
-            local hrp = char:FindFirstChild("HumanoidRootPart")
-            if hrp then
-                hrp.AssemblyLinearVelocity  = Vector3.zero
-                hrp.AssemblyAngularVelocity = Vector3.zero
-            end
+local function addNoclipHook(part)
+    if not part or not part:IsA("BasePart") then return end
+    if noclipHooks[part] then return end
+    part.CanCollide = false
+    noclipHooks[part] = part:GetPropertyChangedSignal("CanCollide"):Connect(function()
+        if Settings.NoClip and part.CanCollide then
+            part.CanCollide = false
         end
-        return
+    end)
+end
+
+local function enableNoClip()
+    if noclipConnection then return end
+    local char = LocalPlayer.Character
+    if not char then return end
+
+    for _, part in ipairs(char:GetDescendants()) do
+        if part:IsA("BasePart") then
+            addNoclipHook(part)
+        end
     end
 
-    -- Enable: disable CanCollide on every part, including HumanoidRootPart.
-    -- Anti-slide: when the player is not actively moving, cancel horizontal velocity.
-    noclipConnection = RunService.Stepped:Connect(function()
-        local char = LocalPlayer.Character
-        if not char or not Settings.NoClip then return end
-        local hrp = char:FindFirstChild("HumanoidRootPart")
-        local hum = char:FindFirstChildOfClass("Humanoid")
+    noclipDescConn = char.DescendantAdded:Connect(function(part)
+        if Settings.NoClip then addNoclipHook(part) end
+    end)
 
-        for _, part in ipairs(char:GetDescendants()) do
+    noclipConnection = RunService.Stepped:Connect(function()
+        if not Settings.NoClip then return end
+        local c = LocalPlayer.Character
+        if not c then return end
+        local hrp = c:FindFirstChild("HumanoidRootPart")
+        local hum = c:FindFirstChildOfClass("Humanoid")
+
+        for _, part in ipairs(c:GetDescendants()) do
             if part:IsA("BasePart") then
-                part.CanCollide = false
+                addNoclipHook(part)
             end
         end
 
         if hrp and hum then
-            -- If the player is not pressing any movement input, cancel horizontal slide.
             if hum.MoveDirection.Magnitude < 0.1 then
                 local v = hrp.AssemblyLinearVelocity
                 hrp.AssemblyLinearVelocity = Vector3.new(0, v.Y, 0)
@@ -998,8 +1062,40 @@ local function applyNoClip(state)
     end)
 end
 
+local function disableNoClip()
+    if noclipConnection then
+        noclipConnection:Disconnect()
+        noclipConnection = nil
+    end
+    if noclipDescConn then
+        noclipDescConn:Disconnect()
+        noclipDescConn = nil
+    end
+    for part, conn in pairs(noclipHooks) do
+        if conn then conn:Disconnect() end
+        if part and part.Parent then
+            part.CanCollide = true
+        end
+    end
+    noclipHooks = {}
+
+    local char = LocalPlayer.Character
+    if char then
+        for _, part in ipairs(char:GetDescendants()) do
+            if part:IsA("BasePart") then
+                part.CanCollide = true
+            end
+        end
+        local hrp = char:FindFirstChild("HumanoidRootPart")
+        if hrp then
+            hrp.AssemblyLinearVelocity  = Vector3.zero
+            hrp.AssemblyAngularVelocity = Vector3.zero
+        end
+    end
+end
+
 -- ───────────────────────────────────────────────────────────────
--- AUTO FARM (teleport in front, orient, activate tool with bot humanoid)
+-- AUTO FARM
 -- ───────────────────────────────────────────────────────────────
 local lastFarmTime = 0
 
@@ -1018,12 +1114,10 @@ local function doAutoFarm()
     local botModel, botHRP = getNearestBot()
     if not botHRP or not botModel then return end
 
-    -- Position 3 studs in front of the bot, looking at it
     local botPos = botHRP.Position
     local front = botPos + Vector3.new(0, 0, 3)
     hrp.CFrame = CFrame.lookAt(front, botPos)
 
-    -- Equip tool if not already equipped
     local tool = char:FindFirstChildOfClass("Tool")
     if not tool then
         local backpack = LocalPlayer:FindFirstChild("Backpack")
@@ -1037,10 +1131,10 @@ local function doAutoFarm()
         end
     end
 
+    local botHum = botModel:FindFirstChildOfClass("Humanoid")
+
     if tool then
         pcall(function() tool:Activate() end)
-        -- Fire tool remotes with the bot's Humanoid as argument
-        local botHum = botModel:FindFirstChildOfClass("Humanoid")
         for _, v in ipairs(tool:GetDescendants()) do
             if v:IsA("RemoteEvent") then
                 pcall(function() v:FireServer(botHum) end)
@@ -1048,14 +1142,8 @@ local function doAutoFarm()
         end
     end
 
-    -- Fallback: generic attack remotes with the bot's Humanoid
-    local rs = game:GetService("ReplicatedStorage")
-    local botHum = botModel:FindFirstChildOfClass("Humanoid")
-    for _, name in ipairs({
-        "Attack", "Hit", "Damage", "DamageBot", "BotHit", "Strike",
-        "SwordSlash", "Slash", "Melee", "AttackEvent", "Combat"
-    }) do
-        local ev = rs:FindFirstChild(name, true)
+    for _, name in ipairs(attackRemoteNames) do
+        local ev = ReplicatedStorage:FindFirstChild(name, true)
         if ev and ev:IsA("RemoteEvent") then
             pcall(function() ev:FireServer(botHum) end)
             break
@@ -1076,10 +1164,10 @@ TabHome:CreateParagraph({
 local TabVision = Window:CreateTab(T("TabVision"), 4483362458)
 
 TabVision:CreateToggle({
-    Name        = T("ESPBots"),
+    Name         = T("ESPBots"),
     CurrentValue = Settings.ESP_Bots,
-    Flag        = "ESP_Bots",
-    Callback    = function(v) Settings.ESP_Bots = v end,
+    Flag         = "ESP_Bots",
+    Callback     = function(v) Settings.ESP_Bots = v end,
 })
 
 TabVision:CreateButton({
@@ -1093,7 +1181,7 @@ TabVision:CreateButton({
             hrp.CFrame = CFrame.new(botHRP.Position + dir * 4 + Vector3.new(0, 1, 0))
             Rayfield:Notify({ Title = T("TPNearestBot"), Content = T("TPNearestDesc"), Duration = 2 })
         else
-            Rayfield:Notify({ Title = T("TPNearestBot"), Content = "No bot found nearby.", Duration = 2 })
+            Rayfield:Notify({ Title = T("TPNearestBot"), Content = T("NoBot"), Duration = 2 })
         end
     end,
 })
@@ -1125,7 +1213,7 @@ TabMovement:CreateToggle({
     Flag         = "NoClip",
     Callback     = function(v)
         Settings.NoClip = v
-        applyNoClip(v)
+        if v then enableNoClip() else disableNoClip() end
     end,
 })
 
@@ -1145,12 +1233,12 @@ TabMovement:CreateSlider({
 local TabCombat = Window:CreateTab(T("TabCombat"), 4483362458)
 
 TabCombat:CreateToggle({
-    Name         = T("GodMode"),
-    CurrentValue = Settings.GodMode,
-    Flag         = "GodMode",
+    Name         = T("SilentAim"),
+    CurrentValue = Settings.SilentAim,
+    Flag         = "SilentAim",
     Callback     = function(v)
-        Settings.GodMode = v
-        setGodMode(v)
+        Settings.SilentAim = v
+        if v then enableSilentAim() else disableSilentAim() end
     end,
 })
 
@@ -1177,19 +1265,22 @@ TabCombat:CreateToggle({
     Callback     = function(v)
         Settings.Hitbox_Enabled = v
         if not v then
-            for _, obj in ipairs(Workspace:GetDescendants()) do
-                if isBot(obj) then
-                    local bhrp = obj:FindFirstChild("HumanoidRootPart")
-                    if bhrp then
-                        local orig = bhrp:GetAttribute("HitboxOriginalSize")
-                        if orig then
-                            bhrp.Size = orig
-                            bhrp:SetAttribute("HitboxOriginalSize", nil)
-                        else
-                            bhrp.Size = Vector3.new(2, 2, 1)
+            local botsFolder = Workspace:FindFirstChild("Bots")
+            if botsFolder then
+                for _, obj in ipairs(botsFolder:GetDescendants()) do
+                    if isBot(obj) then
+                        local bhrp = obj:FindFirstChild("HumanoidRootPart")
+                        if bhrp then
+                            local orig = bhrp:GetAttribute("HitboxOriginalSize")
+                            if orig then
+                                bhrp.Size = orig
+                                bhrp:SetAttribute("HitboxOriginalSize", nil)
+                            else
+                                bhrp.Size = Vector3.new(2, 2, 1)
+                            end
+                            bhrp.Transparency = 1
+                            bhrp.CanCollide = true
                         end
-                        bhrp.Transparency = 1
-                        bhrp.CanCollide = true
                     end
                 end
             end
@@ -1228,15 +1319,15 @@ TabTools:CreateToggle({
 
 local langOptions = {"EN","FR","DE","ES","PT","RU","IT","NL","PL","ZH","JA","TR","KO","AR","VI","SV","EL","RO","UK","CS","DA"}
 TabTools:CreateDropdown({
-    Name    = T("LangSelect"),
-    Options = langOptions,
+    Name          = T("LangSelect"),
+    Options       = langOptions,
     CurrentOption = {CurrentLang},
-    Flag    = "Language",
-    Callback = function(selected)
+    Flag          = "Language",
+    Callback      = function(selected)
         CurrentLang = selected[1] or selected
         Rayfield:Notify({
-            Title   = "Language",
-            Content = "Re-execute the script to apply the new language.",
+            Title    = "Language",
+            Content  = "Re-execute the script to apply the new language.",
             Duration = 4,
         })
     end,
@@ -1249,8 +1340,8 @@ RunService.RenderStepped:Connect(function()
     local char = LocalPlayer.Character
     if not char then return end
 
-    local hrp  = char:FindFirstChild("HumanoidRootPart")
-    local hum  = char:FindFirstChildOfClass("Humanoid")
+    local hrp = char:FindFirstChild("HumanoidRootPart")
+    local hum = char:FindFirstChildOfClass("Humanoid")
 
     -- Fly
     if Settings.Fly and flyVelocity and flyGyro and hrp then
@@ -1286,50 +1377,53 @@ RunService.RenderStepped:Connect(function()
             end
         end
 
-        flyVelocity.Velocity = dir.Magnitude > 0 and dir.Unit * speed or Vector3.zero
+        flyVelocity.VectorVelocity = dir.Magnitude > 0 and dir.Unit * speed or Vector3.zero
         flyGyro.CFrame = cam.CFrame
     end
 
-    -- ESP (only bots)
+    -- ESP
     if Settings.ESP_Bots then
-        for _, obj in ipairs(Workspace:GetDescendants()) do
-            if isBot(obj) then
-                local botHum = obj:FindFirstChildOfClass("Humanoid")
+        local botsFolder = Workspace:FindFirstChild("Bots")
+        if botsFolder then
+            for _, obj in ipairs(botsFolder:GetDescendants()) do
+                if isBot(obj) then
+                    local botHum = obj:FindFirstChildOfClass("Humanoid")
 
-                local hl = obj:FindFirstChild("_BotESP_Highlight")
-                if not hl then
-                    hl = Instance.new("Highlight")
-                    hl.Name             = "_BotESP_Highlight"
-                    hl.FillColor        = Color3.fromRGB(255, 60, 60)
-                    hl.OutlineColor     = Color3.fromRGB(255, 200, 0)
-                    hl.FillTransparency = 0.4
-                    hl.Parent           = obj
-                end
-
-                local bhrp = obj:FindFirstChild("HumanoidRootPart")
-                if bhrp then
-                    local bb = bhrp:FindFirstChild("_BotESP_BB")
-                    if not bb then
-                        bb = Instance.new("BillboardGui")
-                        bb.Name          = "_BotESP_BB"
-                        bb.Size          = UDim2.new(0, 120, 0, 40)
-                        bb.StudsOffset   = Vector3.new(0, 3, 0)
-                        bb.AlwaysOnTop   = true
-                        bb.Parent        = bhrp
-
-                        local lbl = Instance.new("TextLabel")
-                        lbl.Name            = "Label"
-                        lbl.Size            = UDim2.new(1, 0, 1, 0)
-                        lbl.BackgroundTransparency = 1
-                        lbl.TextColor3      = Color3.fromRGB(255, 240, 100)
-                        lbl.TextStrokeTransparency = 0
-                        lbl.TextScaled      = true
-                        lbl.Font            = Enum.Font.GothamBold
-                        lbl.Parent          = bb
+                    local hl = obj:FindFirstChild("_BotESP_Highlight")
+                    if not hl then
+                        hl = Instance.new("Highlight")
+                        hl.Name             = "_BotESP_Highlight"
+                        hl.FillColor        = Color3.fromRGB(255, 60, 60)
+                        hl.OutlineColor     = Color3.fromRGB(255, 200, 0)
+                        hl.FillTransparency = 0.4
+                        hl.Parent           = obj
                     end
-                    local lbl = bb:FindFirstChild("Label")
-                    if lbl and botHum then
-                        lbl.Text = string.format("%s\nHP: %d/%d", obj.Name, math.floor(botHum.Health), math.floor(botHum.MaxHealth))
+
+                    local bhrp = obj:FindFirstChild("HumanoidRootPart")
+                    if bhrp then
+                        local bb = bhrp:FindFirstChild("_BotESP_BB")
+                        if not bb then
+                            bb = Instance.new("BillboardGui")
+                            bb.Name        = "_BotESP_BB"
+                            bb.Size        = UDim2.new(0, 120, 0, 40)
+                            bb.StudsOffset = Vector3.new(0, 3, 0)
+                            bb.AlwaysOnTop = true
+                            bb.Parent      = bhrp
+
+                            local lbl = Instance.new("TextLabel")
+                            lbl.Name                   = "Label"
+                            lbl.Size                   = UDim2.new(1, 0, 1, 0)
+                            lbl.BackgroundTransparency = 1
+                            lbl.TextColor3             = Color3.fromRGB(255, 240, 100)
+                            lbl.TextStrokeTransparency = 0
+                            lbl.TextScaled             = true
+                            lbl.Font                   = Enum.Font.GothamBold
+                            lbl.Parent                 = bb
+                        end
+                        local lbl = bb:FindFirstChild("Label")
+                        if lbl and botHum then
+                            lbl.Text = string.format("%s\nHP: %d/%d", obj.Name, math.floor(botHum.Health), math.floor(botHum.MaxHealth))
+                        end
                     end
                 end
             end
@@ -1346,28 +1440,31 @@ RunService.RenderStepped:Connect(function()
         end
     end
 
-    -- HITBOX: only bots, never the player
+    -- Hitbox (bots only)
     if Settings.Hitbox_Enabled then
-        for _, obj in ipairs(Workspace:GetDescendants()) do
-            if isBot(obj) then
-                local bhrp = obj:FindFirstChild("HumanoidRootPart")
-                if bhrp then
-                    if not bhrp:GetAttribute("HitboxOriginalSize") then
-                        bhrp:SetAttribute("HitboxOriginalSize", bhrp.Size)
+        local botsFolder = Workspace:FindFirstChild("Bots")
+        if botsFolder then
+            for _, obj in ipairs(botsFolder:GetDescendants()) do
+                if isBot(obj) then
+                    local bhrp = obj:FindFirstChild("HumanoidRootPart")
+                    if bhrp then
+                        if not bhrp:GetAttribute("HitboxOriginalSize") then
+                            bhrp:SetAttribute("HitboxOriginalSize", bhrp.Size)
+                        end
+                        bhrp.Size = Vector3.new(
+                            Settings.HitboxSize * 2,
+                            Settings.HitboxSize * 2,
+                            Settings.HitboxSize * 2
+                        )
+                        bhrp.Transparency = 0.6
+                        bhrp.CanCollide   = false
                     end
-                    bhrp.Size = Vector3.new(
-                        Settings.HitboxSize * 2,
-                        Settings.HitboxSize * 2,
-                        Settings.HitboxSize * 2
-                    )
-                    bhrp.Transparency = 0.6
-                    bhrp.CanCollide   = false
                 end
             end
         end
     end
 
-    -- WALKSPEED
+    -- WalkSpeed
     if hum and hum.WalkSpeed ~= Settings.WalkSpeed and not Settings.Fly then
         hum.WalkSpeed = Settings.WalkSpeed
     end
@@ -1378,11 +1475,6 @@ RunService.Heartbeat:Connect(doAutoFarm)
 LocalPlayer.CharacterAdded:Connect(function(_character)
     task.wait(0.5)
 
-    if Settings.GodMode then
-        originalMaxHealth = nil
-        setGodMode(true)
-    end
-
     if Settings.Fly then
         disableFly()
         task.wait(0.1)
@@ -1390,7 +1482,11 @@ LocalPlayer.CharacterAdded:Connect(function(_character)
     end
 
     if Settings.NoClip then
-        applyNoClip(true)
+        enableNoClip()
+    end
+
+    if Settings.SilentAim then
+        enableSilentAim()
     end
 
     local hum = getHumanoid()
