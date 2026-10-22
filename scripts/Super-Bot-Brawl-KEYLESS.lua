@@ -1,14 +1,14 @@
 --[[
     ================================================================
     Super Bot Brawl Hub — Super Bot Brawl
-    Created by Rival960 with the help of Claude
+    Created by Rival960 with the help of Claude and DeepSeek
     Version: 1.0.0 | Languages: 21 | Rayfield UI
     ================================================================
     Features:
-      - Auto Farm (feet on bot head, PlatformStand, works for all sizes)
-      - Anti Touch (CanTouch=false on player and bots)
+      - Auto Farm (feet on bot head, PlatformStand, 0.1s default)
+      - Bot Magnet (gathers all bots in one place for easy farming)
       - Anti Ragdoll (event-driven, blocks Ragdoll/Physics/FallingDown/Dead)
-      - No Animation (universal R6/R15/custom)
+      - No Animation (universal R6/R15/custom + weapon animations)
       - ESP Bots (highlight + HP billboard on all NPCs)
       - Teleport to Nearest Bot
       - Fly (PC: WASD/Space/Shift | Mobile: joystick + on-screen ▲/▼)
@@ -37,403 +37,256 @@ local CurrentLang = "EN"
 
 local Translations = {
     EN = {
-        WindowTitle     = "Super Bot Brawl Hub",
-        TabHome         = "Home", TabVision = "Vision", TabMovement = "Movement", TabCombat = "Combat", TabTools = "Tools",
-        ESPBots         = "ESP Bots", ESPBotsDesc = "Highlight nearby bots and show their HP",
-        TPNearestBot    = "TP to Nearest Bot", TPNearestDesc = "Teleport in front of the closest bot",
-        Fly             = "Fly", FlyDesc = "Toggle flight mode", FlySpeed = "Fly Speed",
-        NoClip          = "NoClip", NoClipDesc = "Pass through walls and obstacles",
-        WalkSpeed       = "Walk Speed",
-        AutoFarm        = "Auto Farm", AutoFarmDesc = "Automatically attack the nearest bot", AutoFarmDelay = "Farm Delay (s)",
-        AntiTouch       = "Anti Touch", AntiTouchDesc = "Disable bot touch damage",
-        AntiRagdoll     = "Anti Ragdoll", AntiRagdollDesc = "Prevent ragdoll and physics states",
-        NoAnimation     = "No Animation", NoAnimationDesc = "Stop attack animations (R6/R15/custom)",
-        Fullbright      = "Fullbright", FullbrightDesc = "Raise brightness and disable shadows",
-        LangSelect      = "Language",
-        CreditsTitle    = "Super Bot Brawl Hub",
-        CreditsContent  = "Created by Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — First release",
-        Loaded          = "Hub loaded! Fight smarter.",
-        NoBot           = "No bot found nearby.",
+        WindowTitle = "Super Bot Brawl Hub", TabHome = "Home", TabVision = "Vision", TabMovement = "Movement", TabCombat = "Combat", TabTools = "Tools",
+        ESPBots = "ESP Bots", TPNearestBot = "TP to Nearest Bot", TPNearestDesc = "Teleport in front of the closest bot",
+        Fly = "Fly", FlySpeed = "Fly Speed", NoClip = "NoClip", WalkSpeed = "Walk Speed",
+        AutoFarm = "Auto Farm", AutoFarmDelay = "Farm Delay (s)",
+        BotMagnet = "Bot Magnet", BotMagnetDesc = "Gather all bots in one spot",
+        AntiRagdoll = "Anti Ragdoll", NoAnimation = "No Animation",
+        Fullbright = "Fullbright", LangSelect = "Language",
+        CreditsTitle = "Super Bot Brawl Hub",
+        CreditsContent = "Created by Rival960\nWith the help of Claude (AI)\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — First release",
+        Loaded = "Hub loaded! Fight smarter.", NoBot = "No bot found nearby.",
     },
     FR = {
-        WindowTitle     = "Super Bot Brawl Hub",
-        TabHome         = "Accueil", TabVision = "Vision", TabMovement = "Mouvement", TabCombat = "Combat", TabTools = "Outils",
-        ESPBots         = "ESP Bots", ESPBotsDesc = "Surligner les bots proches et afficher leurs PV",
-        TPNearestBot    = "TP au Bot le plus proche", TPNearestDesc = "Se téléporter devant le bot le plus proche",
-        Fly             = "Vol", FlyDesc = "Activer le mode vol", FlySpeed = "Vitesse de vol",
-        NoClip          = "NoClip", NoClipDesc = "Passer à travers les murs et obstacles",
-        WalkSpeed       = "Vitesse de marche",
-        AutoFarm        = "Auto Farm", AutoFarmDesc = "Attaque automatiquement le bot le plus proche", AutoFarmDelay = "Délai farm (s)",
-        AntiTouch       = "Anti Touche", AntiTouchDesc = "Désactive les dégâts de contact des bots",
-        AntiRagdoll     = "Anti Ragdoll", AntiRagdollDesc = "Empêche le ragdoll et les états physiques",
-        NoAnimation     = "Sans Animation", NoAnimationDesc = "Arrête les animations d'attaque (R6/R15/custom)",
-        Fullbright      = "Luminosité max", FullbrightDesc = "Augmenter la luminosité et désactiver les ombres",
-        LangSelect      = "Langue",
-        CreditsTitle    = "Super Bot Brawl Hub",
-        CreditsContent  = "Créé par Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — Première version",
-        Loaded          = "Hub chargé ! Combats plus intelligemment.",
-        NoBot           = "Aucun bot trouvé à proximité.",
+        WindowTitle = "Super Bot Brawl Hub", TabHome = "Accueil", TabVision = "Vision", TabMovement = "Mouvement", TabCombat = "Combat", TabTools = "Outils",
+        ESPBots = "ESP Bots", TPNearestBot = "TP au Bot le plus proche", TPNearestDesc = "Se téléporter devant le bot le plus proche",
+        Fly = "Vol", FlySpeed = "Vitesse de vol", NoClip = "NoClip", WalkSpeed = "Vitesse de marche",
+        AutoFarm = "Auto Farm", AutoFarmDelay = "Délai farm (s)",
+        BotMagnet = "Aimant à Bots", BotMagnetDesc = "Regroupe tous les bots en un point",
+        AntiRagdoll = "Anti Ragdoll", NoAnimation = "Sans Animation",
+        Fullbright = "Luminosité max", LangSelect = "Langue",
+        CreditsTitle = "Super Bot Brawl Hub",
+        CreditsContent = "Créé par Rival960\nAvec l'aide de Claude (IA)\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — Première version",
+        Loaded = "Hub chargé ! Combats plus intelligemment.", NoBot = "Aucun bot trouvé à proximité.",
     },
     DE = {
-        WindowTitle     = "Super Bot Brawl Hub",
-        TabHome         = "Start", TabVision = "Sicht", TabMovement = "Bewegung", TabCombat = "Kampf", TabTools = "Werkzeuge",
-        ESPBots         = "ESP Bots", ESPBotsDesc = "Nahe Bots hervorheben und HP anzeigen",
-        TPNearestBot    = "TP zum nächsten Bot", TPNearestDesc = "Zum nächsten Bot teleportieren",
-        Fly             = "Fliegen", FlyDesc = "Flugmodus umschalten", FlySpeed = "Fluggeschwindigkeit",
-        NoClip          = "NoClip", NoClipDesc = "Durch Wände und Hindernisse gehen",
-        WalkSpeed       = "Laufgeschwindigkeit",
-        AutoFarm        = "Auto Farm", AutoFarmDesc = "Greift automatisch den nächsten Bot an", AutoFarmDelay = "Farm-Verzögerung (s)",
-        AntiTouch       = "Anti Touch", AntiTouchDesc = "Deaktiviert Kontaktschaden von Bots",
-        AntiRagdoll     = "Anti Ragdoll", AntiRagdollDesc = "Verhindert Ragdoll- und Physik-Zustände",
-        NoAnimation     = "Keine Animation", NoAnimationDesc = "Stoppt Angriffsanimationen (R6/R15/custom)",
-        Fullbright      = "Vollhell", FullbrightDesc = "Helligkeit erhöhen und Schatten deaktivieren",
-        LangSelect      = "Sprache",
-        CreditsTitle    = "Super Bot Brawl Hub",
-        CreditsContent  = "Erstellt von Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — Erste Version",
-        Loaded          = "Hub geladen! Kämpfe klüger.",
-        NoBot           = "Kein Bot in der Nähe gefunden.",
+        WindowTitle = "Super Bot Brawl Hub", TabHome = "Start", TabVision = "Sicht", TabMovement = "Bewegung", TabCombat = "Kampf", TabTools = "Werkzeuge",
+        ESPBots = "ESP Bots", TPNearestBot = "TP zum nächsten Bot", TPNearestDesc = "Zum nächsten Bot teleportieren",
+        Fly = "Fliegen", FlySpeed = "Fluggeschwindigkeit", NoClip = "NoClip", WalkSpeed = "Laufgeschwindigkeit",
+        AutoFarm = "Auto Farm", AutoFarmDelay = "Farm-Verzögerung (s)",
+        BotMagnet = "Bot-Magnet", BotMagnetDesc = "Sammelt alle Bots an einem Ort",
+        AntiRagdoll = "Anti Ragdoll", NoAnimation = "Keine Animation",
+        Fullbright = "Vollhell", LangSelect = "Sprache",
+        CreditsTitle = "Super Bot Brawl Hub",
+        CreditsContent = "Erstellt von Rival960\nMit Hilfe von Claude (KI)\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — Erste Version",
+        Loaded = "Hub geladen! Kämpfe klüger.", NoBot = "Kein Bot in der Nähe gefunden.",
     },
     ES = {
-        WindowTitle     = "Super Bot Brawl Hub",
-        TabHome         = "Inicio", TabVision = "Visión", TabMovement = "Movimiento", TabCombat = "Combate", TabTools = "Herramientas",
-        ESPBots         = "ESP Bots", ESPBotsDesc = "Resaltar bots cercanos y mostrar su HP",
-        TPNearestBot    = "TP al Bot más cercano", TPNearestDesc = "Teletransportarse frente al bot más cercano",
-        Fly             = "Volar", FlyDesc = "Activar modo vuelo", FlySpeed = "Velocidad de vuelo",
-        NoClip          = "NoClip", NoClipDesc = "Atravesar paredes y obstáculos",
-        WalkSpeed       = "Velocidad de marcha",
-        AutoFarm        = "Auto Farm", AutoFarmDesc = "Ataca automáticamente al bot más cercano", AutoFarmDelay = "Retraso farm (s)",
-        AntiTouch       = "Anti Contacto", AntiTouchDesc = "Desactiva el daño por contacto de los bots",
-        AntiRagdoll     = "Anti Ragdoll", AntiRagdollDesc = "Evita el ragdoll y los estados físicos",
-        NoAnimation     = "Sin Animación", NoAnimationDesc = "Detiene las animaciones de ataque (R6/R15/custom)",
-        Fullbright      = "Brillo máximo", FullbrightDesc = "Aumentar brillo y desactivar sombras",
-        LangSelect      = "Idioma",
-        CreditsTitle    = "Super Bot Brawl Hub",
-        CreditsContent  = "Creado por Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — Primera versión",
-        Loaded          = "¡Hub cargado! Lucha de forma más inteligente.",
-        NoBot           = "No se encontró ningún bot cerca.",
+        WindowTitle = "Super Bot Brawl Hub", TabHome = "Inicio", TabVision = "Visión", TabMovement = "Movimiento", TabCombat = "Combate", TabTools = "Herramientas",
+        ESPBots = "ESP Bots", TPNearestBot = "TP al Bot más cercano", TPNearestDesc = "Teletransportarse frente al bot más cercano",
+        Fly = "Volar", FlySpeed = "Velocidad de vuelo", NoClip = "NoClip", WalkSpeed = "Velocidad de marcha",
+        AutoFarm = "Auto Farm", AutoFarmDelay = "Retraso farm (s)",
+        BotMagnet = "Imán de Bots", BotMagnetDesc = "Reúne todos los bots en un punto",
+        AntiRagdoll = "Anti Ragdoll", NoAnimation = "Sin Animación",
+        Fullbright = "Brillo máximo", LangSelect = "Idioma",
+        CreditsTitle = "Super Bot Brawl Hub",
+        CreditsContent = "Creado por Rival960\nCon la ayuda de Claude (IA)\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — Primera versión",
+        Loaded = "¡Hub cargado! Lucha de forma más inteligente.", NoBot = "No se encontró ningún bot cerca.",
     },
     PT = {
-        WindowTitle     = "Super Bot Brawl Hub",
-        TabHome         = "Início", TabVision = "Visão", TabMovement = "Movimento", TabCombat = "Combate", TabTools = "Ferramentas",
-        ESPBots         = "ESP Bots", ESPBotsDesc = "Destacar bots próximos e mostrar HP",
-        TPNearestBot    = "TP para o Bot mais próximo", TPNearestDesc = "Teleportar para o bot mais próximo",
-        Fly             = "Voar", FlyDesc = "Ativar modo de voo", FlySpeed = "Velocidade de voo",
-        NoClip          = "NoClip", NoClipDesc = "Atravessar paredes e obstáculos",
-        WalkSpeed       = "Velocidade de caminhada",
-        AutoFarm        = "Auto Farm", AutoFarmDesc = "Ataca automaticamente o bot mais próximo", AutoFarmDelay = "Atraso do farm (s)",
-        AntiTouch       = "Anti Toque", AntiTouchDesc = "Desativa o dano de contato dos bots",
-        AntiRagdoll     = "Anti Ragdoll", AntiRagdollDesc = "Impede ragdoll e estados físicos",
-        NoAnimation     = "Sem Animação", NoAnimationDesc = "Para as animações de ataque (R6/R15/custom)",
-        Fullbright      = "Brilho máximo", FullbrightDesc = "Aumentar brilho e desativar sombras",
-        LangSelect      = "Idioma",
-        CreditsTitle    = "Super Bot Brawl Hub",
-        CreditsContent  = "Criado por Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — Primeira versão",
-        Loaded          = "Hub carregado! Lute de forma mais inteligente.",
-        NoBot           = "Nenhum bot encontrado por perto.",
+        WindowTitle = "Super Bot Brawl Hub", TabHome = "Início", TabVision = "Visão", TabMovement = "Movimento", TabCombat = "Combate", TabTools = "Ferramentas",
+        ESPBots = "ESP Bots", TPNearestBot = "TP para o Bot mais próximo", TPNearestDesc = "Teleportar para o bot mais próximo",
+        Fly = "Voar", FlySpeed = "Velocidade de voo", NoClip = "NoClip", WalkSpeed = "Velocidade de caminhada",
+        AutoFarm = "Auto Farm", AutoFarmDelay = "Atraso do farm (s)",
+        BotMagnet = "Ímã de Bots", BotMagnetDesc = "Reúne todos os bots em um só lugar",
+        AntiRagdoll = "Anti Ragdoll", NoAnimation = "Sem Animação",
+        Fullbright = "Brilho máximo", LangSelect = "Idioma",
+        CreditsTitle = "Super Bot Brawl Hub",
+        CreditsContent = "Criado por Rival960\nCom a ajuda de Claude (IA)\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — Primeira versão",
+        Loaded = "Hub carregado! Lute de forma mais inteligente.", NoBot = "Nenhum bot encontrado por perto.",
     },
     RU = {
-        WindowTitle     = "Super Bot Brawl Hub",
-        TabHome         = "Главная", TabVision = "Зрение", TabMovement = "Движение", TabCombat = "Бой", TabTools = "Инструменты",
-        ESPBots         = "ESP ботов", ESPBotsDesc = "Выделить ближайших ботов и показать их HP",
-        TPNearestBot    = "ТП к ближайшему боту", TPNearestDesc = "Телепортироваться к ближайшему боту",
-        Fly             = "Полёт", FlyDesc = "Включить режим полёта", FlySpeed = "Скорость полёта",
-        NoClip          = "Ноклип", NoClipDesc = "Проходить сквозь стены и препятствия",
-        WalkSpeed       = "Скорость ходьбы",
-        AutoFarm        = "Авто фарм", AutoFarmDesc = "Автоматически атаковать ближайшего бота", AutoFarmDelay = "Задержка фарма (с)",
-        AntiTouch       = "Анти-касание", AntiTouchDesc = "Отключает контактный урон от ботов",
-        AntiRagdoll     = "Анти-рагдолл", AntiRagdollDesc = "Предотвращает состояния ragdoll и физики",
-        NoAnimation     = "Без анимации", NoAnimationDesc = "Останавливает анимации атаки (R6/R15/custom)",
-        Fullbright      = "Максяркость", FullbrightDesc = "Увеличить яркость и отключить тени",
-        LangSelect      = "Язык",
-        CreditsTitle    = "Super Bot Brawl Hub",
-        CreditsContent  = "Создано Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — Первый выпуск",
-        Loaded          = "Хаб загружен! Сражайся умнее.",
-        NoBot           = "Рядом нет ботов.",
+        WindowTitle = "Super Bot Brawl Hub", TabHome = "Главная", TabVision = "Зрение", TabMovement = "Движение", TabCombat = "Бой", TabTools = "Инструменты",
+        ESPBots = "ESP ботов", TPNearestBot = "ТП к ближайшему боту", TPNearestDesc = "Телепортироваться к ближайшему боту",
+        Fly = "Полёт", FlySpeed = "Скорость полёта", NoClip = "Ноклип", WalkSpeed = "Скорость ходьбы",
+        AutoFarm = "Авто фарм", AutoFarmDelay = "Задержка фарма (с)",
+        BotMagnet = "Магнит ботов", BotMagnetDesc = "Собирает всех ботов в одно место",
+        AntiRagdoll = "Анти-рагдолл", NoAnimation = "Без анимации",
+        Fullbright = "Максяркость", LangSelect = "Язык",
+        CreditsTitle = "Super Bot Brawl Hub",
+        CreditsContent = "Создано Rival960\nПри помощи Claude (ИИ)\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — Первый выпуск",
+        Loaded = "Хаб загружен! Сражайся умнее.", NoBot = "Рядом нет ботов.",
     },
     IT = {
-        WindowTitle     = "Super Bot Brawl Hub",
-        TabHome         = "Home", TabVision = "Visione", TabMovement = "Movimento", TabCombat = "Combattimento", TabTools = "Strumenti",
-        ESPBots         = "ESP Bot", ESPBotsDesc = "Evidenziare i bot vicini e mostrare i loro HP",
-        TPNearestBot    = "TP al Bot più vicino", TPNearestDesc = "Teletrasportarsi davanti al bot più vicino",
-        Fly             = "Volare", FlyDesc = "Attivare modalità volo", FlySpeed = "Velocità di volo",
-        NoClip          = "NoClip", NoClipDesc = "Attraversare muri e ostacoli",
-        WalkSpeed       = "Velocità di camminata",
-        AutoFarm        = "Auto Farm", AutoFarmDesc = "Attacca automaticamente il bot più vicino", AutoFarmDelay = "Ritardo farm (s)",
-        AntiTouch       = "Anti Contatto", AntiTouchDesc = "Disattiva i danni da contatto dei bot",
-        AntiRagdoll     = "Anti Ragdoll", AntiRagdollDesc = "Impedisce ragdoll e stati fisici",
-        NoAnimation     = "Nessuna Animazione", NoAnimationDesc = "Ferma le animazioni di attacco (R6/R15/custom)",
-        Fullbright      = "Luminosità massima", FullbrightDesc = "Aumenta luminosità e disattiva ombre",
-        LangSelect      = "Lingua",
-        CreditsTitle    = "Super Bot Brawl Hub",
-        CreditsContent  = "Creato da Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — Prima versione",
-        Loaded          = "Hub caricato! Combatti in modo più intelligente.",
-        NoBot           = "Nessun bot trovato nelle vicinanze.",
+        WindowTitle = "Super Bot Brawl Hub", TabHome = "Home", TabVision = "Visione", TabMovement = "Movimento", TabCombat = "Combattimento", TabTools = "Strumenti",
+        ESPBots = "ESP Bot", TPNearestBot = "TP al Bot più vicino", TPNearestDesc = "Teletrasportarsi davanti al bot più vicino",
+        Fly = "Volare", FlySpeed = "Velocità di volo", NoClip = "NoClip", WalkSpeed = "Velocità di camminata",
+        AutoFarm = "Auto Farm", AutoFarmDelay = "Ritardo farm (s)",
+        BotMagnet = "Calamita Bot", BotMagnetDesc = "Raccoglie tutti i bot in un punto",
+        AntiRagdoll = "Anti Ragdoll", NoAnimation = "Nessuna Animazione",
+        Fullbright = "Luminosità massima", LangSelect = "Lingua",
+        CreditsTitle = "Super Bot Brawl Hub",
+        CreditsContent = "Creato da Rival960\nCon l'aiuto di Claude (IA)\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — Prima versione",
+        Loaded = "Hub caricato! Combatti in modo più intelligente.", NoBot = "Nessun bot trovato nelle vicinanze.",
     },
     NL = {
-        WindowTitle     = "Super Bot Brawl Hub",
-        TabHome         = "Start", TabVision = "Zicht", TabMovement = "Beweging", TabCombat = "Gevecht", TabTools = "Hulpmiddelen",
-        ESPBots         = "ESP Bots", ESPBotsDesc = "Nabijgelegen bots markeren en HP weergeven",
-        TPNearestBot    = "TP naar dichtstbijzijnde Bot", TPNearestDesc = "Teleporteer naar de dichtstbijzijnde bot",
-        Fly             = "Vliegen", FlyDesc = "Vliegmodus in-/uitschakelen", FlySpeed = "Vliegsnelheid",
-        NoClip          = "NoClip", NoClipDesc = "Door muren en obstakels lopen",
-        WalkSpeed       = "Loopsnelheid",
-        AutoFarm        = "Auto Farm", AutoFarmDesc = "Valt automatisch de dichtstbijzijnde bot aan", AutoFarmDelay = "Farm vertraging (s)",
-        AntiTouch       = "Anti Aanraking", AntiTouchDesc = "Schakelt aanrakingsschade van bots uit",
-        AntiRagdoll     = "Anti Ragdoll", AntiRagdollDesc = "Voorkomt ragdoll- en fysica-toestanden",
-        NoAnimation     = "Geen Animatie", NoAnimationDesc = "Stopt aanvalsanimaties (R6/R15/custom)",
-        Fullbright      = "Maximale helderheid", FullbrightDesc = "Helderheid verhogen en schaduwen uitschakelen",
-        LangSelect      = "Taal",
-        CreditsTitle    = "Super Bot Brawl Hub",
-        CreditsContent  = "Gemaakt door Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — Eerste versie",
-        Loaded          = "Hub geladen! Vecht slimmer.",
-        NoBot           = "Geen bot in de buurt gevonden.",
+        WindowTitle = "Super Bot Brawl Hub", TabHome = "Start", TabVision = "Zicht", TabMovement = "Beweging", TabCombat = "Gevecht", TabTools = "Hulpmiddelen",
+        ESPBots = "ESP Bots", TPNearestBot = "TP naar dichtstbijzijnde Bot", TPNearestDesc = "Teleporteer naar de dichtstbijzijnde bot",
+        Fly = "Vliegen", FlySpeed = "Vliegsnelheid", NoClip = "NoClip", WalkSpeed = "Loopsnelheid",
+        AutoFarm = "Auto Farm", AutoFarmDelay = "Farm vertraging (s)",
+        BotMagnet = "Bot Magneet", BotMagnetDesc = "Verzamelt alle bots op één plek",
+        AntiRagdoll = "Anti Ragdoll", NoAnimation = "Geen Animatie",
+        Fullbright = "Maximale helderheid", LangSelect = "Taal",
+        CreditsTitle = "Super Bot Brawl Hub",
+        CreditsContent = "Gemaakt door Rival960\nMet hulp van Claude (AI)\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — Eerste versie",
+        Loaded = "Hub geladen! Vecht slimmer.", NoBot = "Geen bot in de buurt gevonden.",
     },
     PL = {
-        WindowTitle     = "Super Bot Brawl Hub",
-        TabHome         = "Główna", TabVision = "Wzrok", TabMovement = "Ruch", TabCombat = "Walka", TabTools = "Narzędzia",
-        ESPBots         = "ESP Boty", ESPBotsDesc = "Podświetl pobliskie boty i pokaż ich HP",
-        TPNearestBot    = "TP do najbliższego Bota", TPNearestDesc = "Teleportuj się do najbliższego bota",
-        Fly             = "Latanie", FlyDesc = "Włącz tryb lotu", FlySpeed = "Prędkość lotu",
-        NoClip          = "NoClip", NoClipDesc = "Przechodzić przez ściany i przeszkody",
-        WalkSpeed       = "Prędkość chodzenia",
-        AutoFarm        = "Auto Farm", AutoFarmDesc = "Automatycznie atakuje najbliższego bota", AutoFarmDelay = "Opóźnienie farmu (s)",
-        AntiTouch       = "Anti Dotyk", AntiTouchDesc = "Wyłącza obrażenia od kontaktu z botami",
-        AntiRagdoll     = "Anti Ragdoll", AntiRagdollDesc = "Zapobiega stanom ragdoll i fizyki",
-        NoAnimation     = "Bez Animacji", NoAnimationDesc = "Zatrzymuje animacje ataku (R6/R15/custom)",
-        Fullbright      = "Pełna jasność", FullbrightDesc = "Zwiększ jasność i wyłącz cienie",
-        LangSelect      = "Język",
-        CreditsTitle    = "Super Bot Brawl Hub",
-        CreditsContent  = "Stworzone przez Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — Pierwsza wersja",
-        Loaded          = "Hub załadowany! Walcz mądrzej.",
-        NoBot           = "Nie znaleziono bota w pobliżu.",
+        WindowTitle = "Super Bot Brawl Hub", TabHome = "Główna", TabVision = "Wzrok", TabMovement = "Ruch", TabCombat = "Walka", TabTools = "Narzędzia",
+        ESPBots = "ESP Boty", TPNearestBot = "TP do najbliższego Bota", TPNearestDesc = "Teleportuj się do najbliższego bota",
+        Fly = "Latanie", FlySpeed = "Prędkość lotu", NoClip = "NoClip", WalkSpeed = "Prędkość chodzenia",
+        AutoFarm = "Auto Farm", AutoFarmDelay = "Opóźnienie farmu (s)",
+        BotMagnet = "Magnes na Boty", BotMagnetDesc = "Gromadzi wszystkie boty w jednym miejscu",
+        AntiRagdoll = "Anti Ragdoll", NoAnimation = "Bez Animacji",
+        Fullbright = "Pełna jasność", LangSelect = "Język",
+        CreditsTitle = "Super Bot Brawl Hub",
+        CreditsContent = "Stworzone przez Rival960\nZ pomocą Claude (AI)\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — Pierwsza wersja",
+        Loaded = "Hub załadowany! Walcz mądrzej.", NoBot = "Nie znaleziono bota w pobliżu.",
     },
     ZH = {
-        WindowTitle     = "超级机器人乱斗Hub",
-        TabHome         = "主页", TabVision = "视野", TabMovement = "移动", TabCombat = "战斗", TabTools = "工具",
-        ESPBots         = "ESP机器人", ESPBotsDesc = "高亮附近机器人并显示HP",
-        TPNearestBot    = "传送至最近机器人", TPNearestDesc = "传送到最近的机器人前方",
-        Fly             = "飞行", FlyDesc = "切换飞行模式", FlySpeed = "飞行速度",
-        NoClip          = "穿墙", NoClipDesc = "穿过墙壁和障碍物",
-        WalkSpeed       = "移动速度",
-        AutoFarm        = "自动刷怪", AutoFarmDesc = "自动攻击最近的机器人", AutoFarmDelay = "刷怪延迟（秒）",
-        AntiTouch       = "防触摸", AntiTouchDesc = "禁用机器人的接触伤害",
-        AntiRagdoll     = "防布娃娃", AntiRagdollDesc = "防止布娃娃和物理状态",
-        NoAnimation     = "无动画", NoAnimationDesc = "停止攻击动画（R6/R15/自定义）",
-        Fullbright      = "全亮", FullbrightDesc = "提高亮度并关闭阴影",
-        LangSelect      = "语言",
-        CreditsTitle    = "超级机器人乱斗Hub",
-        CreditsContent  = "由 Rival960 创建\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — 首次发布",
-        Loaded          = "Hub已加载！更智慧地战斗。",
-        NoBot           = "附近没有找到机器人。",
+        WindowTitle = "超级机器人乱斗Hub", TabHome = "主页", TabVision = "视野", TabMovement = "移动", TabCombat = "战斗", TabTools = "工具",
+        ESPBots = "ESP机器人", TPNearestBot = "传送至最近机器人", TPNearestDesc = "传送到最近的机器人前方",
+        Fly = "飞行", FlySpeed = "飞行速度", NoClip = "穿墙", WalkSpeed = "移动速度",
+        AutoFarm = "自动刷怪", AutoFarmDelay = "刷怪延迟（秒）",
+        BotMagnet = "机器人磁铁", BotMagnetDesc = "将所有机器人聚集到一个地方",
+        AntiRagdoll = "防布娃娃", NoAnimation = "无动画",
+        Fullbright = "全亮", LangSelect = "语言",
+        CreditsTitle = "超级机器人乱斗Hub",
+        CreditsContent = "由 Rival960 创建\n在 Claude (AI) 的帮助下\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — 首次发布",
+        Loaded = "Hub已加载！更智慧地战斗。", NoBot = "附近没有找到机器人。",
     },
     JA = {
-        WindowTitle     = "スーパーボットブロールHub",
-        TabHome         = "ホーム", TabVision = "視覚", TabMovement = "移動", TabCombat = "戦闘", TabTools = "ツール",
-        ESPBots         = "ESPボット", ESPBotsDesc = "近くのボットをハイライトしてHPを表示",
-        TPNearestBot    = "最近のボットにTP", TPNearestDesc = "最も近いボットの前にテレポート",
-        Fly             = "飛行", FlyDesc = "飛行モードを切り替える", FlySpeed = "飛行速度",
-        NoClip          = "ノークリップ", NoClipDesc = "壁や障害物を通り抜ける",
-        WalkSpeed       = "移動速度",
-        AutoFarm        = "オートファーム", AutoFarmDesc = "最も近いボットを自動攻撃", AutoFarmDelay = "ファーム遅延（秒）",
-        AntiTouch       = "アンチタッチ", AntiTouchDesc = "ボットの接触ダメージを無効化",
-        AntiRagdoll     = "アンチラグドール", AntiRagdollDesc = "ラグドールと物理状態を防止",
-        NoAnimation     = "アニメーションなし", NoAnimationDesc = "攻撃アニメーションを停止（R6/R15/カスタム）",
-        Fullbright      = "フルブライト", FullbrightDesc = "明るさを上げてシャドウを無効化",
-        LangSelect      = "言語",
-        CreditsTitle    = "スーパーボットブロールHub",
-        CreditsContent  = "Rival960 作\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — 初回リリース",
-        Loaded          = "Hub読み込み完了！より賢く戦おう。",
-        NoBot           = "近くにボットが見つかりません。",
+        WindowTitle = "スーパーボットブロールHub", TabHome = "ホーム", TabVision = "視覚", TabMovement = "移動", TabCombat = "戦闘", TabTools = "ツール",
+        ESPBots = "ESPボット", TPNearestBot = "最近のボットにTP", TPNearestDesc = "最も近いボットの前にテレポート",
+        Fly = "飛行", FlySpeed = "飛行速度", NoClip = "ノークリップ", WalkSpeed = "移動速度",
+        AutoFarm = "オートファーム", AutoFarmDelay = "ファーム遅延（秒）",
+        BotMagnet = "ボットマグネット", BotMagnetDesc = "すべてのボットを1か所に集める",
+        AntiRagdoll = "アンチラグドール", NoAnimation = "アニメーションなし",
+        Fullbright = "フルブライト", LangSelect = "言語",
+        CreditsTitle = "スーパーボットブロールHub",
+        CreditsContent = "Rival960 作\nClaude (AI) の協力による\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — 初回リリース",
+        Loaded = "Hub読み込み完了！より賢く戦おう。", NoBot = "近くにボットが見つかりません。",
     },
     TR = {
-        WindowTitle     = "Super Bot Brawl Hub",
-        TabHome         = "Ana Sayfa", TabVision = "Görüş", TabMovement = "Hareket", TabCombat = "Savaş", TabTools = "Araçlar",
-        ESPBots         = "ESP Botlar", ESPBotsDesc = "Yakındaki botları vurgula ve HP göster",
-        TPNearestBot    = "En Yakın Bota TP", TPNearestDesc = "En yakın botun önüne ışınlan",
-        Fly             = "Uçuş", FlyDesc = "Uçuş modunu aç/kapat", FlySpeed = "Uçuş Hızı",
-        NoClip          = "NoClip", NoClipDesc = "Duvarlardan ve engellerden geç",
-        WalkSpeed       = "Yürüyüş Hızı",
-        AutoFarm        = "Otomatik Farm", AutoFarmDesc = "En yakın botu otomatik saldır", AutoFarmDelay = "Farm gecikmesi (s)",
-        AntiTouch       = "Anti Dokunma", AntiTouchDesc = "Botların temas hasarını devre dışı bırakır",
-        AntiRagdoll     = "Anti Ragdoll", AntiRagdollDesc = "Ragdoll ve fizik durumlarını engeller",
-        NoAnimation     = "Animasyonsuz", NoAnimationDesc = "Saldırı animasyonlarını durdurur (R6/R15/özel)",
-        Fullbright      = "Tam Parlaklık", FullbrightDesc = "Parlaklığı artır ve gölgeleri devre dışı bırak",
-        LangSelect      = "Dil",
-        CreditsTitle    = "Super Bot Brawl Hub",
-        CreditsContent  = "Rival960 tarafından oluşturuldu\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — İlk sürüm",
-        Loaded          = "Hub yüklendi! Daha akıllıca savaş.",
-        NoBot           = "Yakında bot bulunamadı.",
+        WindowTitle = "Super Bot Brawl Hub", TabHome = "Ana Sayfa", TabVision = "Görüş", TabMovement = "Hareket", TabCombat = "Savaş", TabTools = "Araçlar",
+        ESPBots = "ESP Botlar", TPNearestBot = "En Yakın Bota TP", TPNearestDesc = "En yakın botun önüne ışınlan",
+        Fly = "Uçuş", FlySpeed = "Uçuş Hızı", NoClip = "NoClip", WalkSpeed = "Yürüyüş Hızı",
+        AutoFarm = "Otomatik Farm", AutoFarmDelay = "Farm gecikmesi (s)",
+        BotMagnet = "Bot Mıknatısı", BotMagnetDesc = "Tüm botları tek bir yerde toplar",
+        AntiRagdoll = "Anti Ragdoll", NoAnimation = "Animasyonsuz",
+        Fullbright = "Tam Parlaklık", LangSelect = "Dil",
+        CreditsTitle = "Super Bot Brawl Hub",
+        CreditsContent = "Rival960 tarafından oluşturuldu\nClaude (AI) yardımıyla\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — İlk sürüm",
+        Loaded = "Hub yüklendi! Daha akıllıca savaş.", NoBot = "Yakında bot bulunamadı.",
     },
     KO = {
-        WindowTitle     = "슈퍼 봇 브롤 허브",
-        TabHome         = "홈", TabVision = "시야", TabMovement = "이동", TabCombat = "전투", TabTools = "도구",
-        ESPBots         = "ESP 봇", ESPBotsDesc = "근처 봇 강조 표시 및 HP 표시",
-        TPNearestBot    = "가장 가까운 봇으로 TP", TPNearestDesc = "가장 가까운 봇 앞으로 순간이동",
-        Fly             = "비행", FlyDesc = "비행 모드 전환", FlySpeed = "비행 속도",
-        NoClip          = "노클립", NoClipDesc = "벽과 장애물을 통과",
-        WalkSpeed       = "이동 속도",
-        AutoFarm        = "자동 파밍", AutoFarmDesc = "가장 가까운 봇을 자동 공격", AutoFarmDelay = "파밍 딜레이(초)",
-        AntiTouch       = "안티 터치", AntiTouchDesc = "봇의 접촉 피해를 비활성화합니다",
-        AntiRagdoll     = "안티 래그돌", AntiRagdollDesc = "래그돌 및 물리 상태를 방지합니다",
-        NoAnimation     = "애니메이션 없음", NoAnimationDesc = "공격 애니메이션을 중지합니다 (R6/R15/커스텀)",
-        Fullbright      = "풀브라이트", FullbrightDesc = "밝기 증가 및 그림자 비활성화",
-        LangSelect      = "언어",
-        CreditsTitle    = "슈퍼 봇 브롤 허브",
-        CreditsContent  = "Rival960 제작\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — 첫 번째 릴리스",
-        Loaded          = "허브 로드 완료! 더 스마트하게 싸우자.",
-        NoBot           = "근처에 봇이 없습니다.",
+        WindowTitle = "슈퍼 봇 브롤 허브", TabHome = "홈", TabVision = "시야", TabMovement = "이동", TabCombat = "전투", TabTools = "도구",
+        ESPBots = "ESP 봇", TPNearestBot = "가장 가까운 봇으로 TP", TPNearestDesc = "가장 가까운 봇 앞으로 순간이동",
+        Fly = "비행", FlySpeed = "비행 속도", NoClip = "노클립", WalkSpeed = "이동 속도",
+        AutoFarm = "자동 파밍", AutoFarmDelay = "파밍 딜레이(초)",
+        BotMagnet = "봇 자석", BotMagnetDesc = "모든 봇을 한 곳에 모읍니다",
+        AntiRagdoll = "안티 래그돌", NoAnimation = "애니메이션 없음",
+        Fullbright = "풀브라이트", LangSelect = "언어",
+        CreditsTitle = "슈퍼 봇 브롤 허브",
+        CreditsContent = "Rival960 제작\nClaude (AI)의 도움으로\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — 첫 번째 릴리스",
+        Loaded = "허브 로드 완료! 더 스마트하게 싸우자.", NoBot = "근처에 봇이 없습니다.",
     },
     AR = {
-        WindowTitle     = "سوبر بوت برول هاب",
-        TabHome         = "الرئيسية", TabVision = "الرؤية", TabMovement = "الحركة", TabCombat = "القتال", TabTools = "الأدوات",
-        ESPBots         = "ESP الروبوتات", ESPBotsDesc = "تمييز الروبوتات القريبة وعرض HP",
-        TPNearestBot    = "انتقال إلى أقرب روبوت", TPNearestDesc = "الانتقال أمام أقرب روبوت",
-        Fly             = "الطيران", FlyDesc = "تبديل وضع الطيران", FlySpeed = "سرعة الطيران",
-        NoClip          = "نوكليب", NoClipDesc = "المرور عبر الجدران والعوائق",
-        WalkSpeed       = "سرعة المشي",
-        AutoFarm        = "زراعة تلقائية", AutoFarmDesc = "مهاجمة أقرب روبوت تلقائياً", AutoFarmDelay = "تأخير الزراعة (ث)",
-        AntiTouch       = "مضاد اللمس", AntiTouchDesc = "يعطل ضرر اللمس من الروبوتات",
-        AntiRagdoll     = "مضاد الراجدول", AntiRagdollDesc = "يمنع حالات الراجدول والفيزياء",
-        NoAnimation     = "بدون رسوم متحركة", NoAnimationDesc = "يوقف رسوم الهجوم (R6/R15/مخصص)",
-        Fullbright      = "إضاءة كاملة", FullbrightDesc = "رفع السطوع وتعطيل الظلال",
-        LangSelect      = "اللغة",
-        CreditsTitle    = "سوبر بوت برول هاب",
-        CreditsContent  = "أنشأه Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — الإصدار الأول",
-        Loaded          = "تم تحميل الهاب! قاتل بذكاء.",
-        NoBot           = "لم يتم العثور على روبوت قريب.",
+        WindowTitle = "سوبر بوت برول هاب", TabHome = "الرئيسية", TabVision = "الرؤية", TabMovement = "الحركة", TabCombat = "القتال", TabTools = "الأدوات",
+        ESPBots = "ESP الروبوتات", TPNearestBot = "انتقال إلى أقرب روبوت", TPNearestDesc = "الانتقال أمام أقرب روبوت",
+        Fly = "الطيران", FlySpeed = "سرعة الطيران", NoClip = "نوكليب", WalkSpeed = "سرعة المشي",
+        AutoFarm = "زراعة تلقائية", AutoFarmDelay = "تأخير الزراعة (ث)",
+        BotMagnet = "مغناطيس الروبوتات", BotMagnetDesc = "يجمع كل الروبوتات في مكان واحد",
+        AntiRagdoll = "مضاد الراجدول", NoAnimation = "بدون رسوم متحركة",
+        Fullbright = "إضاءة كاملة", LangSelect = "اللغة",
+        CreditsTitle = "سوبر بوت برول هاب",
+        CreditsContent = "أنشأه Rival960\nبمساعدة Claude (AI)\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — الإصدار الأول",
+        Loaded = "تم تحميل الهاب! قاتل بذكاء.", NoBot = "لم يتم العثور على روبوت قريب.",
     },
     VI = {
-        WindowTitle     = "Super Bot Brawl Hub",
-        TabHome         = "Trang chủ", TabVision = "Tầm nhìn", TabMovement = "Di chuyển", TabCombat = "Chiến đấu", TabTools = "Công cụ",
-        ESPBots         = "ESP Bots", ESPBotsDesc = "Làm nổi bật bot gần đó và hiển thị HP",
-        TPNearestBot    = "TP đến Bot gần nhất", TPNearestDesc = "Dịch chuyển đến phía trước bot gần nhất",
-        Fly             = "Bay", FlyDesc = "Bật/tắt chế độ bay", FlySpeed = "Tốc độ bay",
-        NoClip          = "NoClip", NoClipDesc = "Đi xuyên tường và chướng ngại vật",
-        WalkSpeed       = "Tốc độ đi bộ",
-        AutoFarm        = "Tự động Farm", AutoFarmDesc = "Tự động tấn công bot gần nhất", AutoFarmDelay = "Độ trễ farm (s)",
-        AntiTouch       = "Chống chạm", AntiTouchDesc = "Vô hiệu hóa sát thương chạm từ bot",
-        AntiRagdoll     = "Chống Ragdoll", AntiRagdollDesc = "Ngăn chặn ragdoll và trạng thái vật lý",
-        NoAnimation     = "Không Hoạt Ảnh", NoAnimationDesc = "Dừng hoạt ảnh tấn công (R6/R15/tùy chỉnh)",
-        Fullbright      = "Sáng tối đa", FullbrightDesc = "Tăng độ sáng và tắt bóng",
-        LangSelect      = "Ngôn ngữ",
-        CreditsTitle    = "Super Bot Brawl Hub",
-        CreditsContent  = "Tạo bởi Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — Phiên bản đầu tiên",
-        Loaded          = "Hub đã tải! Chiến đấu thông minh hơn.",
-        NoBot           = "Không tìm thấy bot nào gần đây.",
+        WindowTitle = "Super Bot Brawl Hub", TabHome = "Trang chủ", TabVision = "Tầm nhìn", TabMovement = "Di chuyển", TabCombat = "Chiến đấu", TabTools = "Công cụ",
+        ESPBots = "ESP Bots", TPNearestBot = "TP đến Bot gần nhất", TPNearestDesc = "Dịch chuyển đến phía trước bot gần nhất",
+        Fly = "Bay", FlySpeed = "Tốc độ bay", NoClip = "NoClip", WalkSpeed = "Tốc độ đi bộ",
+        AutoFarm = "Tự động Farm", AutoFarmDelay = "Độ trễ farm (s)",
+        BotMagnet = "Nam Châm Bot", BotMagnetDesc = "Tập hợp tất cả bot ở một nơi",
+        AntiRagdoll = "Chống Ragdoll", NoAnimation = "Không Hoạt Ảnh",
+        Fullbright = "Sáng tối đa", LangSelect = "Ngôn ngữ",
+        CreditsTitle = "Super Bot Brawl Hub",
+        CreditsContent = "Tạo bởi Rival960\nVới sự trợ giúp của Claude (AI)\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — Phiên bản đầu tiên",
+        Loaded = "Hub đã tải! Chiến đấu thông minh hơn.", NoBot = "Không tìm thấy bot nào gần đây.",
     },
     SV = {
-        WindowTitle     = "Super Bot Brawl Hub",
-        TabHome         = "Hem", TabVision = "Syn", TabMovement = "Rörelse", TabCombat = "Strid", TabTools = "Verktyg",
-        ESPBots         = "ESP Botar", ESPBotsDesc = "Markera närliggande botar och visa deras HP",
-        TPNearestBot    = "TP till närmaste Bot", TPNearestDesc = "Teleportera framför närmaste boten",
-        Fly             = "Flyg", FlyDesc = "Aktivera flygläge", FlySpeed = "Flyghastighet",
-        NoClip          = "NoClip", NoClipDesc = "Gå igenom väggar och hinder",
-        WalkSpeed       = "Gånghastighet",
-        AutoFarm        = "Auto Farm", AutoFarmDesc = "Attackera automatiskt närmaste boten", AutoFarmDelay = "Farmfördröjning (s)",
-        AntiTouch       = "Anti Beröring", AntiTouchDesc = "Inaktiverar beröringsskada från botar",
-        AntiRagdoll     = "Anti Ragdoll", AntiRagdollDesc = "Förhindrar ragdoll- och fysiktillstånd",
-        NoAnimation     = "Ingen Animation", NoAnimationDesc = "Stoppar attackanimationer (R6/R15/anpassad)",
-        Fullbright      = "Fullbright", FullbrightDesc = "Öka ljusstyrka och inaktivera skuggor",
-        LangSelect      = "Språk",
-        CreditsTitle    = "Super Bot Brawl Hub",
-        CreditsContent  = "Skapad av Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — Första utgåvan",
-        Loaded          = "Hub laddad! Kämpa smartare.",
-        NoBot           = "Ingen bot hittades i närheten.",
+        WindowTitle = "Super Bot Brawl Hub", TabHome = "Hem", TabVision = "Syn", TabMovement = "Rörelse", TabCombat = "Strid", TabTools = "Verktyg",
+        ESPBots = "ESP Botar", TPNearestBot = "TP till närmaste Bot", TPNearestDesc = "Teleportera framför närmaste boten",
+        Fly = "Flyg", FlySpeed = "Flyghastighet", NoClip = "NoClip", WalkSpeed = "Gånghastighet",
+        AutoFarm = "Auto Farm", AutoFarmDelay = "Farmfördröjning (s)",
+        BotMagnet = "Botmagnet", BotMagnetDesc = "Samlar alla botar på en plats",
+        AntiRagdoll = "Anti Ragdoll", NoAnimation = "Ingen Animation",
+        Fullbright = "Fullbright", LangSelect = "Språk",
+        CreditsTitle = "Super Bot Brawl Hub",
+        CreditsContent = "Skapad av Rival960\nMed hjälp av Claude (AI)\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — Första utgåvan",
+        Loaded = "Hub laddad! Kämpa smartare.", NoBot = "Ingen bot hittades i närheten.",
     },
     EL = {
-        WindowTitle     = "Super Bot Brawl Hub",
-        TabHome         = "Αρχική", TabVision = "Όραση", TabMovement = "Κίνηση", TabCombat = "Μάχη", TabTools = "Εργαλεία",
-        ESPBots         = "ESP Bots", ESPBotsDesc = "Επισήμανση κοντινών bots και εμφάνιση HP",
-        TPNearestBot    = "TP στο Κοντινότερο Bot", TPNearestDesc = "Τηλεμεταφορά μπροστά στο κοντινότερο bot",
-        Fly             = "Πτήση", FlyDesc = "Εναλλαγή λειτουργίας πτήσης", FlySpeed = "Ταχύτητα Πτήσης",
-        NoClip          = "NoClip", NoClipDesc = "Περνάς μέσα από τοίχους και εμπόδια",
-        WalkSpeed       = "Ταχύτητα Βαδίσματος",
-        AutoFarm        = "Αυτόματο Farm", AutoFarmDesc = "Αυτόματη επίθεση στο κοντινότερο bot", AutoFarmDelay = "Καθυστέρηση farm (δευτ.)",
-        AntiTouch       = "Anti Touch", AntiTouchDesc = "Απενεργοποιεί τη ζημιά επαφής από bots",
-        AntiRagdoll     = "Anti Ragdoll", AntiRagdollDesc = "Αποτρέπει καταστάσεις ragdoll και φυσικής",
-        NoAnimation     = "Χωρίς Animation", NoAnimationDesc = "Σταματά τις κινήσεις επίθεσης (R6/R15/custom)",
-        Fullbright      = "Πλήρης Φωτεινότητα", FullbrightDesc = "Αύξηση φωτεινότητας και απενεργοποίηση σκιών",
-        LangSelect      = "Γλώσσα",
-        CreditsTitle    = "Super Bot Brawl Hub",
-        CreditsContent  = "Δημιουργήθηκε από τον Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — Πρώτη έκδοση",
-        Loaded          = "Hub φορτώθηκε! Μάχου εξυπνότερα.",
-        NoBot           = "Δεν βρέθηκε bot κοντά.",
+        WindowTitle = "Super Bot Brawl Hub", TabHome = "Αρχική", TabVision = "Όραση", TabMovement = "Κίνηση", TabCombat = "Μάχη", TabTools = "Εργαλεία",
+        ESPBots = "ESP Bots", TPNearestBot = "TP στο Κοντινότερο Bot", TPNearestDesc = "Τηλεμεταφορά μπροστά στο κοντινότερο bot",
+        Fly = "Πτήση", FlySpeed = "Ταχύτητα Πτήσης", NoClip = "NoClip", WalkSpeed = "Ταχύτητα Βαδίσματος",
+        AutoFarm = "Αυτόματο Farm", AutoFarmDelay = "Καθυστέρηση farm (δευτ.)",
+        BotMagnet = "Μαγνήτης Bot", BotMagnetDesc = "Συγκεντρώνει όλα τα bots σε ένα σημείο",
+        AntiRagdoll = "Anti Ragdoll", NoAnimation = "Χωρίς Animation",
+        Fullbright = "Πλήρης Φωτεινότητα", LangSelect = "Γλώσσα",
+        CreditsTitle = "Super Bot Brawl Hub",
+        CreditsContent = "Δημιουργήθηκε από τον Rival960\nΜε βοήθεια του Claude (AI)\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — Πρώτη έκδοση",
+        Loaded = "Hub φορτώθηκε! Μάχου εξυπνότερα.", NoBot = "Δεν βρέθηκε bot κοντά.",
     },
     RO = {
-        WindowTitle     = "Super Bot Brawl Hub",
-        TabHome         = "Acasă", TabVision = "Viziune", TabMovement = "Mișcare", TabCombat = "Luptă", TabTools = "Instrumente",
-        ESPBots         = "ESP Boți", ESPBotsDesc = "Evidențiază boții din apropiere și arată HP",
-        TPNearestBot    = "TP la Cel Mai Aproape Bot", TPNearestDesc = "Teleportare în fața celui mai apropiat bot",
-        Fly             = "Zbor", FlyDesc = "Activează modul de zbor", FlySpeed = "Viteza de zbor",
-        NoClip          = "NoClip", NoClipDesc = "Treci prin pereți și obstacole",
-        WalkSpeed       = "Viteză de mers",
-        AutoFarm        = "Auto Farm", AutoFarmDesc = "Atacă automat cel mai apropiat bot", AutoFarmDelay = "Întârziere farm (s)",
-        AntiTouch       = "Anti Atingere", AntiTouchDesc = "Dezactivează daunele de contact de la boți",
-        AntiRagdoll     = "Anti Ragdoll", AntiRagdollDesc = "Previne stările ragdoll și fizice",
-        NoAnimation     = "Fără Animație", NoAnimationDesc = "Oprește animațiile de atac (R6/R15/custom)",
-        Fullbright      = "Luminozitate maximă", FullbrightDesc = "Crește luminozitatea și dezactivează umbrele",
-        LangSelect      = "Limbă",
-        CreditsTitle    = "Super Bot Brawl Hub",
-        CreditsContent  = "Creat de Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — Prima versiune",
-        Loaded          = "Hub încărcat! Luptă mai inteligent.",
-        NoBot           = "Niciun bot găsit în apropiere.",
+        WindowTitle = "Super Bot Brawl Hub", TabHome = "Acasă", TabVision = "Viziune", TabMovement = "Mișcare", TabCombat = "Luptă", TabTools = "Instrumente",
+        ESPBots = "ESP Boți", TPNearestBot = "TP la Cel Mai Aproape Bot", TPNearestDesc = "Teleportare în fața celui mai apropiat bot",
+        Fly = "Zbor", FlySpeed = "Viteza de zbor", NoClip = "NoClip", WalkSpeed = "Viteză de mers",
+        AutoFarm = "Auto Farm", AutoFarmDelay = "Întârziere farm (s)",
+        BotMagnet = "Magnet de Boți", BotMagnetDesc = "Adună toți boții într-un singur loc",
+        AntiRagdoll = "Anti Ragdoll", NoAnimation = "Fără Animație",
+        Fullbright = "Luminozitate maximă", LangSelect = "Limbă",
+        CreditsTitle = "Super Bot Brawl Hub",
+        CreditsContent = "Creat de Rival960\nCu ajutorul lui Claude (AI)\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — Prima versiune",
+        Loaded = "Hub încărcat! Luptă mai inteligent.", NoBot = "Niciun bot găsit în apropiere.",
     },
     UK = {
-        WindowTitle     = "Super Bot Brawl Hub",
-        TabHome         = "Головна", TabVision = "Зір", TabMovement = "Рух", TabCombat = "Бій", TabTools = "Інструменти",
-        ESPBots         = "ESP ботів", ESPBotsDesc = "Підсвічувати ближніх ботів і показувати HP",
-        TPNearestBot    = "ТП до найближчого бота", TPNearestDesc = "Телепортуватися до найближчого бота",
-        Fly             = "Політ", FlyDesc = "Увімкнути режим польоту", FlySpeed = "Швидкість польоту",
-        NoClip          = "Нокліп", NoClipDesc = "Проходити крізь стіни й перешкоди",
-        WalkSpeed       = "Швидкість ходьби",
-        AutoFarm        = "Авто фарм", AutoFarmDesc = "Автоматично атакує найближчого бота", AutoFarmDelay = "Затримка фарму (с)",
-        AntiTouch       = "Анти-дотик", AntiTouchDesc = "Вимикає контактну шкоду від ботів",
-        AntiRagdoll     = "Анти-рагдол", AntiRagdollDesc = "Запобігає станам ragdoll та фізики",
-        NoAnimation     = "Без анімації", NoAnimationDesc = "Зупиняє анімації атаки (R6/R15/custom)",
-        Fullbright      = "Повна яскравість", FullbrightDesc = "Збільшити яскравість і вимкнути тіні",
-        LangSelect      = "Мова",
-        CreditsTitle    = "Super Bot Brawl Hub",
-        CreditsContent  = "Створено Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — Перший випуск",
-        Loaded          = "Hub завантажено! Бийся розумніше.",
-        NoBot           = "Поруч немає ботів.",
+        WindowTitle = "Super Bot Brawl Hub", TabHome = "Головна", TabVision = "Зір", TabMovement = "Рух", TabCombat = "Бій", TabTools = "Інструменти",
+        ESPBots = "ESP ботів", TPNearestBot = "ТП до найближчого бота", TPNearestDesc = "Телепортуватися до найближчого бота",
+        Fly = "Політ", FlySpeed = "Швидкість польоту", NoClip = "Нокліп", WalkSpeed = "Швидкість ходьби",
+        AutoFarm = "Авто фарм", AutoFarmDelay = "Затримка фарму (с)",
+        BotMagnet = "Магніт ботів", BotMagnetDesc = "Збирає всіх ботів в одному місці",
+        AntiRagdoll = "Анти-рагдол", NoAnimation = "Без анімації",
+        Fullbright = "Повна яскравість", LangSelect = "Мова",
+        CreditsTitle = "Super Bot Brawl Hub",
+        CreditsContent = "Створено Rival960\nЗа допомогою Claude (AI)\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — Перший випуск",
+        Loaded = "Hub завантажено! Бийся розумніше.", NoBot = "Поруч немає ботів.",
     },
     CS = {
-        WindowTitle     = "Super Bot Brawl Hub",
-        TabHome         = "Domů", TabVision = "Vidění", TabMovement = "Pohyb", TabCombat = "Boj", TabTools = "Nástroje",
-        ESPBots         = "ESP Boti", ESPBotsDesc = "Zvýraznit blízké boty a zobrazit jejich HP",
-        TPNearestBot    = "TP k nejbližšímu Botovi", TPNearestDesc = "Přesuň se před nejbližšího bota",
-        Fly             = "Létání", FlyDesc = "Přepnout letový režim", FlySpeed = "Rychlost letu",
-        NoClip          = "NoClip", NoClipDesc = "Procházet zdmi a překážkami",
-        WalkSpeed       = "Rychlost chůze",
-        AutoFarm        = "Auto Farm", AutoFarmDesc = "Automaticky útočí na nejbližšího bota", AutoFarmDelay = "Zpoždění farmu (s)",
-        AntiTouch       = "Anti Dotyk", AntiTouchDesc = "Vypíná poškození kontaktem od botů",
-        AntiRagdoll     = "Anti Ragdoll", AntiRagdollDesc = "Zabraňuje stavům ragdoll a fyziky",
-        NoAnimation     = "Bez Animace", NoAnimationDesc = "Zastaví animace útoku (R6/R15/custom)",
-        Fullbright      = "Plné světlo", FullbrightDesc = "Zvýšit jas a vypnout stíny",
-        LangSelect      = "Jazyk",
-        CreditsTitle    = "Super Bot Brawl Hub",
-        CreditsContent  = "Vytvořil Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — První verze",
-        Loaded          = "Hub načten! Bojuj chytřeji.",
-        NoBot           = "V okolí nebyl nalezen žádný bot.",
+        WindowTitle = "Super Bot Brawl Hub", TabHome = "Domů", TabVision = "Vidění", TabMovement = "Pohyb", TabCombat = "Boj", TabTools = "Nástroje",
+        ESPBots = "ESP Boti", TPNearestBot = "TP k nejbližšímu Botovi", TPNearestDesc = "Přesuň se před nejbližšího bota",
+        Fly = "Létání", FlySpeed = "Rychlost letu", NoClip = "NoClip", WalkSpeed = "Rychlost chůze",
+        AutoFarm = "Auto Farm", AutoFarmDelay = "Zpoždění farmu (s)",
+        BotMagnet = "Magnet na Boty", BotMagnetDesc = "Shromažďuje všechny boty na jednom místě",
+        AntiRagdoll = "Anti Ragdoll", NoAnimation = "Bez Animace",
+        Fullbright = "Plné světlo", LangSelect = "Jazyk",
+        CreditsTitle = "Super Bot Brawl Hub",
+        CreditsContent = "Vytvořil Rival960\nS pomocí Claude (AI)\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — První verze",
+        Loaded = "Hub načten! Bojuj chytřeji.", NoBot = "V okolí nebyl nalezen žádný bot.",
     },
     DA = {
-        WindowTitle     = "Super Bot Brawl Hub",
-        TabHome         = "Hjem", TabVision = "Syn", TabMovement = "Bevægelse", TabCombat = "Kamp", TabTools = "Værktøjer",
-        ESPBots         = "ESP Bots", ESPBotsDesc = "Fremhæv nærliggende bots og vis deres HP",
-        TPNearestBot    = "TP til nærmeste Bot", TPNearestDesc = "Teleportér foran den nærmeste bot",
-        Fly             = "Fly", FlyDesc = "Slå flytilstand til/fra", FlySpeed = "Flyhastighed",
-        NoClip          = "NoClip", NoClipDesc = "Gå igennem vægge og forhindringer",
-        WalkSpeed       = "Gåhastighed",
-        AutoFarm        = "Auto Farm", AutoFarmDesc = "Angrib automatisk den nærmeste bot", AutoFarmDelay = "Farm-forsinkelse (s)",
-        AntiTouch       = "Anti Berøring", AntiTouchDesc = "Deaktiverer berøringsskade fra bots",
-        AntiRagdoll     = "Anti Ragdoll", AntiRagdollDesc = "Forhindrer ragdoll- og fysiktilstande",
-        NoAnimation     = "Ingen Animation", NoAnimationDesc = "Stopper angrebsanimationer (R6/R15/custom)",
-        Fullbright      = "Fuld lysstyrke", FullbrightDesc = "Øg lysstyrke og deaktiver skygger",
-        LangSelect      = "Sprog",
-        CreditsTitle    = "Super Bot Brawl Hub",
-        CreditsContent  = "Oprettet af Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — Første udgivelse",
-        Loaded          = "Hub indlæst! Kæmp klogere.",
-        NoBot           = "Ingen bot fundet i nærheden.",
+        WindowTitle = "Super Bot Brawl Hub", TabHome = "Hjem", TabVision = "Syn", TabMovement = "Bevægelse", TabCombat = "Kamp", TabTools = "Værktøjer",
+        ESPBots = "ESP Bots", TPNearestBot = "TP til nærmeste Bot", TPNearestDesc = "Teleportér foran den nærmeste bot",
+        Fly = "Fly", FlySpeed = "Flyhastighed", NoClip = "NoClip", WalkSpeed = "Gåhastighed",
+        AutoFarm = "Auto Farm", AutoFarmDelay = "Farm-forsinkelse (s)",
+        BotMagnet = "Bot-Magnet", BotMagnetDesc = "Samler alle bots på ét sted",
+        AntiRagdoll = "Anti Ragdoll", NoAnimation = "Ingen Animation",
+        Fullbright = "Fuld lysstyrke", LangSelect = "Sprog",
+        CreditsTitle = "Super Bot Brawl Hub",
+        CreditsContent = "Oprettet af Rival960\nMed hjælp fra Claude (AI)\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.0.0 — Første udgivelse",
+        Loaded = "Hub indlæst! Kæmp klogere.", NoBot = "Ingen bot fundet i nærheden.",
     },
 }
 
@@ -448,13 +301,13 @@ end
 -- ───────────────────────────────────────────────────────────────
 local Settings = {
     AutoFarm         = false,
-    AutoFarmDelay    = 0.3,
+    AutoFarmDelay    = 0.1,  -- 0.1s default
+    BotMagnet        = false,
     ESP_Bots         = false,
     Fly              = false,
     FlySpeed         = 60,
     NoClip           = false,
     WalkSpeed        = 16,
-    AntiTouch        = false,
     AntiRagdoll      = false,
     NoAnimation      = false,
     Fullbright       = false,
@@ -552,7 +405,7 @@ local function getBotHeight(botModel)
 end
 
 -- ───────────────────────────────────────────────────────────────
--- FLY (BodyVelocity + BodyGyro, PC + Mobile)
+-- FLY
 -- ───────────────────────────────────────────────────────────────
 local flyVelocity, flyGyro
 local flyMobileVertical = 0
@@ -582,33 +435,27 @@ local function createMobileFlyButtons()
 
     mobileUpBtn = makeBtn("▲", -70)
     mobileDownBtn = makeBtn("▼", 0)
-
     mobileUpBtn.MouseButton1Down:Connect(function() flyMobileVertical = 1 end)
     mobileUpBtn.MouseButton1Up:Connect(function() flyMobileVertical = 0 end)
     mobileDownBtn.MouseButton1Down:Connect(function() flyMobileVertical = -1 end)
     mobileDownBtn.MouseButton1Up:Connect(function() flyMobileVertical = 0 end)
-
     mobileFlyGui = gui
 end
 
 local function enableFly()
     local hrp = getHRP()
     if not hrp then return end
-
     flyVelocity = Instance.new("BodyVelocity")
     flyVelocity.Velocity = Vector3.zero
     flyVelocity.MaxForce = Vector3.new(1e9, 1e9, 1e9)
     flyVelocity.Parent = hrp
-
     flyGyro = Instance.new("BodyGyro")
     flyGyro.MaxTorque = Vector3.new(1e9, 1e9, 1e9)
     flyGyro.P = 1e4
     flyGyro.CFrame = hrp.CFrame
     flyGyro.Parent = hrp
-
     local hum = getHumanoid()
     if hum then hum.PlatformStand = true end
-
     if isMobile then
         createMobileFlyButtons()
         if mobileFlyGui then mobileFlyGui.Enabled = true end
@@ -630,7 +477,7 @@ local function disableFly()
 end
 
 -- ───────────────────────────────────────────────────────────────
--- NOCLIP (save/restore original CanCollide)
+-- NOCLIP
 -- ───────────────────────────────────────────────────────────────
 local noclipConnection = nil
 local originalCanCollide = {}
@@ -654,7 +501,6 @@ local function enableNoClip()
         if not c then return end
         local hrp = c:FindFirstChild("HumanoidRootPart")
         local hum = c:FindFirstChildOfClass("Humanoid")
-
         for _, part in ipairs(c:GetDescendants()) do
             if part:IsA("BasePart") then
                 if originalCanCollide[part] == nil then
@@ -665,7 +511,6 @@ local function enableNoClip()
                 end
             end
         end
-
         if hrp and hum and hum.MoveDirection.Magnitude < 0.1 then
             local v = hrp.AssemblyLinearVelocity
             hrp.AssemblyLinearVelocity = Vector3.new(0, v.Y, 0)
@@ -687,66 +532,10 @@ local function disableNoClip()
 end
 
 -- ───────────────────────────────────────────────────────────────
--- ANTI TOUCH (player + bots, CanTouch=false + TouchInterest removed)
+-- ANTI RAGDOLL (event-driven only, no forced state)
 -- ───────────────────────────────────────────────────────────────
-local antiTouchConnection = nil
-
-local function disablePartTouch(part)
-    if not part or not part:IsA("BasePart") then return end
-    part.CanTouch = false
-    local ti = part:FindFirstChildOfClass("TouchInterest")
-    if ti then ti:Destroy() end
-end
-
-local function enableAntiTouch()
-    if antiTouchConnection then return end
-    antiTouchConnection = RunService.Heartbeat:Connect(function()
-        if not Settings.AntiTouch then return end
-
-        local char = LocalPlayer.Character
-        if char then
-            for _, part in ipairs(char:GetDescendants()) do
-                if part:IsA("BasePart") then
-                    disablePartTouch(part)
-                end
-            end
-        end
-
-        local botsFolder = Workspace:FindFirstChild("Bots")
-        if botsFolder then
-            for _, obj in ipairs(botsFolder:GetDescendants()) do
-                if isBot(obj) then
-                    for _, part in ipairs(obj:GetDescendants()) do
-                        if part:IsA("BasePart") then
-                            disablePartTouch(part)
-                        end
-                    end
-                end
-            end
-        end
-    end)
-end
-
-local function disableAntiTouch()
-    if antiTouchConnection then
-        antiTouchConnection:Disconnect()
-        antiTouchConnection = nil
-    end
-    local char = LocalPlayer.Character
-    if char then
-        for _, part in ipairs(char:GetDescendants()) do
-            if part:IsA("BasePart") then
-                part.CanTouch = true
-            end
-        end
-    end
-end
-
--- ───────────────────────────────────────────────────────────────
--- ANTI RAGDOLL (event-driven, minimal reset)
--- ───────────────────────────────────────────────────────────────
-local antiRagdollConnection = nil
-local ragdollCleanupConn = nil
+local antiRagdollConn = nil
+local ragdollConstraintConn = nil
 local blockedStates = {
     [Enum.HumanoidStateType.Ragdoll] = true,
     [Enum.HumanoidStateType.FallingDown] = true,
@@ -755,7 +544,6 @@ local blockedStates = {
 }
 
 local function cleanRagdollMinimal(char)
-    -- Only re-enable motors and remove constraints, do NOT force any state
     for _, v in ipairs(char:GetDescendants()) do
         if v:IsA("Motor6D") and not v.Enabled then
             pcall(function() v.Enabled = true end)
@@ -766,47 +554,32 @@ local function cleanRagdollMinimal(char)
 end
 
 local function enableAntiRagdoll()
-    if antiRagdollConnection then return end
+    if antiRagdollConn then return end
     local char = LocalPlayer.Character
     if not char then return end
     local hum = char:FindFirstChildOfClass("Humanoid")
     if not hum then return end
-
     for state in pairs(blockedStates) do
         pcall(function() hum:SetStateEnabled(state, false) end)
     end
-
-    -- Only react to actual state changes, not every frame
-    antiRagdollConnection = hum.StateChanged:Connect(function(_, newState)
+    antiRagdollConn = hum.StateChanged:Connect(function(_, newState)
         if not Settings.AntiRagdoll then return end
         if blockedStates[newState] then
             local c = LocalPlayer.Character
-            if c then
-                cleanRagdollMinimal(c)
-            end
+            if c then cleanRagdollMinimal(c) end
         end
     end)
-
-    -- Also catch ragdoll constraints being created by the game
-    ragdollCleanupConn = char.DescendantAdded:Connect(function(desc)
+    ragdollConstraintConn = char.DescendantAdded:Connect(function(desc)
         if not Settings.AntiRagdoll then return end
         if desc:IsA("BallSocketConstraint") or desc:IsA("HingeConstraint") then
-            task.defer(function()
-                pcall(function() desc:Destroy() end)
-            end)
+            task.defer(function() pcall(function() desc:Destroy() end) end)
         end
     end)
 end
 
 local function disableAntiRagdoll()
-    if antiRagdollConnection then
-        antiRagdollConnection:Disconnect()
-        antiRagdollConnection = nil
-    end
-    if ragdollCleanupConn then
-        ragdollCleanupConn:Disconnect()
-        ragdollCleanupConn = nil
-    end
+    if antiRagdollConn then antiRagdollConn:Disconnect(); antiRagdollConn = nil end
+    if ragdollConstraintConn then ragdollConstraintConn:Disconnect(); ragdollConstraintConn = nil end
     local hum = getHumanoid()
     if hum then
         for state in pairs(blockedStates) do
@@ -816,12 +589,12 @@ local function disableAntiRagdoll()
 end
 
 -- ───────────────────────────────────────────────────────────────
--- NO ANIMATION (universal)
+-- NO ANIMATION (universal + weapons + no callback)
 -- ───────────────────────────────────────────────────────────────
 local noAnimConnection = nil
-local animatorHook = nil
 local originalPlayAnimations = nil
-local originalAnimateDisabled = nil
+local originalLoadAnimation = nil
+local trackedTracks = {}
 
 local function getAnimator()
     local hum = getHumanoid()
@@ -835,10 +608,7 @@ local function enableNoAnimation()
     local char = LocalPlayer.Character
     if char then
         local animateScript = char:FindFirstChild("Animate")
-        if animateScript then
-            originalAnimateDisabled = animateScript.Disabled
-            animateScript.Disabled = true
-        end
+        if animateScript then animateScript.Disabled = true end
     end
 
     local animator = getAnimator()
@@ -846,61 +616,147 @@ local function enableNoAnimation()
         originalPlayAnimations = animator.PlayAnimations
         animator.PlayAnimations = false
 
-        if animatorHook then animatorHook:Disconnect() end
-        animatorHook = animator.AnimationPlayed:Connect(function(track)
-            if Settings.NoAnimation then
-                pcall(function() track:Stop(0) end)
+        if not originalLoadAnimation then
+            originalLoadAnimation = animator.LoadAnimation
+            animator.LoadAnimation = function(self, animation)
+                local track
+                local ok, result = pcall(function()
+                    return originalLoadAnimation(self, animation)
+                end)
+                if ok and result then
+                    track = result
+                    if Settings.NoAnimation then
+                        pcall(function() track:Stop(0) end)
+                        table.insert(trackedTracks, track)
+                        task.spawn(function()
+                            while Settings.NoAnimation and track do
+                                pcall(function()
+                                    if track.IsPlaying then
+                                        track:Stop(0)
+                                    end
+                                end)
+                                task.wait()
+                            end
+                        end)
+                    end
+                end
+                return track or result
             end
-        end)
+        end
     end
 
     noAnimConnection = RunService.Heartbeat:Connect(function()
         if not Settings.NoAnimation then return end
-
-        local c = LocalPlayer.Character
-        if c then
-            local animateScript = c:FindFirstChild("Animate")
-            if animateScript and not animateScript.Disabled then
-                animateScript.Disabled = true
+        pcall(function()
+            local c = LocalPlayer.Character
+            if c then
+                local animateScript = c:FindFirstChild("Animate")
+                if animateScript and not animateScript.Disabled then
+                    animateScript.Disabled = true
+                end
             end
-        end
-
-        local animator = getAnimator()
-        if animator then
-            if animator.PlayAnimations then
-                animator.PlayAnimations = false
+            local a = getAnimator()
+            if a then
+                if a.PlayAnimations then a.PlayAnimations = false end
+                for _, track in ipairs(a:GetPlayingAnimationTracks()) do
+                    pcall(function() track:Stop(0) end)
+                end
             end
-            for _, track in ipairs(animator:GetPlayingAnimationTracks()) do
-                pcall(function() track:Stop(0) end)
+            -- Prune dead tracks
+            for i = #trackedTracks, 1, -1 do
+                local t = trackedTracks[i]
+                if not t or not t.IsPlaying then
+                    table.remove(trackedTracks, i)
+                end
             end
-        end
+        end)
     end)
 end
 
 local function disableNoAnimation()
-    if noAnimConnection then
-        noAnimConnection:Disconnect()
-        noAnimConnection = nil
-    end
-    if animatorHook then
-        animatorHook:Disconnect()
-        animatorHook = nil
-    end
+    if noAnimConnection then noAnimConnection:Disconnect(); noAnimConnection = nil end
 
     local char = LocalPlayer.Character
     if char then
         local animateScript = char:FindFirstChild("Animate")
-        if animateScript and originalAnimateDisabled ~= nil then
-            animateScript.Disabled = originalAnimateDisabled
-            originalAnimateDisabled = nil
-        end
+        if animateScript then animateScript.Disabled = false end
     end
 
     local animator = getAnimator()
-    if animator and originalPlayAnimations ~= nil then
-        animator.PlayAnimations = originalPlayAnimations
-        originalPlayAnimations = nil
+    if animator then
+        if originalPlayAnimations ~= nil then
+            animator.PlayAnimations = originalPlayAnimations
+            originalPlayAnimations = nil
+        end
+        if originalLoadAnimation then
+            pcall(function() animator.LoadAnimation = originalLoadAnimation end)
+            originalLoadAnimation = nil
+        end
     end
+    trackedTracks = {}
+end
+
+-- ───────────────────────────────────────────────────────────────
+-- BOT MAGNET (gather all bots in one spot, including new spawns)
+-- ───────────────────────────────────────────────────────────────
+local botMagnetConnection = nil
+local magnetAnchor = nil
+
+local function doBotMagnet()
+    if not Settings.BotMagnet then
+        magnetAnchor = nil
+        return
+    end
+
+    local hrp = getHRP()
+    if not hrp then return end
+
+    -- Anchor the center 8 studs in front of the player (only update if player moved away)
+    if not magnetAnchor or (hrp.Position - magnetAnchor).Magnitude > 40 then
+        magnetAnchor = hrp.Position + hrp.CFrame.LookVector * 8
+    end
+
+    local botsFolder = Workspace:FindFirstChild("Bots")
+    if not botsFolder then return end
+
+    local bots = {}
+    for _, obj in ipairs(botsFolder:GetDescendants()) do
+        if isBot(obj) then
+            local bhrp = obj:FindFirstChild("HumanoidRootPart")
+            if bhrp then
+                table.insert(bots, bhrp)
+            end
+        end
+    end
+
+    -- Arrange in a 5-wide grid in front of the anchor
+    for i, bhrp in ipairs(bots) do
+        local idx = i - 1
+        local row = math.floor(idx / 5)
+        local col = idx % 5
+        local targetX = magnetAnchor.X + (col - 2) * 4
+        local targetZ = magnetAnchor.Z + row * 4
+        pcall(function()
+            bhrp.CFrame = CFrame.new(targetX, bhrp.Position.Y, targetZ)
+        end)
+    end
+end
+
+local function enableBotMagnet()
+    if botMagnetConnection then return end
+    magnetAnchor = nil
+    botMagnetConnection = RunService.Heartbeat:Connect(function()
+        if not Settings.BotMagnet then return end
+        pcall(doBotMagnet)
+    end)
+end
+
+local function disableBotMagnet()
+    if botMagnetConnection then
+        botMagnetConnection:Disconnect()
+        botMagnetConnection = nil
+    end
+    magnetAnchor = nil
 end
 
 -- ───────────────────────────────────────────────────────────────
@@ -912,9 +768,7 @@ local farmActive = false
 local function restoreFarmState()
     farmActive = false
     local hum = getHumanoid()
-    if hum then
-        hum.PlatformStand = false
-    end
+    if hum then hum.PlatformStand = false end
 end
 
 local function doAutoFarm()
@@ -937,16 +791,12 @@ local function doAutoFarm()
     local botModel, botHRP = getNearestBot()
     if not botHRP or not botModel then return end
 
-    -- PlatformStand so gravity doesn't pull us down between farm ticks
     hum.PlatformStand = true
 
-    -- Place HRP so player's feet are just above bot's head
-    -- HRP.y = botHRP.y + botHeight/2 + charHeight/2 + 1
     local botHeight  = getBotHeight(botModel)
     local charHeight = getCharacterHeight()
     local targetY = botHRP.Position.Y + (botHeight / 2) + (charHeight / 2) + 1
 
-    -- Small horizontal offset so we're not perfectly centered (avoids overlap glitch)
     local sideOffset = (hrp.Position - botHRP.Position)
     sideOffset = Vector3.new(sideOffset.X, 0, sideOffset.Z)
     if sideOffset.Magnitude < 0.1 then
@@ -963,15 +813,6 @@ local function doAutoFarm()
     hrp.CFrame = CFrame.lookAt(targetPos, botHRP.Position)
     hrp.AssemblyLinearVelocity = Vector3.zero
     hrp.AssemblyAngularVelocity = Vector3.zero
-
-    -- Anti-touch on player during farm
-    for _, part in ipairs(char:GetDescendants()) do
-        if part:IsA("BasePart") then
-            part.CanTouch = false
-            local ti = part:FindFirstChildOfClass("TouchInterest")
-            if ti then ti:Destroy() end
-        end
-    end
 
     local tool = char:FindFirstChildOfClass("Tool")
     if not tool then
@@ -1039,7 +880,7 @@ TabMovement:CreateSlider({ Name = T("WalkSpeed"), Range = {16, 250}, Increment =
 local TabCombat = Window:CreateTab(T("TabCombat"), 4483362458)
 TabCombat:CreateToggle({ Name = T("AutoFarm"), CurrentValue = Settings.AutoFarm, Flag = "AutoFarm", Callback = function(v) Settings.AutoFarm = v; if not v then restoreFarmState() end end })
 TabCombat:CreateSlider({ Name = T("AutoFarmDelay"), Range = {0.1, 2.0}, Increment = 0.1, CurrentValue = Settings.AutoFarmDelay, Flag = "AutoFarmDelay", Callback = function(v) Settings.AutoFarmDelay = v end })
-TabCombat:CreateToggle({ Name = T("AntiTouch"), CurrentValue = Settings.AntiTouch, Flag = "AntiTouch", Callback = function(v) Settings.AntiTouch = v; if v then enableAntiTouch() else disableAntiTouch() end end })
+TabCombat:CreateToggle({ Name = T("BotMagnet"), CurrentValue = Settings.BotMagnet, Flag = "BotMagnet", Callback = function(v) Settings.BotMagnet = v; if v then enableBotMagnet() else disableBotMagnet() end end })
 TabCombat:CreateToggle({ Name = T("AntiRagdoll"), CurrentValue = Settings.AntiRagdoll, Flag = "AntiRagdoll", Callback = function(v) Settings.AntiRagdoll = v; if v then enableAntiRagdoll() else disableAntiRagdoll() end end })
 TabCombat:CreateToggle({ Name = T("NoAnimation"), CurrentValue = Settings.NoAnimation, Flag = "NoAnimation", Callback = function(v) Settings.NoAnimation = v; if v then enableNoAnimation() else disableNoAnimation() end end })
 
@@ -1068,7 +909,6 @@ TabTools:CreateDropdown({
 RunService.RenderStepped:Connect(function()
     local char = LocalPlayer.Character
     if not char then return end
-
     local hrp = char:FindFirstChild("HumanoidRootPart")
     local hum = char:FindFirstChildOfClass("Humanoid")
 
@@ -1077,7 +917,6 @@ RunService.RenderStepped:Connect(function()
         local cam = Workspace.CurrentCamera
         local speed = Settings.FlySpeed
         local dir = Vector3.zero
-
         if isMobile then
             local move = hum and hum.MoveDirection or Vector3.zero
             dir = move
@@ -1093,7 +932,6 @@ RunService.RenderStepped:Connect(function()
             if uis:IsKeyDown(Enum.KeyCode.Space) then dir = dir + Vector3.new(0, 1, 0) end
             if uis:IsKeyDown(Enum.KeyCode.LeftShift) or uis:IsKeyDown(Enum.KeyCode.RightShift) then dir = dir - Vector3.new(0, 1, 0) end
         end
-
         flyVelocity.Velocity = dir.Magnitude > 0 and dir.Unit * speed or Vector3.zero
         flyGyro.CFrame = cam.CFrame
     end
@@ -1154,7 +992,6 @@ RunService.RenderStepped:Connect(function()
         end
     end
 
-    -- WalkSpeed
     if hum and hum.WalkSpeed ~= Settings.WalkSpeed and not Settings.Fly and not Settings.AutoFarm then
         hum.WalkSpeed = Settings.WalkSpeed
     end
@@ -1164,13 +1001,10 @@ RunService.Heartbeat:Connect(doAutoFarm)
 
 LocalPlayer.CharacterAdded:Connect(function(_character)
     task.wait(0.5)
-
     if Settings.Fly then disableFly(); task.wait(0.1); enableFly() end
     if Settings.NoClip then enableNoClip() end
-    if Settings.AntiTouch then enableAntiTouch() end
     if Settings.AntiRagdoll then enableAntiRagdoll() end
     if Settings.NoAnimation then enableNoAnimation() end
-
     local hum = getHumanoid()
     if hum then hum.WalkSpeed = Settings.WalkSpeed end
 end)
