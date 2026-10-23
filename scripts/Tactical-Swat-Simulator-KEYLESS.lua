@@ -7,31 +7,27 @@
     ================================================================
     Features:
       COMBAT
-        Silent Aim  — FOV camera redirect toward nearest suspect
-                      when weapon fires (PC + Mobile)
-        God Mode    — health loop, near-invincible
-        ESP         — Highlight + BillboardGui (name + HP) on suspects
-        Hitbox      — enlarge suspect HRPs for easier hits
+        Silent Aim    — FOV camera redirect toward nearest criminal NPC (PC + Mobile)
+        ESP           — DYNAMIC: criminals = orange+hitbox | civilians = blue, no hitbox
+        Objective ESP — highlight mission objectives (bombs, packages, evidence…) in yellow
+        Hitbox        — enlarge criminal NPC HRPs only (never affects civilians)
       WEAPONS
-        Infinite Ammo  — keeps all ammo values at 999 each frame
-        Freeze Ammo    — same, but disables natural consumption
-        Fast Reload    — forces reload values to max immediately
+        Fast Reload   — fires reload remotes + resets ammo values (all weapon types)
       MOVEMENT
-        Fly        — WASD/MoveDir + UI Up/Down buttons (PC + Mobile)
-        NoClip     — pass through walls
-        WalkSpeed  — slider 16–350
-        Jump       — BodyVelocity boost (works when JumpPower = 0)
-                     PC: E key | Mobile: UI button
+        Fly           — Infinite Yield style: WASD/Space/Shift PC + MoveDir Mobile
+        NoClip        — pass through walls
+        WalkSpeed     — slider 16–350
+        Infinite Jump — hold jump for continuous jumping (JumpRequest hook)
       AUTO
-        Auto Arrest  — fires all arrest/handcuff ProximityPrompts
-                       in range, with configurable delay
-        Bring Near   — TP nearest suspect to local player
-        Bring All    — TP all suspects to local player
-        Open Doors   — fires door/gate/checkpoint prompts
+        Auto Arrest   — fires ALL ProximityPrompts on criminal NPCs +
+                        scans ActionText for arrest keywords
+        Bring Near    — TP nearest criminal NPC to local player
+        Bring All     — TP all criminal NPCs to local player
+        Open Doors    — fires ALL environment ProximityPrompts/ClickDetectors
       TOOLS
-        Fullbright   — brightness + no shadows, fixed clock
-        Anti-AFK     — fake input every 4 min to avoid kick
-        Language     — 21 languages (re-exec to apply)
+        Fullbright    — brightness + no shadows, fixed clock
+        Anti-AFK      — fake input every 4 min to avoid kick
+        Language      — 21 languages (re-exec to apply)
     ================================================================
 --]]
 
@@ -69,10 +65,12 @@ local Translations = {
         SilentAimFOV     = "FOV Radius (px)",
         GodMode          = "God Mode",
         GodModeDesc      = "Continuously restore HP — near-invincible",
-        ESPEnabled       = "ESP Suspects",
-        ESPDesc          = "Highlight suspects + show HP through walls",
-        HitboxToggle     = "Expand Hitboxes",
-        HitboxDesc       = "Enlarge suspect HRPs for easier hits",
+        ESPEnabled       = "ESP (Criminals/Civilians)",
+        ESPDesc          = "Criminals = orange+hitbox | Civilians = blue, no hitbox",
+        ObjectiveESP     = "Objective ESP",
+        ObjectiveESPDesc = "Highlight mission objectives in yellow through walls",
+        HitboxToggle     = "Expand Hitboxes (Criminals only)",
+        HitboxDesc       = "Enlarge criminal NPC HRPs for easier hits",
         HitboxSize       = "Hitbox Size",
         -- Weapons
         InfiniteAmmo     = "Infinite Ammo",
@@ -83,16 +81,13 @@ local Translations = {
         FastReloadDesc   = "Instantly reload equipped weapon",
         -- Movement
         Fly              = "Fly",
-        FlyDesc          = "Flight mode (WASD + Up/Down buttons)",
+        FlyDesc          = "Flight mode — WASD+Space/Shift (PC) or MoveDir (Mobile)",
         FlySpeed         = "Fly Speed",
-        FloatUp          = "Float Up ▲",
-        FloatDown        = "Float Down ▼",
         NoClip           = "NoClip",
         NoClipDesc       = "Pass through walls and obstacles",
         WalkSpeed        = "Walk Speed",
-        Jump             = "Jump (E key / button)",
-        JumpDesc         = "Force a jump even when disabled",
-        JumpPower        = "Jump Power",
+        InfJump          = "Infinite Jump",
+        InfJumpDesc      = "Continuously jump by holding the jump button/key",
         -- Auto
         AutoArrest       = "Auto Arrest",
         AutoArrestDesc   = "Auto-fire arrest prompts on all suspects",
@@ -1209,17 +1204,15 @@ local Settings = {
     SilentAim       = false,
     SilentAimDist   = 150,   -- studs
     SilentAimFOV    = 80,    -- px on screen
-    GodMode         = false,
     ESP             = false,
+    ObjectiveESP    = false,
     Hitbox          = false,
     HitboxSize      = 4,
-    InfiniteAmmo    = false,
-    FreezeAmmo      = false,
     Fly             = false,
     FlySpeed        = 60,
     NoClip          = false,
     WalkSpeed       = 16,
-    JumpPower       = 60,
+    InfJump         = false,
     AutoArrest      = false,
     AutoArrestDelay = 0.5,
     AntiAFK         = false,
@@ -1260,7 +1253,7 @@ local function getHum()
 end
 
 -- Is this model a live NPC (not a player)?
-local function isSuspect(model)
+local function isNPC(model)
     if not model:IsA("Model") then return false end
     local h = model:FindFirstChildOfClass("Humanoid")
     if not h or h.Health <= 0 then return false end
@@ -1270,11 +1263,52 @@ local function isSuspect(model)
     return true
 end
 
--- Get all live suspects in workspace
+-- Keyword lists for NPC classification
+local CIVILIAN_KW = {
+    "hostage","civilian","victim","bystander","customer",
+    "worker","employee","staff","innocent","npc","citizen",
+    "passerby","clerk","cashier","teller","person"
+}
+local CRIMINAL_KW = {
+    "criminal","robber","suspect","thief","gangster","bandit",
+    "shooter","hostile","enemy","terrorist","attacker","perpetrator",
+    "crook","felon","gunman","raider","intruder","villain"
+}
+
+-- Returns "criminal", "civilian", or nil
+local function getNPCType(model)
+    if not isNPC(model) then return nil end
+    local n = model.Name:lower()
+    for _, kw in ipairs(CIVILIAN_KW) do
+        if n:find(kw) then return "civilian" end
+    end
+    -- Check StringValues inside (some games tag NPC role)
+    for _, v in ipairs(model:GetDescendants()) do
+        if v:IsA("StringValue") then
+            local vn = v.Name:lower()
+            local vv = v.Value:lower()
+            if (vn == "role" or vn == "type" or vn == "team") then
+                for _, kw in ipairs(CIVILIAN_KW) do
+                    if vv:find(kw) then return "civilian" end
+                end
+            end
+        end
+    end
+    -- Default: any unknown NPC = criminal
+    return "criminal"
+end
+
+local function isCriminal(model) return getNPCType(model) == "criminal" end
+local function isCivilian(model) return getNPCType(model) == "civilian" end
+
+-- Keep isSuspect as alias for "any NPC" (used by SilentAim/Bring)
+local function isSuspect(model) return isNPC(model) end
+
+-- Get all live criminal NPCs in workspace
 local function getAllSuspects()
     local list = {}
     for _, obj in ipairs(Workspace:GetDescendants()) do
-        if isSuspect(obj) then list[#list+1] = obj end
+        if isCriminal(obj) then list[#list+1] = obj end
     end
     return list
 end
@@ -1303,90 +1337,205 @@ local function worldToScreen(pos)
 end
 
 -- ───────────────────────────────────────────────────────────────
--- FLY (BodyVelocity + BodyGyro, camera-relative + MoveDirection)
+-- FLY — Infinite Yield style (BodyVelocity + BodyGyro)
+--        WASD + Space/Shift on PC | MoveDirection on Mobile
 -- ───────────────────────────────────────────────────────────────
-local flyBV, flyBG
-local flyUp, flyDown = false, false   -- toggled by UI buttons
+local FLYING = false
+local flyKeyDown, flyKeyUp
 
 local function enableFly()
-    local hrp = getHRP()
-    if not hrp then return end
-    flyBV = Instance.new("BodyVelocity")
-    flyBV.MaxForce = Vector3.new(1e5,1e5,1e5)
-    flyBV.Velocity = Vector3.zero
-    flyBV.Parent   = hrp
-    flyBG = Instance.new("BodyGyro")
-    flyBG.MaxTorque = Vector3.new(1e5,1e5,1e5)
-    flyBG.P         = 1e4
-    flyBG.CFrame    = hrp.CFrame
-    flyBG.Parent    = hrp
-    local h = getHum()
-    if h then h.PlatformStand = true end
+    local char = getChar()
+    local hrp  = getHRP()
+    local hum  = getHum()
+    if not char or not hrp or not hum then return end
+
+    -- Disconnect any previous listeners
+    if flyKeyDown then flyKeyDown:Disconnect() end
+    if flyKeyUp   then flyKeyUp:Disconnect()   end
+
+    FLYING = true
+
+    local CTRL = {F=0, B=0, L=0, R=0, UP=0, DOWN=0}
+
+    local bv = Instance.new("BodyVelocity")
+    bv.Name      = "_SWAT_FLY_BV"
+    bv.MaxForce  = Vector3.new(9e9, 9e9, 9e9)
+    bv.Velocity  = Vector3.zero
+    bv.Parent    = hrp
+
+    local bg = Instance.new("BodyGyro")
+    bg.Name      = "_SWAT_FLY_BG"
+    bg.P         = 9e4
+    bg.MaxTorque = Vector3.new(9e9, 9e9, 9e9)
+    bg.CFrame    = hrp.CFrame
+    bg.Parent    = hrp
+
+    hum.PlatformStand = true
+
+    flyKeyDown = UserInputService.InputBegan:Connect(function(inp, proc)
+        if proc then return end
+        local k = inp.KeyCode
+        local s = 1
+        if k == Enum.KeyCode.W     then CTRL.F    =  s
+        elseif k == Enum.KeyCode.S then CTRL.B    = -s
+        elseif k == Enum.KeyCode.A then CTRL.L    = -s
+        elseif k == Enum.KeyCode.D then CTRL.R    =  s
+        elseif k == Enum.KeyCode.Space      then CTRL.UP   =  s
+        elseif k == Enum.KeyCode.LeftShift
+            or k == Enum.KeyCode.RightShift then CTRL.DOWN = -s
+        end
+    end)
+
+    flyKeyUp = UserInputService.InputEnded:Connect(function(inp, proc)
+        if proc then return end
+        local k = inp.KeyCode
+        if k == Enum.KeyCode.W     then CTRL.F    = 0
+        elseif k == Enum.KeyCode.S then CTRL.B    = 0
+        elseif k == Enum.KeyCode.A then CTRL.L    = 0
+        elseif k == Enum.KeyCode.D then CTRL.R    = 0
+        elseif k == Enum.KeyCode.Space      then CTRL.UP   = 0
+        elseif k == Enum.KeyCode.LeftShift
+            or k == Enum.KeyCode.RightShift then CTRL.DOWN = 0
+        end
+    end)
+
+    task.spawn(function()
+        while FLYING do
+            task.wait()
+            local cam   = Workspace.CurrentCamera
+            local spd   = Settings.FlySpeed
+            -- Mobile: MoveDirection gives horizontal intent
+            local md    = hum.MoveDirection
+            local hasMobile = md.Magnitude > 0.1
+
+            local vel
+            if hasMobile then
+                -- Project mobile MoveDirection onto camera-flat plane
+                local fwd   = Vector3.new(cam.CFrame.LookVector.X,  0, cam.CFrame.LookVector.Z)
+                local right = Vector3.new(cam.CFrame.RightVector.X, 0, cam.CFrame.RightVector.Z)
+                if fwd.Magnitude  > 0 then fwd   = fwd.Unit   end
+                if right.Magnitude > 0 then right = right.Unit end
+                vel = (fwd * (-md.Z) + right * md.X) * spd
+                    + Vector3.new(0, (CTRL.UP + CTRL.DOWN) * spd, 0)
+            else
+                -- PC WASD
+                vel = (cam.CFrame.LookVector  * (CTRL.F + CTRL.B)
+                     + cam.CFrame.RightVector * (CTRL.L + CTRL.R)
+                     + Vector3.new(0, (CTRL.UP + CTRL.DOWN), 0)) * spd
+            end
+
+            bv.Velocity = vel
+            bg.CFrame   = cam.CFrame
+        end
+    end)
 end
 
 local function disableFly()
-    if flyBV then flyBV:Destroy(); flyBV = nil end
-    if flyBG then flyBG:Destroy(); flyBG = nil end
+    FLYING = false
+    if flyKeyDown then flyKeyDown:Disconnect(); flyKeyDown = nil end
+    if flyKeyUp   then flyKeyUp:Disconnect();   flyKeyUp   = nil end
+    local hrp = getHRP()
+    if hrp then
+        local b = hrp:FindFirstChild("_SWAT_FLY_BV")
+        if b then b:Destroy() end
+        local g = hrp:FindFirstChild("_SWAT_FLY_BG")
+        if g then g:Destroy() end
+    end
     local h = getHum()
     if h then h.PlatformStand = false end
-    flyUp, flyDown = false, false
 end
 
 -- ───────────────────────────────────────────────────────────────
--- JUMP (works when JumpPower = 0 in-game)
+-- INFINITE JUMP (JumpRequest hook — works on PC + Mobile)
 -- ───────────────────────────────────────────────────────────────
-local function doJump()
-    local hrp = getHRP()
-    local hum = getHum()
-    if not hrp or not hum then return end
-    -- BodyVelocity burst
-    local bv = Instance.new("BodyVelocity")
-    bv.Velocity  = Vector3.new(0, Settings.JumpPower, 0)
-    bv.MaxForce  = Vector3.new(0, 1e6, 0)
-    bv.Parent    = hrp
-    game:GetService("Debris"):AddItem(bv, 0.25)
-    -- also try humanoid jump in case JumpPower was reset
-    local orig = hum.JumpPower
-    hum.JumpPower = Settings.JumpPower
-    hum:ChangeState(Enum.HumanoidStateType.Jumping)
-    task.delay(0.15, function() pcall(function() hum.JumpPower = orig end) end)
+local infJumpConn
+local infJumpDebounce = false
+
+local function enableInfJump()
+    if infJumpConn then infJumpConn:Disconnect() end
+    infJumpDebounce = false
+    infJumpConn = UserInputService.JumpRequest:Connect(function()
+        if not infJumpDebounce then
+            infJumpDebounce = true
+            local hum = getHum()
+            if hum then
+                pcall(function() hum:ChangeState(Enum.HumanoidStateType.Jumping) end)
+            end
+            task.wait(0.1)
+            infJumpDebounce = false
+        end
+    end)
 end
 
--- PC: E key to jump
-UserInputService.InputBegan:Connect(function(input, gp)
-    if gp then return end
-    if input.KeyCode == Enum.KeyCode.E then
-        doJump()
-    end
-end)
+local function disableInfJump()
+    if infJumpConn then infJumpConn:Disconnect(); infJumpConn = nil end
+    infJumpDebounce = false
+end
 
 -- ───────────────────────────────────────────────────────────────
--- FAST RELOAD helper
+-- FAST RELOAD helper — works with all weapon types
 -- ───────────────────────────────────────────────────────────────
+local RELOAD_KW = {"reload","refill","recharge","replenish","restock"}
+local AMMO_KW   = {"ammo","mag","clip","bullet","reserve","current","round","chamber","loaded"}
+
 local function doFastReload()
     local char = getChar()
     if not char then return end
     local tool = char:FindFirstChildOfClass("Tool")
     if not tool then return end
-    -- Reset ammo values in the tool
+
+    -- 1. Max out all ammo-like Values
     for _, v in ipairs(tool:GetDescendants()) do
-        if (v:IsA("IntValue") or v:IsA("NumberValue")) then
+        if v:IsA("IntValue") or v:IsA("NumberValue") then
             local n = v.Name:lower()
-            if n:find("ammo") or n:find("mag") or n:find("clip") or n:find("bullet") then
-                v.Value = 999
+            for _, kw in ipairs(AMMO_KW) do
+                if n:find(kw) then v.Value = 9999; break end
             end
         end
     end
-    -- Try firing a reload remote if it exists
+
+    -- 2. Fire RemoteEvents named after reload
     for _, v in ipairs(tool:GetDescendants()) do
         if v:IsA("RemoteEvent") then
             local n = v.Name:lower()
-            if n:find("reload") then
-                pcall(function() v:FireServer() end)
-                break
+            for _, kw in ipairs(RELOAD_KW) do
+                if n:find(kw) then pcall(function() v:FireServer() end); break end
             end
         end
     end
+
+    -- 3. Invoke RemoteFunctions named after reload
+    for _, v in ipairs(tool:GetDescendants()) do
+        if v:IsA("RemoteFunction") then
+            local n = v.Name:lower()
+            for _, kw in ipairs(RELOAD_KW) do
+                if n:find(kw) then pcall(function() v:InvokeServer() end); break end
+            end
+        end
+    end
+
+    -- 4. Fire BindableEvents named after reload
+    for _, v in ipairs(tool:GetDescendants()) do
+        if v:IsA("BindableEvent") then
+            local n = v.Name:lower()
+            for _, kw in ipairs(RELOAD_KW) do
+                if n:find(kw) then pcall(function() v:Fire() end); break end
+            end
+        end
+    end
+
+    -- 5. Scan game's RemoteEvents at root level (some games store them outside the tool)
+    for _, rs in ipairs({ReplicatedStorage, Workspace}) do
+        for _, v in ipairs(rs:GetDescendants()) do
+            if v:IsA("RemoteEvent") then
+                local n = v.Name:lower()
+                for _, kw in ipairs(RELOAD_KW) do
+                    if n:find(kw) then pcall(function() v:FireServer() end); break end
+                end
+            end
+        end
+    end
+
     Rayfield:Notify({Title = T("FastReload"), Content = "✓", Duration = 1})
 end
 
@@ -1430,19 +1579,17 @@ TabCombat:CreateSlider({
 TabCombat:CreateDivider()
 
 TabCombat:CreateToggle({
-    Name         = T("GodMode"),
-    CurrentValue = Settings.GodMode,
-    Flag         = "GodMode",
-    Callback     = function(v) Settings.GodMode = v end,
-})
-
-TabCombat:CreateDivider()
-
-TabCombat:CreateToggle({
     Name         = T("ESPEnabled"),
     CurrentValue = Settings.ESP,
     Flag         = "ESP",
     Callback     = function(v) Settings.ESP = v end,
+})
+
+TabCombat:CreateToggle({
+    Name         = T("ObjectiveESP"),
+    CurrentValue = Settings.ObjectiveESP,
+    Flag         = "ObjectiveESP",
+    Callback     = function(v) Settings.ObjectiveESP = v end,
 })
 
 TabCombat:CreateDivider()
@@ -1454,9 +1601,9 @@ TabCombat:CreateToggle({
     Callback     = function(v)
         Settings.Hitbox = v
         if not v then
-            -- restore original sizes
+            -- restore original sizes (criminal NPCs only)
             for _, obj in ipairs(Workspace:GetDescendants()) do
-                if isSuspect(obj) then
+                if isCriminal(obj) then
                     local hrpS = obj:FindFirstChild("HumanoidRootPart")
                     if hrpS then
                         local sv = hrpS:FindFirstChild("_origSzSWAT")
@@ -1483,18 +1630,6 @@ TabCombat:CreateSlider({
 -- ── TAB WEAPONS ─────────────────────────────────────────────────
 local TabWeapons = Window:CreateTab(T("TabWeapons"), 4483362458)
 
-TabWeapons:CreateToggle({
-    Name         = T("InfiniteAmmo"),
-    CurrentValue = Settings.InfiniteAmmo,
-    Flag         = "InfiniteAmmo",
-    Callback     = function(v) Settings.InfiniteAmmo = v end,
-})
-TabWeapons:CreateToggle({
-    Name         = T("FreezeAmmo"),
-    CurrentValue = Settings.FreezeAmmo,
-    Flag         = "FreezeAmmo",
-    Callback     = function(v) Settings.FreezeAmmo = v end,
-})
 TabWeapons:CreateButton({
     Name     = T("FastReload"),
     Callback = doFastReload,
@@ -1520,23 +1655,6 @@ TabMovement:CreateSlider({
     Flag         = "FlySpeed",
     Callback     = function(v) Settings.FlySpeed = v end,
 })
--- Float Up / Down buttons (work on mobile and PC)
-TabMovement:CreateButton({
-    Name     = T("FloatUp"),
-    Callback = function()
-        flyUp   = true
-        flyDown = false
-        task.delay(0.5, function() flyUp = false end)
-    end,
-})
-TabMovement:CreateButton({
-    Name     = T("FloatDown"),
-    Callback = function()
-        flyDown = true
-        flyUp   = false
-        task.delay(0.5, function() flyDown = false end)
-    end,
-})
 
 TabMovement:CreateDivider()
 
@@ -1561,17 +1679,14 @@ TabMovement:CreateSlider({
 
 TabMovement:CreateDivider()
 
-TabMovement:CreateButton({
-    Name     = T("Jump"),
-    Callback = doJump,
-})
-TabMovement:CreateSlider({
-    Name         = T("JumpPower"),
-    Range        = {20, 200},
-    Increment    = 5,
-    CurrentValue = Settings.JumpPower,
-    Flag         = "JumpPower",
-    Callback     = function(v) Settings.JumpPower = v end,
+TabMovement:CreateToggle({
+    Name         = T("InfJump"),
+    CurrentValue = Settings.InfJump,
+    Flag         = "InfJump",
+    Callback     = function(v)
+        Settings.InfJump = v
+        if v then enableInfJump() else disableInfJump() end
+    end,
 })
 
 -- ── TAB AUTO ────────────────────────────────────────────────────
@@ -1632,23 +1747,64 @@ TabAuto:CreateButton({
     Name     = T("OpenDoors"),
     Callback = function()
         local count = 0
-        local keywords = {"door","gate","porte","checkpoint","portal","barrier","shutter","vault"}
-        for _, obj in ipairs(Workspace:GetDescendants()) do
-            local n = obj.Name:lower()
-            local match = false
-            for _, kw in ipairs(keywords) do
-                if n:find(kw) then match = true; break end
+        local DOOR_ACT = {
+            "open","unlock","enter","access","activate","use",
+            "interact","push","pull","door","gate","checkpoint"
+        }
+        local DOOR_NAME = {
+            "door","gate","porte","checkpoint","portal","barrier",
+            "shutter","vault","lock","entrance","exit","passage",
+            "hatch","panel","keypad","lever","switch","button"
+        }
+
+        -- Helper: is this prompt NOT on a live NPC model?
+        local function isEnvPrompt(pp)
+            local p = pp.Parent
+            while p and p ~= Workspace do
+                if isNPC(p) then return false end
+                p = p.Parent
             end
-            if match then
-                if obj:IsA("ProximityPrompt") then
-                    pcall(function() fireproximityprompt(obj) end); count=count+1
-                elseif obj:IsA("ClickDetector") then
-                    pcall(function() fireclickdetector(obj) end); count=count+1
-                elseif obj:IsA("RemoteEvent") then
-                    pcall(function() obj:FireServer(true) end); count=count+1
+            return true
+        end
+
+        -- 1. Fire ALL non-NPC ProximityPrompts
+        for _, pp in ipairs(Workspace:GetDescendants()) do
+            if pp:IsA("ProximityPrompt") and pp.Enabled and isEnvPrompt(pp) then
+                -- Optionally also check ActionText for door context
+                local action = (pp.ActionText or ""):lower()
+                local name   = pp.Name:lower()
+                local isDoor = false
+                for _, kw in ipairs(DOOR_ACT) do
+                    if action:find(kw) then isDoor = true; break end
+                end
+                if not isDoor then
+                    for _, kw in ipairs(DOOR_NAME) do
+                        if name:find(kw) then isDoor = true; break end
+                    end
+                end
+                -- Fire all unlabeled env prompts too (catch-all)
+                if not isDoor then isDoor = true end
+                if isDoor then
+                    pcall(function() fireproximityprompt(pp) end)
+                    count = count + 1
                 end
             end
         end
+
+        -- 2. Fire ClickDetectors on door-named parts
+        for _, cd in ipairs(Workspace:GetDescendants()) do
+            if cd:IsA("ClickDetector") and isEnvPrompt(cd) then
+                local name = cd.Name:lower()
+                for _, kw in ipairs(DOOR_NAME) do
+                    if name:find(kw) then
+                        pcall(function() fireclickdetector(cd) end)
+                        count = count + 1
+                        break
+                    end
+                end
+            end
+        end
+
         Rayfield:Notify({Title = T("OpenDoors"), Content = count.." interactions", Duration = 2})
     end,
 })
@@ -1724,7 +1880,7 @@ LocalPlayer.CharacterAdded:Connect(hookChar)
 local lastArrestTime = 0
 local ARREST_KEYWORDS = {
     "arrest","handcuff","detain","cuff","interact",
-    "capture","tackle","subdue","grab","seize"
+    "capture","tackle","subdue","grab","seize","apprehend"
 }
 
 local function tryAutoArrest()
@@ -1736,18 +1892,53 @@ local function tryAutoArrest()
     local hrp = getHRP()
     if not hrp then return end
 
+    -- Strategy 1: fire ALL ProximityPrompts on criminal NPC models directly
     for _, obj in ipairs(Workspace:GetDescendants()) do
-        local n = obj.Name:lower()
-        local match = false
-        for _, kw in ipairs(ARREST_KEYWORDS) do
-            if n:find(kw) then match = true; break end
+        if isCriminal(obj) then
+            for _, pp in ipairs(obj:GetDescendants()) do
+                if pp:IsA("ProximityPrompt") then
+                    pcall(function() fireproximityprompt(pp) end)
+                elseif pp:IsA("ClickDetector") then
+                    pcall(function() fireclickdetector(pp) end)
+                end
+            end
         end
-        if match and obj:IsA("ProximityPrompt") then
-            pcall(function() fireproximityprompt(obj) end)
-        elseif match and obj:IsA("ClickDetector") then
-            pcall(function() fireclickdetector(obj) end)
-        elseif match and obj:IsA("RemoteEvent") then
-            pcall(function() obj:FireServer() end)
+    end
+
+    -- Strategy 2: scan ALL ProximityPrompts in workspace by ActionText keyword
+    for _, pp in ipairs(Workspace:GetDescendants()) do
+        if pp:IsA("ProximityPrompt") then
+            local action = (pp.ActionText or ""):lower()
+            local name   = pp.Name:lower()
+            for _, kw in ipairs(ARREST_KEYWORDS) do
+                if action:find(kw) or name:find(kw) then
+                    pcall(function() fireproximityprompt(pp) end)
+                    break
+                end
+            end
+        elseif pp:IsA("ClickDetector") then
+            local name = pp.Name:lower()
+            for _, kw in ipairs(ARREST_KEYWORDS) do
+                if name:find(kw) then
+                    pcall(function() fireclickdetector(pp) end)
+                    break
+                end
+            end
+        end
+    end
+
+    -- Strategy 3: fire arrest-named RemoteEvents at root level
+    for _, rs in ipairs({ReplicatedStorage, Workspace}) do
+        for _, re in ipairs(rs:GetDescendants()) do
+            if re:IsA("RemoteEvent") then
+                local n = re.Name:lower()
+                for _, kw in ipairs(ARREST_KEYWORDS) do
+                    if n:find(kw) then
+                        pcall(function() re:FireServer() end)
+                        break
+                    end
+                end
+            end
         end
     end
 end
@@ -1767,11 +1958,6 @@ RunService.RenderStepped:Connect(function()
     local hrp = char:FindFirstChild("HumanoidRootPart")
     local hum = char:FindFirstChildOfClass("Humanoid")
 
-    -- ── GOD MODE ──────────────────────────────────────────────
-    if Settings.GodMode and hum and hum.Health > 0 then
-        hum.Health = hum.MaxHealth
-    end
-
     -- ── NOCLIP ────────────────────────────────────────────────
     if Settings.NoClip then
         for _, p in ipairs(char:GetDescendants()) do
@@ -1781,117 +1967,154 @@ RunService.RenderStepped:Connect(function()
         end
     end
 
-    -- ── FLY ───────────────────────────────────────────────────
-    if Settings.Fly and flyBV and flyBG and hrp then
-        local cam   = Workspace.CurrentCamera
-        local speed = Settings.FlySpeed
-        -- Horizontal: from MoveDirection (works on PC thumbstick + mobile)
-        local md = hum and hum.MoveDirection or Vector3.zero
-        local dir = Vector3.new(md.X, 0, md.Z)
+    -- ── FLY — handled inside enableFly() task.spawn loop ─────
+    -- (no per-frame logic here; loop runs autonomously)
 
-        -- Vertical: keyboard (PC) or UI button flags
-        local uis = UserInputService
-        if uis:IsKeyDown(Enum.KeyCode.Space) or flyUp then
-            dir = dir + Vector3.new(0, 1, 0)
-        end
-        if uis:IsKeyDown(Enum.KeyCode.LeftShift)
-        or uis:IsKeyDown(Enum.KeyCode.RightShift)
-        or flyDown then
-            dir = dir - Vector3.new(0, 1, 0)
-        end
+    -- ── DYNAMIC NPC ESP ───────────────────────────────────────
+    local OBJ_KW = {
+        "objective","target","goal","bomb","package","case",
+        "briefcase","evidence","vault","keycard","intel","device",
+        "mission","cargo","loot","artifact","item","objective"
+    }
 
-        flyBV.Velocity = dir.Magnitude > 0 and dir.Unit * speed or Vector3.zero
-        flyBG.CFrame   = cam.CFrame
-    end
+    for _, obj in ipairs(Workspace:GetDescendants()) do
+        local npcType = getNPCType(obj)  -- "criminal" | "civilian" | nil
 
-    -- ── INFINITE / FREEZE AMMO ────────────────────────────────
-    if Settings.InfiniteAmmo or Settings.FreezeAmmo then
-        local tool = char:FindFirstChildOfClass("Tool")
-        if tool then
-            for _, v in ipairs(tool:GetDescendants()) do
-                if v:IsA("IntValue") or v:IsA("NumberValue") then
-                    local n = v.Name:lower()
-                    if n:find("ammo") or n:find("mag") or n:find("clip")
-                    or n:find("bullet") or n:find("reserve") then
-                        v.Value = 999
+        if npcType then
+            -- ── NPC ESP ───────────────────────────────────────
+            local isCrim = (npcType == "criminal")
+            local hlTag  = isCrim and "_SWAT_HL_C" or "_SWAT_HL_V"
+            local bbTag  = "_SWAT_BB"
+
+            if Settings.ESP then
+                -- Highlight
+                if not obj:FindFirstChild(hlTag) then
+                    -- Remove any old tag from the other type
+                    local oldHL = obj:FindFirstChild("_SWAT_HL_C") or obj:FindFirstChild("_SWAT_HL_V")
+                    if oldHL then oldHL:Destroy() end
+
+                    local hl = Instance.new("Highlight")
+                    hl.Name             = hlTag
+                    hl.FillTransparency = 0.35
+                    if isCrim then
+                        hl.FillColor    = Color3.fromRGB(255, 70,  0)   -- orange
+                        hl.OutlineColor = Color3.fromRGB(255, 200, 0)   -- yellow border
+                    else
+                        hl.FillColor    = Color3.fromRGB(0,  160, 255)  -- blue
+                        hl.OutlineColor = Color3.fromRGB(180, 240, 255) -- light blue border
+                    end
+                    hl.Parent = obj
+                end
+
+                -- BillboardGui
+                local sHRP = obj:FindFirstChild("HumanoidRootPart")
+                if sHRP and not sHRP:FindFirstChild(bbTag) then
+                    local bb  = Instance.new("BillboardGui")
+                    bb.Name        = bbTag
+                    bb.Size        = UDim2.new(0, 140, 0, 48)
+                    bb.StudsOffset = Vector3.new(0, 3.5, 0)
+                    bb.AlwaysOnTop = true
+                    bb.Parent      = sHRP
+                    local lbl = Instance.new("TextLabel")
+                    lbl.Name                   = "Lbl"
+                    lbl.Size                   = UDim2.new(1,0,1,0)
+                    lbl.BackgroundTransparency = 1
+                    lbl.TextStrokeTransparency = 0
+                    lbl.TextScaled             = true
+                    lbl.Font                   = Enum.Font.GothamBold
+                    lbl.TextColor3             = isCrim
+                        and Color3.fromRGB(255, 230, 80)   -- yellow text for criminals
+                        or  Color3.fromRGB(180, 240, 255)  -- light blue text for civilians
+                    lbl.Parent = bb
+                end
+
+                -- Update HP label every frame
+                local sHRP2 = obj:FindFirstChild("HumanoidRootPart")
+                if sHRP2 then
+                    local bb = sHRP2:FindFirstChild(bbTag)
+                    local sH = obj:FindFirstChildOfClass("Humanoid")
+                    if bb and sH then
+                        local l = bb:FindFirstChild("Lbl")
+                        if l then
+                            local tag = isCrim and "[CRIMINAL]" or "[CIVILIAN]"
+                            l.Text = string.format("%s\n%s\n❤ %d/%d",
+                                tag, obj.Name,
+                                math.floor(sH.Health),
+                                math.floor(sH.MaxHealth))
+                        end
                     end
                 end
+            else
+                -- Clean up ESP when disabled
+                for _, tag in ipairs({"_SWAT_HL_C","_SWAT_HL_V"}) do
+                    local hl = obj:FindFirstChild(tag)
+                    if hl then hl:Destroy() end
+                end
+                local sHRP = obj:FindFirstChild("HumanoidRootPart")
+                if sHRP then
+                    local bb = sHRP:FindFirstChild(bbTag)
+                    if bb then bb:Destroy() end
+                end
             end
-        end
-    end
 
-    -- ── ESP SUSPECTS ──────────────────────────────────────────
-    for _, obj in ipairs(Workspace:GetDescendants()) do
-        local alive = isSuspect(obj)
-
-        if Settings.ESP and alive then
-            -- Highlight
-            if not obj:FindFirstChild("_SWAT_HL") then
-                local hl = Instance.new("Highlight")
-                hl.Name             = "_SWAT_HL"
-                hl.FillColor        = Color3.fromRGB(255, 80, 0)
-                hl.OutlineColor     = Color3.fromRGB(255, 255, 0)
-                hl.FillTransparency = 0.35
-                hl.Parent           = obj
-            end
-            -- BillboardGui
-            local sHRP = obj:FindFirstChild("HumanoidRootPart")
-            if sHRP and not sHRP:FindFirstChild("_SWAT_BB") then
-                local bb = Instance.new("BillboardGui")
-                bb.Name        = "_SWAT_BB"
-                bb.Size        = UDim2.new(0, 130, 0, 44)
-                bb.StudsOffset = Vector3.new(0, 3.5, 0)
-                bb.AlwaysOnTop = true
-                bb.Parent      = sHRP
-                local lbl = Instance.new("TextLabel")
-                lbl.Name                    = "Lbl"
-                lbl.Size                    = UDim2.new(1,0,1,0)
-                lbl.BackgroundTransparency  = 1
-                lbl.TextColor3              = Color3.fromRGB(255, 230, 80)
-                lbl.TextStrokeTransparency  = 0
-                lbl.TextScaled              = true
-                lbl.Font                    = Enum.Font.GothamBold
-                lbl.Parent                  = bb
-            end
-            -- Update HP label
-            if sHRP then
-                local bb = sHRP:FindFirstChild("_SWAT_BB")
-                local sH = obj:FindFirstChildOfClass("Humanoid")
-                if bb and sH then
-                    local l = bb:FindFirstChild("Lbl")
-                    if l then
-                        l.Text = string.format("[SUSPECT]\n%s\nHP %d/%d",
-                            obj.Name,
-                            math.floor(sH.Health),
-                            math.floor(sH.MaxHealth))
+            -- ── HITBOX — criminals only ────────────────────────
+            if Settings.Hitbox and isCrim then
+                local sHRP = obj:FindFirstChild("HumanoidRootPart")
+                if sHRP then
+                    if not sHRP:FindFirstChild("_origSzSWAT") then
+                        local sv = Instance.new("Vector3Value")
+                        sv.Name   = "_origSzSWAT"
+                        sv.Value  = sHRP.Size
+                        sv.Parent = sHRP
                     end
+                    local sz = Settings.HitboxSize * 2
+                    sHRP.Size         = Vector3.new(sz, sz, sz)
+                    sHRP.Transparency = 0.65
+                    sHRP.CanCollide   = false
+                end
+            end
+
+        elseif Settings.ObjectiveESP and obj:IsA("BasePart") then
+            -- ── OBJECTIVE ESP — non-NPC parts with objective keywords ──
+            local n = obj.Name:lower()
+            local isObj = false
+            for _, kw in ipairs(OBJ_KW) do
+                if n:find(kw) then isObj = true; break end
+            end
+            if isObj then
+                if not obj:FindFirstChild("_SWAT_OBJ_HL") then
+                    local hl = Instance.new("Highlight")
+                    hl.Name             = "_SWAT_OBJ_HL"
+                    hl.FillColor        = Color3.fromRGB(255, 255, 0)   -- yellow
+                    hl.OutlineColor     = Color3.fromRGB(255, 200, 0)
+                    hl.FillTransparency = 0.25
+                    hl.Parent           = obj
+                    -- Label
+                    local bb = Instance.new("BillboardGui")
+                    bb.Name        = "_SWAT_OBJ_BB"
+                    bb.Size        = UDim2.new(0, 120, 0, 36)
+                    bb.StudsOffset = Vector3.new(0, 2.5, 0)
+                    bb.AlwaysOnTop = true
+                    bb.Parent      = obj
+                    local lbl = Instance.new("TextLabel")
+                    lbl.Name                   = "Lbl"
+                    lbl.Size                   = UDim2.new(1,0,1,0)
+                    lbl.BackgroundTransparency = 1
+                    lbl.TextColor3             = Color3.fromRGB(255, 255, 100)
+                    lbl.TextStrokeTransparency = 0
+                    lbl.TextScaled             = true
+                    lbl.Font                   = Enum.Font.GothamBold
+                    lbl.Text                   = "⭐ "..obj.Name
+                    lbl.Parent                 = bb
                 end
             end
         else
-            -- Clean up if ESP disabled or model died
-            local hl = obj:FindFirstChild("_SWAT_HL")
-            if hl then hl:Destroy() end
-            local sHRP = obj:FindFirstChild("HumanoidRootPart")
-            if sHRP then
-                local bb = sHRP:FindFirstChild("_SWAT_BB")
+            -- Objective ESP cleanup when disabled
+            if not Settings.ObjectiveESP then
+                local hl = obj:FindFirstChild("_SWAT_OBJ_HL")
+                if hl then hl:Destroy() end
+                local bb = obj:FindFirstChild("_SWAT_OBJ_BB")
                 if bb then bb:Destroy() end
-            end
-        end
-
-        -- ── HITBOX ────────────────────────────────────────────
-        if Settings.Hitbox and alive then
-            local sHRP = obj:FindFirstChild("HumanoidRootPart")
-            if sHRP then
-                if not sHRP:FindFirstChild("_origSzSWAT") then
-                    local sv = Instance.new("Vector3Value")
-                    sv.Name   = "_origSzSWAT"
-                    sv.Value  = sHRP.Size
-                    sv.Parent = sHRP
-                end
-                local sz = Settings.HitboxSize * 2
-                sHRP.Size         = Vector3.new(sz, sz, sz)
-                sHRP.Transparency = 0.65
-                sHRP.CanCollide   = false
             end
         end
     end
@@ -1961,6 +2184,11 @@ LocalPlayer.CharacterAdded:Connect(function(char)
         disableFly()
         task.wait(0.1)
         enableFly()
+    end
+    if Settings.InfJump then
+        disableInfJump()
+        task.wait(0.05)
+        enableInfJump()
     end
     local h = char:FindFirstChildOfClass("Humanoid")
     if h then h.WalkSpeed = Settings.WalkSpeed end
