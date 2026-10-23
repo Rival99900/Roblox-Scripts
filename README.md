@@ -434,7 +434,7 @@ loadstring(game:HttpGet("https://raw.githubusercontent.com/Rival99900/Roblox-Scr
 - **Supported Games**: 1 (Be an SCP or Guard)
 - **Languages**: 21
 - **Script Length**: 1,275 lines
-- **Status**: untested in-game
+- **Status**: working
 
 ---
 
