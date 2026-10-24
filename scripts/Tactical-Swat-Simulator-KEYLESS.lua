@@ -11,19 +11,19 @@
         ESP           — DYNAMIC: criminals = orange+hitbox | civilians = blue, no hitbox
         Objective ESP — highlight mission objectives (bombs, packages, evidence…) in yellow
         Hitbox        — enlarge criminal NPC HRPs only (never affects civilians)
-      WEAPONS
-        Fast Reload   — fires reload remotes + resets ammo values (all weapon types)
       MOVEMENT
         Fly           — Infinite Yield style: WASD/Space/Shift PC + MoveDir Mobile
         NoClip        — pass through walls
         WalkSpeed     — slider 16–350
         Infinite Jump — hold jump for continuous jumping (JumpRequest hook)
       AUTO
-        Auto Arrest   — fires ALL ProximityPrompts on criminal NPCs +
-                        scans ActionText for arrest keywords
+        Auto Arrest   — fires arrest prompts within max distance + hands-up check
         Bring Near    — TP nearest criminal NPC to local player
         Bring All     — TP all criminal NPCs to local player
         Open Doors    — fires ALL environment ProximityPrompts/ClickDetectors
+      OVERLAY (on-screen, not in GUI)
+        Jump Button   — always visible bottom-right, works PC + Mobile
+        Fly ▲▼        — visible only when flying, works PC + Mobile
       TOOLS
         Fullbright    — brightness + no shadows, fixed clock
         Anti-AFK      — fake input every 4 min to avoid kick
@@ -90,8 +90,9 @@ local Translations = {
         InfJumpDesc      = "Continuously jump by holding the jump button/key",
         -- Auto
         AutoArrest       = "Auto Arrest",
-        AutoArrestDesc   = "Auto-fire arrest prompts on all suspects",
+        AutoArrestDesc   = "Auto-fire arrest prompts on suspects in range (hands up required)",
         AutoArrestDelay  = "Arrest Delay (s)",
+        AutoArrestDist   = "Max Arrest Distance (studs)",
         BringNearest     = "Bring Nearest Suspect",
         BringNearestDesc = "Teleport the closest suspect to you",
         BringAll         = "Bring All Suspects",
@@ -1215,6 +1216,7 @@ local Settings = {
     InfJump         = false,
     AutoArrest      = false,
     AutoArrestDelay = 0.5,
+    AutoArrestDist  = 10,   -- studs; 0 = unlimited
     AntiAFK         = false,
     Fullbright      = false,
 }
@@ -1266,8 +1268,8 @@ end
 -- Keyword lists for NPC classification
 local CIVILIAN_KW = {
     "hostage","civilian","victim","bystander","customer",
-    "worker","employee","staff","innocent","npc","citizen",
-    "passerby","clerk","cashier","teller","person"
+    "worker","employee","staff","innocent",
+    "clerk","cashier","teller"
 }
 local CRIMINAL_KW = {
     "criminal","robber","suspect","thief","gangster","bandit",
@@ -1275,26 +1277,35 @@ local CRIMINAL_KW = {
     "crook","felon","gunman","raider","intruder","villain"
 }
 
--- Returns "criminal", "civilian", or nil
+-- Returns "criminal", "civilian", or "criminal" (default for unknown)
+-- Checks CRIMINAL_KW first (priority), then CIVILIAN_KW, then StringValues
 local function getNPCType(model)
     if not isNPC(model) then return nil end
     local n = model.Name:lower()
+    -- 1. Criminal keywords take priority (checked first)
+    for _, kw in ipairs(CRIMINAL_KW) do
+        if n:find(kw) then return "criminal" end
+    end
+    -- 2. Civilian keywords
     for _, kw in ipairs(CIVILIAN_KW) do
         if n:find(kw) then return "civilian" end
     end
-    -- Check StringValues inside (some games tag NPC role)
+    -- 3. Check StringValues inside (some games tag NPC role)
     for _, v in ipairs(model:GetDescendants()) do
         if v:IsA("StringValue") then
             local vn = v.Name:lower()
             local vv = v.Value:lower()
             if (vn == "role" or vn == "type" or vn == "team") then
+                for _, kw in ipairs(CRIMINAL_KW) do
+                    if vv:find(kw) then return "criminal" end
+                end
                 for _, kw in ipairs(CIVILIAN_KW) do
                     if vv:find(kw) then return "civilian" end
                 end
             end
         end
     end
-    -- Default: any unknown NPC = criminal
+    -- Default: any unclassified NPC = criminal (SWAT game context)
     return "criminal"
 end
 
@@ -1339,9 +1350,15 @@ end
 -- ───────────────────────────────────────────────────────────────
 -- FLY — Infinite Yield style (BodyVelocity + BodyGyro)
 --        WASD + Space/Shift on PC | MoveDirection on Mobile
+--        On-screen ▲▼ buttons (mobile) set FLY_BTN_UP / FLY_BTN_DOWN
 -- ───────────────────────────────────────────────────────────────
-local FLYING = false
+local FLYING       = false
+local FLY_BTN_UP   = 0  -- set to  1 while on-screen ▲ button is held
+local FLY_BTN_DOWN = 0  -- set to -1 while on-screen ▼ button is held
 local flyKeyDown, flyKeyUp
+
+-- Forward references to on-screen overlay buttons (created after Rayfield loads)
+local _flyUpBtn, _flyDownBtn, _jumpBtn
 
 local function enableFly()
     local char = getChar()
@@ -1399,6 +1416,10 @@ local function enableFly()
         end
     end)
 
+    -- Show on-screen fly buttons
+    if _flyUpBtn   then _flyUpBtn.Visible   = true end
+    if _flyDownBtn then _flyDownBtn.Visible = true end
+
     task.spawn(function()
         while FLYING do
             task.wait()
@@ -1416,12 +1437,12 @@ local function enableFly()
                 if fwd.Magnitude  > 0 then fwd   = fwd.Unit   end
                 if right.Magnitude > 0 then right = right.Unit end
                 vel = (fwd * (-md.Z) + right * md.X) * spd
-                    + Vector3.new(0, (CTRL.UP + CTRL.DOWN) * spd, 0)
+                    + Vector3.new(0, (CTRL.UP + CTRL.DOWN + FLY_BTN_UP + FLY_BTN_DOWN) * spd, 0)
             else
                 -- PC WASD
                 vel = (cam.CFrame.LookVector  * (CTRL.F + CTRL.B)
                      + cam.CFrame.RightVector * (CTRL.L + CTRL.R)
-                     + Vector3.new(0, (CTRL.UP + CTRL.DOWN), 0)) * spd
+                     + Vector3.new(0, (CTRL.UP + CTRL.DOWN + FLY_BTN_UP + FLY_BTN_DOWN), 0)) * spd
             end
 
             bv.Velocity = vel
@@ -1432,6 +1453,8 @@ end
 
 local function disableFly()
     FLYING = false
+    FLY_BTN_UP   = 0
+    FLY_BTN_DOWN = 0
     if flyKeyDown then flyKeyDown:Disconnect(); flyKeyDown = nil end
     if flyKeyUp   then flyKeyUp:Disconnect();   flyKeyUp   = nil end
     local hrp = getHRP()
@@ -1443,6 +1466,9 @@ local function disableFly()
     end
     local h = getHum()
     if h then h.PlatformStand = false end
+    -- Hide on-screen fly buttons
+    if _flyUpBtn   then _flyUpBtn.Visible   = false end
+    if _flyDownBtn then _flyDownBtn.Visible = false end
 end
 
 -- ───────────────────────────────────────────────────────────────
@@ -1473,71 +1499,140 @@ local function disableInfJump()
 end
 
 -- ───────────────────────────────────────────────────────────────
--- FAST RELOAD helper — works with all weapon types
+-- SURRENDER DETECTION — checks if a criminal NPC has hands up
+-- (BoolValues, StringValues, and playing animation track names)
 -- ───────────────────────────────────────────────────────────────
-local RELOAD_KW = {"reload","refill","recharge","replenish","restock"}
-local AMMO_KW   = {"ammo","mag","clip","bullet","reserve","current","round","chamber","loaded"}
+local SURRENDER_TAGS = {
+    "handsup","surrendered","surrender","issurrendered",
+    "canarrest","arrestready","raised","hands","cuffed",
+    "detained","freeze","complying","yielding"
+}
 
-local function doFastReload()
-    local char = getChar()
-    if not char then return end
-    local tool = char:FindFirstChildOfClass("Tool")
-    if not tool then return end
-
-    -- 1. Max out all ammo-like Values
-    for _, v in ipairs(tool:GetDescendants()) do
-        if v:IsA("IntValue") or v:IsA("NumberValue") then
-            local n = v.Name:lower()
-            for _, kw in ipairs(AMMO_KW) do
-                if n:find(kw) then v.Value = 9999; break end
+local function isSurrendered(model)
+    for _, v in ipairs(model:GetDescendants()) do
+        if v:IsA("BoolValue") then
+            local vn = v.Name:lower()
+            for _, tag in ipairs(SURRENDER_TAGS) do
+                if vn:find(tag) and v.Value == true then return true end
+            end
+        elseif v:IsA("StringValue") then
+            local vn = v.Name:lower()
+            local vv = v.Value:lower()
+            for _, tag in ipairs(SURRENDER_TAGS) do
+                if vn:find(tag) then
+                    if vv == "true" or vv == "yes" or vv == "1"
+                    or vv == "surrendered" or vv == "up" then
+                        return true
+                    end
+                end
+                if vv:find(tag) then return true end
             end
         end
     end
-
-    -- 2. Fire RemoteEvents named after reload
-    for _, v in ipairs(tool:GetDescendants()) do
-        if v:IsA("RemoteEvent") then
-            local n = v.Name:lower()
-            for _, kw in ipairs(RELOAD_KW) do
-                if n:find(kw) then pcall(function() v:FireServer() end); break end
-            end
-        end
-    end
-
-    -- 3. Invoke RemoteFunctions named after reload
-    for _, v in ipairs(tool:GetDescendants()) do
-        if v:IsA("RemoteFunction") then
-            local n = v.Name:lower()
-            for _, kw in ipairs(RELOAD_KW) do
-                if n:find(kw) then pcall(function() v:InvokeServer() end); break end
-            end
-        end
-    end
-
-    -- 4. Fire BindableEvents named after reload
-    for _, v in ipairs(tool:GetDescendants()) do
-        if v:IsA("BindableEvent") then
-            local n = v.Name:lower()
-            for _, kw in ipairs(RELOAD_KW) do
-                if n:find(kw) then pcall(function() v:Fire() end); break end
-            end
-        end
-    end
-
-    -- 5. Scan game's RemoteEvents at root level (some games store them outside the tool)
-    for _, rs in ipairs({ReplicatedStorage, Workspace}) do
-        for _, v in ipairs(rs:GetDescendants()) do
-            if v:IsA("RemoteEvent") then
-                local n = v.Name:lower()
-                for _, kw in ipairs(RELOAD_KW) do
-                    if n:find(kw) then pcall(function() v:FireServer() end); break end
+    local hum = model:FindFirstChildOfClass("Humanoid")
+    if hum then
+        local anim = hum:FindFirstChildOfClass("Animator")
+        if anim then
+            for _, track in ipairs(anim:GetPlayingAnimationTracks()) do
+                local tn = track.Name:lower()
+                for _, tag in ipairs(SURRENDER_TAGS) do
+                    if tn:find(tag) then return true end
                 end
             end
         end
     end
-
-    Rayfield:Notify({Title = T("FastReload"), Content = "✓", Duration = 1})
+    return false
 end
+
+-- ───────────────────────────────────────────────────────────────
+-- OVERLAY UI — on-screen buttons (NOT inside Rayfield)
+--   Jump ▲  — always visible, bottom-right
+--   Fly  ▲  — visible only when flying (top)
+--   Fly  ▼  — visible only when flying (below)
+-- ───────────────────────────────────────────────────────────────
+local function createOverlayUI()
+    -- Clean up any previous instance
+    local old = LocalPlayer.PlayerGui:FindFirstChild("_SWAT_OVERLAY")
+    if old then old:Destroy() end
+
+    local sg = Instance.new("ScreenGui")
+    sg.Name             = "_SWAT_OVERLAY"
+    sg.ResetOnSpawn     = false
+    sg.IgnoreGuiInset   = true
+    sg.ZIndexBehavior   = Enum.ZIndexBehavior.Sibling
+    sg.Parent           = LocalPlayer.PlayerGui
+
+    local function makeBtn(name, text, col, ax, ay, w, h)
+        local btn = Instance.new("TextButton")
+        btn.Name                   = name
+        btn.Size                   = UDim2.new(0, w, 0, h)
+        btn.AnchorPoint            = Vector2.new(0.5, 0.5)
+        btn.Position               = UDim2.new(ax, 0, ay, 0)
+        btn.BackgroundColor3       = col
+        btn.BackgroundTransparency = 0.25
+        btn.BorderSizePixel        = 0
+        btn.Text                   = text
+        btn.TextColor3             = Color3.fromRGB(255, 255, 255)
+        btn.TextStrokeTransparency = 0.4
+        btn.Font                   = Enum.Font.GothamBold
+        btn.TextSize               = 16
+        btn.AutoButtonColor        = true
+        btn.Parent                 = sg
+
+        local corner = Instance.new("UICorner")
+        corner.CornerRadius = UDim.new(0.3, 0)
+        corner.Parent = btn
+
+        local stroke = Instance.new("UIStroke")
+        stroke.Color       = Color3.fromRGB(255, 255, 255)
+        stroke.Thickness   = 1.5
+        stroke.Transparency = 0.5
+        stroke.Parent = btn
+
+        return btn
+    end
+
+    -- Jump button — bottom-right, always visible
+    _jumpBtn = makeBtn("JumpBtn", "⬆\nJUMP",
+        Color3.fromRGB(30, 100, 200), 0.88, 0.88, 75, 75)
+    _jumpBtn.Visible = true
+
+    -- Fly Up button — right side, hidden until flying
+    _flyUpBtn = makeBtn("FlyUpBtn", "▲",
+        Color3.fromRGB(20, 180, 80), 0.93, 0.70, 60, 60)
+    _flyUpBtn.Visible = false
+
+    -- Fly Down button — right side below up, hidden until flying
+    _flyDownBtn = makeBtn("FlyDownBtn", "▼",
+        Color3.fromRGB(200, 60, 30), 0.93, 0.80, 60, 60)
+    _flyDownBtn.Visible = false
+
+    -- ── Jump button logic ─────────────────────────────────────
+    _jumpBtn.MouseButton1Click:Connect(function()
+        local hum = getHum()
+        if hum then
+            pcall(function() hum:ChangeState(Enum.HumanoidStateType.Jumping) end)
+        end
+    end)
+
+    -- ── Fly Up/Down — hold to fly vertically ─────────────────
+    _flyUpBtn.MouseButton1Down:Connect(function() FLY_BTN_UP = 1   end)
+    _flyUpBtn.MouseButton1Up:Connect(function()   FLY_BTN_UP = 0   end)
+    _flyUpBtn.MouseLeave:Connect(function()       FLY_BTN_UP = 0   end)
+
+    _flyDownBtn.MouseButton1Down:Connect(function() FLY_BTN_DOWN = -1 end)
+    _flyDownBtn.MouseButton1Up:Connect(function()   FLY_BTN_DOWN = 0  end)
+    _flyDownBtn.MouseLeave:Connect(function()       FLY_BTN_DOWN = 0  end)
+
+    -- If fly is currently active, show fly buttons immediately
+    if FLYING then
+        _flyUpBtn.Visible   = true
+        _flyDownBtn.Visible = true
+    end
+end
+
+-- Create overlay UI now (after LocalPlayer is available)
+createOverlayUI()
 
 -- ───────────────────────────────────────────────────────────────
 -- TABS
@@ -1601,16 +1696,18 @@ TabCombat:CreateToggle({
     Callback     = function(v)
         Settings.Hitbox = v
         if not v then
-            -- restore original sizes (criminal NPCs only)
+            -- restore original sizes + transparency (criminal NPCs only)
             for _, obj in ipairs(Workspace:GetDescendants()) do
                 if isCriminal(obj) then
                     local hrpS = obj:FindFirstChild("HumanoidRootPart")
                     if hrpS then
                         local sv = hrpS:FindFirstChild("_origSzSWAT")
-                        if sv then
-                            hrpS.Size = sv.Value
-                            sv:Destroy()
-                            hrpS.Transparency = 1
+                        if sv then hrpS.Size = sv.Value; sv:Destroy() end
+                        local tv = hrpS:FindFirstChild("_origTrSWAT")
+                        if tv then
+                            hrpS.Transparency = tv.Value
+                            hrpS.LocalTransparencyModifier = 0
+                            tv:Destroy()
                         end
                     end
                 end
@@ -1625,14 +1722,6 @@ TabCombat:CreateSlider({
     CurrentValue = Settings.HitboxSize,
     Flag         = "HitboxSize",
     Callback     = function(v) Settings.HitboxSize = v end,
-})
-
--- ── TAB WEAPONS ─────────────────────────────────────────────────
-local TabWeapons = Window:CreateTab(T("TabWeapons"), 4483362458)
-
-TabWeapons:CreateButton({
-    Name     = T("FastReload"),
-    Callback = doFastReload,
 })
 
 -- ── TAB MOVEMENT ────────────────────────────────────────────────
@@ -1705,6 +1794,14 @@ TabAuto:CreateSlider({
     CurrentValue = Settings.AutoArrestDelay,
     Flag         = "AutoArrestDelay",
     Callback     = function(v) Settings.AutoArrestDelay = v end,
+})
+TabAuto:CreateSlider({
+    Name         = T("AutoArrestDist"),
+    Range        = {0, 50},
+    Increment    = 1,
+    CurrentValue = Settings.AutoArrestDist,
+    Flag         = "AutoArrestDist",
+    Callback     = function(v) Settings.AutoArrestDist = v end,
 })
 
 TabAuto:CreateDivider()
@@ -1892,36 +1989,58 @@ local function tryAutoArrest()
     local hrp = getHRP()
     if not hrp then return end
 
-    -- Strategy 1: fire ALL ProximityPrompts on criminal NPC models directly
+    local maxDist = Settings.AutoArrestDist  -- 0 = unlimited
+
+    local function inRange(pos)
+        if maxDist <= 0 then return true end
+        return (pos - hrp.Position).Magnitude <= maxDist
+    end
+
+    -- Strategy 1: fire ProximityPrompts on criminal NPC models
+    --   • Distance check: NPC must be within AutoArrestDist
+    --   • Hands-up check: NPC must be surrendering (or game already gates the prompt)
     for _, obj in ipairs(Workspace:GetDescendants()) do
         if isCriminal(obj) then
-            for _, pp in ipairs(obj:GetDescendants()) do
-                if pp:IsA("ProximityPrompt") then
-                    pcall(function() fireproximityprompt(pp) end)
-                elseif pp:IsA("ClickDetector") then
-                    pcall(function() fireclickdetector(pp) end)
+            local npcHRP = obj:FindFirstChild("HumanoidRootPart")
+            if npcHRP and inRange(npcHRP.Position) then
+                -- Try to fire regardless (game-side prompt gating handles the rest)
+                -- Additional client-side surrender check for extra safety
+                local surrendered = isSurrendered(obj)
+                for _, pp in ipairs(obj:GetDescendants()) do
+                    if pp:IsA("ProximityPrompt") then
+                        -- Always try: game enables/disables prompt based on hands state
+                        pcall(function() fireproximityprompt(pp) end)
+                    elseif pp:IsA("ClickDetector") and surrendered then
+                        pcall(function() fireclickdetector(pp) end)
+                    end
                 end
             end
         end
     end
 
-    -- Strategy 2: scan ALL ProximityPrompts in workspace by ActionText keyword
+    -- Strategy 2: scan ALL ProximityPrompts by ActionText keyword, within distance
     for _, pp in ipairs(Workspace:GetDescendants()) do
         if pp:IsA("ProximityPrompt") then
-            local action = (pp.ActionText or ""):lower()
-            local name   = pp.Name:lower()
-            for _, kw in ipairs(ARREST_KEYWORDS) do
-                if action:find(kw) or name:find(kw) then
-                    pcall(function() fireproximityprompt(pp) end)
-                    break
+            local ppPart = pp.Parent
+            if ppPart and ppPart:IsA("BasePart") and inRange(ppPart.Position) then
+                local action = (pp.ActionText or ""):lower()
+                local name   = pp.Name:lower()
+                for _, kw in ipairs(ARREST_KEYWORDS) do
+                    if action:find(kw) or name:find(kw) then
+                        pcall(function() fireproximityprompt(pp) end)
+                        break
+                    end
                 end
             end
         elseif pp:IsA("ClickDetector") then
-            local name = pp.Name:lower()
-            for _, kw in ipairs(ARREST_KEYWORDS) do
-                if name:find(kw) then
-                    pcall(function() fireclickdetector(pp) end)
-                    break
+            local cdPart = pp.Parent
+            if cdPart and cdPart:IsA("BasePart") and inRange(cdPart.Position) then
+                local name = pp.Name:lower()
+                for _, kw in ipairs(ARREST_KEYWORDS) do
+                    if name:find(kw) then
+                        pcall(function() fireclickdetector(pp) end)
+                        break
+                    end
                 end
             end
         end
@@ -2061,16 +2180,24 @@ RunService.RenderStepped:Connect(function()
             if Settings.Hitbox and isCrim then
                 local sHRP = obj:FindFirstChild("HumanoidRootPart")
                 if sHRP then
+                    -- Store original size (once)
                     if not sHRP:FindFirstChild("_origSzSWAT") then
                         local sv = Instance.new("Vector3Value")
                         sv.Name   = "_origSzSWAT"
                         sv.Value  = sHRP.Size
                         sv.Parent = sHRP
                     end
+                    -- Store original transparency (once)
+                    if not sHRP:FindFirstChild("_origTrSWAT") then
+                        local tv = Instance.new("NumberValue")
+                        tv.Name   = "_origTrSWAT"
+                        tv.Value  = sHRP.Transparency
+                        tv.Parent = sHRP
+                    end
                     local sz = Settings.HitboxSize * 2
-                    sHRP.Size         = Vector3.new(sz, sz, sz)
-                    sHRP.Transparency = 0.65
-                    sHRP.CanCollide   = false
+                    sHRP.Size                     = Vector3.new(sz, sz, sz)
+                    sHRP.LocalTransparencyModifier = 0.35   -- client-side only, doesn't affect server
+                    sHRP.CanCollide               = false
                 end
             end
 
@@ -2180,6 +2307,7 @@ end)
 LocalPlayer.CharacterAdded:Connect(function(char)
     task.wait(0.5)
     hookChar(char)
+    createOverlayUI()  -- rebuild overlay buttons after respawn
     if Settings.Fly then
         disableFly()
         task.wait(0.1)
