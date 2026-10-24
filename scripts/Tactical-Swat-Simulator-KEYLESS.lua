@@ -1219,6 +1219,12 @@ local Settings = {
     AutoArrestDist  = 10,   -- studs; 0 = unlimited
     AntiAFK         = false,
     Fullbright      = false,
+    -- Aimbot
+    Aimbot          = false,
+    AimbotFOV       = 80,   -- px radius on screen
+    AimbotDist      = 150,  -- studs
+    -- Gun Mode (ACS_Engine)
+    GunMode         = false,
 }
 
 -- ───────────────────────────────────────────────────────────────
@@ -1338,6 +1344,43 @@ local function getNearestSuspect()
         end
     end
     return best, bhrp
+end
+
+-- ── ENEMY PLAYER DETECTION (team-based) ──────────────────────────
+-- Returns true if `model` is a Character belonging to a player on
+-- the opposite team from LocalPlayer.
+local function isEnemyPlayer(model)
+    if not model then return false end
+    local myTeam = LocalPlayer.Team  -- may be nil if unassigned
+    if not myTeam then return false end
+    for _, p in ipairs(Players:GetPlayers()) do
+        if p ~= LocalPlayer and p.Character == model then
+            local theirTeam = p.Team
+            if theirTeam and theirTeam ~= myTeam then
+                return true
+            end
+        end
+    end
+    return false
+end
+
+-- Returns all live enemy player Characters
+local function getAllEnemyPlayers()
+    local list = {}
+    local myTeam = LocalPlayer.Team
+    if not myTeam then return list end
+    for _, p in ipairs(Players:GetPlayers()) do
+        if p ~= LocalPlayer and p.Team and p.Team ~= myTeam then
+            local char = p.Character
+            if char then
+                local hum = char:FindFirstChildOfClass("Humanoid")
+                if hum and hum.Health > 0 then
+                    list[#list+1] = char
+                end
+            end
+        end
+    end
+    return list
 end
 
 -- WorldToViewportPoint wrapper (returns screenPos, onScreen)
@@ -1472,30 +1515,31 @@ local function disableFly()
 end
 
 -- ───────────────────────────────────────────────────────────────
--- INFINITE JUMP (JumpRequest hook — works on PC + Mobile)
+-- INFINITE JUMP (StateChanged: Landed → Jumping)
+-- Hooks Humanoid.StateChanged so every landing triggers a new jump.
+-- The overlay JUMP button also respects Settings.InfJump.
 -- ───────────────────────────────────────────────────────────────
 local infJumpConn
-local infJumpDebounce = false
 
 local function enableInfJump()
-    if infJumpConn then infJumpConn:Disconnect() end
-    infJumpDebounce = false
-    infJumpConn = UserInputService.JumpRequest:Connect(function()
-        if not infJumpDebounce then
-            infJumpDebounce = true
-            local hum = getHum()
-            if hum then
-                pcall(function() hum:ChangeState(Enum.HumanoidStateType.Jumping) end)
-            end
-            task.wait(0.1)
-            infJumpDebounce = false
+    if infJumpConn then infJumpConn:Disconnect(); infJumpConn = nil end
+    local hum = getHum()
+    if not hum then return end
+    infJumpConn = hum.StateChanged:Connect(function(_, newState)
+        if not Settings.InfJump then return end
+        if newState == Enum.HumanoidStateType.Landed then
+            task.defer(function()
+                local h = getHum()
+                if h and Settings.InfJump then
+                    pcall(function() h:ChangeState(Enum.HumanoidStateType.Jumping) end)
+                end
+            end)
         end
     end)
 end
 
 local function disableInfJump()
     if infJumpConn then infJumpConn:Disconnect(); infJumpConn = nil end
-    infJumpDebounce = false
 end
 
 -- ───────────────────────────────────────────────────────────────
@@ -1609,6 +1653,7 @@ local function createOverlayUI()
 
     -- ── Jump button logic ─────────────────────────────────────
     _jumpBtn.MouseButton1Click:Connect(function()
+        if not Settings.InfJump then return end
         local hum = getHum()
         if hum then
             pcall(function() hum:ChangeState(Enum.HumanoidStateType.Jumping) end)
@@ -1722,6 +1767,42 @@ TabCombat:CreateSlider({
     CurrentValue = Settings.HitboxSize,
     Flag         = "HitboxSize",
     Callback     = function(v) Settings.HitboxSize = v end,
+})
+
+TabCombat:CreateDivider()
+
+-- ── Aimbot ─────────────────────────────────────────────────────
+TabCombat:CreateToggle({
+    Name         = "Aimbot (Enemy Players)",
+    CurrentValue = Settings.Aimbot,
+    Flag         = "Aimbot",
+    Callback     = function(v) Settings.Aimbot = v end,
+})
+TabCombat:CreateSlider({
+    Name         = "Aimbot FOV (px)",
+    Range        = {10, 200},
+    Increment    = 5,
+    CurrentValue = Settings.AimbotFOV,
+    Flag         = "AimbotFOV",
+    Callback     = function(v) Settings.AimbotFOV = v end,
+})
+TabCombat:CreateSlider({
+    Name         = "Aimbot Distance (studs)",
+    Range        = {20, 300},
+    Increment    = 10,
+    CurrentValue = Settings.AimbotDist,
+    Flag         = "AimbotDist",
+    Callback     = function(v) Settings.AimbotDist = v end,
+})
+
+TabCombat:CreateDivider()
+
+-- ── Gun Mode (ACS_Engine) ──────────────────────────────────────
+TabCombat:CreateToggle({
+    Name         = "Gun Mode (ACS / 1-shot)",
+    CurrentValue = Settings.GunMode,
+    Flag         = "GunMode",
+    Callback     = function(v) Settings.GunMode = v end,
 })
 
 -- ── TAB MOVEMENT ────────────────────────────────────────────────
@@ -1843,66 +1924,73 @@ TabAuto:CreateDivider()
 TabAuto:CreateButton({
     Name     = T("OpenDoors"),
     Callback = function()
+        local ChangeDoor = game:GetService("ReplicatedStorage"):FindFirstChild("Network")
+            and game:GetService("ReplicatedStorage").Network:FindFirstChild("ChangeDoor")
+        if not ChangeDoor then
+            Rayfield:Notify({Title = T("OpenDoors"), Content = "Remote not found", Duration = 3})
+            return
+        end
+        local doorsContainer = Workspace:FindFirstChild("Map") and Workspace.Map:FindFirstChild("Doors")
+        if not doorsContainer then
+            Rayfield:Notify({Title = T("OpenDoors"), Content = "workspace.Map.Doors not found", Duration = 3})
+            return
+        end
         local count = 0
-        local DOOR_ACT = {
-            "open","unlock","enter","access","activate","use",
-            "interact","push","pull","door","gate","checkpoint"
-        }
-        local DOOR_NAME = {
-            "door","gate","porte","checkpoint","portal","barrier",
-            "shutter","vault","lock","entrance","exit","passage",
-            "hatch","panel","keypad","lever","switch","button"
-        }
-
-        -- Helper: is this prompt NOT on a live NPC model?
-        local function isEnvPrompt(pp)
-            local p = pp.Parent
-            while p and p ~= Workspace do
-                if isNPC(p) then return false end
-                p = p.Parent
-            end
-            return true
+        for _, door in ipairs(doorsContainer:GetChildren()) do
+            pcall(function() ChangeDoor:FireServer(door, "Open") end)
+            count = count + 1
         end
+        Rayfield:Notify({Title = T("OpenDoors"), Content = count.." doors opened", Duration = 2})
+    end,
+})
 
-        -- 1. Fire ALL non-NPC ProximityPrompts
-        for _, pp in ipairs(Workspace:GetDescendants()) do
-            if pp:IsA("ProximityPrompt") and pp.Enabled and isEnvPrompt(pp) then
-                -- Optionally also check ActionText for door context
-                local action = (pp.ActionText or ""):lower()
-                local name   = pp.Name:lower()
-                local isDoor = false
-                for _, kw in ipairs(DOOR_ACT) do
-                    if action:find(kw) then isDoor = true; break end
-                end
-                if not isDoor then
-                    for _, kw in ipairs(DOOR_NAME) do
-                        if name:find(kw) then isDoor = true; break end
-                    end
-                end
-                -- Fire all unlabeled env prompts too (catch-all)
-                if not isDoor then isDoor = true end
-                if isDoor then
-                    pcall(function() fireproximityprompt(pp) end)
-                    count = count + 1
-                end
-            end
+TabAuto:CreateButton({
+    Name     = "Close All Doors",
+    Callback = function()
+        local ChangeDoor = game:GetService("ReplicatedStorage"):FindFirstChild("Network")
+            and game:GetService("ReplicatedStorage").Network:FindFirstChild("ChangeDoor")
+        if not ChangeDoor then
+            Rayfield:Notify({Title = "Close All Doors", Content = "Remote not found", Duration = 3})
+            return
         end
+        local doorsContainer = Workspace:FindFirstChild("Map") and Workspace.Map:FindFirstChild("Doors")
+        if not doorsContainer then
+            Rayfield:Notify({Title = "Close All Doors", Content = "workspace.Map.Doors not found", Duration = 3})
+            return
+        end
+        local count = 0
+        for _, door in ipairs(doorsContainer:GetChildren()) do
+            pcall(function() ChangeDoor:FireServer(door, "Kick") end)
+            count = count + 1
+        end
+        Rayfield:Notify({Title = "Close All Doors", Content = count.." doors closed", Duration = 2})
+    end,
+})
 
-        -- 2. Fire ClickDetectors on door-named parts
-        for _, cd in ipairs(Workspace:GetDescendants()) do
-            if cd:IsA("ClickDetector") and isEnvPrompt(cd) then
-                local name = cd.Name:lower()
-                for _, kw in ipairs(DOOR_NAME) do
-                    if name:find(kw) then
-                        pcall(function() fireclickdetector(cd) end)
-                        count = count + 1
-                        break
-                    end
-                end
+TabAuto:CreateDivider()
+
+TabAuto:CreateButton({
+    Name     = "Secure Evidence / Validate Objective",
+    Callback = function()
+        local SecureEvidence = game:GetService("ReplicatedStorage"):FindFirstChild("Network")
+            and game:GetService("ReplicatedStorage").Network:FindFirstChild("SecureEvidence")
+        if not SecureEvidence then
+            Rayfield:Notify({Title = "Secure Evidence", Content = "Remote not found", Duration = 3})
+            return
+        end
+        local found = false
+        for _, obj in ipairs(getnilinstances()) do
+            if obj.Name == "CashRecoverEvidence" then
+                pcall(function() SecureEvidence:FireServer(obj) end)
+                found = true
+                break
             end
         end
-
-        Rayfield:Notify({Title = T("OpenDoors"), Content = count.." interactions", Duration = 2})
+        if found then
+            Rayfield:Notify({Title = "Secure Evidence", Content = "✓ Evidence secured!", Duration = 3})
+        else
+            Rayfield:Notify({Title = "Secure Evidence", Content = "No evidence instance found", Duration = 3})
+        end
     end,
 })
 
@@ -1970,6 +2058,58 @@ end
 
 if LocalPlayer.Character then hookChar(LocalPlayer.Character) end
 LocalPlayer.CharacterAdded:Connect(hookChar)
+
+-- ───────────────────────────────────────────────────────────────
+-- GUN MODE — ACS_Engine metatable hook
+-- Intercepts outgoing FireServer on ACS_Engine.Events.Equip and
+-- injects god-tier gun stats when GunMode is enabled.
+-- ───────────────────────────────────────────────────────────────
+local ACS_EQUIP_PATH = "ACS_Engine/Events/Equip"
+
+local function patchGunData(tbl)
+    if type(tbl) ~= "table" then return tbl end
+    tbl.HeadDamage        = {999, 999}
+    tbl.TorsoDamage       = {999, 999}
+    tbl.LimbDamage        = {999, 999}
+    tbl.ShootRate         = 1200
+    tbl.MaxRecoilPower    = 0
+    tbl.MinRecoilPower    = 0
+    tbl.StoredAmmo        = math.huge
+    tbl.MaxStoredAmmo     = math.huge
+    tbl.AmmoInGun         = 999
+    if type(tbl.camRecoil) == "table" then
+        for k in pairs(tbl.camRecoil) do tbl.camRecoil[k] = {0, 0} end
+    end
+    if type(tbl.gunRecoil) == "table" then
+        for k in pairs(tbl.gunRecoil) do tbl.gunRecoil[k] = {0, 0} end
+    end
+    return tbl
+end
+
+pcall(function()
+    local mt = getrawmetatable(game)
+    local oldNamecall = mt.__namecall
+    setreadonly(mt, false)
+    mt.__namecall = newcclosure(function(self, ...)
+        local method = getnamecallmethod()
+        if method == "FireServer" and Settings.GunMode then
+            -- Check if this is the ACS_Engine Equip remote
+            local ok2, selfPath = pcall(function()
+                return self:GetFullName()
+            end)
+            if ok2 and selfPath and selfPath:find("ACS_Engine") and selfPath:find("Equip") then
+                local args = {...}
+                -- args: [1]=Tool, [2]=slotNum, [3]=gunDataTable
+                if type(args[3]) == "table" then
+                    args[3] = patchGunData(args[3])
+                end
+                return oldNamecall(self, table.unpack(args))
+            end
+        end
+        return oldNamecall(self, ...)
+    end)
+    setreadonly(mt, true)
+end)
 
 -- ───────────────────────────────────────────────────────────────
 -- AUTO ARREST: loop
@@ -2243,6 +2383,136 @@ RunService.RenderStepped:Connect(function()
                 local bb = obj:FindFirstChild("_SWAT_OBJ_BB")
                 if bb then bb:Destroy() end
             end
+        end
+    end
+
+    -- ── PLAYER ESP (enemy team) ───────────────────────────────
+    for _, p in ipairs(Players:GetPlayers()) do
+        if p ~= LocalPlayer and p.Character then
+            local pChar = p.Character
+            local isEnemy = isEnemyPlayer(pChar)
+            local epHlTag = "_SWAT_EP_HL"
+            local epBbTag = "_SWAT_EP_BB"
+
+            if Settings.ESP and isEnemy then
+                -- Highlight
+                if not pChar:FindFirstChild(epHlTag) then
+                    local hl = Instance.new("Highlight")
+                    hl.Name             = epHlTag
+                    hl.FillColor        = Color3.fromRGB(255, 30, 30)   -- red
+                    hl.OutlineColor     = Color3.fromRGB(255, 150, 0)   -- orange border
+                    hl.FillTransparency = 0.3
+                    hl.Parent           = pChar
+                end
+                -- BillboardGui above head
+                local pHRP = pChar:FindFirstChild("HumanoidRootPart")
+                if pHRP and not pHRP:FindFirstChild(epBbTag) then
+                    local bb = Instance.new("BillboardGui")
+                    bb.Name        = epBbTag
+                    bb.Size        = UDim2.new(0, 160, 0, 52)
+                    bb.StudsOffset = Vector3.new(0, 4, 0)
+                    bb.AlwaysOnTop = true
+                    bb.Parent      = pHRP
+                    local lbl = Instance.new("TextLabel")
+                    lbl.Name                   = "Lbl"
+                    lbl.Size                   = UDim2.new(1,0,1,0)
+                    lbl.BackgroundTransparency = 1
+                    lbl.TextStrokeTransparency = 0
+                    lbl.TextScaled             = true
+                    lbl.Font                   = Enum.Font.GothamBold
+                    lbl.TextColor3             = Color3.fromRGB(255, 100, 100)
+                    lbl.Parent                 = bb
+                end
+                -- Update HP label
+                local pHRP2 = pChar:FindFirstChild("HumanoidRootPart")
+                if pHRP2 then
+                    local bb2 = pHRP2:FindFirstChild(epBbTag)
+                    local pH  = pChar:FindFirstChildOfClass("Humanoid")
+                    if bb2 and pH then
+                        local lbl2 = bb2:FindFirstChild("Lbl")
+                        if lbl2 then
+                            lbl2.Text = string.format("[ENEMY] %s\n❤ %d/%d",
+                                p.Name,
+                                math.floor(pH.Health),
+                                math.floor(pH.MaxHealth))
+                        end
+                    end
+                end
+            else
+                -- Cleanup when not enemy or ESP off
+                local hl = pChar:FindFirstChild(epHlTag)
+                if hl then hl:Destroy() end
+                local pHRP = pChar:FindFirstChild("HumanoidRootPart")
+                if pHRP then
+                    local bb2 = pHRP:FindFirstChild(epBbTag)
+                    if bb2 then bb2:Destroy() end
+                end
+            end
+
+            -- ── PLAYER HITBOX (enemy team) ─────────────────────
+            if Settings.Hitbox and isEnemy then
+                local pHRP = pChar:FindFirstChild("HumanoidRootPart")
+                if pHRP then
+                    if not pHRP:FindFirstChild("_origSzEP") then
+                        local sv = Instance.new("Vector3Value")
+                        sv.Name   = "_origSzEP"
+                        sv.Value  = pHRP.Size
+                        sv.Parent = pHRP
+                    end
+                    if not pHRP:FindFirstChild("_origTrEP") then
+                        local tv = Instance.new("NumberValue")
+                        tv.Name   = "_origTrEP"
+                        tv.Value  = pHRP.Transparency
+                        tv.Parent = pHRP
+                    end
+                    local sz = Settings.HitboxSize * 2
+                    pHRP.Size                      = Vector3.new(sz, sz, sz)
+                    pHRP.LocalTransparencyModifier = 0.35
+                    pHRP.CanCollide                = false
+                end
+            elseif not Settings.Hitbox then
+                -- Restore player hitbox
+                local pHRP = pChar:FindFirstChild("HumanoidRootPart")
+                if pHRP then
+                    local sv = pHRP:FindFirstChild("_origSzEP")
+                    if sv then pHRP.Size = sv.Value; sv:Destroy() end
+                    local tv = pHRP:FindFirstChild("_origTrEP")
+                    if tv then
+                        pHRP.Transparency = tv.Value
+                        pHRP.LocalTransparencyModifier = 0
+                        tv:Destroy()
+                    end
+                end
+            end
+        end
+    end
+
+    -- ── AIMBOT (enemy players, triggered on Tool.Activated) ───
+    if Settings.Aimbot and isWeaponFiring and hrp then
+        local cam    = Workspace.CurrentCamera
+        local vpSize = cam.ViewportSize
+        local center = Vector2.new(vpSize.X/2, vpSize.Y/2)
+        local bestDist2, bestHead = math.huge, nil
+
+        for _, pChar in ipairs(getAllEnemyPlayers()) do
+            local head = pChar:FindFirstChild("Head")
+            if head then
+                local dist3D = (head.Position - hrp.Position).Magnitude
+                if dist3D <= Settings.AimbotDist then
+                    local sp, onScreen = worldToScreen(head.Position)
+                    if onScreen then
+                        local d2 = (sp - center).Magnitude
+                        if d2 <= Settings.AimbotFOV and d2 < bestDist2 then
+                            bestDist2, bestHead = d2, head
+                        end
+                    end
+                end
+            end
+        end
+
+        if bestHead then
+            local lookAt = CFrame.lookAt(cam.CFrame.Position, bestHead.Position)
+            cam.CFrame = lookAt
         end
     end
 
