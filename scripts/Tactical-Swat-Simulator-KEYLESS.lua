@@ -1270,15 +1270,19 @@ local function isNPC(model)
 end
 
 -- Keyword lists for NPC classification
+-- CIVILIAN_KW is intentionally broad to catch all non-combatants
 local CIVILIAN_KW = {
     "hostage","civilian","victim","bystander","customer",
     "worker","employee","staff","innocent",
-    "clerk","cashier","teller"
+    "clerk","cashier","teller","witness","reporter",
+    "civilian","person","pedestrian","citizen","npc",
+    "patron","shopper","visitor","passerby","spectator"
 }
 local CRIMINAL_KW = {
     "criminal","robber","suspect","thief","gangster","bandit",
     "shooter","hostile","enemy","terrorist","attacker","perpetrator",
-    "crook","felon","gunman","raider","intruder","villain"
+    "crook","felon","gunman","raider","intruder","villain",
+    "swat","cop","police","officer","guard","agent","swatter"
 }
 
 -- Returns "criminal", "civilian", or "criminal" (default for unknown)
@@ -1309,8 +1313,8 @@ local function getNPCType(model)
             end
         end
     end
-    -- Default: any unclassified NPC = criminal (SWAT game context)
-    return "criminal"
+    -- Default: unclassified NPC = nil (don't assume criminal; avoids targeting hostages)
+    return nil
 end
 
 local function isCriminal(model) return getNPCType(model) == "criminal" end
@@ -1541,16 +1545,15 @@ local infJumpConn
 
 local function enableInfJump()
     if infJumpConn then infJumpConn:Disconnect(); infJumpConn = nil end
-    local hum = getHum()
-    if not hum then return end
-    infJumpConn = hum.StateChanged:Connect(function(_, newState)
+    -- Use Heartbeat loop instead of StateChanged to avoid task.wait() unreliability
+    infJumpConn = RunService.Heartbeat:Connect(function()
         if not Settings.InfJump then return end
-        if newState == Enum.HumanoidStateType.Landed then
-            task.wait()  -- let the Landed state settle before jumping again
-            local h = getHum()
-            if h and Settings.InfJump then
-                pcall(function() h:ChangeState(Enum.HumanoidStateType.Jumping) end)
-            end
+        local hum = getHum()
+        if not hum then return end
+        local state = hum:GetState()
+        if state == Enum.HumanoidStateType.Freefall
+        or state == Enum.HumanoidStateType.Landed then
+            pcall(function() hum:ChangeState(Enum.HumanoidStateType.Jumping) end)
         end
     end)
 end
@@ -1991,7 +1994,7 @@ TabAuto:CreateButton({
     Name     = "Close All Doors",
     Callback = function()
         local count = 0
-        -- Strategy 1: try ChangeDoor remote (Kick = close)
+        -- Strategy 1: try ChangeDoor remote (Close = close)
         local ChangeDoor
         pcall(function()
             local net = game:GetService("ReplicatedStorage"):FindFirstChild("Network")
@@ -2005,7 +2008,7 @@ TabAuto:CreateButton({
             end)
             if doorsContainer then
                 for _, door in ipairs(doorsContainer:GetChildren()) do
-                    pcall(function() ChangeDoor:FireServer(door, "Kick") end)
+                    pcall(function() ChangeDoor:FireServer(door, "Close") end)
                     count = count + 1
                 end
                 Rayfield:Notify({Title = "Close All Doors", Content = count.." doors closed (remote)", Duration = 2})
@@ -2153,7 +2156,12 @@ local function doAimbotSnap()
     end
 
     if bestHead then
-        cam.CFrame = CFrame.new(cam.CFrame.Position, bestHead.Position)
+        local prevType = cam.CameraType
+        cam.CameraType = Enum.CameraType.Scriptable
+        cam.CFrame = CFrame.lookAt(cam.CFrame.Position, bestHead.Position)
+        task.delay(0.15, function()
+            if cam then cam.CameraType = prevType end
+        end)
     end
 end
 
@@ -2184,7 +2192,12 @@ local function doSilentAimSnap()
     end
 
     if bestHead then
-        cam.CFrame = CFrame.new(cam.CFrame.Position, bestHead.Position)
+        local prevType = cam.CameraType
+        cam.CameraType = Enum.CameraType.Scriptable
+        cam.CFrame = CFrame.lookAt(cam.CFrame.Position, bestHead.Position)
+        task.delay(0.15, function()
+            if cam then cam.CameraType = prevType end
+        end)
     end
 end
 
@@ -2339,28 +2352,29 @@ RunService.RenderStepped:Connect(function()
         local npcType = getNPCType(obj)  -- "criminal" | "civilian" | nil
 
         if npcType then
-            -- ── NPC ESP ───────────────────────────────────────
+            -- ── NPC ESP — criminals only ─────────────────────────
             local isCrim = (npcType == "criminal")
-            local hlTag  = isCrim and "_SWAT_HL_C" or "_SWAT_HL_V"
             local bbTag  = "_SWAT_BB"
 
-            if Settings.ESP then
-                -- Highlight
-                if not obj:FindFirstChild(hlTag) then
-                    -- Remove any old tag from the other type
-                    local oldHL = obj:FindFirstChild("_SWAT_HL_C") or obj:FindFirstChild("_SWAT_HL_V")
-                    if oldHL then oldHL:Destroy() end
+            -- Always clean civilian highlights (never show civilians)
+            local civHL = obj:FindFirstChild("_SWAT_HL_V")
+            if civHL then civHL:Destroy() end
+            local sHRPv = obj:FindFirstChild("HumanoidRootPart")
+            if sHRPv then
+                local civBB = sHRPv:FindFirstChild(bbTag)
+                if civBB and not isCrim then civBB:Destroy() end
+            end
 
+            if Settings.ESP and isCrim then
+                -- Highlight (criminal = orange)
+                if not obj:FindFirstChild("_SWAT_HL_C") then
+                    local oldHL = obj:FindFirstChild("_SWAT_HL_V")
+                    if oldHL then oldHL:Destroy() end
                     local hl = Instance.new("Highlight")
-                    hl.Name             = hlTag
+                    hl.Name             = "_SWAT_HL_C"
                     hl.FillTransparency = 0.35
-                    if isCrim then
-                        hl.FillColor    = Color3.fromRGB(255, 70,  0)   -- orange
-                        hl.OutlineColor = Color3.fromRGB(255, 200, 0)   -- yellow border
-                    else
-                        hl.FillColor    = Color3.fromRGB(0,  160, 255)  -- blue
-                        hl.OutlineColor = Color3.fromRGB(180, 240, 255) -- light blue border
-                    end
+                    hl.FillColor        = Color3.fromRGB(255, 70,  0)
+                    hl.OutlineColor     = Color3.fromRGB(255, 200, 0)
                     hl.Parent = obj
                 end
 
@@ -2380,9 +2394,7 @@ RunService.RenderStepped:Connect(function()
                     lbl.TextStrokeTransparency = 0
                     lbl.TextScaled             = true
                     lbl.Font                   = Enum.Font.GothamBold
-                    lbl.TextColor3             = isCrim
-                        and Color3.fromRGB(255, 230, 80)   -- yellow text for criminals
-                        or  Color3.fromRGB(180, 240, 255)  -- light blue text for civilians
+                    lbl.TextColor3             = Color3.fromRGB(255, 230, 80)
                     lbl.Parent = bb
                 end
 
@@ -2394,20 +2406,17 @@ RunService.RenderStepped:Connect(function()
                     if bb and sH then
                         local l = bb:FindFirstChild("Lbl")
                         if l then
-                            local tag = isCrim and "[CRIMINAL]" or "[CIVILIAN]"
-                            l.Text = string.format("%s\n%s\n❤ %d/%d",
-                                tag, obj.Name,
+                            l.Text = string.format("[CRIMINAL]\n%s\n❤ %d/%d",
+                                obj.Name,
                                 math.floor(sH.Health),
                                 math.floor(sH.MaxHealth))
                         end
                     end
                 end
             else
-                -- Clean up ESP when disabled
-                for _, tag in ipairs({"_SWAT_HL_C","_SWAT_HL_V"}) do
-                    local hl = obj:FindFirstChild(tag)
-                    if hl then hl:Destroy() end
-                end
+                -- Clean up ESP when disabled or NPC is civilian
+                local hl = obj:FindFirstChild("_SWAT_HL_C")
+                if hl then hl:Destroy() end
                 local sHRP = obj:FindFirstChild("HumanoidRootPart")
                 if sHRP then
                     local bb = sHRP:FindFirstChild(bbTag)
