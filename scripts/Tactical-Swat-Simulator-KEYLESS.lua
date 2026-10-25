@@ -1223,8 +1223,6 @@ local Settings = {
     Aimbot          = false,
     AimbotFOV       = 80,   -- px radius on screen
     AimbotDist      = 150,  -- studs
-    -- Gun Mode (ACS_Engine)
-    GunMode         = false,
 }
 
 -- ───────────────────────────────────────────────────────────────
@@ -1349,33 +1347,53 @@ end
 -- ── ENEMY PLAYER DETECTION (team-based) ──────────────────────────
 -- Returns true if `model` is a Character belonging to a player on
 -- the opposite team from LocalPlayer.
+-- Returns true if 'model' belongs to an enemy player (different team).
+-- Uses Team object first; falls back to TeamColor when teams are nil/unassigned.
 local function isEnemyPlayer(model)
     if not model then return false end
-    local myTeam = LocalPlayer.Team  -- may be nil if unassigned
-    if not myTeam then return false end
+    local neutral = BrickColor.new("Medium stone grey")
     for _, p in ipairs(Players:GetPlayers()) do
         if p ~= LocalPlayer and p.Character == model then
+            local myTeam    = LocalPlayer.Team
             local theirTeam = p.Team
-            if theirTeam and theirTeam ~= myTeam then
-                return true
+            if myTeam and theirTeam then
+                return theirTeam ~= myTeam
             end
+            -- Fallback: compare TeamColor (ignores neutral/unassigned)
+            local myColor    = LocalPlayer.TeamColor
+            local theirColor = p.TeamColor
+            if myColor and theirColor
+                and myColor ~= neutral and theirColor ~= neutral then
+                return theirColor ~= myColor
+            end
+            return false
         end
     end
     return false
 end
 
--- Returns all live enemy player Characters
+-- Returns all live enemy player Characters (same TeamColor logic)
 local function getAllEnemyPlayers()
-    local list = {}
-    local myTeam = LocalPlayer.Team
-    if not myTeam then return list end
+    local list    = {}
+    local neutral = BrickColor.new("Medium stone grey")
+    local myTeam  = LocalPlayer.Team
+    local myColor = LocalPlayer.TeamColor
     for _, p in ipairs(Players:GetPlayers()) do
-        if p ~= LocalPlayer and p.Team and p.Team ~= myTeam then
-            local char = p.Character
-            if char then
-                local hum = char:FindFirstChildOfClass("Humanoid")
-                if hum and hum.Health > 0 then
-                    list[#list+1] = char
+        if p ~= LocalPlayer then
+            local isEnemy = false
+            if myTeam and p.Team then
+                isEnemy = p.Team ~= myTeam
+            elseif myColor and p.TeamColor
+                and myColor ~= neutral and p.TeamColor ~= neutral then
+                isEnemy = p.TeamColor ~= myColor
+            end
+            if isEnemy then
+                local char = p.Character
+                if char then
+                    local hum = char:FindFirstChildOfClass("Humanoid")
+                    if hum and hum.Health > 0 then
+                        list[#list+1] = char
+                    end
                 end
             end
         end
@@ -1528,12 +1546,11 @@ local function enableInfJump()
     infJumpConn = hum.StateChanged:Connect(function(_, newState)
         if not Settings.InfJump then return end
         if newState == Enum.HumanoidStateType.Landed then
-            task.defer(function()
-                local h = getHum()
-                if h and Settings.InfJump then
-                    pcall(function() h:ChangeState(Enum.HumanoidStateType.Jumping) end)
-                end
-            end)
+            task.wait()  -- let the Landed state settle before jumping again
+            local h = getHum()
+            if h and Settings.InfJump then
+                pcall(function() h:ChangeState(Enum.HumanoidStateType.Jumping) end)
+            end
         end
     end)
 end
@@ -1636,10 +1653,10 @@ local function createOverlayUI()
         return btn
     end
 
-    -- Jump button — bottom-right, always visible
+    -- Jump button — bottom-right, hidden until InfJump toggle is ON
     _jumpBtn = makeBtn("JumpBtn", "⬆\nJUMP",
         Color3.fromRGB(30, 100, 200), 0.88, 0.88, 75, 75)
-    _jumpBtn.Visible = true
+    _jumpBtn.Visible = false
 
     -- Fly Up button — right side, hidden until flying
     _flyUpBtn = makeBtn("FlyUpBtn", "▲",
@@ -1797,14 +1814,6 @@ TabCombat:CreateSlider({
 
 TabCombat:CreateDivider()
 
--- ── Gun Mode (ACS_Engine) ──────────────────────────────────────
-TabCombat:CreateToggle({
-    Name         = "Gun Mode (ACS / 1-shot)",
-    CurrentValue = Settings.GunMode,
-    Flag         = "GunMode",
-    Callback     = function(v) Settings.GunMode = v end,
-})
-
 -- ── TAB MOVEMENT ────────────────────────────────────────────────
 local TabMovement = Window:CreateTab(T("TabMovement"), 4483362458)
 
@@ -1856,6 +1865,7 @@ TabMovement:CreateToggle({
     Callback     = function(v)
         Settings.InfJump = v
         if v then enableInfJump() else disableInfJump() end
+        if _jumpBtn then _jumpBtn.Visible = v end
     end,
 })
 
@@ -1924,46 +1934,103 @@ TabAuto:CreateDivider()
 TabAuto:CreateButton({
     Name     = T("OpenDoors"),
     Callback = function()
-        local ChangeDoor = game:GetService("ReplicatedStorage"):FindFirstChild("Network")
-            and game:GetService("ReplicatedStorage").Network:FindFirstChild("ChangeDoor")
-        if not ChangeDoor then
-            Rayfield:Notify({Title = T("OpenDoors"), Content = "Remote not found", Duration = 3})
-            return
-        end
-        local doorsContainer = Workspace:FindFirstChild("Map") and Workspace.Map:FindFirstChild("Doors")
-        if not doorsContainer then
-            Rayfield:Notify({Title = T("OpenDoors"), Content = "workspace.Map.Doors not found", Duration = 3})
-            return
-        end
         local count = 0
-        for _, door in ipairs(doorsContainer:GetChildren()) do
-            pcall(function() ChangeDoor:FireServer(door, "Open") end)
-            count = count + 1
+        -- Strategy 1: try ChangeDoor remote first (game-specific)
+        local ChangeDoor
+        pcall(function()
+            local net = game:GetService("ReplicatedStorage"):FindFirstChild("Network")
+            if net then ChangeDoor = net:FindFirstChild("ChangeDoor") end
+        end)
+        if ChangeDoor then
+            local doorsContainer
+            pcall(function()
+                doorsContainer = Workspace:FindFirstChild("Map")
+                    and Workspace.Map:FindFirstChild("Doors")
+            end)
+            if doorsContainer then
+                for _, door in ipairs(doorsContainer:GetChildren()) do
+                    pcall(function() ChangeDoor:FireServer(door, "Open") end)
+                    count = count + 1
+                end
+                Rayfield:Notify({Title = T("OpenDoors"), Content = count.." doors opened (remote)", Duration = 2})
+                return
+            end
         end
-        Rayfield:Notify({Title = T("OpenDoors"), Content = count.." doors opened", Duration = 2})
+        -- Strategy 2: fireproximityprompt / fireclickdetector on all doors in workspace
+        local DOOR_KEYWORDS = {"door","gate","entrance","exit","barrier","shutter"}
+        local function isDoorObj(obj)
+            local n = obj.Name:lower()
+            for _, kw in ipairs(DOOR_KEYWORDS) do
+                if n:find(kw) then return true end
+            end
+            return false
+        end
+        for _, obj in ipairs(Workspace:GetDescendants()) do
+            if isDoorObj(obj) then
+                -- ProximityPrompts
+                for _, pp in ipairs(obj:GetDescendants()) do
+                    if pp:IsA("ProximityPrompt") and pp.Enabled then
+                        pcall(function() fireproximityprompt(pp) end)
+                        count = count + 1
+                    end
+                end
+                -- ClickDetectors
+                for _, cd in ipairs(obj:GetDescendants()) do
+                    if cd:IsA("ClickDetector") then
+                        pcall(function() fireclickdetector(cd) end)
+                        count = count + 1
+                    end
+                end
+            end
+        end
+        Rayfield:Notify({Title = T("OpenDoors"), Content = count.." prompts fired", Duration = 2})
     end,
 })
 
 TabAuto:CreateButton({
     Name     = "Close All Doors",
     Callback = function()
-        local ChangeDoor = game:GetService("ReplicatedStorage"):FindFirstChild("Network")
-            and game:GetService("ReplicatedStorage").Network:FindFirstChild("ChangeDoor")
-        if not ChangeDoor then
-            Rayfield:Notify({Title = "Close All Doors", Content = "Remote not found", Duration = 3})
-            return
-        end
-        local doorsContainer = Workspace:FindFirstChild("Map") and Workspace.Map:FindFirstChild("Doors")
-        if not doorsContainer then
-            Rayfield:Notify({Title = "Close All Doors", Content = "workspace.Map.Doors not found", Duration = 3})
-            return
-        end
         local count = 0
-        for _, door in ipairs(doorsContainer:GetChildren()) do
-            pcall(function() ChangeDoor:FireServer(door, "Kick") end)
-            count = count + 1
+        -- Strategy 1: try ChangeDoor remote (Kick = close)
+        local ChangeDoor
+        pcall(function()
+            local net = game:GetService("ReplicatedStorage"):FindFirstChild("Network")
+            if net then ChangeDoor = net:FindFirstChild("ChangeDoor") end
+        end)
+        if ChangeDoor then
+            local doorsContainer
+            pcall(function()
+                doorsContainer = Workspace:FindFirstChild("Map")
+                    and Workspace.Map:FindFirstChild("Doors")
+            end)
+            if doorsContainer then
+                for _, door in ipairs(doorsContainer:GetChildren()) do
+                    pcall(function() ChangeDoor:FireServer(door, "Kick") end)
+                    count = count + 1
+                end
+                Rayfield:Notify({Title = "Close All Doors", Content = count.." doors closed (remote)", Duration = 2})
+                return
+            end
         end
-        Rayfield:Notify({Title = "Close All Doors", Content = count.." doors closed", Duration = 2})
+        -- Strategy 2: fire ProximityPrompts / ClickDetectors whose action hints at closing
+        local CLOSE_KW = {"close","shut","lock","seal"}
+        for _, pp in ipairs(Workspace:GetDescendants()) do
+            if pp:IsA("ProximityPrompt") and pp.Enabled then
+                local lbl = pp.ActionText:lower()
+                for _, kw in ipairs(CLOSE_KW) do
+                    if lbl:find(kw) then
+                        pcall(function() fireproximityprompt(pp) end)
+                        count = count + 1
+                        break
+                    end
+                end
+            end
+        end
+        if count == 0 then
+            Rayfield:Notify({Title = "Close All Doors", Content = "No close prompts found", Duration = 3})
+        else
+            Rayfield:Notify({Title = "Close All Doors", Content = count.." doors closed", Duration = 2})
+        end
     end,
 })
 
@@ -1978,13 +2045,27 @@ TabAuto:CreateButton({
             Rayfield:Notify({Title = "Secure Evidence", Content = "Remote not found", Duration = 3})
             return
         end
+        -- Search in nil instances first (executor-specific), then workspace descendants
         local found = false
-        for _, obj in ipairs(getnilinstances()) do
-            if obj.Name == "CashRecoverEvidence" then
-                pcall(function() SecureEvidence:FireServer(obj) end)
-                found = true
-                break
+        local evidenceObjs = {}
+        pcall(function()
+            for _, obj in ipairs(getnilinstances()) do
+                if obj.Name == "CashRecoverEvidence" then
+                    evidenceObjs[#evidenceObjs+1] = obj
+                end
             end
+        end)
+        if #evidenceObjs == 0 then
+            -- Fallback: scan all game descendants
+            for _, obj in ipairs(game:GetDescendants()) do
+                if obj.Name == "CashRecoverEvidence" then
+                    evidenceObjs[#evidenceObjs+1] = obj
+                end
+            end
+        end
+        for _, obj in ipairs(evidenceObjs) do
+            pcall(function() SecureEvidence:FireServer(obj) end)
+            found = true
         end
         if found then
             Rayfield:Notify({Title = "Secure Evidence", Content = "✓ Evidence secured!", Duration = 3})
@@ -2035,14 +2116,84 @@ TabTools:CreateDropdown({
 })
 
 -- ───────────────────────────────────────────────────────────────
--- SILENT AIM: state
+-- AIMBOT / SILENT AIM: snap helpers (called on Tool.Activated)
 -- ───────────────────────────────────────────────────────────────
 local isWeaponFiring = false
+
+-- Snap camera toward the closest enemy head within FOV/range.
+-- Targets: criminal NPCs (getAllSuspects) + enemy players (getAllEnemyPlayers).
+local function doAimbotSnap()
+    if not Settings.Aimbot then return end
+    local hrp = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
+    if not hrp then return end
+    local cam    = Workspace.CurrentCamera
+    local vpSize = cam.ViewportSize
+    local center = Vector2.new(vpSize.X/2, vpSize.Y/2)
+    local bestDist2, bestHead = math.huge, nil
+
+    -- Merge criminal NPCs and enemy players into one list
+    local targets = {}
+    for _, c in ipairs(getAllSuspects())      do targets[#targets+1] = c end
+    for _, c in ipairs(getAllEnemyPlayers())  do targets[#targets+1] = c end
+
+    for _, tChar in ipairs(targets) do
+        local head = tChar:FindFirstChild("Head")
+        if head then
+            local dist3D = (head.Position - hrp.Position).Magnitude
+            if dist3D <= Settings.AimbotDist then
+                local sp, onScreen = worldToScreen(head.Position)
+                if onScreen then
+                    local d2 = (sp - center).Magnitude
+                    if d2 <= Settings.AimbotFOV and d2 < bestDist2 then
+                        bestDist2, bestHead = d2, head
+                    end
+                end
+            end
+        end
+    end
+
+    if bestHead then
+        cam.CFrame = CFrame.new(cam.CFrame.Position, bestHead.Position)
+    end
+end
+
+-- Redirect camera for Silent Aim (suspects only — criminal NPCs).
+local function doSilentAimSnap()
+    if not Settings.SilentAim then return end
+    local hrp = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
+    if not hrp then return end
+    local cam    = Workspace.CurrentCamera
+    local vpSize = cam.ViewportSize
+    local center = Vector2.new(vpSize.X/2, vpSize.Y/2)
+    local bestDist, bestHead = math.huge, nil
+
+    for _, obj in ipairs(getAllSuspects()) do
+        local head = obj:FindFirstChild("Head")
+        if head then
+            local dist3D = (head.Position - hrp.Position).Magnitude
+            if dist3D <= Settings.SilentAimDist then
+                local sp, onScreen = worldToScreen(head.Position)
+                if onScreen then
+                    local d2 = (sp - center).Magnitude
+                    if d2 <= Settings.SilentAimFOV and d2 < bestDist then
+                        bestDist, bestHead = d2, head
+                    end
+                end
+            end
+        end
+    end
+
+    if bestHead then
+        cam.CFrame = CFrame.new(cam.CFrame.Position, bestHead.Position)
+    end
+end
 
 -- Hook all tools the player picks up
 local function hookTool(tool)
     tool.Activated:Connect(function()
         isWeaponFiring = true
+        doAimbotSnap()    -- snap camera BEFORE bullet trajectory is calculated
+        doSilentAimSnap()
         task.delay(0.12, function() isWeaponFiring = false end)
     end)
 end
@@ -2058,58 +2209,6 @@ end
 
 if LocalPlayer.Character then hookChar(LocalPlayer.Character) end
 LocalPlayer.CharacterAdded:Connect(hookChar)
-
--- ───────────────────────────────────────────────────────────────
--- GUN MODE — ACS_Engine metatable hook
--- Intercepts outgoing FireServer on ACS_Engine.Events.Equip and
--- injects god-tier gun stats when GunMode is enabled.
--- ───────────────────────────────────────────────────────────────
-local ACS_EQUIP_PATH = "ACS_Engine/Events/Equip"
-
-local function patchGunData(tbl)
-    if type(tbl) ~= "table" then return tbl end
-    tbl.HeadDamage        = {999, 999}
-    tbl.TorsoDamage       = {999, 999}
-    tbl.LimbDamage        = {999, 999}
-    tbl.ShootRate         = 1200
-    tbl.MaxRecoilPower    = 0
-    tbl.MinRecoilPower    = 0
-    tbl.StoredAmmo        = math.huge
-    tbl.MaxStoredAmmo     = math.huge
-    tbl.AmmoInGun         = 999
-    if type(tbl.camRecoil) == "table" then
-        for k in pairs(tbl.camRecoil) do tbl.camRecoil[k] = {0, 0} end
-    end
-    if type(tbl.gunRecoil) == "table" then
-        for k in pairs(tbl.gunRecoil) do tbl.gunRecoil[k] = {0, 0} end
-    end
-    return tbl
-end
-
-pcall(function()
-    local mt = getrawmetatable(game)
-    local oldNamecall = mt.__namecall
-    setreadonly(mt, false)
-    mt.__namecall = newcclosure(function(self, ...)
-        local method = getnamecallmethod()
-        if method == "FireServer" and Settings.GunMode then
-            -- Check if this is the ACS_Engine Equip remote
-            local ok2, selfPath = pcall(function()
-                return self:GetFullName()
-            end)
-            if ok2 and selfPath and selfPath:find("ACS_Engine") and selfPath:find("Equip") then
-                local args = {...}
-                -- args: [1]=Tool, [2]=slotNum, [3]=gunDataTable
-                if type(args[3]) == "table" then
-                    args[3] = patchGunData(args[3])
-                end
-                return oldNamecall(self, table.unpack(args))
-            end
-        end
-        return oldNamecall(self, ...)
-    end)
-    setreadonly(mt, true)
-end)
 
 -- ───────────────────────────────────────────────────────────────
 -- AUTO ARREST: loop
@@ -2484,65 +2583,6 @@ RunService.RenderStepped:Connect(function()
                     end
                 end
             end
-        end
-    end
-
-    -- ── AIMBOT (enemy players, triggered on Tool.Activated) ───
-    if Settings.Aimbot and isWeaponFiring and hrp then
-        local cam    = Workspace.CurrentCamera
-        local vpSize = cam.ViewportSize
-        local center = Vector2.new(vpSize.X/2, vpSize.Y/2)
-        local bestDist2, bestHead = math.huge, nil
-
-        for _, pChar in ipairs(getAllEnemyPlayers()) do
-            local head = pChar:FindFirstChild("Head")
-            if head then
-                local dist3D = (head.Position - hrp.Position).Magnitude
-                if dist3D <= Settings.AimbotDist then
-                    local sp, onScreen = worldToScreen(head.Position)
-                    if onScreen then
-                        local d2 = (sp - center).Magnitude
-                        if d2 <= Settings.AimbotFOV and d2 < bestDist2 then
-                            bestDist2, bestHead = d2, head
-                        end
-                    end
-                end
-            end
-        end
-
-        if bestHead then
-            local lookAt = CFrame.lookAt(cam.CFrame.Position, bestHead.Position)
-            cam.CFrame = lookAt
-        end
-    end
-
-    -- ── SILENT AIM ────────────────────────────────────────────
-    if Settings.SilentAim and isWeaponFiring and hrp then
-        local cam     = Workspace.CurrentCamera
-        local vpSize  = cam.ViewportSize
-        local center  = Vector2.new(vpSize.X/2, vpSize.Y/2)
-        local bestDist, bestHead = math.huge, nil
-
-        for _, obj in ipairs(getAllSuspects()) do
-            local head = obj:FindFirstChild("Head")
-            if head then
-                local dist3D = (head.Position - hrp.Position).Magnitude
-                if dist3D <= Settings.SilentAimDist then
-                    local sp, onScreen = worldToScreen(head.Position)
-                    if onScreen then
-                        local d2 = (sp - center).Magnitude
-                        if d2 <= Settings.SilentAimFOV and d2 < bestDist then
-                            bestDist, bestHead = d2, head
-                        end
-                    end
-                end
-            end
-        end
-
-        if bestHead then
-            -- Redirect camera toward the suspect head
-            local lookAt = CFrame.lookAt(cam.CFrame.Position, bestHead.Position)
-            cam.CFrame = lookAt
         end
     end
 
