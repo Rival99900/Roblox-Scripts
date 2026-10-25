@@ -1270,19 +1270,16 @@ local function isNPC(model)
 end
 
 -- Keyword lists for NPC classification
--- CIVILIAN_KW is intentionally broad to catch all non-combatants
+-- CIVILIAN_KW: only explicit civilian/hostage terms (do NOT add generic words like "npc","person")
 local CIVILIAN_KW = {
-    "hostage","civilian","victim","bystander","customer",
-    "worker","employee","staff","innocent",
-    "clerk","cashier","teller","witness","reporter",
-    "civilian","person","pedestrian","citizen","npc",
-    "patron","shopper","visitor","passerby","spectator"
+    "hostage","civilian","victim","bystander","innocent",
+    "customer","clerk","cashier","teller","employee","staff"
 }
+-- CRIMINAL_KW: only enemy combatant terms (NOT police/swat/guard = player team)
 local CRIMINAL_KW = {
     "criminal","robber","suspect","thief","gangster","bandit",
     "shooter","hostile","enemy","terrorist","attacker","perpetrator",
-    "crook","felon","gunman","raider","intruder","villain",
-    "swat","cop","police","officer","guard","agent","swatter"
+    "crook","felon","gunman","raider","intruder","villain","burglar"
 }
 
 -- Returns "criminal", "civilian", or "criminal" (default for unknown)
@@ -1313,8 +1310,9 @@ local function getNPCType(model)
             end
         end
     end
-    -- Default: unclassified NPC = nil (don't assume criminal; avoids targeting hostages)
-    return nil
+    -- Default: unclassified NPC = criminal (SWAT game context — unknown = target)
+    -- Only explicit CIVILIAN_KW matches are excluded
+    return "criminal"
 end
 
 local function isCriminal(model) return getNPCType(model) == "criminal" end
@@ -1545,14 +1543,12 @@ local infJumpConn
 
 local function enableInfJump()
     if infJumpConn then infJumpConn:Disconnect(); infJumpConn = nil end
-    -- Use Heartbeat loop instead of StateChanged to avoid task.wait() unreliability
-    infJumpConn = RunService.Heartbeat:Connect(function()
+    local hum = getHum()
+    if not hum then return end
+    -- StateChanged without task.wait() = immediate re-jump on landing (no floating)
+    infJumpConn = hum.StateChanged:Connect(function(_, newState)
         if not Settings.InfJump then return end
-        local hum = getHum()
-        if not hum then return end
-        local state = hum:GetState()
-        if state == Enum.HumanoidStateType.Freefall
-        or state == Enum.HumanoidStateType.Landed then
+        if newState == Enum.HumanoidStateType.Landed then
             pcall(function() hum:ChangeState(Enum.HumanoidStateType.Jumping) end)
         end
     end)
@@ -1959,7 +1955,21 @@ TabAuto:CreateButton({
                 return
             end
         end
-        -- Strategy 2: fireproximityprompt / fireclickdetector on all doors in workspace
+        -- Strategy 2: only fire prompts whose ActionText suggests "open" (avoids toggling closed doors)
+        local OPEN_KW  = {"open","unlock","enter","push","pull"}
+        local CLOSE_KW = {"close","shut","lock","seal"}
+        local function isOpenPrompt(pp)
+            local lbl = pp.ActionText:lower()
+            -- Reject if explicitly a close action
+            for _, kw in ipairs(CLOSE_KW) do
+                if lbl:find(kw) then return false end
+            end
+            -- Accept if labelled as open, or if generic (no keyword = likely a toggle open)
+            for _, kw in ipairs(OPEN_KW) do
+                if lbl:find(kw) then return true end
+            end
+            return true  -- generic prompt: fire it (doors default to open action)
+        end
         local DOOR_KEYWORDS = {"door","gate","entrance","exit","barrier","shutter"}
         local function isDoorObj(obj)
             local n = obj.Name:lower()
@@ -1970,14 +1980,12 @@ TabAuto:CreateButton({
         end
         for _, obj in ipairs(Workspace:GetDescendants()) do
             if isDoorObj(obj) then
-                -- ProximityPrompts
                 for _, pp in ipairs(obj:GetDescendants()) do
-                    if pp:IsA("ProximityPrompt") and pp.Enabled then
+                    if pp:IsA("ProximityPrompt") and pp.Enabled and isOpenPrompt(pp) then
                         pcall(function() fireproximityprompt(pp) end)
                         count = count + 1
                     end
                 end
-                -- ClickDetectors
                 for _, cd in ipairs(obj:GetDescendants()) do
                     if cd:IsA("ClickDetector") then
                         pcall(function() fireclickdetector(cd) end)
@@ -2007,24 +2015,46 @@ TabAuto:CreateButton({
                     and Workspace.Map:FindFirstChild("Doors")
             end)
             if doorsContainer then
+                -- Try multiple possible close action strings (game-dependent)
+                local closeActions = {"Close","Locked","Lock","Shut","closed"}
                 for _, door in ipairs(doorsContainer:GetChildren()) do
-                    pcall(function() ChangeDoor:FireServer(door, "Close") end)
+                    for _, action in ipairs(closeActions) do
+                        pcall(function() ChangeDoor:FireServer(door, action) end)
+                    end
                     count = count + 1
                 end
                 Rayfield:Notify({Title = "Close All Doors", Content = count.." doors closed (remote)", Duration = 2})
                 return
             end
         end
-        -- Strategy 2: fire ProximityPrompts / ClickDetectors whose action hints at closing
+        -- Strategy 2: ProximityPrompts whose ActionText hints at closing
         local CLOSE_KW = {"close","shut","lock","seal"}
-        for _, pp in ipairs(Workspace:GetDescendants()) do
-            if pp:IsA("ProximityPrompt") and pp.Enabled then
-                local lbl = pp.ActionText:lower()
-                for _, kw in ipairs(CLOSE_KW) do
-                    if lbl:find(kw) then
+        local DOOR_KEYWORDS2 = {"door","gate","entrance","exit","barrier","shutter"}
+        local function isDoorObj2(obj)
+            local n = obj.Name:lower()
+            for _, kw in ipairs(DOOR_KEYWORDS2) do if n:find(kw) then return true end end
+            return false
+        end
+        local function isClosePrompt(pp)
+            local lbl = pp.ActionText:lower()
+            for _, kw in ipairs(CLOSE_KW) do
+                if lbl:find(kw) then return true end
+            end
+            return false
+        end
+        for _, obj in ipairs(Workspace:GetDescendants()) do
+            if isDoorObj2(obj) then
+                for _, pp in ipairs(obj:GetDescendants()) do
+                    if pp:IsA("ProximityPrompt") and pp.Enabled and isClosePrompt(pp) then
                         pcall(function() fireproximityprompt(pp) end)
                         count = count + 1
-                        break
+                    end
+                end
+                -- ClickDetectors on door = likely a toggle; fire only if door looks open
+                for _, cd in ipairs(obj:GetDescendants()) do
+                    if cd:IsA("ClickDetector") then
+                        pcall(function() fireclickdetector(cd) end)
+                        count = count + 1
                     end
                 end
             end
@@ -2156,11 +2186,12 @@ local function doAimbotSnap()
     end
 
     if bestHead then
-        local prevType = cam.CameraType
+        -- Set Scriptable to prevent the default camera controller from overwriting the snap
         cam.CameraType = Enum.CameraType.Scriptable
         cam.CFrame = CFrame.lookAt(cam.CFrame.Position, bestHead.Position)
-        task.delay(0.15, function()
-            if cam then cam.CameraType = prevType end
+        -- Restore camera control after the bullet has been cast (next frame is enough)
+        task.defer(function()
+            if cam then cam.CameraType = Enum.CameraType.Custom end
         end)
     end
 end
@@ -2192,11 +2223,10 @@ local function doSilentAimSnap()
     end
 
     if bestHead then
-        local prevType = cam.CameraType
         cam.CameraType = Enum.CameraType.Scriptable
         cam.CFrame = CFrame.lookAt(cam.CFrame.Position, bestHead.Position)
-        task.delay(0.15, function()
-            if cam then cam.CameraType = prevType end
+        task.defer(function()
+            if cam then cam.CameraType = Enum.CameraType.Custom end
         end)
     end
 end
