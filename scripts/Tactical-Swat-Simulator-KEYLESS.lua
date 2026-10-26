@@ -1269,63 +1269,29 @@ local function isNPC(model)
     return true
 end
 
--- Keyword lists for NPC classification
--- CIVILIAN_KW: only explicit civilian/hostage terms (do NOT add generic words like "npc","person")
-local CIVILIAN_KW = {
-    "hostage","civilian","victim","bystander","innocent",
-    "customer","clerk","cashier","teller","employee","staff"
-}
--- CRIMINAL_KW: only enemy combatant terms (NOT police/swat/guard = player team)
-local CRIMINAL_KW = {
-    "criminal","robber","suspect","thief","gangster","bandit",
-    "shooter","hostile","enemy","terrorist","attacker","perpetrator",
-    "crook","felon","gunman","raider","intruder","villain","burglar"
-}
+-- NPC classification: suspects carry a "Vest" in their model (confirmed via game log).
+-- Civilians have no Vest. Keyword matching was unreliable — this is ground-truth detection.
 
--- Returns "criminal", "civilian", or "criminal" (default for unknown)
--- Checks CRIMINAL_KW first (priority), then CIVILIAN_KW, then StringValues
-local function getNPCType(model)
-    if not isNPC(model) then return nil end
-    local n = model.Name:lower()
-    -- 1. Criminal keywords take priority (checked first)
-    for _, kw in ipairs(CRIMINAL_KW) do
-        if n:find(kw) then return "criminal" end
-    end
-    -- 2. Civilian keywords
-    for _, kw in ipairs(CIVILIAN_KW) do
-        if n:find(kw) then return "civilian" end
-    end
-    -- 3. Check StringValues inside (some games tag NPC role)
-    for _, v in ipairs(model:GetDescendants()) do
-        if v:IsA("StringValue") then
-            local vn = v.Name:lower()
-            local vv = v.Value:lower()
-            if (vn == "role" or vn == "type" or vn == "team") then
-                for _, kw in ipairs(CRIMINAL_KW) do
-                    if vv:find(kw) then return "criminal" end
-                end
-                for _, kw in ipairs(CIVILIAN_KW) do
-                    if vv:find(kw) then return "civilian" end
-                end
-            end
-        end
-    end
-    -- Default: unclassified NPC = criminal (SWAT game context — unknown = target)
-    -- Only explicit CIVILIAN_KW matches are excluded
-    return "criminal"
+-- Returns true if model is a live suspect (NPC + has Vest)
+local function isSuspect(model)
+    if not isNPC(model) then return false end
+    return model:FindFirstChild("Vest") ~= nil
 end
 
-local function isCriminal(model) return getNPCType(model) == "criminal" end
-local function isCivilian(model) return getNPCType(model) == "civilian" end
+-- Returns true if model is a live civilian (NPC + no Vest)
+local function isCivilian(model)
+    if not isNPC(model) then return false end
+    return model:FindFirstChild("Vest") == nil
+end
 
--- Keep isSuspect as alias for "any NPC" (used by SilentAim/Bring)
-local function isSuspect(model) return isNPC(model) end
+-- isCriminal is an alias for isSuspect (used by hitbox/ESP internals)
+local function isCriminal(model) return isSuspect(model) end
 
--- Get all live criminal NPCs in workspace
+-- Get all live suspect NPCs — direct children of workspace (confirmed by game log)
 local function getAllSuspects()
     local list = {}
-    for _, obj in ipairs(Workspace:GetDescendants()) do
-        if isCriminal(obj) then list[#list+1] = obj end
+    for _, obj in ipairs(Workspace:GetChildren()) do
+        if isSuspect(obj) then list[#list+1] = obj end
     end
     return list
 end
@@ -1545,11 +1511,18 @@ local function enableInfJump()
     if infJumpConn then infJumpConn:Disconnect(); infJumpConn = nil end
     local hum = getHum()
     if not hum then return end
-    -- StateChanged without task.wait() = immediate re-jump on landing (no floating)
-    infJumpConn = hum.StateChanged:Connect(function(_, newState)
+    -- StateChanged: jump on Landed, and also on Freefall/Jumping→Running
+    -- (some Roblox versions skip the Landed state and go straight to Running)
+    infJumpConn = hum.StateChanged:Connect(function(oldState, newState)
         if not Settings.InfJump then return end
         if newState == Enum.HumanoidStateType.Landed then
-            pcall(function() hum:ChangeState(Enum.HumanoidStateType.Jumping) end)
+            hum:ChangeState(Enum.HumanoidStateType.Jumping)
+        elseif newState == Enum.HumanoidStateType.Running
+            or newState == Enum.HumanoidStateType.RunningNoPhysics then
+            if oldState == Enum.HumanoidStateType.Freefall
+                or oldState == Enum.HumanoidStateType.Jumping then
+                hum:ChangeState(Enum.HumanoidStateType.Jumping)
+            end
         end
     end)
 end
@@ -1757,9 +1730,9 @@ TabCombat:CreateToggle({
     Callback     = function(v)
         Settings.Hitbox = v
         if not v then
-            -- restore original sizes + transparency (criminal NPCs only)
-            for _, obj in ipairs(Workspace:GetDescendants()) do
-                if isCriminal(obj) then
+            -- restore original sizes + transparency (suspect NPCs only)
+            for _, obj in ipairs(Workspace:GetChildren()) do
+                if isSuspect(obj) then
                     local hrpS = obj:FindFirstChild("HumanoidRootPart")
                     if hrpS then
                         local sv = hrpS:FindFirstChild("_origSzSWAT")
@@ -2278,11 +2251,11 @@ local function tryAutoArrest()
         return (pos - hrp.Position).Magnitude <= maxDist
     end
 
-    -- Strategy 1: fire ProximityPrompts on criminal NPC models
+    -- Strategy 1: fire ProximityPrompts on suspect NPC models (Vest = suspect)
     --   • Distance check: NPC must be within AutoArrestDist
     --   • Hands-up check: NPC must be surrendering (or game already gates the prompt)
-    for _, obj in ipairs(Workspace:GetDescendants()) do
-        if isCriminal(obj) then
+    for _, obj in ipairs(Workspace:GetChildren()) do
+        if isSuspect(obj) then
             local npcHRP = obj:FindFirstChild("HumanoidRootPart")
             if npcHRP and inRange(npcHRP.Position) then
                 -- Try to fire regardless (game-side prompt gating handles the rest)
@@ -2378,12 +2351,15 @@ RunService.RenderStepped:Connect(function()
         "mission","cargo","loot","artifact","item","objective"
     }
 
-    for _, obj in ipairs(Workspace:GetDescendants()) do
-        local npcType = getNPCType(obj)  -- "criminal" | "civilian" | nil
+    for _, obj in ipairs(Workspace:GetChildren()) do
+        -- Vest presence = suspect; no Vest = civilian; non-NPC = nil
+        local isCrim = isSuspect(obj)
+        local isCiv  = (not isCrim) and isCivilian(obj)
+        local npcType = isCrim and "criminal" or (isCiv and "civilian" or nil)
 
         if npcType then
-            -- ── NPC ESP — criminals only ─────────────────────────
-            local isCrim = (npcType == "criminal")
+            -- ── NPC ESP — suspects (Vest) only ───────────────────
+
             local bbTag  = "_SWAT_BB"
 
             -- Always clean civilian highlights (never show civilians)
