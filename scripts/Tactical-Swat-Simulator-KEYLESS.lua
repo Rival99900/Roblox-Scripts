@@ -1213,7 +1213,6 @@ local Settings = {
     FlySpeed        = 60,
     NoClip          = false,
     WalkSpeed       = 16,
-    InfJump         = false,
     AutoArrest      = false,
     AutoArrestDelay = 0.5,
     AutoArrestDist  = 10,   -- studs; 0 = unlimited
@@ -1387,7 +1386,7 @@ local FLY_BTN_DOWN = 0  -- set to -1 while on-screen ▼ button is held
 local flyKeyDown, flyKeyUp
 
 -- Forward references to on-screen overlay buttons (created after Rayfield loads)
-local _flyUpBtn, _flyDownBtn, _jumpBtn
+local _flyUpBtn, _flyDownBtn
 
 local function enableFly()
     local char = getChar()
@@ -1501,29 +1500,6 @@ local function disableFly()
 end
 
 -- ───────────────────────────────────────────────────────────────
--- INFINITE JUMP (StateChanged: Landed → Jumping)
--- Hooks Humanoid.StateChanged so every landing triggers a new jump.
--- The overlay JUMP button also respects Settings.InfJump.
--- ───────────────────────────────────────────────────────────────
-local infJumpConn
-
-local function enableInfJump()
-    if infJumpConn then infJumpConn:Disconnect(); infJumpConn = nil end
-    local hum = getHum()
-    if not hum then return end
-    -- Only hook Landed → Jumping. No BodyVelocity, no Freefall logic.
-    infJumpConn = hum.StateChanged:Connect(function(_, newState)
-        if not Settings.InfJump then return end
-        if newState == Enum.HumanoidStateType.Landed then
-            hum:ChangeState(Enum.HumanoidStateType.Jumping)
-        end
-    end)
-end
-
-local function disableInfJump()
-    if infJumpConn then infJumpConn:Disconnect(); infJumpConn = nil end
-end
-
 -- ───────────────────────────────────────────────────────────────
 -- SURRENDER DETECTION — checks if a criminal NPC has hands up
 -- (BoolValues, StringValues, and playing animation track names)
@@ -1618,11 +1594,6 @@ local function createOverlayUI()
         return btn
     end
 
-    -- Jump button — bottom-right, hidden until InfJump toggle is ON
-    _jumpBtn = makeBtn("JumpBtn", "⬆\nJUMP",
-        Color3.fromRGB(30, 100, 200), 0.88, 0.88, 75, 75)
-    _jumpBtn.Visible = false
-
     -- Fly Up button — right side, hidden until flying
     _flyUpBtn = makeBtn("FlyUpBtn", "▲",
         Color3.fromRGB(20, 180, 80), 0.93, 0.70, 60, 60)
@@ -1632,15 +1603,6 @@ local function createOverlayUI()
     _flyDownBtn = makeBtn("FlyDownBtn", "▼",
         Color3.fromRGB(200, 60, 30), 0.93, 0.80, 60, 60)
     _flyDownBtn.Visible = false
-
-    -- ── Jump button logic ─────────────────────────────────────
-    _jumpBtn.MouseButton1Click:Connect(function()
-        if not Settings.InfJump then return end
-        local hum = getHum()
-        if hum then
-            pcall(function() hum:ChangeState(Enum.HumanoidStateType.Jumping) end)
-        end
-    end)
 
     -- ── Fly Up/Down — hold to fly vertically ─────────────────
     _flyUpBtn.MouseButton1Down:Connect(function() FLY_BTN_UP = 1   end)
@@ -1736,6 +1698,8 @@ TabCombat:CreateToggle({
                             hrpS.LocalTransparencyModifier = 0
                             tv:Destroy()
                         end
+                        local box = hrpS:FindFirstChild("_hbBoxSWAT")
+                        if box then box:Destroy() end
                     end
                 end
             end
@@ -1744,7 +1708,7 @@ TabCombat:CreateToggle({
 })
 TabCombat:CreateSlider({
     Name         = T("HitboxSize"),
-    Range        = {2, 12},
+    Range        = {2, 25},
     Increment    = 1,
     CurrentValue = Settings.HitboxSize,
     Flag         = "HitboxSize",
@@ -1821,19 +1785,6 @@ TabMovement:CreateSlider({
     end,
 })
 
-TabMovement:CreateDivider()
-
-TabMovement:CreateToggle({
-    Name         = T("InfJump"),
-    CurrentValue = Settings.InfJump,
-    Flag         = "InfJump",
-    Callback     = function(v)
-        Settings.InfJump = v
-        if v then enableInfJump() else disableInfJump() end
-        if _jumpBtn then _jumpBtn.Visible = v end
-    end,
-})
-
 -- ── TAB AUTO ────────────────────────────────────────────────────
 local TabAuto = Window:CreateTab(T("TabAuto"), 4483362458)
 
@@ -1900,30 +1851,28 @@ TabAuto:CreateButton({
     Name     = T("OpenDoors"),
     Callback = function()
         local count = 0
-        -- Strategy 1: game-specific ChangeDoor remote with "Open"
+        -- Primary: workspace.Map.Doors container + ChangeDoor remote (confirmed via Cobalt log)
+        -- Action "Open" confirmed: Event:FireServer(door, "Open")
         local ChangeDoor
         pcall(function()
             local net = game:GetService("ReplicatedStorage"):FindFirstChild("Network")
             if net then ChangeDoor = net:FindFirstChild("ChangeDoor") end
         end)
-        if ChangeDoor then
-            -- Fire on every Model in workspace that looks like a door
-            for _, obj in ipairs(Workspace:GetDescendants()) do
-                if obj:IsA("Model") then
-                    local n = obj.Name:lower()
-                    if n:find("door") or n:find("gate") or n:find("barrier") then
-                        pcall(function() ChangeDoor:FireServer(obj, "Open") end)
-                        count = count + 1
-                    end
-                end
+        local doorsFolder
+        pcall(function()
+            doorsFolder = Workspace:FindFirstChild("Map") and Workspace.Map:FindFirstChild("Doors")
+        end)
+        if ChangeDoor and doorsFolder then
+            for _, door in ipairs(doorsFolder:GetChildren()) do
+                pcall(function() ChangeDoor:FireServer(door, "Open") end)
+                count = count + 1
             end
             if count > 0 then
-                Rayfield:Notify({Title = T("OpenDoors"), Content = count.." doors opened (remote)", Duration = 2})
+                Rayfield:Notify({Title = T("OpenDoors"), Content = count.." doors opened", Duration = 2})
                 return
             end
         end
-        -- Strategy 2: fire ONLY prompts explicitly labelled as open/enter/unlock
-        -- Do NOT fire generic prompts (they toggle and would also close doors)
+        -- Fallback: proximity prompts labelled open/unlock/enter
         local OPEN_KW = {"open","unlock","enter","push","pull"}
         for _, obj in ipairs(Workspace:GetDescendants()) do
             if obj:IsA("ProximityPrompt") and obj.Enabled then
@@ -1937,7 +1886,7 @@ TabAuto:CreateButton({
                 end
             end
         end
-        Rayfield:Notify({Title = T("OpenDoors"), Content = count.." open prompts fired", Duration = 2})
+        Rayfield:Notify({Title = T("OpenDoors"), Content = count > 0 and count.." open prompts fired" or "No doors found", Duration = 2})
     end,
 })
 
@@ -1945,28 +1894,28 @@ TabAuto:CreateButton({
     Name     = "Close All Doors",
     Callback = function()
         local count = 0
-        -- Strategy 1: game-specific ChangeDoor remote with "Close"
+        -- Primary: workspace.Map.Doors container + ChangeDoor remote
+        -- Action "Kick" confirmed via Cobalt log: Event:FireServer(door, "Kick")
         local ChangeDoor
         pcall(function()
             local net = game:GetService("ReplicatedStorage"):FindFirstChild("Network")
             if net then ChangeDoor = net:FindFirstChild("ChangeDoor") end
         end)
-        if ChangeDoor then
-            for _, obj in ipairs(Workspace:GetDescendants()) do
-                if obj:IsA("Model") then
-                    local n = obj.Name:lower()
-                    if n:find("door") or n:find("gate") or n:find("barrier") then
-                        pcall(function() ChangeDoor:FireServer(obj, "Close") end)
-                        count = count + 1
-                    end
-                end
+        local doorsFolder
+        pcall(function()
+            doorsFolder = Workspace:FindFirstChild("Map") and Workspace.Map:FindFirstChild("Doors")
+        end)
+        if ChangeDoor and doorsFolder then
+            for _, door in ipairs(doorsFolder:GetChildren()) do
+                pcall(function() ChangeDoor:FireServer(door, "Kick") end)
+                count = count + 1
             end
             if count > 0 then
-                Rayfield:Notify({Title = "Close All Doors", Content = count.." doors closed (remote)", Duration = 2})
+                Rayfield:Notify({Title = "Close All Doors", Content = count.." doors closed", Duration = 2})
                 return
             end
         end
-        -- Strategy 2: fire ONLY prompts explicitly labelled as close/lock/shut
+        -- Fallback: proximity prompts labelled close/lock/shut
         local CLOSE_KW = {"close","shut","lock","seal"}
         for _, obj in ipairs(Workspace:GetDescendants()) do
             if obj:IsA("ProximityPrompt") and obj.Enabled then
@@ -1981,7 +1930,7 @@ TabAuto:CreateButton({
             end
         end
         if count == 0 then
-            Rayfield:Notify({Title = "Close All Doors", Content = "No close prompts found — try Open first", Duration = 3})
+            Rayfield:Notify({Title = "Close All Doors", Content = "No doors found — check Map.Doors path", Duration = 3})
         else
             Rayfield:Notify({Title = "Close All Doors", Content = count.." doors closed", Duration = 2})
         end
@@ -2125,16 +2074,19 @@ local function doAimbotSnap()
     end
 
     if bestHead then
+        -- Aim at top of head (forehead) so bullet hits head hitbox reliably
+        local aimPos = bestHead.Position + Vector3.new(0, bestHead.Size.Y * 0.35, 0)
         cam.CameraType = Enum.CameraType.Scriptable
-        cam.CFrame = CFrame.lookAt(cam.CFrame.Position, bestHead.Position)
+        cam.CFrame = CFrame.lookAt(cam.CFrame.Position, aimPos)
         -- Wait long enough for ACS to read camera direction before restoring
-        task.delay(0.15, function()
+        task.delay(0.18, function()
             if cam then cam.CameraType = Enum.CameraType.Custom end
         end)
     end
 end
 
--- Redirect camera for Silent Aim: direct Vest scan, same as aimbot.
+-- Redirect camera for Silent Aim: reinforces game's built-in aim assist.
+-- Targets head explicitly and keeps snap active longer than aimbot.
 local function doSilentAimSnap()
     if not Settings.SilentAim then return end
     local hrp = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
@@ -2166,9 +2118,12 @@ local function doSilentAimSnap()
     end
 
     if bestHead then
+        -- Snap directly to head center for Silent Aim (game aim-assist reinforcement)
+        local aimPos = bestHead.Position + Vector3.new(0, bestHead.Size.Y * 0.2, 0)
         cam.CameraType = Enum.CameraType.Scriptable
-        cam.CFrame = CFrame.lookAt(cam.CFrame.Position, bestHead.Position)
-        task.delay(0.15, function()
+        cam.CFrame = CFrame.lookAt(cam.CFrame.Position, aimPos)
+        -- Hold snap for ACS to fire the shot toward head, then restore
+        task.delay(0.22, function()
             if cam then cam.CameraType = Enum.CameraType.Custom end
         end)
     end
@@ -2221,24 +2176,35 @@ local function tryAutoArrest()
         return (pos - hrp.Position).Magnitude <= maxDist
     end
 
+    -- Grab ShoutNPC remote once (makes suspects kneel/surrender before arrest)
+    local ShoutNPC
+    pcall(function()
+        local net = ReplicatedStorage:FindFirstChild("Network")
+        if net then ShoutNPC = net:FindFirstChild("ShoutNPC") end
+    end)
+
     -- Strategy 1: fire ProximityPrompts on suspect NPC models (Vest = suspect)
     --   • Distance check: NPC must be within AutoArrestDist
-    --   • Hands-up check: NPC must be surrendering (or game already gates the prompt)
+    --   • ShoutNPC is fired first to make the suspect kneel (prerequisite for arrest)
     for _, obj in ipairs(Workspace:GetChildren()) do
         if isSuspect(obj) then
             local npcHRP = obj:FindFirstChild("HumanoidRootPart")
             if npcHRP and inRange(npcHRP.Position) then
-                -- Try to fire regardless (game-side prompt gating handles the rest)
-                -- Additional client-side surrender check for extra safety
-                local surrendered = isSurrendered(obj)
-                for _, pp in ipairs(obj:GetDescendants()) do
-                    if pp:IsA("ProximityPrompt") then
-                        -- Always try: game enables/disables prompt based on hands state
-                        pcall(function() fireproximityprompt(pp) end)
-                    elseif pp:IsA("ClickDetector") and surrendered then
-                        pcall(function() fireclickdetector(pp) end)
-                    end
+                -- Fire ShoutNPC to make suspect kneel (required before cuff prompt appears)
+                if ShoutNPC then
+                    pcall(function() ShoutNPC:FireServer(obj) end)
                 end
+                -- Short delay so the kneel animation registers before we fire arrest prompt
+                task.delay(0.3, function()
+                    local surrendered = isSurrendered(obj)
+                    for _, pp in ipairs(obj:GetDescendants()) do
+                        if pp:IsA("ProximityPrompt") then
+                            pcall(function() fireproximityprompt(pp) end)
+                        elseif pp:IsA("ClickDetector") and surrendered then
+                            pcall(function() fireclickdetector(pp) end)
+                        end
+                    end
+                end)
             end
         end
     end
@@ -2635,13 +2601,27 @@ RunService.Heartbeat:Connect(function()
                         end
                         local sz = Settings.HitboxSize * 2
                         hrp.Size                      = Vector3.new(sz, sz, sz)
-                        hrp.LocalTransparencyModifier = 0.35
+                        hrp.LocalTransparencyModifier = 0.6
                         hrp.CanCollide                = false
+                        -- SelectionBox visible indicator (red/orange)
+                        if not hrp:FindFirstChild("_hbBoxSWAT") then
+                            local box = Instance.new("SelectionBox")
+                            box.Name            = "_hbBoxSWAT"
+                            box.Adornee         = hrp
+                            box.Color3          = Color3.fromRGB(255, 80, 0)
+                            box.LineThickness    = 0.05
+                            box.SurfaceColor3   = Color3.fromRGB(255, 80, 0)
+                            box.SurfaceTransparency = 0.55
+                            box.Parent          = hrp
+                        end
                     else
                         -- Restore original size when hitbox is off
                         local sv = hrp:FindFirstChild("_origSzSWAT")
                         if sv then hrp.Size = sv.Value; sv:Destroy() end
                         hrp.LocalTransparencyModifier = 0
+                        -- Remove SelectionBox
+                        local box = hrp:FindFirstChild("_hbBoxSWAT")
+                        if box then box:Destroy() end
                     end
                 end
             end
@@ -2679,11 +2659,6 @@ LocalPlayer.CharacterAdded:Connect(function(char)
         disableFly()
         task.wait(0.1)
         enableFly()
-    end
-    if Settings.InfJump then
-        disableInfJump()
-        task.wait(0.05)
-        enableInfJump()
     end
     local h = char:FindFirstChildOfClass("Humanoid")
     if h then h.WalkSpeed = Settings.WalkSpeed end
