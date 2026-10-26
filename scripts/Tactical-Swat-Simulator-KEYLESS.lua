@@ -1511,18 +1511,11 @@ local function enableInfJump()
     if infJumpConn then infJumpConn:Disconnect(); infJumpConn = nil end
     local hum = getHum()
     if not hum then return end
-    -- StateChanged: jump on Landed, and also on Freefall/Jumping→Running
-    -- (some Roblox versions skip the Landed state and go straight to Running)
-    infJumpConn = hum.StateChanged:Connect(function(oldState, newState)
+    -- Only hook Landed → Jumping. No BodyVelocity, no Freefall logic.
+    infJumpConn = hum.StateChanged:Connect(function(_, newState)
         if not Settings.InfJump then return end
         if newState == Enum.HumanoidStateType.Landed then
             hum:ChangeState(Enum.HumanoidStateType.Jumping)
-        elseif newState == Enum.HumanoidStateType.Running
-            or newState == Enum.HumanoidStateType.RunningNoPhysics then
-            if oldState == Enum.HumanoidStateType.Freefall
-                or oldState == Enum.HumanoidStateType.Jumping then
-                hum:ChangeState(Enum.HumanoidStateType.Jumping)
-            end
         end
     end)
 end
@@ -1860,8 +1853,8 @@ TabAuto:CreateSlider({
 })
 TabAuto:CreateSlider({
     Name         = T("AutoArrestDist"),
-    Range        = {0, 50},
-    Increment    = 1,
+    Range        = {0, 500},
+    Increment    = 5,
     CurrentValue = Settings.AutoArrestDist,
     Flag         = "AutoArrestDist",
     Callback     = function(v) Settings.AutoArrestDist = v end,
@@ -1907,67 +1900,44 @@ TabAuto:CreateButton({
     Name     = T("OpenDoors"),
     Callback = function()
         local count = 0
-        -- Strategy 1: try ChangeDoor remote first (game-specific)
+        -- Strategy 1: game-specific ChangeDoor remote with "Open"
         local ChangeDoor
         pcall(function()
             local net = game:GetService("ReplicatedStorage"):FindFirstChild("Network")
             if net then ChangeDoor = net:FindFirstChild("ChangeDoor") end
         end)
         if ChangeDoor then
-            local doorsContainer
-            pcall(function()
-                doorsContainer = Workspace:FindFirstChild("Map")
-                    and Workspace.Map:FindFirstChild("Doors")
-            end)
-            if doorsContainer then
-                for _, door in ipairs(doorsContainer:GetChildren()) do
-                    pcall(function() ChangeDoor:FireServer(door, "Open") end)
-                    count = count + 1
+            -- Fire on every Model in workspace that looks like a door
+            for _, obj in ipairs(Workspace:GetDescendants()) do
+                if obj:IsA("Model") then
+                    local n = obj.Name:lower()
+                    if n:find("door") or n:find("gate") or n:find("barrier") then
+                        pcall(function() ChangeDoor:FireServer(obj, "Open") end)
+                        count = count + 1
+                    end
                 end
+            end
+            if count > 0 then
                 Rayfield:Notify({Title = T("OpenDoors"), Content = count.." doors opened (remote)", Duration = 2})
                 return
             end
         end
-        -- Strategy 2: only fire prompts whose ActionText suggests "open" (avoids toggling closed doors)
-        local OPEN_KW  = {"open","unlock","enter","push","pull"}
-        local CLOSE_KW = {"close","shut","lock","seal"}
-        local function isOpenPrompt(pp)
-            local lbl = pp.ActionText:lower()
-            -- Reject if explicitly a close action
-            for _, kw in ipairs(CLOSE_KW) do
-                if lbl:find(kw) then return false end
-            end
-            -- Accept if labelled as open, or if generic (no keyword = likely a toggle open)
-            for _, kw in ipairs(OPEN_KW) do
-                if lbl:find(kw) then return true end
-            end
-            return true  -- generic prompt: fire it (doors default to open action)
-        end
-        local DOOR_KEYWORDS = {"door","gate","entrance","exit","barrier","shutter"}
-        local function isDoorObj(obj)
-            local n = obj.Name:lower()
-            for _, kw in ipairs(DOOR_KEYWORDS) do
-                if n:find(kw) then return true end
-            end
-            return false
-        end
+        -- Strategy 2: fire ONLY prompts explicitly labelled as open/enter/unlock
+        -- Do NOT fire generic prompts (they toggle and would also close doors)
+        local OPEN_KW = {"open","unlock","enter","push","pull"}
         for _, obj in ipairs(Workspace:GetDescendants()) do
-            if isDoorObj(obj) then
-                for _, pp in ipairs(obj:GetDescendants()) do
-                    if pp:IsA("ProximityPrompt") and pp.Enabled and isOpenPrompt(pp) then
-                        pcall(function() fireproximityprompt(pp) end)
+            if obj:IsA("ProximityPrompt") and obj.Enabled then
+                local lbl = obj.ActionText:lower()
+                for _, kw in ipairs(OPEN_KW) do
+                    if lbl:find(kw) then
+                        pcall(function() fireproximityprompt(obj) end)
                         count = count + 1
-                    end
-                end
-                for _, cd in ipairs(obj:GetDescendants()) do
-                    if cd:IsA("ClickDetector") then
-                        pcall(function() fireclickdetector(cd) end)
-                        count = count + 1
+                        break
                     end
                 end
             end
         end
-        Rayfield:Notify({Title = T("OpenDoors"), Content = count.." prompts fired", Duration = 2})
+        Rayfield:Notify({Title = T("OpenDoors"), Content = count.." open prompts fired", Duration = 2})
     end,
 })
 
@@ -1975,65 +1945,43 @@ TabAuto:CreateButton({
     Name     = "Close All Doors",
     Callback = function()
         local count = 0
-        -- Strategy 1: try ChangeDoor remote (Close = close)
+        -- Strategy 1: game-specific ChangeDoor remote with "Close"
         local ChangeDoor
         pcall(function()
             local net = game:GetService("ReplicatedStorage"):FindFirstChild("Network")
             if net then ChangeDoor = net:FindFirstChild("ChangeDoor") end
         end)
         if ChangeDoor then
-            local doorsContainer
-            pcall(function()
-                doorsContainer = Workspace:FindFirstChild("Map")
-                    and Workspace.Map:FindFirstChild("Doors")
-            end)
-            if doorsContainer then
-                -- Try multiple possible close action strings (game-dependent)
-                local closeActions = {"Close","Locked","Lock","Shut","closed"}
-                for _, door in ipairs(doorsContainer:GetChildren()) do
-                    for _, action in ipairs(closeActions) do
-                        pcall(function() ChangeDoor:FireServer(door, action) end)
+            for _, obj in ipairs(Workspace:GetDescendants()) do
+                if obj:IsA("Model") then
+                    local n = obj.Name:lower()
+                    if n:find("door") or n:find("gate") or n:find("barrier") then
+                        pcall(function() ChangeDoor:FireServer(obj, "Close") end)
+                        count = count + 1
                     end
-                    count = count + 1
                 end
+            end
+            if count > 0 then
                 Rayfield:Notify({Title = "Close All Doors", Content = count.." doors closed (remote)", Duration = 2})
                 return
             end
         end
-        -- Strategy 2: ProximityPrompts whose ActionText hints at closing
+        -- Strategy 2: fire ONLY prompts explicitly labelled as close/lock/shut
         local CLOSE_KW = {"close","shut","lock","seal"}
-        local DOOR_KEYWORDS2 = {"door","gate","entrance","exit","barrier","shutter"}
-        local function isDoorObj2(obj)
-            local n = obj.Name:lower()
-            for _, kw in ipairs(DOOR_KEYWORDS2) do if n:find(kw) then return true end end
-            return false
-        end
-        local function isClosePrompt(pp)
-            local lbl = pp.ActionText:lower()
-            for _, kw in ipairs(CLOSE_KW) do
-                if lbl:find(kw) then return true end
-            end
-            return false
-        end
         for _, obj in ipairs(Workspace:GetDescendants()) do
-            if isDoorObj2(obj) then
-                for _, pp in ipairs(obj:GetDescendants()) do
-                    if pp:IsA("ProximityPrompt") and pp.Enabled and isClosePrompt(pp) then
-                        pcall(function() fireproximityprompt(pp) end)
+            if obj:IsA("ProximityPrompt") and obj.Enabled then
+                local lbl = obj.ActionText:lower()
+                for _, kw in ipairs(CLOSE_KW) do
+                    if lbl:find(kw) then
+                        pcall(function() fireproximityprompt(obj) end)
                         count = count + 1
-                    end
-                end
-                -- ClickDetectors on door = likely a toggle; fire only if door looks open
-                for _, cd in ipairs(obj:GetDescendants()) do
-                    if cd:IsA("ClickDetector") then
-                        pcall(function() fireclickdetector(cd) end)
-                        count = count + 1
+                        break
                     end
                 end
             end
         end
         if count == 0 then
-            Rayfield:Notify({Title = "Close All Doors", Content = "No close prompts found", Duration = 3})
+            Rayfield:Notify({Title = "Close All Doors", Content = "No close prompts found — try Open first", Duration = 3})
         else
             Rayfield:Notify({Title = "Close All Doors", Content = count.." doors closed", Duration = 2})
         end
@@ -2127,7 +2075,8 @@ TabTools:CreateDropdown({
 local isWeaponFiring = false
 
 -- Snap camera toward the closest enemy head within FOV/range.
--- Targets: criminal NPCs (getAllSuspects) + enemy players (getAllEnemyPlayers).
+-- Suspects: direct workspace:GetChildren() + Vest check (same as ESP).
+-- Enemy players: getAllEnemyPlayers().
 local function doAimbotSnap()
     if not Settings.Aimbot then return end
     local hrp = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
@@ -2137,12 +2086,29 @@ local function doAimbotSnap()
     local center = Vector2.new(vpSize.X/2, vpSize.Y/2)
     local bestDist2, bestHead = math.huge, nil
 
-    -- Merge criminal NPCs and enemy players into one list
-    local targets = {}
-    for _, c in ipairs(getAllSuspects())      do targets[#targets+1] = c end
-    for _, c in ipairs(getAllEnemyPlayers())  do targets[#targets+1] = c end
-
-    for _, tChar in ipairs(targets) do
+    -- Suspects: direct Vest scan (same logic as criminal ESP)
+    for _, obj in ipairs(Workspace:GetChildren()) do
+        if obj:IsA("Model") and obj:FindFirstChild("Vest") then
+            local hum = obj:FindFirstChildOfClass("Humanoid")
+            if hum and hum.Health > 0 then
+                local head = obj:FindFirstChild("Head")
+                if head then
+                    local dist3D = (head.Position - hrp.Position).Magnitude
+                    if dist3D <= Settings.AimbotDist then
+                        local sp, onScreen = worldToScreen(head.Position)
+                        if onScreen then
+                            local d2 = (sp - center).Magnitude
+                            if d2 <= Settings.AimbotFOV and d2 < bestDist2 then
+                                bestDist2, bestHead = d2, head
+                            end
+                        end
+                    end
+                end
+            end
+        end
+    end
+    -- Enemy players
+    for _, tChar in ipairs(getAllEnemyPlayers()) do
         local head = tChar:FindFirstChild("Head")
         if head then
             local dist3D = (head.Position - hrp.Position).Magnitude
@@ -2159,17 +2125,16 @@ local function doAimbotSnap()
     end
 
     if bestHead then
-        -- Set Scriptable to prevent the default camera controller from overwriting the snap
         cam.CameraType = Enum.CameraType.Scriptable
         cam.CFrame = CFrame.lookAt(cam.CFrame.Position, bestHead.Position)
-        -- Restore camera control after the bullet has been cast (next frame is enough)
-        task.defer(function()
+        -- Wait long enough for ACS to read camera direction before restoring
+        task.delay(0.15, function()
             if cam then cam.CameraType = Enum.CameraType.Custom end
         end)
     end
 end
 
--- Redirect camera for Silent Aim (suspects only — criminal NPCs).
+-- Redirect camera for Silent Aim: direct Vest scan, same as aimbot.
 local function doSilentAimSnap()
     if not Settings.SilentAim then return end
     local hrp = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
@@ -2179,16 +2144,21 @@ local function doSilentAimSnap()
     local center = Vector2.new(vpSize.X/2, vpSize.Y/2)
     local bestDist, bestHead = math.huge, nil
 
-    for _, obj in ipairs(getAllSuspects()) do
-        local head = obj:FindFirstChild("Head")
-        if head then
-            local dist3D = (head.Position - hrp.Position).Magnitude
-            if dist3D <= Settings.SilentAimDist then
-                local sp, onScreen = worldToScreen(head.Position)
-                if onScreen then
-                    local d2 = (sp - center).Magnitude
-                    if d2 <= Settings.SilentAimFOV and d2 < bestDist then
-                        bestDist, bestHead = d2, head
+    for _, obj in ipairs(Workspace:GetChildren()) do
+        if obj:IsA("Model") and obj:FindFirstChild("Vest") then
+            local hum = obj:FindFirstChildOfClass("Humanoid")
+            if hum and hum.Health > 0 then
+                local head = obj:FindFirstChild("Head")
+                if head then
+                    local dist3D = (head.Position - hrp.Position).Magnitude
+                    if dist3D <= Settings.SilentAimDist then
+                        local sp, onScreen = worldToScreen(head.Position)
+                        if onScreen then
+                            local d2 = (sp - center).Magnitude
+                            if d2 <= Settings.SilentAimFOV and d2 < bestDist then
+                                bestDist, bestHead = d2, head
+                            end
+                        end
                     end
                 end
             end
@@ -2198,7 +2168,7 @@ local function doSilentAimSnap()
     if bestHead then
         cam.CameraType = Enum.CameraType.Scriptable
         cam.CFrame = CFrame.lookAt(cam.CFrame.Position, bestHead.Position)
-        task.defer(function()
+        task.delay(0.15, function()
             if cam then cam.CameraType = Enum.CameraType.Custom end
         end)
     end
@@ -2358,24 +2328,25 @@ RunService.RenderStepped:Connect(function()
         local npcType = isCrim and "criminal" or (isCiv and "civilian" or nil)
 
         if npcType then
-            -- ── NPC ESP — suspects (Vest) only ───────────────────
+            -- ── NPC ESP ───────────────────────────────────────────
+            -- Suspects (Vest)  → orange highlight, [SUSPECT] label
+            -- Civilians (no Vest) → yellow highlight, [CIVILIAN] label
 
-            local bbTag  = "_SWAT_BB"
-
-            -- Always clean civilian highlights (never show civilians)
-            local civHL = obj:FindFirstChild("_SWAT_HL_V")
-            if civHL then civHL:Destroy() end
-            local sHRPv = obj:FindFirstChild("HumanoidRootPart")
-            if sHRPv then
-                local civBB = sHRPv:FindFirstChild(bbTag)
-                if civBB and not isCrim then civBB:Destroy() end
-            end
+            local bbTagC   = "_SWAT_BB_C"   -- suspect billboard tag
+            local bbTagCiv = "_SWAT_BB_CIV" -- civilian billboard tag
 
             if Settings.ESP and isCrim then
-                -- Highlight (criminal = orange)
+                -- Remove any leftover civilian highlight on this model
+                local civHL = obj:FindFirstChild("_SWAT_HL_CIV")
+                if civHL then civHL:Destroy() end
+                local sHRPv = obj:FindFirstChild("HumanoidRootPart")
+                if sHRPv then
+                    local civBB = sHRPv:FindFirstChild(bbTagCiv)
+                    if civBB then civBB:Destroy() end
+                end
+
+                -- Suspect highlight (orange)
                 if not obj:FindFirstChild("_SWAT_HL_C") then
-                    local oldHL = obj:FindFirstChild("_SWAT_HL_V")
-                    if oldHL then oldHL:Destroy() end
                     local hl = Instance.new("Highlight")
                     hl.Name             = "_SWAT_HL_C"
                     hl.FillTransparency = 0.35
@@ -2383,12 +2354,11 @@ RunService.RenderStepped:Connect(function()
                     hl.OutlineColor     = Color3.fromRGB(255, 200, 0)
                     hl.Parent = obj
                 end
-
-                -- BillboardGui
+                -- Suspect BillboardGui
                 local sHRP = obj:FindFirstChild("HumanoidRootPart")
-                if sHRP and not sHRP:FindFirstChild(bbTag) then
+                if sHRP and not sHRP:FindFirstChild(bbTagC) then
                     local bb  = Instance.new("BillboardGui")
-                    bb.Name        = bbTag
+                    bb.Name        = bbTagC
                     bb.Size        = UDim2.new(0, 140, 0, 48)
                     bb.StudsOffset = Vector3.new(0, 3.5, 0)
                     bb.AlwaysOnTop = true
@@ -2403,57 +2373,92 @@ RunService.RenderStepped:Connect(function()
                     lbl.TextColor3             = Color3.fromRGB(255, 230, 80)
                     lbl.Parent = bb
                 end
-
-                -- Update HP label every frame
+                -- Update suspect HP label every frame
                 local sHRP2 = obj:FindFirstChild("HumanoidRootPart")
                 if sHRP2 then
-                    local bb = sHRP2:FindFirstChild(bbTag)
+                    local bb = sHRP2:FindFirstChild(bbTagC)
                     local sH = obj:FindFirstChildOfClass("Humanoid")
                     if bb and sH then
                         local l = bb:FindFirstChild("Lbl")
                         if l then
-                            l.Text = string.format("[CRIMINAL]\n%s\n❤ %d/%d",
+                            l.Text = string.format("[SUSPECT]\n%s\n❤ %d/%d",
                                 obj.Name,
                                 math.floor(sH.Health),
                                 math.floor(sH.MaxHealth))
                         end
                     end
                 end
+
+            elseif Settings.ESP and isCiv then
+                -- Remove any leftover suspect highlight on this model
+                local crimHL = obj:FindFirstChild("_SWAT_HL_C")
+                if crimHL then crimHL:Destroy() end
+                local sHRPv = obj:FindFirstChild("HumanoidRootPart")
+                if sHRPv then
+                    local crimBB = sHRPv:FindFirstChild(bbTagC)
+                    if crimBB then crimBB:Destroy() end
+                end
+
+                -- Civilian highlight (yellow)
+                if not obj:FindFirstChild("_SWAT_HL_CIV") then
+                    local hl = Instance.new("Highlight")
+                    hl.Name             = "_SWAT_HL_CIV"
+                    hl.FillTransparency = 0.45
+                    hl.FillColor        = Color3.fromRGB(255, 240, 0)
+                    hl.OutlineColor     = Color3.fromRGB(255, 200, 50)
+                    hl.Parent = obj
+                end
+                -- Civilian BillboardGui
+                local sHRP = obj:FindFirstChild("HumanoidRootPart")
+                if sHRP and not sHRP:FindFirstChild(bbTagCiv) then
+                    local bb  = Instance.new("BillboardGui")
+                    bb.Name        = bbTagCiv
+                    bb.Size        = UDim2.new(0, 140, 0, 48)
+                    bb.StudsOffset = Vector3.new(0, 3.5, 0)
+                    bb.AlwaysOnTop = true
+                    bb.Parent      = sHRP
+                    local lbl = Instance.new("TextLabel")
+                    lbl.Name                   = "Lbl"
+                    lbl.Size                   = UDim2.new(1,0,1,0)
+                    lbl.BackgroundTransparency = 1
+                    lbl.TextStrokeTransparency = 0
+                    lbl.TextScaled             = true
+                    lbl.Font                   = Enum.Font.GothamBold
+                    lbl.TextColor3             = Color3.fromRGB(255, 255, 80)
+                    lbl.Parent = bb
+                end
+                -- Update civilian HP label every frame
+                local sHRP2 = obj:FindFirstChild("HumanoidRootPart")
+                if sHRP2 then
+                    local bb = sHRP2:FindFirstChild(bbTagCiv)
+                    local sH = obj:FindFirstChildOfClass("Humanoid")
+                    if bb and sH then
+                        local l = bb:FindFirstChild("Lbl")
+                        if l then
+                            l.Text = string.format("[CIVILIAN]\n%s\n❤ %d/%d",
+                                obj.Name,
+                                math.floor(sH.Health),
+                                math.floor(sH.MaxHealth))
+                        end
+                    end
+                end
+
             else
-                -- Clean up ESP when disabled or NPC is civilian
-                local hl = obj:FindFirstChild("_SWAT_HL_C")
-                if hl then hl:Destroy() end
+                -- ESP disabled — clean up all NPC highlights
+                local hC   = obj:FindFirstChild("_SWAT_HL_C")
+                local hCiv = obj:FindFirstChild("_SWAT_HL_CIV")
+                if hC   then hC:Destroy() end
+                if hCiv then hCiv:Destroy() end
                 local sHRP = obj:FindFirstChild("HumanoidRootPart")
                 if sHRP then
-                    local bb = sHRP:FindFirstChild(bbTag)
-                    if bb then bb:Destroy() end
+                    local bbC   = sHRP:FindFirstChild(bbTagC)
+                    local bbCiv = sHRP:FindFirstChild(bbTagCiv)
+                    if bbC   then bbC:Destroy() end
+                    if bbCiv then bbCiv:Destroy() end
                 end
             end
 
-            -- ── HITBOX — criminals only ────────────────────────
-            if Settings.Hitbox and isCrim then
-                local sHRP = obj:FindFirstChild("HumanoidRootPart")
-                if sHRP then
-                    -- Store original size (once)
-                    if not sHRP:FindFirstChild("_origSzSWAT") then
-                        local sv = Instance.new("Vector3Value")
-                        sv.Name   = "_origSzSWAT"
-                        sv.Value  = sHRP.Size
-                        sv.Parent = sHRP
-                    end
-                    -- Store original transparency (once)
-                    if not sHRP:FindFirstChild("_origTrSWAT") then
-                        local tv = Instance.new("NumberValue")
-                        tv.Name   = "_origTrSWAT"
-                        tv.Value  = sHRP.Transparency
-                        tv.Parent = sHRP
-                    end
-                    local sz = Settings.HitboxSize * 2
-                    sHRP.Size                     = Vector3.new(sz, sz, sz)
-                    sHRP.LocalTransparencyModifier = 0.35   -- client-side only, doesn't affect server
-                    sHRP.CanCollide               = false
-                end
-            end
+            -- (hitbox handled in dedicated Heartbeat loop below)
 
         elseif Settings.ObjectiveESP and obj:IsA("BasePart") then
             -- ── OBJECTIVE ESP — non-NPC parts with objective keywords ──
@@ -2604,6 +2609,43 @@ RunService.RenderStepped:Connect(function()
     -- ── WALKSPEED re-apply ─────────────────────────────────────
     if hum and hum.WalkSpeed ~= Settings.WalkSpeed and not Settings.Fly then
         hum.WalkSpeed = Settings.WalkSpeed
+    end
+end)
+
+-- ───────────────────────────────────────────────────────────────
+-- HITBOX — dedicated Heartbeat loop
+-- Directly scans workspace:GetChildren() for models with Vest.
+-- Same detection logic as ESP (confirmed working in-game).
+-- ───────────────────────────────────────────────────────────────
+RunService.Heartbeat:Connect(function()
+    for _, obj in ipairs(Workspace:GetChildren()) do
+        -- Direct Vest check: same as criminal ESP detection
+        if obj:IsA("Model") and obj:FindFirstChild("Vest") then
+            local hum = obj:FindFirstChildOfClass("Humanoid")
+            if hum and hum.Health > 0 then
+                local hrp = obj:FindFirstChild("HumanoidRootPart")
+                if hrp then
+                    if Settings.Hitbox then
+                        -- Store original size once
+                        if not hrp:FindFirstChild("_origSzSWAT") then
+                            local sv = Instance.new("Vector3Value")
+                            sv.Name   = "_origSzSWAT"
+                            sv.Value  = hrp.Size
+                            sv.Parent = hrp
+                        end
+                        local sz = Settings.HitboxSize * 2
+                        hrp.Size                      = Vector3.new(sz, sz, sz)
+                        hrp.LocalTransparencyModifier = 0.35
+                        hrp.CanCollide                = false
+                    else
+                        -- Restore original size when hitbox is off
+                        local sv = hrp:FindFirstChild("_origSzSWAT")
+                        if sv then hrp.Size = sv.Value; sv:Destroy() end
+                        hrp.LocalTransparencyModifier = 0
+                    end
+                end
+            end
+        end
     end
 end)
 
