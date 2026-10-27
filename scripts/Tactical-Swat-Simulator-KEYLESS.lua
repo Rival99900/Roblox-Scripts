@@ -1177,17 +1177,24 @@ local function isNPC(model)
     return true
 end
 
--- NPC classification: suspects have a Vest accessory OR their name contains a known keyword.
--- This handles both the standard map (Vest) and Broken Bars (prisoners named "Prisoner*").
--- Civilians are all other live NPCs that are not suspects.
+-- NPC classification: armed = suspect/criminal, unarmed = civilian/hostage.
+-- Priority order:
+--   1. Tool child present in model → suspect (armed criminal, works on all maps)
+--   2. Name keyword match          → suspect (fallback for edge cases)
+--   3. Everything else             → civilian/hostage (unarmed, to be arrested/secured)
+-- This correctly handles:
+--   • Standard map: guards/criminals carry weapons (Tool)
+--   • Broken Bars:  prisoners carrying weapons = suspects; unarmed prisoners = hostages
 
--- Keywords (case-insensitive) that identify a suspect by model name
-local SUSPECT_NAME_KW = {"suspect", "criminal", "prisoner"}
+-- Keywords (case-insensitive) that identify a suspect by model name (fallback)
+local SUSPECT_NAME_KW = {"suspect", "criminal", "prisoner", "inmate"}
 
--- Returns true if model is a live suspect (NPC + Vest present OR name keyword match)
+-- Returns true if model is a live suspect (NPC + armed OR name keyword match)
 local function isSuspect(model)
     if not isNPC(model) then return false end
-    if model:FindFirstChild("Vest") then return true end
+    -- Armed check: any Tool in the model = this NPC is a criminal
+    if model:FindFirstChildOfClass("Tool") then return true end
+    -- Name keyword fallback
     local n = model.Name:lower()
     for _, kw in ipairs(SUSPECT_NAME_KW) do
         if n:find(kw, 1, true) then return true end
@@ -1195,7 +1202,7 @@ local function isSuspect(model)
     return false
 end
 
--- Returns true if model is a live civilian (NPC + not a suspect)
+-- Returns true if model is a live civilian/hostage (unarmed NPC, not a suspect)
 local function isCivilian(model)
     if not isNPC(model) then return false end
     return not isSuspect(model)
@@ -1916,14 +1923,15 @@ local function tryAutoArrest()
         if net then ShoutNPC = net:FindFirstChild("ShoutNPC") end
     end)
 
-    -- Strategy 1: fire ProximityPrompts on suspect NPC models (Vest = suspect)
+    -- Strategy 1: fire ProximityPrompts on civilian/hostage NPC models (unarmed = to arrest)
     --   • Distance check: NPC must be within AutoArrestDist
-    --   • ShoutNPC is fired first to make the suspect kneel (prerequisite for arrest)
+    --   • ShoutNPC is fired first to make the civilian comply (prerequisite for cuff prompt)
+    --   • Suspects (armed criminals) are NEVER targeted here — they must be neutralised by shooting
     for _, obj in ipairs(Workspace:GetChildren()) do
-        if isSuspect(obj) then
+        if isCivilian(obj) then
             local npcHRP = obj:FindFirstChild("HumanoidRootPart")
             if npcHRP and inRange(npcHRP.Position) then
-                -- Fire ShoutNPC to make suspect kneel (required before cuff prompt appears)
+                -- Fire ShoutNPC to make civilian comply (required before cuff prompt appears)
                 if ShoutNPC then
                     pcall(function() ShoutNPC:FireServer(obj) end)
                 end
