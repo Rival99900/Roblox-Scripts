@@ -59,10 +59,6 @@ local Translations = {
         TabAuto          = "Auto",
         TabTools         = "Tools",
         -- Combat
-        SilentAim        = "Silent Aim",
-        SilentAimDesc    = "Redirect shots to nearest suspect when firing",
-        SilentAimDist    = "Max Distance (studs)",
-        SilentAimFOV     = "FOV Radius (px)",
         GodMode          = "God Mode",
         GodModeDesc      = "Continuously restore HP — near-invincible",
         ESPEnabled       = "ESP (Criminals/Civilians)",
@@ -118,10 +114,6 @@ local Translations = {
         TabMovement      = "Mouvement",
         TabAuto          = "Auto",
         TabTools         = "Outils",
-        SilentAim        = "Silent Aim",
-        SilentAimDesc    = "Redirige les tirs vers le suspect le plus proche",
-        SilentAimDist    = "Distance max (studs)",
-        SilentAimFOV     = "Rayon FOV (px)",
         GodMode          = "Mode Dieu",
         GodModeDesc      = "Restaure les PV en continu — quasi invincible",
         ESPEnabled       = "ESP Suspects",
@@ -172,10 +164,6 @@ local Translations = {
         TabMovement      = "Bewegung",
         TabAuto          = "Auto",
         TabTools         = "Werkzeuge",
-        SilentAim        = "Silent Aim",
-        SilentAimDesc    = "Schüsse zum nächsten Verdächtigen umleiten",
-        SilentAimDist    = "Max. Entfernung (Studs)",
-        SilentAimFOV     = "FOV-Radius (px)",
         GodMode          = "Gottmodus",
         GodModeDesc      = "HP kontinuierlich wiederherstellen",
         ESPEnabled       = "ESP Verdächtige",
@@ -226,10 +214,6 @@ local Translations = {
         TabMovement      = "Movimiento",
         TabAuto          = "Auto",
         TabTools         = "Herramientas",
-        SilentAim        = "Silent Aim",
-        SilentAimDesc    = "Redirige disparos al sospechoso más cercano",
-        SilentAimDist    = "Distancia máx. (studs)",
-        SilentAimFOV     = "Radio FOV (px)",
         GodMode          = "Modo Dios",
         GodModeDesc      = "Restaurar HP continuamente — casi invencible",
         ESPEnabled       = "ESP Sospechosos",
@@ -280,10 +264,6 @@ local Translations = {
         TabMovement      = "Movimento",
         TabAuto          = "Auto",
         TabTools         = "Ferramentas",
-        SilentAim        = "Silent Aim",
-        SilentAimDesc    = "Redireciona tiros para o suspeito mais próximo",
-        SilentAimDist    = "Distância máx. (studs)",
-        SilentAimFOV     = "Raio FOV (px)",
         GodMode          = "Modo Deus",
         GodModeDesc      = "Restaurar HP continuamente — quase invencível",
         ESPEnabled       = "ESP Suspeitos",
@@ -334,10 +314,6 @@ local Translations = {
         TabMovement      = "Движение",
         TabAuto          = "Авто",
         TabTools         = "Инструменты",
-        SilentAim        = "Silent Aim",
-        SilentAimDesc    = "Перенаправляет выстрелы на ближайшего подозреваемого",
-        SilentAimDist    = "Макс. дистанция (Studs)",
-        SilentAimFOV     = "Радиус FOV (px)",
         GodMode          = "Режим Бога",
         GodModeDesc      = "Непрерывное восстановление HP — почти неуязвим",
         ESPEnabled       = "ESP подозреваемых",
@@ -388,10 +364,6 @@ local Translations = {
         TabMovement      = "Movimento",
         TabAuto          = "Auto",
         TabTools         = "Strumenti",
-        SilentAim        = "Silent Aim",
-        SilentAimDesc    = "Redirige i colpi verso il sospettato più vicino",
-        SilentAimDist    = "Distanza max (studs)",
-        SilentAimFOV     = "Raggio FOV (px)",
         GodMode          = "Modalità Dio",
         GodModeDesc      = "Ripristino HP continuo — quasi invincibile",
         ESPEnabled       = "ESP Sospettati",
@@ -442,10 +414,6 @@ local Translations = {
         TabMovement      = "Beweging",
         TabAuto          = "Auto",
         TabTools         = "Hulpmiddelen",
-        SilentAim        = "Silent Aim",
-        SilentAimDesc    = "Schoten omleiden naar dichtstbijzijnde verdachte",
-        SilentAimDist    = "Max. afstand (studs)",
-        SilentAimFOV     = "FOV-straal (px)",
         GodMode          = "Godmodus",
         GodModeDesc      = "HP continu herstellen — bijna onoverwinnelijk",
         ESPEnabled       = "ESP Verdachten",
@@ -496,10 +464,6 @@ local Translations = {
         TabMovement      = "Ruch",
         TabAuto          = "Auto",
         TabTools         = "Narzędzia",
-        SilentAim        = "Silent Aim",
-        SilentAimDesc    = "Przekierowuje strzały na najbliższego podejrzanego",
-        SilentAimDist    = "Maks. dystans (studs)",
-        SilentAimFOV     = "Promień FOV (px)",
         GodMode          = "Tryb Boga",
         GodModeDesc      = "Ciągłe przywracanie HP — prawie niezniszczalny",
         ESPEnabled       = "ESP Podejrzani",
@@ -550,10 +514,6 @@ local Translations = {
         TabMovement      = "移动",
         TabAuto          = "自动",
         TabTools         = "工具",
-        SilentAim        = "静默瞄准",
-        SilentAimDesc    = "开枪时将子弹重定向到最近嫌疑人",
-        SilentAimDist    = "最大距离（格）",
-        SilentAimFOV     = "FOV半径（像素）",
         GodMode          = "无敌模式",
         GodModeDesc      = "持续恢复HP — 几乎无敌",
         ESPEnabled       = "ESP嫌疑人",
@@ -604,10 +564,6 @@ local Translations = {
         TabMovement      = "移動",
         TabAuto          = "オート",
         TabTools         = "ツール",
-        SilentAim        = "サイレントエイム",
-        SilentAimDesc    = "射撃時に最近の容疑者に向けてリダイレクト",
-        SilentAimDist    = "最大距離（Studs）",
-        SilentAimFOV     = "FOV半径（px）",
         GodMode          = "神モード",
         GodModeDesc      = "HPを継続回復 — ほぼ無敵",
         ESPEnabled       = "ESP容疑者",
@@ -658,10 +614,6 @@ local Translations = {
         TabMovement      = "Hareket",
         TabAuto          = "Otomatik",
         TabTools         = "Araçlar",
-        SilentAim        = "Silent Aim",
-        SilentAimDesc    = "Ateş ederken en yakın şüpheliye yönlendir",
-        SilentAimDist    = "Maks. mesafe (studs)",
-        SilentAimFOV     = "FOV yarıçapı (px)",
         GodMode          = "Tanrı Modu",
         GodModeDesc      = "HP'yi sürekli yenile — neredeyse yenilmez",
         ESPEnabled       = "ESP Şüpheliler",
@@ -712,10 +664,6 @@ local Translations = {
         TabMovement      = "이동",
         TabAuto          = "자동",
         TabTools         = "도구",
-        SilentAim        = "사일런트 에임",
-        SilentAimDesc    = "발사 시 가장 가까운 용의자로 탄도 변경",
-        SilentAimDist    = "최대 거리 (studs)",
-        SilentAimFOV     = "FOV 반경 (px)",
         GodMode          = "갓 모드",
         GodModeDesc      = "HP 지속 회복 — 거의 불사",
         ESPEnabled       = "ESP 용의자",
@@ -766,10 +714,6 @@ local Translations = {
         TabMovement      = "الحركة",
         TabAuto          = "أوتوماتيك",
         TabTools         = "الأدوات",
-        SilentAim        = "صمت التصويب",
-        SilentAimDesc    = "توجيه الطلقات نحو أقرب مشتبه به عند إطلاق النار",
-        SilentAimDist    = "المسافة القصوى",
-        SilentAimFOV     = "نصف قطر FOV (بكسل)",
         GodMode          = "وضع الإله",
         GodModeDesc      = "استعادة HP بشكل مستمر — شبه لا يُهزم",
         ESPEnabled       = "ESP المشتبه بهم",
@@ -820,10 +764,6 @@ local Translations = {
         TabMovement      = "Di chuyển",
         TabAuto          = "Tự động",
         TabTools         = "Công cụ",
-        SilentAim        = "Silent Aim",
-        SilentAimDesc    = "Chuyển hướng đạn sang nghi phạm gần nhất",
-        SilentAimDist    = "Khoảng cách tối đa (studs)",
-        SilentAimFOV     = "Bán kính FOV (px)",
         GodMode          = "Chế độ Thần",
         GodModeDesc      = "Liên tục hồi HP — gần như bất tử",
         ESPEnabled       = "ESP Nghi phạm",
@@ -874,10 +814,6 @@ local Translations = {
         TabMovement      = "Rörelse",
         TabAuto          = "Auto",
         TabTools         = "Verktyg",
-        SilentAim        = "Silent Aim",
-        SilentAimDesc    = "Dirigera skott mot närmaste misstänkt",
-        SilentAimDist    = "Maks. avstånd (studs)",
-        SilentAimFOV     = "FOV-radie (px)",
         GodMode          = "Gudläge",
         GodModeDesc      = "Återställ HP kontinuerligt — nästan osårbar",
         ESPEnabled       = "ESP Misstänkta",
@@ -928,10 +864,6 @@ local Translations = {
         TabMovement      = "Κίνηση",
         TabAuto          = "Αυτόματο",
         TabTools         = "Εργαλεία",
-        SilentAim        = "Silent Aim",
-        SilentAimDesc    = "Ανακατεύθυνση πυρών στον πλησιέστερο ύποπτο",
-        SilentAimDist    = "Μέγ. απόσταση (studs)",
-        SilentAimFOV     = "Ακτίνα FOV (px)",
         GodMode          = "Λειτουργία Θεού",
         GodModeDesc      = "Συνεχής αναπλήρωση HP — σχεδόν άτρωτος",
         ESPEnabled       = "ESP Ύποπτοι",
@@ -982,10 +914,6 @@ local Translations = {
         TabMovement      = "Mișcare",
         TabAuto          = "Auto",
         TabTools         = "Instrumente",
-        SilentAim        = "Silent Aim",
-        SilentAimDesc    = "Redirecționează gloanțele spre cel mai apropiat suspect",
-        SilentAimDist    = "Distanță max (studs)",
-        SilentAimFOV     = "Raza FOV (px)",
         GodMode          = "Modul Dumnezeu",
         GodModeDesc      = "Restaurare HP continuu — aproape invincibil",
         ESPEnabled       = "ESP Suspecți",
@@ -1036,10 +964,6 @@ local Translations = {
         TabMovement      = "Рух",
         TabAuto          = "Авто",
         TabTools         = "Інструменти",
-        SilentAim        = "Silent Aim",
-        SilentAimDesc    = "Перенаправляє постріли на найближчого підозрюваного",
-        SilentAimDist    = "Макс. дистанція (studs)",
-        SilentAimFOV     = "Радіус FOV (px)",
         GodMode          = "Режим Бога",
         GodModeDesc      = "Безперервне відновлення HP — майже невразливий",
         ESPEnabled       = "ESP підозрюваних",
@@ -1090,10 +1014,6 @@ local Translations = {
         TabMovement      = "Pohyb",
         TabAuto          = "Auto",
         TabTools         = "Nástroje",
-        SilentAim        = "Silent Aim",
-        SilentAimDesc    = "Přesměrovat střely na nejbližšího podezřelého",
-        SilentAimDist    = "Max. vzdálenost (studs)",
-        SilentAimFOV     = "Poloměr FOV (px)",
         GodMode          = "Bůh mód",
         GodModeDesc      = "Průběžná obnova HP — téměř nezničitelný",
         ESPEnabled       = "ESP Podezřelí",
@@ -1144,10 +1064,6 @@ local Translations = {
         TabMovement      = "Bevægelse",
         TabAuto          = "Auto",
         TabTools         = "Værktøjer",
-        SilentAim        = "Silent Aim",
-        SilentAimDesc    = "Omdirigér skud mod nærmeste mistænkte",
-        SilentAimDist    = "Maks. afstand (studs)",
-        SilentAimFOV     = "FOV-radius (px)",
         GodMode          = "Gudstilstand",
         GodModeDesc      = "Genopret HP kontinuerligt — næsten usårlig",
         ESPEnabled       = "ESP Mistænkte",
@@ -1202,9 +1118,6 @@ end
 -- SETTINGS
 -- ───────────────────────────────────────────────────────────────
 local Settings = {
-    SilentAim       = false,
-    SilentAimDist   = 150,   -- studs
-    SilentAimFOV    = 80,    -- px on screen
     ESP             = false,
     ObjectiveESP    = false,
     Hitbox          = false,
@@ -1218,10 +1131,6 @@ local Settings = {
     AutoArrestDist  = 10,   -- studs; 0 = unlimited
     AntiAFK         = false,
     Fullbright      = false,
-    -- Aimbot
-    Aimbot          = false,
-    AimbotFOV       = 80,   -- px radius on screen
-    AimbotDist      = 150,  -- studs
 }
 
 -- ───────────────────────────────────────────────────────────────
@@ -1268,19 +1177,28 @@ local function isNPC(model)
     return true
 end
 
--- NPC classification: suspects carry a "Vest" in their model (confirmed via game log).
--- Civilians have no Vest. Keyword matching was unreliable — this is ground-truth detection.
+-- NPC classification: suspects have a Vest accessory OR their name contains a known keyword.
+-- This handles both the standard map (Vest) and Broken Bars (prisoners named "Prisoner*").
+-- Civilians are all other live NPCs that are not suspects.
 
--- Returns true if model is a live suspect (NPC + has Vest)
+-- Keywords (case-insensitive) that identify a suspect by model name
+local SUSPECT_NAME_KW = {"suspect", "criminal", "prisoner"}
+
+-- Returns true if model is a live suspect (NPC + Vest present OR name keyword match)
 local function isSuspect(model)
     if not isNPC(model) then return false end
-    return model:FindFirstChild("Vest") ~= nil
+    if model:FindFirstChild("Vest") then return true end
+    local n = model.Name:lower()
+    for _, kw in ipairs(SUSPECT_NAME_KW) do
+        if n:find(kw, 1, true) then return true end
+    end
+    return false
 end
 
--- Returns true if model is a live civilian (NPC + no Vest)
+-- Returns true if model is a live civilian (NPC + not a suspect)
 local function isCivilian(model)
     if not isNPC(model) then return false end
-    return model:FindFirstChild("Vest") == nil
+    return not isSuspect(model)
 end
 
 -- isCriminal is an alias for isSuspect (used by hitbox/ESP internals)
@@ -1638,31 +1556,6 @@ TabHome:CreateParagraph({
 local TabCombat = Window:CreateTab(T("TabCombat"), 4483362458)
 
 TabCombat:CreateToggle({
-    Name         = T("SilentAim"),
-    CurrentValue = Settings.SilentAim,
-    Flag         = "SilentAim",
-    Callback     = function(v) Settings.SilentAim = v end,
-})
-TabCombat:CreateSlider({
-    Name         = T("SilentAimDist"),
-    Range        = {20, 500},
-    Increment    = 10,
-    CurrentValue = Settings.SilentAimDist,
-    Flag         = "SilentAimDist",
-    Callback     = function(v) Settings.SilentAimDist = v end,
-})
-TabCombat:CreateSlider({
-    Name         = T("SilentAimFOV"),
-    Range        = {10, 300},
-    Increment    = 5,
-    CurrentValue = Settings.SilentAimFOV,
-    Flag         = "SilentAimFOV",
-    Callback     = function(v) Settings.SilentAimFOV = v end,
-})
-
-TabCombat:CreateDivider()
-
-TabCombat:CreateToggle({
     Name         = T("ESPEnabled"),
     CurrentValue = Settings.ESP,
     Flag         = "ESP",
@@ -1714,34 +1607,6 @@ TabCombat:CreateSlider({
     Flag         = "HitboxSize",
     Callback     = function(v) Settings.HitboxSize = v end,
 })
-
-TabCombat:CreateDivider()
-
--- ── Aimbot ─────────────────────────────────────────────────────
-TabCombat:CreateToggle({
-    Name         = "Aimbot (Enemy Players)",
-    CurrentValue = Settings.Aimbot,
-    Flag         = "Aimbot",
-    Callback     = function(v) Settings.Aimbot = v end,
-})
-TabCombat:CreateSlider({
-    Name         = "Aimbot FOV (px)",
-    Range        = {10, 200},
-    Increment    = 5,
-    CurrentValue = Settings.AimbotFOV,
-    Flag         = "AimbotFOV",
-    Callback     = function(v) Settings.AimbotFOV = v end,
-})
-TabCombat:CreateSlider({
-    Name         = "Aimbot Distance (studs)",
-    Range        = {20, 300},
-    Increment    = 10,
-    CurrentValue = Settings.AimbotDist,
-    Flag         = "AimbotDist",
-    Callback     = function(v) Settings.AimbotDist = v end,
-})
-
-TabCombat:CreateDivider()
 
 -- ── TAB MOVEMENT ────────────────────────────────────────────────
 local TabMovement = Window:CreateTab(T("TabMovement"), 4483362458)
@@ -1942,39 +1807,37 @@ TabAuto:CreateDivider()
 TabAuto:CreateButton({
     Name     = "Secure Evidence / Validate Objective",
     Callback = function()
-        local SecureEvidence = game:GetService("ReplicatedStorage"):FindFirstChild("Network")
-            and game:GetService("ReplicatedStorage").Network:FindFirstChild("SecureEvidence")
+        -- Locate the SecureEvidence remote (works on all maps)
+        local SecureEvidence
+        pcall(function()
+            local net = ReplicatedStorage:FindFirstChild("Network")
+            if net then SecureEvidence = net:FindFirstChild("SecureEvidence") end
+        end)
         if not SecureEvidence then
-            Rayfield:Notify({Title = "Secure Evidence", Content = "Remote not found", Duration = 3})
+            Rayfield:Notify({Title = "Secure Evidence", Content = "SecureEvidence remote not found", Duration = 3})
             return
         end
-        -- Search in nil instances first (executor-specific), then workspace descendants
-        local found = false
-        local evidenceObjs = {}
-        pcall(function()
-            for _, obj in ipairs(getnilinstances()) do
-                if obj.Name == "CashRecoverEvidence" then
-                    evidenceObjs[#evidenceObjs+1] = obj
+        -- Generic keyword scan: matches evidence objects regardless of map
+        local EVIDENCE_KW = {"evidence", "cash", "money", "drug", "package", "objective"}
+        local found, secured = 0, 0
+        for _, obj in ipairs(Workspace:GetDescendants()) do
+            if obj:IsA("Model") or obj:IsA("BasePart") then
+                local n = obj.Name:lower()
+                for _, kw in ipairs(EVIDENCE_KW) do
+                    if n:find(kw, 1, true) then
+                        found = found + 1
+                        local ok = pcall(function() SecureEvidence:FireServer(obj) end)
+                        if ok then secured = secured + 1 end
+                        break
+                    end
                 end
             end
-        end)
-        if #evidenceObjs == 0 then
-            -- Fallback: scan all game descendants
-            for _, obj in ipairs(game:GetDescendants()) do
-                if obj.Name == "CashRecoverEvidence" then
-                    evidenceObjs[#evidenceObjs+1] = obj
-                end
-            end
         end
-        for _, obj in ipairs(evidenceObjs) do
-            pcall(function() SecureEvidence:FireServer(obj) end)
-            found = true
-        end
-        if found then
-            Rayfield:Notify({Title = "Secure Evidence", Content = "✓ Evidence secured!", Duration = 3})
-        else
-            Rayfield:Notify({Title = "Secure Evidence", Content = "No evidence instance found", Duration = 3})
-        end
+        Rayfield:Notify({
+            Title   = "Secure Evidence",
+            Content = secured .. "/" .. found .. " objects secured",
+            Duration = 3,
+        })
     end,
 })
 
@@ -2021,136 +1884,6 @@ TabTools:CreateDropdown({
 -- ───────────────────────────────────────────────────────────────
 -- AIMBOT / SILENT AIM: snap helpers (called on Tool.Activated)
 -- ───────────────────────────────────────────────────────────────
-local isWeaponFiring = false
-
--- Snap camera toward the closest enemy head within FOV/range.
--- Suspects: direct workspace:GetChildren() + Vest check (same as ESP).
--- Enemy players: getAllEnemyPlayers().
-local function doAimbotSnap()
-    if not Settings.Aimbot then return end
-    local hrp = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
-    if not hrp then return end
-    local cam    = Workspace.CurrentCamera
-    local vpSize = cam.ViewportSize
-    local center = Vector2.new(vpSize.X/2, vpSize.Y/2)
-    local bestDist2, bestHead = math.huge, nil
-
-    -- Suspects: direct Vest scan (same logic as criminal ESP)
-    for _, obj in ipairs(Workspace:GetChildren()) do
-        if obj:IsA("Model") and obj:FindFirstChild("Vest") then
-            local hum = obj:FindFirstChildOfClass("Humanoid")
-            if hum and hum.Health > 0 then
-                local head = obj:FindFirstChild("Head")
-                if head then
-                    local dist3D = (head.Position - hrp.Position).Magnitude
-                    if dist3D <= Settings.AimbotDist then
-                        local sp, onScreen = worldToScreen(head.Position)
-                        if onScreen then
-                            local d2 = (sp - center).Magnitude
-                            if d2 <= Settings.AimbotFOV and d2 < bestDist2 then
-                                bestDist2, bestHead = d2, head
-                            end
-                        end
-                    end
-                end
-            end
-        end
-    end
-    -- Enemy players
-    for _, tChar in ipairs(getAllEnemyPlayers()) do
-        local head = tChar:FindFirstChild("Head")
-        if head then
-            local dist3D = (head.Position - hrp.Position).Magnitude
-            if dist3D <= Settings.AimbotDist then
-                local sp, onScreen = worldToScreen(head.Position)
-                if onScreen then
-                    local d2 = (sp - center).Magnitude
-                    if d2 <= Settings.AimbotFOV and d2 < bestDist2 then
-                        bestDist2, bestHead = d2, head
-                    end
-                end
-            end
-        end
-    end
-
-    if bestHead then
-        -- Aim at top of head (forehead) so bullet hits head hitbox reliably
-        local aimPos = bestHead.Position + Vector3.new(0, bestHead.Size.Y * 0.35, 0)
-        cam.CameraType = Enum.CameraType.Scriptable
-        cam.CFrame = CFrame.lookAt(cam.CFrame.Position, aimPos)
-        -- Wait long enough for ACS to read camera direction before restoring
-        task.delay(0.18, function()
-            if cam then cam.CameraType = Enum.CameraType.Custom end
-        end)
-    end
-end
-
--- Redirect camera for Silent Aim: reinforces game's built-in aim assist.
--- Targets head explicitly and keeps snap active longer than aimbot.
-local function doSilentAimSnap()
-    if not Settings.SilentAim then return end
-    local hrp = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
-    if not hrp then return end
-    local cam    = Workspace.CurrentCamera
-    local vpSize = cam.ViewportSize
-    local center = Vector2.new(vpSize.X/2, vpSize.Y/2)
-    local bestDist, bestHead = math.huge, nil
-
-    for _, obj in ipairs(Workspace:GetChildren()) do
-        if obj:IsA("Model") and obj:FindFirstChild("Vest") then
-            local hum = obj:FindFirstChildOfClass("Humanoid")
-            if hum and hum.Health > 0 then
-                local head = obj:FindFirstChild("Head")
-                if head then
-                    local dist3D = (head.Position - hrp.Position).Magnitude
-                    if dist3D <= Settings.SilentAimDist then
-                        local sp, onScreen = worldToScreen(head.Position)
-                        if onScreen then
-                            local d2 = (sp - center).Magnitude
-                            if d2 <= Settings.SilentAimFOV and d2 < bestDist then
-                                bestDist, bestHead = d2, head
-                            end
-                        end
-                    end
-                end
-            end
-        end
-    end
-
-    if bestHead then
-        -- Snap directly to head center for Silent Aim (game aim-assist reinforcement)
-        local aimPos = bestHead.Position + Vector3.new(0, bestHead.Size.Y * 0.2, 0)
-        cam.CameraType = Enum.CameraType.Scriptable
-        cam.CFrame = CFrame.lookAt(cam.CFrame.Position, aimPos)
-        -- Hold snap for ACS to fire the shot toward head, then restore
-        task.delay(0.22, function()
-            if cam then cam.CameraType = Enum.CameraType.Custom end
-        end)
-    end
-end
-
--- Hook all tools the player picks up
-local function hookTool(tool)
-    tool.Activated:Connect(function()
-        isWeaponFiring = true
-        doAimbotSnap()    -- snap camera BEFORE bullet trajectory is calculated
-        doSilentAimSnap()
-        task.delay(0.12, function() isWeaponFiring = false end)
-    end)
-end
-
-local function hookChar(char)
-    for _, t in ipairs(char:GetChildren()) do
-        if t:IsA("Tool") then hookTool(t) end
-    end
-    char.ChildAdded:Connect(function(c)
-        if c:IsA("Tool") then hookTool(c) end
-    end)
-end
-
-if LocalPlayer.Character then hookChar(LocalPlayer.Character) end
-LocalPlayer.CharacterAdded:Connect(hookChar)
-
 -- ───────────────────────────────────────────────────────────────
 -- AUTO ARREST: loop
 -- ───────────────────────────────────────────────────────────────
@@ -2580,13 +2313,13 @@ end)
 
 -- ───────────────────────────────────────────────────────────────
 -- HITBOX — dedicated Heartbeat loop
--- Directly scans workspace:GetChildren() for models with Vest.
--- Same detection logic as ESP (confirmed working in-game).
+-- Uses isSuspect() for universal detection (Vest OR name keyword).
+-- Works across all maps including Broken Bars (prisoner name fallback).
 -- ───────────────────────────────────────────────────────────────
 RunService.Heartbeat:Connect(function()
     for _, obj in ipairs(Workspace:GetChildren()) do
-        -- Direct Vest check: same as criminal ESP detection
-        if obj:IsA("Model") and obj:FindFirstChild("Vest") then
+        -- Universal suspect detection (Vest OR name keyword)
+        if isSuspect(obj) then
             local hum = obj:FindFirstChildOfClass("Humanoid")
             if hum and hum.Health > 0 then
                 local hrp = obj:FindFirstChild("HumanoidRootPart")
