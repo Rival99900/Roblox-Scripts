@@ -1399,7 +1399,7 @@ local function disableFly()
     if _flyDownBtn then _flyDownBtn.Visible = false end
 end
 
--- ───────────────────────────────────────────────────────────────
+
 -- ───────────────────────────────────────────────────────────────
 -- SURRENDER DETECTION — checks if a criminal NPC has hands up
 -- (BoolValues, StringValues, and playing animation track names)
@@ -1448,7 +1448,6 @@ end
 
 -- ───────────────────────────────────────────────────────────────
 -- OVERLAY UI — on-screen buttons (NOT inside Rayfield)
---   Jump ▲  — always visible, bottom-right
 --   Fly  ▲  — visible only when flying (top)
 --   Fly  ▼  — visible only when flying (below)
 -- ───────────────────────────────────────────────────────────────
@@ -1863,9 +1862,7 @@ TabTools:CreateDropdown({
     end,
 })
 
--- ───────────────────────────────────────────────────────────────
--- AIMBOT / SILENT AIM: snap helpers (called on Tool.Activated)
--- ───────────────────────────────────────────────────────────────
+
 -- ───────────────────────────────────────────────────────────────
 -- AUTO ARREST: loop
 -- ───────────────────────────────────────────────────────────────
