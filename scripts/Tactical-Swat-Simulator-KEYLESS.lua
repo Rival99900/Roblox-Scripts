@@ -3,31 +3,6 @@
     Tactical SWAT Hub — Tactical: Swat Simulator
     Created by Rival960 with the help of Claude
     Version: 1.0.0 | Languages: 21 | Rayfield UI | PC + Mobile
-    Status: untested in-game
-    ================================================================
-    Features:
-      COMBAT
-        Silent Aim    — FOV camera redirect toward nearest criminal NPC (PC + Mobile)
-        ESP           — DYNAMIC: criminals = orange+hitbox | civilians = blue, no hitbox
-        Objective ESP — highlight mission objectives (bombs, packages, evidence…) in yellow
-        Hitbox        — enlarge criminal NPC HRPs only (never affects civilians)
-      MOVEMENT
-        Fly           — Infinite Yield style: WASD/Space/Shift PC + MoveDir Mobile
-        NoClip        — pass through walls
-        WalkSpeed     — slider 16–350
-        Infinite Jump — hold jump for continuous jumping (JumpRequest hook)
-      AUTO
-        Auto Arrest   — fires arrest prompts within max distance + hands-up check
-        Bring Near    — TP nearest criminal NPC to local player
-        Bring All     — TP all criminal NPCs to local player
-        Open Doors    — fires ALL environment ProximityPrompts/ClickDetectors
-      OVERLAY (on-screen, not in GUI)
-        Jump Button   — always visible bottom-right, works PC + Mobile
-        Fly ▲▼        — visible only when flying, works PC + Mobile
-      TOOLS
-        Fullbright    — brightness + no shadows, fixed clock
-        Anti-AFK      — fake input every 4 min to avoid kick
-        Language      — 21 languages (re-exec to apply)
     ================================================================
 --]]
 
