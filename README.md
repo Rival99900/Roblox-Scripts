@@ -10,8 +10,8 @@
 
 | Script | Game | Features | Status |
 |--------|------|----------|--------|
-| [SCP vs Guard Hub](#-scp-vs-guard-hub) | [Be an SCP or Guard](https://www.roblox.com/games/121461214257813/Be-an-SCP-or-Guard) | ESP, Silent Aim, Fly, Hitbox, Doors | untested |
-| [Tactical SWAT Hub](#-tactical-swat-hub) | [Tactical: Swat Simulator](https://www.roblox.com/games/6571478429) | NPC ESP, Hitbox, Auto Arrest, Fly, Doors | untested |
+| [SCP vs Guard Hub](#-scp-vs-guard-hub) | [Be an SCP or Guard](https://www.roblox.com/games/121461214257813/Be-an-SCP-or-Guard) | ESP, Silent Aim, Fly, Hitbox, Doors | work |
+| [Tactical SWAT Hub](#-tactical-swat-hub) | [Tactical: Swat Simulator](https://www.roblox.com/games/6571478429) | NPC ESP, Hitbox, Auto Arrest, Fly, Doors | work |
 
 ---
 
