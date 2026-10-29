@@ -9,10 +9,10 @@
 ]]
 
 -- Services
-local Players        = game:GetService("Players")
-local RunService     = game:GetService("RunService")
+local Players           = game:GetService("Players")
+local RunService        = game:GetService("RunService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local UserInputService = game:GetService("UserInputService")
+local UserInputService  = game:GetService("UserInputService")
 
 local LocalPlayer = Players.LocalPlayer
 
@@ -23,745 +23,529 @@ local CurrentLang = "EN"
 
 local Translations = {
     EN = {
-        WindowTitle     = "Tower of Zombies Hub",
-        WindowSubtitle  = "by Rival960",
-        TabHome         = "Home",
-        TabCombat       = "Combat",
-        TabMovement     = "Movement",
-        TabAutoActions  = "Auto Actions",
-        TabTools        = "Tools & Visuals",
-        -- Home
-        HomeWelcome     = "Welcome to Tower of Zombies Hub!",
-        HomeVersion     = "Version: v1.0.0 — First Release",
-        HomeCredits     = "Created by Rival960 with the help of AI",
-        HomeGitHub      = "GitHub: Rival99900",
-        HomeDiscord     = "Discord: rival960",
-        HomeYouTube     = "YouTube: rival9607",
-        HomeStatus      = "Status: untested in-game",
-        -- Combat
-        SilentAim       = "Silent Aim",
-        AutoFire        = "Auto Fire",
+        WindowTitle       = "Tower of Zombies Hub",
+        WindowSubtitle    = "by Rival960",
+        TabHome           = "Home",
+        TabCombat         = "Combat",
+        TabMovement       = "Movement",
+        TabTools          = "Tools & Visuals",
+        CreditsTitle      = "Credits",
+        CreditsContent    = "Created by Rival960 with the help of AI\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.0.0 — First Release",
+        SilentAim         = "Silent Aim",
+        AutoFire          = "Auto Fire",
+        AutoFireDelay     = "Auto Fire Delay (s)",
+        KillAura          = "Kill Aura",
+        KillAuraDistance  = "Kill Aura Distance",
         MaxZombieDistance = "Max Zombie Distance",
-        -- Movement
-        FlyToggle       = "Fly",
-        FlySpeed        = "Fly Speed",
-        NoClip          = "NoClip",
-        WalkSpeed       = "Walk Speed",
-        JumpPower       = "Jump Power",
-        -- Auto Actions
-        AutoRollBtn     = "Roll Wheel Once",
-        AutoRollToggle  = "Auto Roll (every 3s)",
-        AutoJoinBtn     = "Auto Join Lobby",
-        AntiAFK         = "Anti-AFK",
-        -- Tools
-        Fullbright      = "Fullbright",
-        LanguageSelect  = "Language",
-        LangNote        = "Language change requires re-execution",
-        -- Notifications
-        NotifRollTitle  = "Wheel Result",
-        NotifRollFail   = "Roll failed — try again",
-        NotifJoinOk     = "Joining lobby...",
-        NotifJoinFail   = "Attempted join — verify in game",
+        FlyToggle         = "Fly",
+        FlySpeed          = "Fly Speed",
+        NoClip            = "NoClip",
+        WalkSpeed         = "Walk Speed",
+        InfJump           = "Infinite Jump",
+        AntiAFK           = "Anti-AFK",
+        Fullbright        = "Fullbright",
+        LanguageSelect    = "Language",
+        LangNote          = "Language change requires re-execution",
     },
     FR = {
-        WindowTitle     = "Tower of Zombies Hub",
-        WindowSubtitle  = "par Rival960",
-        TabHome         = "Accueil",
-        TabCombat       = "Combat",
-        TabMovement     = "Déplacement",
-        TabAutoActions  = "Actions Auto",
-        TabTools        = "Outils & Visuels",
-        HomeWelcome     = "Bienvenue dans Tower of Zombies Hub !",
-        HomeVersion     = "Version : v1.0.0 — Première Release",
-        HomeCredits     = "Créé par Rival960 avec l'aide de l'IA",
-        HomeGitHub      = "GitHub : Rival99900",
-        HomeDiscord     = "Discord : rival960",
-        HomeYouTube     = "YouTube : rival9607",
-        HomeStatus      = "Statut : non testé en jeu",
-        SilentAim       = "Tir Silencieux",
-        AutoFire        = "Tir Automatique",
+        WindowTitle       = "Tower of Zombies Hub",
+        WindowSubtitle    = "par Rival960",
+        TabHome           = "Accueil",
+        TabCombat         = "Combat",
+        TabMovement       = "Déplacement",
+        TabTools          = "Outils & Visuels",
+        CreditsTitle      = "Crédits",
+        CreditsContent    = "Créé par Rival960 avec l'aide de l'IA\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.0.0 — Première Release",
+        SilentAim         = "Tir Silencieux",
+        AutoFire          = "Tir Automatique",
+        AutoFireDelay     = "Délai Tir Auto (s)",
+        KillAura          = "Kill Aura",
+        KillAuraDistance  = "Distance Kill Aura",
         MaxZombieDistance = "Distance Max Zombie",
-        FlyToggle       = "Vol",
-        FlySpeed        = "Vitesse de Vol",
-        NoClip          = "NoClip",
-        WalkSpeed       = "Vitesse de Marche",
-        JumpPower       = "Puissance de Saut",
-        AutoRollBtn     = "Lancer la Roue",
-        AutoRollToggle  = "Roue Auto (3s)",
-        AutoJoinBtn     = "Rejoindre Lobby Auto",
-        AntiAFK         = "Anti-AFK",
-        Fullbright      = "Luminosité Max",
-        LanguageSelect  = "Langue",
-        LangNote        = "Le changement de langue nécessite une ré-exécution",
-        NotifRollTitle  = "Résultat de la Roue",
-        NotifRollFail   = "Echec du lancer — réessayez",
-        NotifJoinOk     = "Connexion au lobby...",
-        NotifJoinFail   = "Tentative de connexion — vérifiez en jeu",
+        FlyToggle         = "Vol",
+        FlySpeed          = "Vitesse de Vol",
+        NoClip            = "NoClip",
+        WalkSpeed         = "Vitesse de Marche",
+        InfJump           = "Saut Infini",
+        AntiAFK           = "Anti-AFK",
+        Fullbright        = "Luminosité Max",
+        LanguageSelect    = "Langue",
+        LangNote          = "Le changement de langue nécessite une ré-exécution",
     },
     DE = {
-        WindowTitle     = "Tower of Zombies Hub",
-        WindowSubtitle  = "von Rival960",
-        TabHome         = "Start",
-        TabCombat       = "Kampf",
-        TabMovement     = "Bewegung",
-        TabAutoActions  = "Auto-Aktionen",
-        TabTools        = "Tools & Visuals",
-        HomeWelcome     = "Willkommen im Tower of Zombies Hub!",
-        HomeVersion     = "Version: v1.0.0 — Erstveröffentlichung",
-        HomeCredits     = "Erstellt von Rival960 mit KI-Hilfe",
-        HomeGitHub      = "GitHub: Rival99900",
-        HomeDiscord     = "Discord: rival960",
-        HomeYouTube     = "YouTube: rival9607",
-        HomeStatus      = "Status: nicht im Spiel getestet",
-        SilentAim       = "Silent Aim",
-        AutoFire        = "Auto-Feuer",
+        WindowTitle       = "Tower of Zombies Hub",
+        WindowSubtitle    = "von Rival960",
+        TabHome           = "Start",
+        TabCombat         = "Kampf",
+        TabMovement       = "Bewegung",
+        TabTools          = "Tools & Visuals",
+        CreditsTitle      = "Credits",
+        CreditsContent    = "Erstellt von Rival960 mit KI-Hilfe\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.0.0 — Erstveröffentlichung",
+        SilentAim         = "Silent Aim",
+        AutoFire          = "Auto-Feuer",
+        AutoFireDelay     = "Auto-Feuer Verzögerung (s)",
+        KillAura          = "Kill Aura",
+        KillAuraDistance  = "Kill Aura Distanz",
         MaxZombieDistance = "Max Zombie-Distanz",
-        FlyToggle       = "Fliegen",
-        FlySpeed        = "Fluggeschwindigkeit",
-        NoClip          = "NoClip",
-        WalkSpeed       = "Laufgeschwindigkeit",
-        JumpPower       = "Sprungkraft",
-        AutoRollBtn     = "Rad drehen",
-        AutoRollToggle  = "Auto-Rad (3s)",
-        AutoJoinBtn     = "Lobby auto beitreten",
-        AntiAFK         = "Anti-AFK",
-        Fullbright      = "Vollhelligkeit",
-        LanguageSelect  = "Sprache",
-        LangNote        = "Sprachänderung erfordert Neuausführung",
-        NotifRollTitle  = "Rad-Ergebnis",
-        NotifRollFail   = "Dreh fehlgeschlagen — erneut versuchen",
-        NotifJoinOk     = "Lobby wird beigetreten...",
-        NotifJoinFail   = "Beitrittsversuch — im Spiel prüfen",
+        FlyToggle         = "Fliegen",
+        FlySpeed          = "Fluggeschwindigkeit",
+        NoClip            = "NoClip",
+        WalkSpeed         = "Laufgeschwindigkeit",
+        InfJump           = "Unendlicher Sprung",
+        AntiAFK           = "Anti-AFK",
+        Fullbright        = "Vollhelligkeit",
+        LanguageSelect    = "Sprache",
+        LangNote          = "Sprachänderung erfordert Neuausführung",
     },
     ES = {
-        WindowTitle     = "Tower of Zombies Hub",
-        WindowSubtitle  = "por Rival960",
-        TabHome         = "Inicio",
-        TabCombat       = "Combate",
-        TabMovement     = "Movimiento",
-        TabAutoActions  = "Acciones Auto",
-        TabTools        = "Herramientas",
-        HomeWelcome     = "¡Bienvenido al Tower of Zombies Hub!",
-        HomeVersion     = "Versión: v1.0.0 — Primera Versión",
-        HomeCredits     = "Creado por Rival960 con ayuda de IA",
-        HomeGitHub      = "GitHub: Rival99900",
-        HomeDiscord     = "Discord: rival960",
-        HomeYouTube     = "YouTube: rival9607",
-        HomeStatus      = "Estado: no probado en el juego",
-        SilentAim       = "Apuntado Silencioso",
-        AutoFire        = "Disparo Automático",
+        WindowTitle       = "Tower of Zombies Hub",
+        WindowSubtitle    = "por Rival960",
+        TabHome           = "Inicio",
+        TabCombat         = "Combate",
+        TabMovement       = "Movimiento",
+        TabTools          = "Herramientas",
+        CreditsTitle      = "Créditos",
+        CreditsContent    = "Creado por Rival960 con ayuda de IA\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.0.0 — Primera Versión",
+        SilentAim         = "Apuntado Silencioso",
+        AutoFire          = "Disparo Automático",
+        AutoFireDelay     = "Retraso Disparo Auto (s)",
+        KillAura          = "Kill Aura",
+        KillAuraDistance  = "Distancia Kill Aura",
         MaxZombieDistance = "Distancia Máx Zombie",
-        FlyToggle       = "Volar",
-        FlySpeed        = "Velocidad de Vuelo",
-        NoClip          = "NoClip",
-        WalkSpeed       = "Velocidad de Caminar",
-        JumpPower       = "Potencia de Salto",
-        AutoRollBtn     = "Girar la Rueda",
-        AutoRollToggle  = "Rueda Auto (3s)",
-        AutoJoinBtn     = "Unirse a Lobby Auto",
-        AntiAFK         = "Anti-AFK",
-        Fullbright      = "Brillo Total",
-        LanguageSelect  = "Idioma",
-        LangNote        = "El cambio de idioma requiere re-ejecución",
-        NotifRollTitle  = "Resultado de la Rueda",
-        NotifRollFail   = "Giro fallido — intenta de nuevo",
-        NotifJoinOk     = "Uniéndose al lobby...",
-        NotifJoinFail   = "Intento de unión — verifica en el juego",
+        FlyToggle         = "Volar",
+        FlySpeed          = "Velocidad de Vuelo",
+        NoClip            = "NoClip",
+        WalkSpeed         = "Velocidad de Caminar",
+        InfJump           = "Salto Infinito",
+        AntiAFK           = "Anti-AFK",
+        Fullbright        = "Brillo Total",
+        LanguageSelect    = "Idioma",
+        LangNote          = "El cambio de idioma requiere re-ejecución",
     },
     PT = {
-        WindowTitle     = "Tower of Zombies Hub",
-        WindowSubtitle  = "por Rival960",
-        TabHome         = "Início",
-        TabCombat       = "Combate",
-        TabMovement     = "Movimento",
-        TabAutoActions  = "Ações Auto",
-        TabTools        = "Ferramentas",
-        HomeWelcome     = "Bem-vindo ao Tower of Zombies Hub!",
-        HomeVersion     = "Versão: v1.0.0 — Primeiro Lançamento",
-        HomeCredits     = "Criado por Rival960 com ajuda de IA",
-        HomeGitHub      = "GitHub: Rival99900",
-        HomeDiscord     = "Discord: rival960",
-        HomeYouTube     = "YouTube: rival9607",
-        HomeStatus      = "Status: não testado no jogo",
-        SilentAim       = "Mira Silenciosa",
-        AutoFire        = "Disparo Automático",
+        WindowTitle       = "Tower of Zombies Hub",
+        WindowSubtitle    = "por Rival960",
+        TabHome           = "Início",
+        TabCombat         = "Combate",
+        TabMovement       = "Movimento",
+        TabTools          = "Ferramentas",
+        CreditsTitle      = "Créditos",
+        CreditsContent    = "Criado por Rival960 com ajuda de IA\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.0.0 — Primeiro Lançamento",
+        SilentAim         = "Mira Silenciosa",
+        AutoFire          = "Disparo Automático",
+        AutoFireDelay     = "Atraso Disparo Auto (s)",
+        KillAura          = "Kill Aura",
+        KillAuraDistance  = "Distância Kill Aura",
         MaxZombieDistance = "Distância Máx Zumbi",
-        FlyToggle       = "Voar",
-        FlySpeed        = "Velocidade de Voo",
-        NoClip          = "NoClip",
-        WalkSpeed       = "Velocidade de Caminhada",
-        JumpPower       = "Força de Pulo",
-        AutoRollBtn     = "Girar a Roda",
-        AutoRollToggle  = "Roda Auto (3s)",
-        AutoJoinBtn     = "Entrar Lobby Auto",
-        AntiAFK         = "Anti-AFK",
-        Fullbright      = "Brilho Total",
-        LanguageSelect  = "Idioma",
-        LangNote        = "Mudança de idioma requer re-execução",
-        NotifRollTitle  = "Resultado da Roda",
-        NotifRollFail   = "Giro falhou — tente novamente",
-        NotifJoinOk     = "Entrando no lobby...",
-        NotifJoinFail   = "Tentativa de entrada — verifique no jogo",
+        FlyToggle         = "Voar",
+        FlySpeed          = "Velocidade de Voo",
+        NoClip            = "NoClip",
+        WalkSpeed         = "Velocidade de Caminhada",
+        InfJump           = "Salto Infinito",
+        AntiAFK           = "Anti-AFK",
+        Fullbright        = "Brilho Total",
+        LanguageSelect    = "Idioma",
+        LangNote          = "Mudança de idioma requer re-execução",
     },
     RU = {
-        WindowTitle     = "Tower of Zombies Hub",
-        WindowSubtitle  = "от Rival960",
-        TabHome         = "Главная",
-        TabCombat       = "Бой",
-        TabMovement     = "Движение",
-        TabAutoActions  = "Авто действия",
-        TabTools        = "Инструменты",
-        HomeWelcome     = "Добро пожаловать в Tower of Zombies Hub!",
-        HomeVersion     = "Версия: v1.0.0 — Первый Выпуск",
-        HomeCredits     = "Создано Rival960 с помощью ИИ",
-        HomeGitHub      = "GitHub: Rival99900",
-        HomeDiscord     = "Discord: rival960",
-        HomeYouTube     = "YouTube: rival9607",
-        HomeStatus      = "Статус: не проверено в игре",
-        SilentAim       = "Тихий Прицел",
-        AutoFire        = "Авто Огонь",
-        MaxZombieDistance = "Макс дист. зомби",
-        FlyToggle       = "Полёт",
-        FlySpeed        = "Скорость полёта",
-        NoClip          = "NoClip",
-        WalkSpeed       = "Скорость ходьбы",
-        JumpPower       = "Сила прыжка",
-        AutoRollBtn     = "Крутить колесо",
-        AutoRollToggle  = "Авто колесо (3с)",
-        AutoJoinBtn     = "Войти в лобби авто",
-        AntiAFK         = "Анти-АФК",
-        Fullbright      = "Полная яркость",
-        LanguageSelect  = "Язык",
-        LangNote        = "Смена языка требует повторного запуска",
-        NotifRollTitle  = "Результат колеса",
-        NotifRollFail   = "Прокрутка не удалась — попробуйте снова",
-        NotifJoinOk     = "Вход в лобби...",
-        NotifJoinFail   = "Попытка входа — проверьте в игре",
+        WindowTitle       = "Tower of Zombies Hub",
+        WindowSubtitle    = "от Rival960",
+        TabHome           = "Главная",
+        TabCombat         = "Бой",
+        TabMovement       = "Движение",
+        TabTools          = "Инструменты",
+        CreditsTitle      = "Авторы",
+        CreditsContent    = "Создано Rival960 с помощью ИИ\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.0.0 — Первый Выпуск",
+        SilentAim         = "Тихий Прицел",
+        AutoFire          = "Авто Огонь",
+        AutoFireDelay     = "Задержка авто огня (с)",
+        KillAura          = "Kill Aura",
+        KillAuraDistance  = "Дистанция Kill Aura",
+        MaxZombieDistance = "Макс дистанция зомбі",
+        FlyToggle         = "Полёт",
+        FlySpeed          = "Скорость полёта",
+        NoClip            = "NoClip",
+        WalkSpeed         = "Скорость ходьбы",
+        InfJump           = "Бесконечный прыжок",
+        AntiAFK           = "Анти-АФК",
+        Fullbright        = "Полная яркость",
+        LanguageSelect    = "Язык",
+        LangNote          = "Смена языка требует повторного запуска",
     },
     IT = {
-        WindowTitle     = "Tower of Zombies Hub",
-        WindowSubtitle  = "di Rival960",
-        TabHome         = "Home",
-        TabCombat       = "Combattimento",
-        TabMovement     = "Movimento",
-        TabAutoActions  = "Azioni Auto",
-        TabTools        = "Strumenti",
-        HomeWelcome     = "Benvenuto nel Tower of Zombies Hub!",
-        HomeVersion     = "Versione: v1.0.0 — Prima Release",
-        HomeCredits     = "Creato da Rival960 con l'aiuto dell'IA",
-        HomeGitHub      = "GitHub: Rival99900",
-        HomeDiscord     = "Discord: rival960",
-        HomeYouTube     = "YouTube: rival9607",
-        HomeStatus      = "Stato: non testato in gioco",
-        SilentAim       = "Mira Silenziosa",
-        AutoFire        = "Fuoco Automatico",
+        WindowTitle       = "Tower of Zombies Hub",
+        WindowSubtitle    = "di Rival960",
+        TabHome           = "Home",
+        TabCombat         = "Combattimento",
+        TabMovement       = "Movimento",
+        TabTools          = "Strumenti",
+        CreditsTitle      = "Crediti",
+        CreditsContent    = "Creato da Rival960 con l'aiuto dell'IA\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.0.0 — Prima Release",
+        SilentAim         = "Mira Silenziosa",
+        AutoFire          = "Fuoco Automatico",
+        AutoFireDelay     = "Ritardo Fuoco Auto (s)",
+        KillAura          = "Kill Aura",
+        KillAuraDistance  = "Distanza Kill Aura",
         MaxZombieDistance = "Distanza Max Zombie",
-        FlyToggle       = "Volo",
-        FlySpeed        = "Velocità di Volo",
-        NoClip          = "NoClip",
-        WalkSpeed       = "Velocità di Camminata",
-        JumpPower       = "Potenza di Salto",
-        AutoRollBtn     = "Gira la Ruota",
-        AutoRollToggle  = "Ruota Auto (3s)",
-        AutoJoinBtn     = "Unisciti Lobby Auto",
-        AntiAFK         = "Anti-AFK",
-        Fullbright      = "Piena Luminosità",
-        LanguageSelect  = "Lingua",
-        LangNote        = "Il cambio lingua richiede una ri-esecuzione",
-        NotifRollTitle  = "Risultato della Ruota",
-        NotifRollFail   = "Giro fallito — riprova",
-        NotifJoinOk     = "Unendosi alla lobby...",
-        NotifJoinFail   = "Tentativo di unione — controlla in gioco",
+        FlyToggle         = "Volo",
+        FlySpeed          = "Velocità di Volo",
+        NoClip            = "NoClip",
+        WalkSpeed         = "Velocità di Camminata",
+        InfJump           = "Salto Infinito",
+        AntiAFK           = "Anti-AFK",
+        Fullbright        = "Piena Luminosità",
+        LanguageSelect    = "Lingua",
+        LangNote          = "Il cambio lingua richiede una ri-esecuzione",
     },
     NL = {
-        WindowTitle     = "Tower of Zombies Hub",
-        WindowSubtitle  = "door Rival960",
-        TabHome         = "Start",
-        TabCombat       = "Gevecht",
-        TabMovement     = "Beweging",
-        TabAutoActions  = "Auto Acties",
-        TabTools        = "Tools & Visuals",
-        HomeWelcome     = "Welkom bij Tower of Zombies Hub!",
-        HomeVersion     = "Versie: v1.0.0 — Eerste Release",
-        HomeCredits     = "Gemaakt door Rival960 met AI-hulp",
-        HomeGitHub      = "GitHub: Rival99900",
-        HomeDiscord     = "Discord: rival960",
-        HomeYouTube     = "YouTube: rival9607",
-        HomeStatus      = "Status: niet getest in het spel",
-        SilentAim       = "Silent Aim",
-        AutoFire        = "Automatisch Vuren",
+        WindowTitle       = "Tower of Zombies Hub",
+        WindowSubtitle    = "door Rival960",
+        TabHome           = "Start",
+        TabCombat         = "Gevecht",
+        TabMovement       = "Beweging",
+        TabTools          = "Tools & Visuals",
+        CreditsTitle      = "Credits",
+        CreditsContent    = "Gemaakt door Rival960 met AI-hulp\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.0.0 — Eerste Release",
+        SilentAim         = "Silent Aim",
+        AutoFire          = "Automatisch Vuren",
+        AutoFireDelay     = "Auto Vuren Vertraging (s)",
+        KillAura          = "Kill Aura",
+        KillAuraDistance  = "Kill Aura Afstand",
         MaxZombieDistance = "Max Zombie Afstand",
-        FlyToggle       = "Vliegen",
-        FlySpeed        = "Vliegsnelheid",
-        NoClip          = "NoClip",
-        WalkSpeed       = "Loopsnelheid",
-        JumpPower       = "Sprongkracht",
-        AutoRollBtn     = "Wiel Draaien",
-        AutoRollToggle  = "Auto Wiel (3s)",
-        AutoJoinBtn     = "Lobby Auto Joinen",
-        AntiAFK         = "Anti-AFK",
-        Fullbright      = "Maximale Helderheid",
-        LanguageSelect  = "Taal",
-        LangNote        = "Taalwijziging vereist heruitvoering",
-        NotifRollTitle  = "Wielresultaat",
-        NotifRollFail   = "Gooien mislukt — probeer opnieuw",
-        NotifJoinOk     = "Lobby betreden...",
-        NotifJoinFail   = "Poging gedaan — controleer in het spel",
+        FlyToggle         = "Vliegen",
+        FlySpeed          = "Vliegsnelheid",
+        NoClip            = "NoClip",
+        WalkSpeed         = "Loopsnelheid",
+        InfJump           = "Oneindig Springen",
+        AntiAFK           = "Anti-AFK",
+        Fullbright        = "Maximale Helderheid",
+        LanguageSelect    = "Taal",
+        LangNote          = "Taalwijziging vereist heruitvoering",
     },
     PL = {
-        WindowTitle     = "Tower of Zombies Hub",
-        WindowSubtitle  = "przez Rival960",
-        TabHome         = "Strona główna",
-        TabCombat       = "Walka",
-        TabMovement     = "Ruch",
-        TabAutoActions  = "Auto Akcje",
-        TabTools        = "Narzędzia",
-        HomeWelcome     = "Witaj w Tower of Zombies Hub!",
-        HomeVersion     = "Wersja: v1.0.0 — Pierwsze Wydanie",
-        HomeCredits     = "Stworzone przez Rival960 z pomocą AI",
-        HomeGitHub      = "GitHub: Rival99900",
-        HomeDiscord     = "Discord: rival960",
-        HomeYouTube     = "YouTube: rival9607",
-        HomeStatus      = "Status: niezweryfikowane w grze",
-        SilentAim       = "Cichy Celownik",
-        AutoFire        = "Automatyczny Ogień",
+        WindowTitle       = "Tower of Zombies Hub",
+        WindowSubtitle    = "przez Rival960",
+        TabHome           = "Strona główna",
+        TabCombat         = "Walka",
+        TabMovement       = "Ruch",
+        TabTools          = "Narzędzia",
+        CreditsTitle      = "Kredyty",
+        CreditsContent    = "Stworzone przez Rival960 z pomocą AI\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.0.0 — Pierwsze Wydanie",
+        SilentAim         = "Cichy Celownik",
+        AutoFire          = "Automatyczna Strzela",
+        AutoFireDelay     = "Opóźnienie auto strzały (s)",
+        KillAura          = "Kill Aura",
+        KillAuraDistance  = "Dystans Kill Aura",
         MaxZombieDistance = "Maks. dystans zombie",
-        FlyToggle       = "Latanie",
-        FlySpeed        = "Prędkość lotu",
-        NoClip          = "NoClip",
-        WalkSpeed       = "Prędkość chodu",
-        JumpPower       = "Moc skoku",
-        AutoRollBtn     = "Zakręć kołem",
-        AutoRollToggle  = "Auto koło (3s)",
-        AutoJoinBtn     = "Dołącz do lobby auto",
-        AntiAFK         = "Anti-AFK",
-        Fullbright      = "Pełna jasność",
-        LanguageSelect  = "Język",
-        LangNote        = "Zmiana języka wymaga ponownego uruchomienia",
-        NotifRollTitle  = "Wynik koła",
-        NotifRollFail   = "Obrót nieudany — spróbuj ponownie",
-        NotifJoinOk     = "Dołączanie do lobby...",
-        NotifJoinFail   = "Próba dołączenia — sprawdź w grze",
+        FlyToggle         = "Latanie",
+        FlySpeed          = "Prędkość lotu",
+        NoClip            = "NoClip",
+        WalkSpeed         = "Prędkość chodu",
+        InfJump           = "Nieskończony Skok",
+        AntiAFK           = "Anti-AFK",
+        Fullbright        = "Pełna jasność",
+        LanguageSelect    = "Język",
+        LangNote          = "Zmiana języka wymaga ponownego uruchomienia",
     },
     ZH = {
-        WindowTitle     = "行尸走肉枢纽",
-        WindowSubtitle  = "由 Rival960",
-        TabHome         = "主页",
-        TabCombat       = "战斗",
-        TabMovement     = "移动",
-        TabAutoActions  = "自动操作",
-        TabTools        = "工具与视觉",
-        HomeWelcome     = "欢迎来到行尸走肉枢纽！",
-        HomeVersion     = "版本: v1.0.0 — 首次发布",
-        HomeCredits     = "由 Rival960 借助 AI 创建",
-        HomeGitHub      = "GitHub: Rival99900",
-        HomeDiscord     = "Discord: rival960",
-        HomeYouTube     = "YouTube: rival9607",
-        HomeStatus      = "状态: 未在游戏中测试",
-        SilentAim       = "静默瞄准",
-        AutoFire        = "自动射击",
+        WindowTitle       = "行尸走肉枢纽",
+        WindowSubtitle    = "由 Rival960",
+        TabHome           = "主页",
+        TabCombat         = "战斗",
+        TabMovement       = "移动",
+        TabTools          = "工具与视觉",
+        CreditsTitle      = "致谢",
+        CreditsContent    = "由 Rival960 借助 AI 创建\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.0.0 — 首次发布",
+        SilentAim         = "静默瞄准",
+        AutoFire          = "自动射击",
+        AutoFireDelay     = "自动射击延迟 (秒)",
+        KillAura          = "杀戮光环",
+        KillAuraDistance  = "杀戮光环距离",
         MaxZombieDistance = "最大僵尸距离",
-        FlyToggle       = "飞行",
-        FlySpeed        = "飞行速度",
-        NoClip          = "穿墙",
-        WalkSpeed       = "行走速度",
-        JumpPower       = "跳跃力",
-        AutoRollBtn     = "转动轮盘",
-        AutoRollToggle  = "自动轮盘(3s)",
-        AutoJoinBtn     = "自动加入大厅",
-        AntiAFK         = "防离线",
-        Fullbright      = "全亮",
-        LanguageSelect  = "语言",
-        LangNote        = "语言更改需要重新执行",
-        NotifRollTitle  = "轮盘结果",
-        NotifRollFail   = "轮盘失败 — 请重试",
-        NotifJoinOk     = "正在加入大厅...",
-        NotifJoinFail   = "尝试加入 — 请在游戏中确认",
+        FlyToggle         = "飞行",
+        FlySpeed          = "飞行速度",
+        NoClip            = "穿墙",
+        WalkSpeed         = "行走速度",
+        InfJump           = "无限跳跃",
+        AntiAFK           = "防离线",
+        Fullbright        = "全亮",
+        LanguageSelect    = "语言",
+        LangNote          = "语言更改需要重新执行",
     },
     JA = {
-        WindowTitle     = "ゾンビタワーハブ",
-        WindowSubtitle  = "Rival960 制作",
-        TabHome         = "ホーム",
-        TabCombat       = "戦闘",
-        TabMovement     = "移動",
-        TabAutoActions  = "自動操作",
-        TabTools        = "ツール",
-        HomeWelcome     = "ゾンビタワーハブへようこそ！",
-        HomeVersion     = "バージョン: v1.0.0 — 初版",
-        HomeCredits     = "Rival960 と AI の協力で作成",
-        HomeGitHub      = "GitHub: Rival99900",
-        HomeDiscord     = "Discord: rival960",
-        HomeYouTube     = "YouTube: rival9607",
-        HomeStatus      = "状態: ゲーム未テスト",
-        SilentAim       = "サイレントエイム",
-        AutoFire        = "オートファイア",
+        WindowTitle       = "ゾンビタワーハブ",
+        WindowSubtitle    = "Rival960 制作",
+        TabHome           = "ホーム",
+        TabCombat         = "戦闘",
+        TabMovement       = "移動",
+        TabTools          = "ツール",
+        CreditsTitle      = "クレジット",
+        CreditsContent    = "Rival960 と AI の協力で作成\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.0.0 — 初版",
+        SilentAim         = "サイレントエイム",
+        AutoFire          = "オートファイア",
+        AutoFireDelay     = "オートファイア遅延 (秒)",
+        KillAura          = "キルオーラ",
+        KillAuraDistance  = "キルオーラ距離",
         MaxZombieDistance = "最大ゾンビ距離",
-        FlyToggle       = "フライ",
-        FlySpeed        = "飛行速度",
-        NoClip          = "ノークリップ",
-        WalkSpeed       = "歩行速度",
-        JumpPower       = "ジャンプ力",
-        AutoRollBtn     = "ホイールを回す",
-        AutoRollToggle  = "オートロール (3秒)",
-        AutoJoinBtn     = "ロビー自動参加",
-        AntiAFK         = "アンチAFK",
-        Fullbright      = "フルブライト",
-        LanguageSelect  = "言語",
-        LangNote        = "言語変更は再実行が必要です",
-        NotifRollTitle  = "ホイール結果",
-        NotifRollFail   = "ロール失敗 — 再試行してください",
-        NotifJoinOk     = "ロビーに参加中...",
-        NotifJoinFail   = "参加試行 — ゲームで確認してください",
+        FlyToggle         = "フライ",
+        FlySpeed          = "飛行速度",
+        NoClip            = "ノークリップ",
+        WalkSpeed         = "歩行速度",
+        InfJump           = "無限ジャンプ",
+        AntiAFK           = "アンチAFK",
+        Fullbright        = "フルブライト",
+        LanguageSelect    = "言語",
+        LangNote          = "言語変更は再実行が必要です",
     },
     TR = {
-        WindowTitle     = "Tower of Zombies Hub",
-        WindowSubtitle  = "Rival960 tarafından",
-        TabHome         = "Ana Sayfa",
-        TabCombat       = "Savaş",
-        TabMovement     = "Hareket",
-        TabAutoActions  = "Oto Eylemler",
-        TabTools        = "Araçlar",
-        HomeWelcome     = "Tower of Zombies Hub'a Hoş Geldiniz!",
-        HomeVersion     = "Sürüm: v1.0.0 — İlk Çıkış",
-        HomeCredits     = "Rival960 tarafından AI yardımıyla yapılmıştır",
-        HomeGitHub      = "GitHub: Rival99900",
-        HomeDiscord     = "Discord: rival960",
-        HomeYouTube     = "YouTube: rival9607",
-        HomeStatus      = "Durum: oyunda test edilmedi",
-        SilentAim       = "Sessiz Nişan",
-        AutoFire        = "Otomatik Ateş",
+        WindowTitle       = "Tower of Zombies Hub",
+        WindowSubtitle    = "Rival960 tarafından",
+        TabHome           = "Ana Sayfa",
+        TabCombat         = "Savaş",
+        TabMovement       = "Hareket",
+        TabTools          = "Araçlar",
+        CreditsTitle      = "Krediler",
+        CreditsContent    = "Rival960 tarafından AI yardımıyla yapılmıştır\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.0.0 — İlk Çıkış",
+        SilentAim         = "Sessiz Nişan",
+        AutoFire          = "Otomatik Ateş",
+        AutoFireDelay     = "Oto Ateş Gecikmesi (s)",
+        KillAura          = "Kill Aura",
+        KillAuraDistance  = "Kill Aura Mesafesi",
         MaxZombieDistance = "Maks Zombi Mesafesi",
-        FlyToggle       = "Uçuş",
-        FlySpeed        = "Uçuş Hızı",
-        NoClip          = "NoClip",
-        WalkSpeed       = "Yürüyüş Hızı",
-        JumpPower       = "Zıplama Gücü",
-        AutoRollBtn     = "Çarkı Döndür",
-        AutoRollToggle  = "Oto Çark (3s)",
-        AutoJoinBtn     = "Lobiye Oto Katıl",
-        AntiAFK         = "Anti-AFK",
-        Fullbright      = "Tam Parlaklık",
-        LanguageSelect  = "Dil",
-        LangNote        = "Dil değişikliği yeniden başlatma gerektirir",
-        NotifRollTitle  = "Çark Sonucu",
-        NotifRollFail   = "Dönüş başarısız — tekrar dene",
-        NotifJoinOk     = "Lobiye katılıyor...",
-        NotifJoinFail   = "Katılım denemesi — oyunda kontrol et",
+        FlyToggle         = "Uçuş",
+        FlySpeed          = "Uçuş Hızı",
+        NoClip            = "NoClip",
+        WalkSpeed         = "Yürüyüş Hızı",
+        InfJump           = "Sonsuz Zıplama",
+        AntiAFK           = "Anti-AFK",
+        Fullbright        = "Tam Parlaklık",
+        LanguageSelect    = "Dil",
+        LangNote          = "Dil değişikliği yeniden başlatma gerektirir",
     },
     KO = {
-        WindowTitle     = "좀비 타워 허브",
-        WindowSubtitle  = "Rival960 제작",
-        TabHome         = "홈",
-        TabCombat       = "전투",
-        TabMovement     = "이동",
-        TabAutoActions  = "자동 동작",
-        TabTools        = "도구",
-        HomeWelcome     = "좀비 타워 허브에 오신 것을 환영합니다!",
-        HomeVersion     = "버전: v1.0.0 — 첫 번째 릴리즈",
-        HomeCredits     = "Rival960이 AI의 도움으로 제작",
-        HomeGitHub      = "GitHub: Rival99900",
-        HomeDiscord     = "Discord: rival960",
-        HomeYouTube     = "YouTube: rival9607",
-        HomeStatus      = "상태: 게임 내 미테스트",
-        SilentAim       = "사일런트 에임",
-        AutoFire        = "자동 발사",
+        WindowTitle       = "좀비 타워 허브",
+        WindowSubtitle    = "Rival960 제작",
+        TabHome           = "홈",
+        TabCombat         = "전투",
+        TabMovement       = "이동",
+        TabTools          = "도구",
+        CreditsTitle      = "크레딧",
+        CreditsContent    = "Rival960이 AI의 도움으로 제작\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.0.0 — 첫 번째 릴리즈",
+        SilentAim         = "사일런트 에임",
+        AutoFire          = "자동 발사",
+        AutoFireDelay     = "자동 발사 지연 (초)",
+        KillAura          = "킬 오라",
+        KillAuraDistance  = "킬 오라 거리",
         MaxZombieDistance = "최대 좀비 거리",
-        FlyToggle       = "비행",
-        FlySpeed        = "비행 속도",
-        NoClip          = "노클립",
-        WalkSpeed       = "걷기 속도",
-        JumpPower       = "점프력",
-        AutoRollBtn     = "휠 돌리기",
-        AutoRollToggle  = "자동 휠 (3초)",
-        AutoJoinBtn     = "자동 로비 참가",
-        AntiAFK         = "Anti-AFK",
-        Fullbright      = "전체 밝기",
-        LanguageSelect  = "언어",
-        LangNote        = "언어 변경은 재실행이 필요합니다",
-        NotifRollTitle  = "휠 결과",
-        NotifRollFail   = "돌리기 실패 — 다시 시도",
-        NotifJoinOk     = "로비 참가 중...",
-        NotifJoinFail   = "참가 시도 — 게임에서 확인",
+        FlyToggle         = "비행",
+        FlySpeed          = "비행 속도",
+        NoClip            = "노클립",
+        WalkSpeed         = "걷기 속도",
+        InfJump           = "무한 점프",
+        AntiAFK           = "Anti-AFK",
+        Fullbright        = "전체 밝기",
+        LanguageSelect    = "언어",
+        LangNote          = "언어 변경은 재실행이 필요합니다",
     },
     AR = {
-        WindowTitle     = "Tower of Zombies Hub",
-        WindowSubtitle  = "بواسطة Rival960",
-        TabHome         = "الرئيسية",
-        TabCombat       = "القتال",
-        TabMovement     = "الحركة",
-        TabAutoActions  = "الإجراءات التلقائية",
-        TabTools        = "الأدوات",
-        HomeWelcome     = "مرحبًا بك في Tower of Zombies Hub!",
-        HomeVersion     = "الإصدار: v1.0.0 — الإصدار الأول",
-        HomeCredits     = "تم إنشاؤه بواسطة Rival960 بمساعدة الذكاء الاصطناعي",
-        HomeGitHub      = "GitHub: Rival99900",
-        HomeDiscord     = "Discord: rival960",
-        HomeYouTube     = "YouTube: rival9607",
-        HomeStatus      = "الحالة: لم يُختبر في اللعبة",
-        SilentAim       = "التصويب الصامت",
-        AutoFire        = "إطلاق نار تلقائي",
+        WindowTitle       = "Tower of Zombies Hub",
+        WindowSubtitle    = "بواسطة Rival960",
+        TabHome           = "الرئيسية",
+        TabCombat         = "القتال",
+        TabMovement       = "الحركة",
+        TabTools          = "الأدوات",
+        CreditsTitle      = "الاعتمادات",
+        CreditsContent    = "تم إنشاؤه بواسطة Rival960 بمساعدة الذكاء الاصطناعي\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.0.0 — الإصدار الأول",
+        SilentAim         = "التصويب الصامت",
+        AutoFire          = "إطلاق نار تلقائي",
+        AutoFireDelay     = "تأخير الإطلاق التلقائي (ث)",
+        KillAura          = "هالة القتل",
+        KillAuraDistance  = "مسافة هالة القتل",
         MaxZombieDistance = "أقصى مسافة للزومبي",
-        FlyToggle       = "طيران",
-        FlySpeed        = "سرعة الطيران",
-        NoClip          = "اختراق الجدران",
-        WalkSpeed       = "سرعة المشي",
-        JumpPower       = "قوة القفز",
-        AutoRollBtn     = "تدوير العجلة",
-        AutoRollToggle  = "عجلة تلقائية (3ث)",
-        AutoJoinBtn     = "الانضمام للردهة تلقائياً",
-        AntiAFK         = "مانع الخمول",
-        Fullbright      = "سطوع كامل",
-        LanguageSelect  = "اللغة",
-        LangNote        = "تغيير اللغة يتطلب إعادة التشغيل",
-        NotifRollTitle  = "نتيجة العجلة",
-        NotifRollFail   = "فشل الدوران — حاول مجدداً",
-        NotifJoinOk     = "جاري الانضمام للردهة...",
-        NotifJoinFail   = "محاولة انضمام — تحقق في اللعبة",
+        FlyToggle         = "طيران",
+        FlySpeed          = "سرعة الطيران",
+        NoClip            = "اختراق الجدران",
+        WalkSpeed         = "سرعة المشي",
+        InfJump           = "قفز لانهائي",
+        AntiAFK           = "مانع الخمول",
+        Fullbright        = "سطوع كامل",
+        LanguageSelect    = "اللغة",
+        LangNote          = "تغيير اللغة يتطلب إعادة التشغيل",
     },
     VI = {
-        WindowTitle     = "Tower of Zombies Hub",
-        WindowSubtitle  = "bởi Rival960",
-        TabHome         = "Trang Chủ",
-        TabCombat       = "Chiến Đấu",
-        TabMovement     = "Di Chuyển",
-        TabAutoActions  = "Hành Động Tự Động",
-        TabTools        = "Công Cụ",
-        HomeWelcome     = "Chào mừng đến Tower of Zombies Hub!",
-        HomeVersion     = "Phiên bản: v1.0.0 — Phát Hành Đầu Tiên",
-        HomeCredits     = "Tạo bởi Rival960 với sự trợ giúp của AI",
-        HomeGitHub      = "GitHub: Rival99900",
-        HomeDiscord     = "Discord: rival960",
-        HomeYouTube     = "YouTube: rival9607",
-        HomeStatus      = "Trạng thái: chưa thử nghiệm trong game",
-        SilentAim       = "Silent Aim",
-        AutoFire        = "Bắn Tự Động",
+        WindowTitle       = "Tower of Zombies Hub",
+        WindowSubtitle    = "bởi Rival960",
+        TabHome           = "Trang Chủ",
+        TabCombat         = "Chiến Đấu",
+        TabMovement       = "Di Chuyển",
+        TabTools          = "Công Cụ",
+        CreditsTitle      = "Tín Dụng",
+        CreditsContent    = "Tạo bởi Rival960 với sự trợ giúp của AI\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.0.0 — Phát Hành Đầu Tiên",
+        SilentAim         = "Silent Aim",
+        AutoFire          = "Bắn Tự Động",
+        AutoFireDelay     = "Độ trễ bắn tự động (s)",
+        KillAura          = "Kill Aura",
+        KillAuraDistance  = "Khoảng cách Kill Aura",
         MaxZombieDistance = "Khoảng Cách Zombie Tối Đa",
-        FlyToggle       = "Bay",
-        FlySpeed        = "Tốc Độ Bay",
-        NoClip          = "NoClip",
-        WalkSpeed       = "Tốc Độ Đi",
-        JumpPower       = "Lực Nhảy",
-        AutoRollBtn     = "Quay Bánh Xe",
-        AutoRollToggle  = "Tự Động Quay (3s)",
-        AutoJoinBtn     = "Tự Động Vào Sảnh",
-        AntiAFK         = "Chống AFK",
-        Fullbright      = "Độ Sáng Tối Đa",
-        LanguageSelect  = "Ngôn Ngữ",
-        LangNote        = "Thay đổi ngôn ngữ cần khởi động lại",
-        NotifRollTitle  = "Kết Quả Bánh Xe",
-        NotifRollFail   = "Quay thất bại — thử lại",
-        NotifJoinOk     = "Đang vào sảnh...",
-        NotifJoinFail   = "Đã thử vào — kiểm tra trong game",
+        FlyToggle         = "Bay",
+        FlySpeed          = "Tốc Độ Bay",
+        NoClip            = "NoClip",
+        WalkSpeed         = "Tốc Độ Đi",
+        InfJump           = "Nhảy Vô Hạn",
+        AntiAFK           = "Chống AFK",
+        Fullbright        = "Độ Sáng Tối Đa",
+        LanguageSelect    = "Ngôn Ngữ",
+        LangNote          = "Thay đổi ngôn ngữ cần khởi động lại",
     },
     SV = {
-        WindowTitle     = "Tower of Zombies Hub",
-        WindowSubtitle  = "av Rival960",
-        TabHome         = "Hem",
-        TabCombat       = "Strid",
-        TabMovement     = "Rörelse",
-        TabAutoActions  = "Auto-åtgärder",
-        TabTools        = "Verktyg",
-        HomeWelcome     = "Välkommen till Tower of Zombies Hub!",
-        HomeVersion     = "Version: v1.0.0 — Första Utgåvan",
-        HomeCredits     = "Skapad av Rival960 med hjälp av AI",
-        HomeGitHub      = "GitHub: Rival99900",
-        HomeDiscord     = "Discord: rival960",
-        HomeYouTube     = "YouTube: rival9607",
-        HomeStatus      = "Status: otestad i spelet",
-        SilentAim       = "Tyst Sikte",
-        AutoFire        = "Automatisk Eld",
+        WindowTitle       = "Tower of Zombies Hub",
+        WindowSubtitle    = "av Rival960",
+        TabHome           = "Hem",
+        TabCombat         = "Strid",
+        TabMovement       = "Rörelse",
+        TabTools          = "Verktyg",
+        CreditsTitle      = "Erkännanden",
+        CreditsContent    = "Skapad av Rival960 med hjälp av AI\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.0.0 — Första Utgåvan",
+        SilentAim         = "Tyst Sikte",
+        AutoFire          = "Automatisk Eld",
+        AutoFireDelay     = "Auto Eld Fördröjning (s)",
+        KillAura          = "Kill Aura",
+        KillAuraDistance  = "Kill Aura Avstånd",
         MaxZombieDistance = "Max Zombieavstånd",
-        FlyToggle       = "Flyg",
-        FlySpeed        = "Flyghastighet",
-        NoClip          = "NoClip",
-        WalkSpeed       = "Gånghastighet",
-        JumpPower       = "Hoppkraft",
-        AutoRollBtn     = "Snurra Hjulet",
-        AutoRollToggle  = "Auto-hjul (3s)",
-        AutoJoinBtn     = "Auto Gå Med i Lobby",
-        AntiAFK         = "Anti-AFK",
-        Fullbright      = "Full Ljusstyrka",
-        LanguageSelect  = "Språk",
-        LangNote        = "Språkändring kräver omstartning",
-        NotifRollTitle  = "Hjulresultat",
-        NotifRollFail   = "Snurr misslyckades — försök igen",
-        NotifJoinOk     = "Går med i lobbyn...",
-        NotifJoinFail   = "Försök gjort — kontrollera i spelet",
+        FlyToggle         = "Flyg",
+        FlySpeed          = "Flyghastighet",
+        NoClip            = "NoClip",
+        WalkSpeed         = "Gånghastighet",
+        InfJump           = "Oändligt Hopp",
+        AntiAFK           = "Anti-AFK",
+        Fullbright        = "Full Ljusstyrka",
+        LanguageSelect    = "Språk",
+        LangNote          = "Språkändring kräver omstartning",
     },
     EL = {
-        WindowTitle     = "Tower of Zombies Hub",
-        WindowSubtitle  = "από Rival960",
-        TabHome         = "Αρχική",
-        TabCombat       = "Μάχη",
-        TabMovement     = "Κίνηση",
-        TabAutoActions  = "Αυτόματες Ενέργειες",
-        TabTools        = "Εργαλεία",
-        HomeWelcome     = "Καλωσορίσατε στο Tower of Zombies Hub!",
-        HomeVersion     = "Έκδοση: v1.0.0 — Πρώτη Κυκλοφορία",
-        HomeCredits     = "Δημιουργήθηκε από Rival960 με βοήθεια AI",
-        HomeGitHub      = "GitHub: Rival99900",
-        HomeDiscord     = "Discord: rival960",
-        HomeYouTube     = "YouTube: rival9607",
-        HomeStatus      = "Κατάσταση: μη δοκιμασμένο στο παιχνίδι",
-        SilentAim       = "Σιωπηλό Σημάδι",
-        AutoFire        = "Αυτόματα Πυρά",
+        WindowTitle       = "Tower of Zombies Hub",
+        WindowSubtitle    = "από Rival960",
+        TabHome           = "Αρχική",
+        TabCombat         = "Μάχη",
+        TabMovement       = "Κίνηση",
+        TabTools          = "Εργαλεία",
+        CreditsTitle      = "Εύσημα",
+        CreditsContent    = "Δημιουργήθηκε από Rival960 με βοήθεια AI\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.0.0 — Πρώτη Κυκλοφορία",
+        SilentAim         = "Σιωπηλό Σημάδι",
+        AutoFire          = "Αυτόματα Πυρά",
+        AutoFireDelay     = "Καθυστέρηση Αυτ. Πυρών (s)",
+        KillAura          = "Kill Aura",
+        KillAuraDistance  = "Απόσταση Kill Aura",
         MaxZombieDistance = "Μέγ. Απόσταση Ζόμπι",
-        FlyToggle       = "Πτήση",
-        FlySpeed        = "Ταχύτητα Πτήσης",
-        NoClip          = "NoClip",
-        WalkSpeed       = "Ταχύτητα Βαδίσματος",
-        JumpPower       = "Δύναμη Άλματος",
-        AutoRollBtn     = "Γύρισε τον Τροχό",
-        AutoRollToggle  = "Αυτόματος Τροχός (3s)",
-        AutoJoinBtn     = "Αυτόματη Σύνδεση Lobby",
-        AntiAFK         = "Anti-AFK",
-        Fullbright      = "Πλήρης Φωτεινότητα",
-        LanguageSelect  = "Γλώσσα",
-        LangNote        = "Η αλλαγή γλώσσας απαιτεί επανεκτέλεση",
-        NotifRollTitle  = "Αποτέλεσμα Τροχού",
-        NotifRollFail   = "Αποτυχία περιστροφής — δοκιμάστε ξανά",
-        NotifJoinOk     = "Σύνδεση στο lobby...",
-        NotifJoinFail   = "Απόπειρα σύνδεσης — ελέγξτε στο παιχνίδι",
+        FlyToggle         = "Πτήση",
+        FlySpeed          = "Ταχύτητα Πτήσης",
+        NoClip            = "NoClip",
+        WalkSpeed         = "Ταχύτητα Βαδίσματος",
+        InfJump           = "Άπειρο Άλμα",
+        AntiAFK           = "Anti-AFK",
+        Fullbright        = "Πλήρης Φωτεινότητα",
+        LanguageSelect    = "Γλώσσα",
+        LangNote          = "Η αλλαγή γλώσσας απαιτεί επανεκτέλεση",
     },
     RO = {
-        WindowTitle     = "Tower of Zombies Hub",
-        WindowSubtitle  = "de Rival960",
-        TabHome         = "Acasă",
-        TabCombat       = "Luptă",
-        TabMovement     = "Mișcare",
-        TabAutoActions  = "Acțiuni Auto",
-        TabTools        = "Instrumente",
-        HomeWelcome     = "Bun venit la Tower of Zombies Hub!",
-        HomeVersion     = "Versiune: v1.0.0 — Prima Lansare",
-        HomeCredits     = "Creat de Rival960 cu ajutorul AI",
-        HomeGitHub      = "GitHub: Rival99900",
-        HomeDiscord     = "Discord: rival960",
-        HomeYouTube     = "YouTube: rival9607",
-        HomeStatus      = "Stare: netestat în joc",
-        SilentAim       = "Ochire Silențioasă",
-        AutoFire        = "Tragere Automată",
+        WindowTitle       = "Tower of Zombies Hub",
+        WindowSubtitle    = "de Rival960",
+        TabHome           = "Acasă",
+        TabCombat         = "Luptă",
+        TabMovement       = "Mișcare",
+        TabTools          = "Instrumente",
+        CreditsTitle      = "Credite",
+        CreditsContent    = "Creat de Rival960 cu ajutorul AI\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.0.0 — Prima Lansare",
+        SilentAim         = "Ochire Silențioasă",
+        AutoFire          = "Tragere Automată",
+        AutoFireDelay     = "Întârziere Tragere Auto (s)",
+        KillAura          = "Kill Aura",
+        KillAuraDistance  = "Distanță Kill Aura",
         MaxZombieDistance = "Dist. Maximă Zombie",
-        FlyToggle       = "Zbor",
-        FlySpeed        = "Viteză Zbor",
-        NoClip          = "NoClip",
-        WalkSpeed       = "Viteză Mers",
-        JumpPower       = "Putere Salt",
-        AutoRollBtn     = "Rotește Roata",
-        AutoRollToggle  = "Roată Auto (3s)",
-        AutoJoinBtn     = "Alătură-te Auto Lobby",
-        AntiAFK         = "Anti-AFK",
-        Fullbright      = "Luminozitate Maximă",
-        LanguageSelect  = "Limbă",
-        LangNote        = "Schimbarea limbii necesită re-executare",
-        NotifRollTitle  = "Rezultat Roată",
-        NotifRollFail   = "Rotire eșuată — încearcă din nou",
-        NotifJoinOk     = "Se alătură lobby-ului...",
-        NotifJoinFail   = "Tentativă de alăturare — verifică în joc",
+        FlyToggle         = "Zbor",
+        FlySpeed          = "Viteză Zbor",
+        NoClip            = "NoClip",
+        WalkSpeed         = "Viteză Mers",
+        InfJump           = "Salt Infinit",
+        AntiAFK           = "Anti-AFK",
+        Fullbright        = "Luminozitate Maximă",
+        LanguageSelect    = "Limbă",
+        LangNote          = "Schimbarea limbii necesită re-executare",
     },
     UK = {
-        WindowTitle     = "Tower of Zombies Hub",
-        WindowSubtitle  = "від Rival960",
-        TabHome         = "Головна",
-        TabCombat       = "Бій",
-        TabMovement     = "Рух",
-        TabAutoActions  = "Авто дії",
-        TabTools        = "Інструменти",
-        HomeWelcome     = "Ласкаво просимо до Tower of Zombies Hub!",
-        HomeVersion     = "Версія: v1.0.0 — Перший Випуск",
-        HomeCredits     = "Створено Rival960 за допомогою AI",
-        HomeGitHub      = "GitHub: Rival99900",
-        HomeDiscord     = "Discord: rival960",
-        HomeYouTube     = "YouTube: rival9607",
-        HomeStatus      = "Статус: не перевірено в грі",
-        SilentAim       = "Тихий Приціл",
-        AutoFire        = "Авто Вогонь",
-        MaxZombieDistance = "Макс відстань зомбі",
-        FlyToggle       = "Політ",
-        FlySpeed        = "Швидкість польоту",
-        NoClip          = "NoClip",
-        WalkSpeed       = "Швидкість ходьби",
-        JumpPower       = "Сила стрибка",
-        AutoRollBtn     = "Покрутити колесо",
-        AutoRollToggle  = "Авто колесо (3с)",
-        AutoJoinBtn     = "Авто вхід в лобі",
-        AntiAFK         = "Анти-АФК",
-        Fullbright      = "Повна яскравість",
-        LanguageSelect  = "Мова",
-        LangNote        = "Зміна мови потребує перезапуску",
-        NotifRollTitle  = "Результат колеса",
-        NotifRollFail   = "Прокрутка не вдалась — спробуйте знову",
-        NotifJoinOk     = "Вхід до лобі...",
-        NotifJoinFail   = "Спроба входу — перевірте в грі",
+        WindowTitle       = "Tower of Zombies Hub",
+        WindowSubtitle    = "від Rival960",
+        TabHome           = "Головна",
+        TabCombat         = "Бій",
+        TabMovement       = "Рух",
+        TabTools          = "Інструменти",
+        CreditsTitle      = "Автори",
+        CreditsContent    = "Створено Rival960 за допомогою AI\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.0.0 — Перший Випуск",
+        SilentAim         = "Тихий Приціл",
+        AutoFire          = "Авто Вогонь",
+        AutoFireDelay     = "Затримка авто вогню (с)",
+        KillAura          = "Kill Aura",
+        KillAuraDistance  = "Дистанція Kill Aura",
+        MaxZombieDistance = "Макс дистанція зомбі",
+        FlyToggle         = "Політ",
+        FlySpeed          = "Швидкість польоту",
+        NoClip            = "NoClip",
+        WalkSpeed         = "Швидкість ходьби",
+        InfJump           = "Нескінченний Стрибок",
+        AntiAFK           = "Анти-АФК",
+        Fullbright        = "Повна яскравість",
+        LanguageSelect    = "Мова",
+        LangNote          = "Зміна мови потребує перезапуску",
     },
     CS = {
-        WindowTitle     = "Tower of Zombies Hub",
-        WindowSubtitle  = "od Rival960",
-        TabHome         = "Domů",
-        TabCombat       = "Boj",
-        TabMovement     = "Pohyb",
-        TabAutoActions  = "Auto Akce",
-        TabTools        = "Nástroje",
-        HomeWelcome     = "Vítejte v Tower of Zombies Hub!",
-        HomeVersion     = "Verze: v1.0.0 — První Vydání",
-        HomeCredits     = "Vytvořeno Rival960 s pomocí AI",
-        HomeGitHub      = "GitHub: Rival99900",
-        HomeDiscord     = "Discord: rival960",
-        HomeYouTube     = "YouTube: rival9607",
-        HomeStatus      = "Stav: netestováno ve hře",
-        SilentAim       = "Tichý Zaměřovač",
-        AutoFire        = "Automatická Střelba",
+        WindowTitle       = "Tower of Zombies Hub",
+        WindowSubtitle    = "od Rival960",
+        TabHome           = "Domů",
+        TabCombat         = "Boj",
+        TabMovement       = "Pohyb",
+        TabTools          = "Nástroje",
+        CreditsTitle      = "Poděkování",
+        CreditsContent    = "Vytvořeno Rival960 s pomocí AI\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.0.0 — První Vydání",
+        SilentAim         = "Tichý Zaměřovač",
+        AutoFire          = "Automatická Střelba",
+        AutoFireDelay     = "Zpoždění auto střelby (s)",
+        KillAura          = "Kill Aura",
+        KillAuraDistance  = "Vzdálenost Kill Aura",
         MaxZombieDistance = "Max vzdálenost zombie",
-        FlyToggle       = "Létání",
-        FlySpeed        = "Rychlost letu",
-        NoClip          = "NoClip",
-        WalkSpeed       = "Rychlost chůze",
-        JumpPower       = "Síla skoku",
-        AutoRollBtn     = "Točit kolo",
-        AutoRollToggle  = "Auto kolo (3s)",
-        AutoJoinBtn     = "Auto vstup do lobby",
-        AntiAFK         = "Anti-AFK",
-        Fullbright      = "Plný jas",
-        LanguageSelect  = "Jazyk",
-        LangNote        = "Změna jazyka vyžaduje restartování",
-        NotifRollTitle  = "Výsledek kola",
-        NotifRollFail   = "Otočení selhalo — zkuste znovu",
-        NotifJoinOk     = "Vstupuji do lobby...",
-        NotifJoinFail   = "Pokus o vstup — ověřte ve hře",
+        FlyToggle         = "Létání",
+        FlySpeed          = "Rychlost letu",
+        NoClip            = "NoClip",
+        WalkSpeed         = "Rychlost chůze",
+        InfJump           = "Nekonečný Skok",
+        AntiAFK           = "Anti-AFK",
+        Fullbright        = "Plný jas",
+        LanguageSelect    = "Jazyk",
+        LangNote          = "Změna jazyka vyžaduje restartování",
     },
     DA = {
-        WindowTitle     = "Tower of Zombies Hub",
-        WindowSubtitle  = "af Rival960",
-        TabHome         = "Hjem",
-        TabCombat       = "Kamp",
-        TabMovement     = "Bevægelse",
-        TabAutoActions  = "Auto Handlinger",
-        TabTools        = "Værktøjer",
-        HomeWelcome     = "Velkommen til Tower of Zombies Hub!",
-        HomeVersion     = "Version: v1.0.0 — Første Udgivelse",
-        HomeCredits     = "Oprettet af Rival960 med hjælp fra AI",
-        HomeGitHub      = "GitHub: Rival99900",
-        HomeDiscord     = "Discord: rival960",
-        HomeYouTube     = "YouTube: rival9607",
-        HomeStatus      = "Status: ikke testet i spillet",
-        SilentAim       = "Stille Sigte",
-        AutoFire        = "Automatisk Ild",
+        WindowTitle       = "Tower of Zombies Hub",
+        WindowSubtitle    = "af Rival960",
+        TabHome           = "Hjem",
+        TabCombat         = "Kamp",
+        TabMovement       = "Bevægelse",
+        TabTools          = "Værktøjer",
+        CreditsTitle      = "Anerkendelser",
+        CreditsContent    = "Oprettet af Rival960 med hjælp fra AI\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.0.0 — Første Udgivelse",
+        SilentAim         = "Stille Sigte",
+        AutoFire          = "Automatisk Ild",
+        AutoFireDelay     = "Auto Ild Forsinkelse (s)",
+        KillAura          = "Kill Aura",
+        KillAuraDistance  = "Kill Aura Afstand",
         MaxZombieDistance = "Maks Zombie Afstand",
-        FlyToggle       = "Fly",
-        FlySpeed        = "Flyvehastighed",
-        NoClip          = "NoClip",
-        WalkSpeed       = "Gåhastighed",
-        JumpPower       = "Springkraft",
-        AutoRollBtn     = "Drej Hjulet",
-        AutoRollToggle  = "Auto Hjul (3s)",
-        AutoJoinBtn     = "Auto Deltag i Lobby",
-        AntiAFK         = "Anti-AFK",
-        Fullbright      = "Fuld Lysstyrke",
-        LanguageSelect  = "Sprog",
-        LangNote        = "Sprogændring kræver genstart",
-        NotifRollTitle  = "Hjulresultat",
-        NotifRollFail   = "Drej mislykkedes — prøv igen",
-        NotifJoinOk     = "Tilslutter lobby...",
-        NotifJoinFail   = "Forsøg gjort — tjek i spillet",
+        FlyToggle         = "Fly",
+        FlySpeed          = "Flyvehastighed",
+        NoClip            = "NoClip",
+        WalkSpeed         = "Gåhastighed",
+        InfJump           = "Uendeligt Hop",
+        AntiAFK           = "Anti-AFK",
+        Fullbright        = "Fuld Lysstyrke",
+        LanguageSelect    = "Sprog",
+        LangNote          = "Sprogændring kræver genstart",
     },
 }
 
@@ -775,30 +559,27 @@ end
 -- Settings
 -- ================================================================
 local Settings = {
-    SilentAim           = false,
-    AutoFire            = false,
-    MaxZombieDistance   = 300,
-    Fly                 = false,
-    FlySpeed            = 60,
-    NoClip              = false,
-    WalkSpeed           = 16,
-    JumpPower           = 50,
-    AutoRoll            = false,
-    AntiAFK             = false,
-    Fullbright          = false,
+    SilentAim         = false,
+    AutoFire          = false,
+    AutoFireDelay     = 0.3,
+    KillAura          = false,
+    KillAuraDistance  = 150,
+    MaxZombieDistance = 300,
+    Fly               = false,
+    FlySpeed          = 60,
+    NoClip            = false,
+    WalkSpeed         = 16,
+    InfJump           = false,
+    AntiAFK           = false,
+    Fullbright        = false,
 }
 
 -- ================================================================
 -- Remote references (confirmed from Cobalt log analysis)
 -- ================================================================
-local FireEvent    = nil
-local RollWheel    = nil
-local LobbyEvent   = nil
-
+local FireEvent = nil
 pcall(function()
-    FireEvent  = ReplicatedStorage.Events.Actions.Fire
-    RollWheel  = ReplicatedStorage.Events.Wheel.RollWheel
-    LobbyEvent = ReplicatedStorage.Events.Gameplay.Lobby
+    FireEvent = ReplicatedStorage.Events.Actions.Fire
 end)
 
 -- ================================================================
@@ -819,15 +600,15 @@ local Window = Rayfield:CreateWindow({
 })
 
 -- ================================================================
--- Helper: closest zombie
+-- Helper: closest zombie within distance
 -- ================================================================
-local function getClosestZombie()
+local function getClosestZombie(maxDist)
     local char = LocalPlayer.Character
     if not char then return nil, nil end
     local hrp = char:FindFirstChild("HumanoidRootPart")
     if not hrp then return nil, nil end
 
-    local best, bestPart, bestDist = nil, nil, Settings.MaxZombieDistance
+    local best, bestPart, bestDist = nil, nil, maxDist
     local zombieFolder = workspace:FindFirstChild("ActiveZombies")
     if not zombieFolder then return nil, nil end
 
@@ -840,9 +621,7 @@ local function getClosestZombie()
                 if dist < bestDist then
                     bestDist = dist
                     best     = zombie
-                    -- Prefer HeadHitbox, fall back through valid parts
                     bestPart = zombie:FindFirstChild("HeadHitbox")
-                        or zombie:FindFirstChild("ChestHitbox")
                         or zombie:FindFirstChild("Head")
                         or zhrp
                 end
@@ -853,32 +632,32 @@ local function getClosestZombie()
 end
 
 -- ================================================================
--- Helper: fire weapon at target part
+-- Helper: fire at a specific target part using confirmed remote
 -- ================================================================
-local function fireAtPart(targetPart)
+local function doFire(targetPart)
     if not FireEvent then return end
     local char = LocalPlayer.Character
     if not char then return end
-    local weapon = char:FindFirstChildOfClass("Tool")
-    if not weapon then return end
-    local exit = weapon:FindFirstChild("Exit")
+    local tool = char:FindFirstChildOfClass("Tool")
+    if not tool then return end
+    local exit = tool:FindFirstChild("Exit")
     if not exit then return end
 
-    local weaponName = weapon.Name
-    local rayOrigin  = exit.WorldPosition
-    local hitPos     = targetPart.Position
-    local normal     = (rayOrigin - hitPos).Unit
+    local weaponName  = tool.Name
+    local rayOrigin   = exit.WorldPosition
+    local hitPosition = targetPart.Position
+    local normal      = (hitPosition - rayOrigin).Unit * -1
 
     pcall(function()
         FireEvent:FireServer(
             weaponName,
-            { { targetPart, hitPos, normal } },
+            { { targetPart, hitPosition, normal } },
             {
                 {
                     weaponName,
                     rayOrigin,
-                    hitPos,
-                    hitPos,
+                    hitPosition,
+                    hitPosition,
                     true,
                     targetPart,
                     false,
@@ -897,31 +676,34 @@ end
 
 -- ───── Tab 1: Home ─────
 local HomeTab = Window:CreateTab(T("TabHome"), 4483362458)
-HomeTab:CreateLabel(T("HomeWelcome"))
-HomeTab:CreateLabel(T("HomeVersion"))
-HomeTab:CreateLabel(T("HomeCredits"))
-HomeTab:CreateLabel(T("HomeGitHub"))
-HomeTab:CreateLabel(T("HomeDiscord"))
-HomeTab:CreateLabel(T("HomeYouTube"))
-HomeTab:CreateLabel(T("HomeStatus"))
+HomeTab:CreateParagraph({
+    Title   = T("CreditsTitle"),
+    Content = T("CreditsContent"),
+})
 
 -- ───── Tab 2: Combat ─────
 local CombatTab = Window:CreateTab(T("TabCombat"), 4483362458)
 
+-- Silent Aim
 CombatTab:CreateToggle({
     Name         = T("SilentAim"),
     CurrentValue = false,
-    Callback     = function(val)
-        Settings.SilentAim = val
-    end,
+    Callback     = function(val) Settings.SilentAim = val end,
 })
 
+-- Auto Fire
 CombatTab:CreateToggle({
     Name         = T("AutoFire"),
     CurrentValue = false,
-    Callback     = function(val)
-        Settings.AutoFire = val
-    end,
+    Callback     = function(val) Settings.AutoFire = val end,
+})
+
+CombatTab:CreateSlider({
+    Name         = T("AutoFireDelay"),
+    Range        = {0.1, 2},
+    Increment    = 0.1,
+    CurrentValue = 0.3,
+    Callback     = function(val) Settings.AutoFireDelay = val end,
 })
 
 CombatTab:CreateSlider({
@@ -929,22 +711,96 @@ CombatTab:CreateSlider({
     Range        = {50, 500},
     Increment    = 10,
     CurrentValue = 300,
-    Callback     = function(val)
-        Settings.MaxZombieDistance = val
-    end,
+    Callback     = function(val) Settings.MaxZombieDistance = val end,
+})
+
+-- Kill Aura
+CombatTab:CreateToggle({
+    Name         = T("KillAura"),
+    CurrentValue = false,
+    Callback     = function(val) Settings.KillAura = val end,
+})
+
+CombatTab:CreateSlider({
+    Name         = T("KillAuraDistance"),
+    Range        = {50, 500},
+    Increment    = 10,
+    CurrentValue = 150,
+    Callback     = function(val) Settings.KillAuraDistance = val end,
 })
 
 -- ───── Tab 3: Movement ─────
 local MovementTab = Window:CreateTab(T("TabMovement"), 4483362458)
 
 -- Fly
-local flyBodyVel, flyBodyGyro
-local flyConn
+local flyBodyVel, flyBodyGyro, flyRenderConn
 
 local function destroyFly()
-    if flyConn then flyConn:Disconnect() flyConn = nil end
-    if flyBodyVel  then flyBodyVel:Destroy()  flyBodyVel  = nil end
-    if flyBodyGyro then flyBodyGyro:Destroy() flyBodyGyro = nil end
+    if flyRenderConn then flyRenderConn:Disconnect() flyRenderConn = nil end
+    if flyBodyVel  then pcall(function() flyBodyVel:Destroy()  end) flyBodyVel  = nil end
+    if flyBodyGyro then pcall(function() flyBodyGyro:Destroy() end) flyBodyGyro = nil end
+end
+
+-- Mobile up/down overlay (only visible on touch devices when fly is on)
+local flyGui = nil
+local function createFlyGui()
+    if not UserInputService.TouchEnabled then return end
+    if flyGui then return end
+    local playerGui = LocalPlayer:FindFirstChild("PlayerGui")
+    if not playerGui then return end
+
+    flyGui = Instance.new("ScreenGui")
+    flyGui.Name          = "TozFlyOverlay"
+    flyGui.ResetOnSpawn  = false
+    flyGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+    flyGui.Parent        = playerGui
+
+    local function makeBtn(text, pos)
+        local btn = Instance.new("TextButton")
+        btn.Size               = UDim2.new(0, 70, 0, 70)
+        btn.Position           = pos
+        btn.BackgroundColor3   = Color3.fromRGB(40, 40, 40)
+        btn.BackgroundTransparency = 0.3
+        btn.TextColor3         = Color3.new(1, 1, 1)
+        btn.Text               = text
+        btn.TextScaled         = true
+        btn.Font               = Enum.Font.GothamBold
+        btn.Parent             = flyGui
+        local corner = Instance.new("UICorner")
+        corner.CornerRadius = UDim.new(0, 12)
+        corner.Parent       = btn
+        return btn
+    end
+
+    local upBtn   = makeBtn("▲", UDim2.new(1, -160, 1, -180))
+    local downBtn = makeBtn("▼", UDim2.new(1, -80,  1, -180))
+
+    -- Track held state
+    local upHeld, downHeld = false, false
+
+    upBtn.InputBegan:Connect(function(i)
+        if i.UserInputType == Enum.UserInputType.Touch then upHeld = true end
+    end)
+    upBtn.InputEnded:Connect(function(i)
+        if i.UserInputType == Enum.UserInputType.Touch then upHeld = false end
+    end)
+    downBtn.InputBegan:Connect(function(i)
+        if i.UserInputType == Enum.UserInputType.Touch then downHeld = true end
+    end)
+    downBtn.InputEnded:Connect(function(i)
+        if i.UserInputType == Enum.UserInputType.Touch then downHeld = false end
+    end)
+
+    -- Expose held state for the fly loop
+    flyGui._upHeld   = function() return upHeld   end
+    flyGui._downHeld = function() return downHeld end
+end
+
+local function destroyFlyGui()
+    if flyGui then
+        pcall(function() flyGui:Destroy() end)
+        flyGui = nil
+    end
 end
 
 local function setupFly()
@@ -955,22 +811,22 @@ local function setupFly()
     if not hrp then return end
 
     flyBodyVel = Instance.new("BodyVelocity")
-    flyBodyVel.Velocity        = Vector3.zero
-    flyBodyVel.MaxForce        = Vector3.new(1e5, 1e5, 1e5)
-    flyBodyVel.Parent          = hrp
+    flyBodyVel.Velocity   = Vector3.zero
+    flyBodyVel.MaxForce   = Vector3.new(1e5, 1e5, 1e5)
+    flyBodyVel.Parent     = hrp
 
     flyBodyGyro = Instance.new("BodyGyro")
-    flyBodyGyro.MaxTorque      = Vector3.new(1e5, 1e5, 1e5)
-    flyBodyGyro.D              = 100
-    flyBodyGyro.CFrame         = hrp.CFrame
-    flyBodyGyro.Parent         = hrp
+    flyBodyGyro.MaxTorque = Vector3.new(1e5, 1e5, 1e5)
+    flyBodyGyro.D         = 100
+    flyBodyGyro.CFrame    = hrp.CFrame
+    flyBodyGyro.Parent    = hrp
 
-    flyConn = RunService.RenderStepped:Connect(function()
+    flyRenderConn = RunService.RenderStepped:Connect(function()
         if not Settings.Fly then destroyFly() return end
-        local char2 = LocalPlayer.Character
-        if not char2 then return end
-        local hrp2 = char2:FindFirstChild("HumanoidRootPart")
-        if not hrp2 then return end
+        local c2  = LocalPlayer.Character
+        if not c2 then return end
+        local h2  = c2:FindFirstChild("HumanoidRootPart")
+        if not h2 then return end
 
         local cam = workspace.CurrentCamera
         local dir = Vector3.zero
@@ -980,17 +836,17 @@ local function setupFly()
         if UserInputService:IsKeyDown(Enum.KeyCode.S) then dir = dir - cam.CFrame.LookVector end
         if UserInputService:IsKeyDown(Enum.KeyCode.A) then dir = dir - cam.CFrame.RightVector end
         if UserInputService:IsKeyDown(Enum.KeyCode.D) then dir = dir + cam.CFrame.RightVector end
-        if UserInputService:IsKeyDown(Enum.KeyCode.Space) then
-            dir = dir + Vector3.new(0, 1, 0)
-        end
-        if UserInputService:IsKeyDown(Enum.KeyCode.LeftShift) then
-            dir = dir - Vector3.new(0, 1, 0)
-        end
+        if UserInputService:IsKeyDown(Enum.KeyCode.Space)     then dir = dir + Vector3.new(0, 1, 0) end
+        if UserInputService:IsKeyDown(Enum.KeyCode.LeftShift) then dir = dir - Vector3.new(0, 1, 0) end
 
-        -- Mobile: MoveDirection
-        local hum = char2:FindFirstChildOfClass("Humanoid")
+        -- Mobile: MoveDirection + overlay buttons
+        local hum = c2:FindFirstChildOfClass("Humanoid")
         if hum and hum.MoveDirection.Magnitude > 0 then
             dir = dir + hum.MoveDirection
+        end
+        if flyGui then
+            if flyGui._upHeld   and flyGui._upHeld()   then dir = dir + Vector3.new(0,  1, 0) end
+            if flyGui._downHeld and flyGui._downHeld()  then dir = dir + Vector3.new(0, -1, 0) end
         end
 
         if flyBodyVel and flyBodyVel.Parent then
@@ -1011,14 +867,17 @@ MovementTab:CreateToggle({
         Settings.Fly = val
         if val then
             setupFly()
+            createFlyGui()
         else
             destroyFly()
-            -- Restore humanoid state
-            local char = LocalPlayer.Character
-            if char then
-                local hum = char:FindFirstChildOfClass("Humanoid")
-                if hum then hum:ChangeState(Enum.HumanoidStateType.GettingUp) end
-            end
+            destroyFlyGui()
+            pcall(function()
+                local char = LocalPlayer.Character
+                if char then
+                    local hum = char:FindFirstChildOfClass("Humanoid")
+                    if hum then hum:ChangeState(Enum.HumanoidStateType.GettingUp) end
+                end
+            end)
         end
     end,
 })
@@ -1028,9 +887,7 @@ MovementTab:CreateSlider({
     Range        = {10, 300},
     Increment    = 5,
     CurrentValue = 60,
-    Callback     = function(val)
-        Settings.FlySpeed = val
-    end,
+    Callback     = function(val) Settings.FlySpeed = val end,
 })
 
 -- NoClip
@@ -1042,19 +899,19 @@ MovementTab:CreateToggle({
         Settings.NoClip = val
         if val then
             if not noClipConn then
-                noClipConn = RunService.RenderStepped:Connect(function()
+                noClipConn = RunService.Stepped:Connect(function()
                     if not Settings.NoClip then
                         noClipConn:Disconnect()
                         noClipConn = nil
                         return
                     end
-                    local char = LocalPlayer.Character
-                    if not char then return end
-                    for _, part in ipairs(char:GetDescendants()) do
-                        if part:IsA("BasePart") then
-                            part.CanCollide = false
+                    pcall(function()
+                        local char = LocalPlayer.Character
+                        if not char then return end
+                        for _, p in ipairs(char:GetDescendants()) do
+                            if p:IsA("BasePart") then p.CanCollide = false end
                         end
-                    end
+                    end)
                 end)
             end
         else
@@ -1071,135 +928,60 @@ MovementTab:CreateSlider({
     CurrentValue = 16,
     Callback     = function(val)
         Settings.WalkSpeed = val
-        local char = LocalPlayer.Character
-        if char then
-            local hum = char:FindFirstChildOfClass("Humanoid")
-            if hum then hum.WalkSpeed = val end
-        end
+        pcall(function()
+            local char = LocalPlayer.Character
+            if char then
+                local hum = char:FindFirstChildOfClass("Humanoid")
+                if hum then hum.WalkSpeed = val end
+            end
+        end)
     end,
 })
 
--- JumpPower
-MovementTab:CreateSlider({
-    Name         = T("JumpPower"),
-    Range        = {50, 300},
-    Increment    = 5,
-    CurrentValue = 50,
-    Callback     = function(val)
-        Settings.JumpPower = val
-        local char = LocalPlayer.Character
-        if char then
-            local hum = char:FindFirstChildOfClass("Humanoid")
-            if hum then hum.JumpPower = val end
-        end
-    end,
-})
-
--- ───── Tab 4: Auto Actions ─────
-local AutoTab = Window:CreateTab(T("TabAutoActions"), 4483362458)
-
--- Auto Roll: single button
-AutoTab:CreateButton({
-    Name     = T("AutoRollBtn"),
-    Callback = function()
-        if not RollWheel then
-            Rayfield:Notify({ Title = T("NotifRollTitle"), Content = T("NotifRollFail"), Duration = 3, Image = 4483362458 })
-            return
-        end
-        pcall(function() RollWheel:FireServer() end)
-    end,
-})
-
--- Auto Roll: repeating toggle
-local autoRollConn
-AutoTab:CreateToggle({
-    Name         = T("AutoRollToggle"),
+-- Infinite Jump (replaces JumpPower — JumpPower alone doesn't work in this game)
+MovementTab:CreateToggle({
+    Name         = T("InfJump"),
     CurrentValue = false,
     Callback     = function(val)
-        Settings.AutoRoll = val
-        if val then
-            if not autoRollConn then
-                autoRollConn = task.spawn(function()
-                    while Settings.AutoRoll do
-                        if RollWheel then
-                            pcall(function() RollWheel:FireServer() end)
-                        end
-                        task.wait(3)
-                    end
-                    autoRollConn = nil
-                end)
-            end
-        end
+        Settings.InfJump = val
     end,
 })
 
--- Listen for wheel results
-pcall(function()
-    RollWheel.OnClientEvent:Connect(function(itemName, rarity)
-        pcall(function()
-            Rayfield:Notify({
-                Title   = T("NotifRollTitle"),
-                Content = tostring(itemName) .. " — " .. tostring(rarity),
-                Duration = 5,
-                Image   = 4483362458,
-            })
-        end)
-    end)
-end)
+-- ───── Tab 4: Tools & Visuals ─────
+local ToolsTab = Window:CreateTab(T("TabTools"), 4483362458)
 
--- Auto Join Lobby button
-AutoTab:CreateButton({
-    Name     = T("AutoJoinBtn"),
-    Callback = function()
-        -- Limit note: lobby ID must be discovered from the GUI at runtime;
-        -- the search below attempts to find it from PlayerGui frames.
-        -- Hardcoded fallback "1" may not work on all servers.
-        local lobbyId = "1"
-        local found   = false
-
+-- Fullbright
+ToolsTab:CreateToggle({
+    Name         = T("Fullbright"),
+    CurrentValue = false,
+    Callback     = function(val)
+        Settings.Fullbright = val
         pcall(function()
-            local gui = LocalPlayer:FindFirstChild("PlayerGui")
-            if not gui then return end
-            for _, desc in ipairs(gui:GetDescendants()) do
-                local n = desc.Name:lower()
-                if (n:find("lobby") or n:find("join")) and desc:IsA("Frame") then
-                    -- Try to extract a numeric ID from child labels
-                    for _, child in ipairs(desc:GetDescendants()) do
-                        if child:IsA("TextLabel") or child:IsA("TextButton") then
-                            local num = child.Text:match("%d+")
-                            if num then
-                                lobbyId = num
-                                found   = true
-                                break
-                            end
-                        end
-                    end
-                end
-                if found then break end
+            local lighting = game:GetService("Lighting")
+            if val then
+                lighting.Brightness    = 10
+                lighting.GlobalShadows = false
+                lighting.ClockTime     = 14
+            else
+                lighting.Brightness    = 1
+                lighting.GlobalShadows = true
+                lighting.ClockTime     = 14
             end
         end)
-
-        if LobbyEvent then
-            pcall(function() LobbyEvent:FireServer("Join", lobbyId) end)
-            Rayfield:Notify({ Title = T("TabAutoActions"), Content = T("NotifJoinOk") .. " (ID: " .. lobbyId .. ")", Duration = 4, Image = 4483362458 })
-        else
-            Rayfield:Notify({ Title = T("TabAutoActions"), Content = T("NotifJoinFail"), Duration = 4, Image = 4483362458 })
-        end
     end,
 })
 
--- Anti-AFK
-local afkConn
-AutoTab:CreateToggle({
+-- Anti-AFK (moved from Auto Actions)
+local afkThread
+ToolsTab:CreateToggle({
     Name         = T("AntiAFK"),
     CurrentValue = false,
     Callback     = function(val)
         Settings.AntiAFK = val
         if val then
-            if not afkConn then
-                afkConn = task.spawn(function()
+            if not afkThread then
+                afkThread = task.spawn(function()
                     while Settings.AntiAFK do
-                        -- Tiny CFrame nudge to prevent server-side AFK kick
                         pcall(function()
                             local char = LocalPlayer.Character
                             if char then
@@ -1211,36 +993,14 @@ AutoTab:CreateToggle({
                         end)
                         task.wait(60)
                     end
-                    afkConn = nil
+                    afkThread = nil
                 end)
             end
         end
     end,
 })
 
--- ───── Tab 5: Tools & Visuals ─────
-local ToolsTab = Window:CreateTab(T("TabTools"), 4483362458)
-
-ToolsTab:CreateToggle({
-    Name         = T("Fullbright"),
-    CurrentValue = false,
-    Callback     = function(val)
-        Settings.Fullbright = val
-        pcall(function()
-            local lighting = game:GetService("Lighting")
-            if val then
-                lighting.Brightness      = 10
-                lighting.GlobalShadows   = false
-                lighting.ClockTime       = 14
-            else
-                lighting.Brightness      = 1
-                lighting.GlobalShadows   = true
-                lighting.ClockTime       = 14
-            end
-        end)
-    end,
-})
-
+-- Language selector
 ToolsTab:CreateDropdown({
     Name          = T("LanguageSelect"),
     Options       = {"EN","FR","DE","ES","PT","RU","IT","NL","PL","ZH","JA","TR","KO","AR","VI","SV","EL","RO","UK","CS","DA"},
@@ -1256,81 +1016,136 @@ ToolsTab:CreateLabel(T("LangNote"))
 -- Main Loops
 -- ================================================================
 
--- Silent Aim: hook Tool.Activated
-LocalPlayer.CharacterAdded:Connect(function(char)
+-- Silent Aim: hook Tool.Activated whenever a tool is equipped
+local function hookTool(tool)
+    tool.Activated:Connect(function()
+        if not Settings.SilentAim then return end
+        local _, targetPart = getClosestZombie(Settings.MaxZombieDistance)
+        if targetPart then
+            pcall(doFire, targetPart)
+        end
+    end)
+end
+
+local function hookChar(char)
+    for _, obj in ipairs(char:GetChildren()) do
+        if obj:IsA("Tool") then hookTool(obj) end
+    end
     char.ChildAdded:Connect(function(obj)
-        if obj:IsA("Tool") then
-            obj.Activated:Connect(function()
-                if Settings.SilentAim then
-                    local _, targetPart = getClosestZombie()
-                    if targetPart then
-                        pcall(function() fireAtPart(targetPart) end)
-                    end
-                end
-            end)
+        if obj:IsA("Tool") then hookTool(obj) end
+    end)
+end
+
+pcall(function()
+    if LocalPlayer.Character then hookChar(LocalPlayer.Character) end
+end)
+LocalPlayer.CharacterAdded:Connect(function(char) hookChar(char) end)
+
+-- Infinite Jump: JumpRequest fires on every jump attempt
+UserInputService.JumpRequest:Connect(function()
+    if not Settings.InfJump then return end
+    pcall(function()
+        local char = LocalPlayer.Character
+        if char then
+            local hum = char:FindFirstChildOfClass("Humanoid")
+            if hum then hum:ChangeState(Enum.HumanoidStateType.Jumping) end
         end
     end)
 end)
 
--- Also wire existing tool on current character
-pcall(function()
-    local char = LocalPlayer.Character
-    if char then
-        char.ChildAdded:Connect(function(obj)
-            if obj:IsA("Tool") then
-                obj.Activated:Connect(function()
-                    if Settings.SilentAim then
-                        local _, targetPart = getClosestZombie()
-                        if targetPart then
-                            pcall(function() fireAtPart(targetPart) end)
-                        end
-                    end
-                end)
-            end
-        end)
-    end
-end)
-
--- Auto Fire loop (every 0.2s via Heartbeat)
--- Note: effectiveness depends on server-side hit detection and weapon fire rate.
+-- Auto Fire: Heartbeat loop, respects AutoFireDelay
 local autoFireTimer = 0
 RunService.Heartbeat:Connect(function(dt)
     if Settings.AutoFire then
         autoFireTimer = autoFireTimer + dt
-        if autoFireTimer >= 0.2 then
+        if autoFireTimer >= Settings.AutoFireDelay then
             autoFireTimer = 0
-            local char = LocalPlayer.Character
-            if char and char:FindFirstChildOfClass("Tool") then
-                local _, targetPart = getClosestZombie()
+            -- Note: effectiveness depends on server-side hit detection and weapon fire rate.
+            pcall(function()
+                local char = LocalPlayer.Character
+                if not char then return end
+                if not char:FindFirstChildOfClass("Tool") then return end
+                local _, targetPart = getClosestZombie(Settings.MaxZombieDistance)
                 if targetPart then
-                    pcall(function() fireAtPart(targetPart) end)
+                    doFire(targetPart)
                 end
-            end
+            end)
         end
     else
         autoFireTimer = 0
     end
 end)
 
--- Listen for incoming game events (display only)
-pcall(function()
-    ReplicatedStorage.Events.Communication.Notification.OnClientEvent:Connect(function(msg)
-        Rayfield:Notify({ Title = T("WindowTitle"), Content = tostring(msg), Duration = 3, Image = 4483362458 })
-    end)
+-- Kill Aura: batched, fires at every zombie within KillAuraDistance simultaneously
+task.spawn(function()
+    while true do
+        if Settings.KillAura then
+            pcall(function()
+                local char = LocalPlayer.Character
+                if not char then return end
+                local hrp = char:FindFirstChild("HumanoidRootPart")
+                if not hrp then return end
+                local tool = char:FindFirstChildOfClass("Tool")
+                if not tool or not FireEvent then return end
+                local exit = tool:FindFirstChild("Exit")
+                if not exit then return end
+
+                local zombieFolder = workspace:FindFirstChild("ActiveZombies")
+                if not zombieFolder then return end
+
+                local hitTable   = {}
+                local extraTable = {}
+
+                for _, zombie in ipairs(zombieFolder:GetChildren()) do
+                    local hum = zombie:FindFirstChildOfClass("Humanoid")
+                    if hum and hum.Health > 0 then
+                        local zhrp = zombie:FindFirstChild("HumanoidRootPart")
+                        if zhrp then
+                            local dist = (zhrp.Position - hrp.Position).Magnitude
+                            if dist <= Settings.KillAuraDistance then
+                                local targetPart = zombie:FindFirstChild("ChestHitbox")
+                                    or zombie:FindFirstChild("HeadHitbox")
+                                    or zombie:FindFirstChild("Head")
+                                    or zhrp
+                                local hitPos = targetPart.Position
+                                local normal = Vector3.new(0, 0, 0)
+                                table.insert(hitTable, { targetPart, hitPos, normal })
+                                table.insert(extraTable, {
+                                    tool.Name,
+                                    exit.WorldPosition,
+                                    hitPos,
+                                    hitPos,
+                                    true,
+                                    targetPart,
+                                    false,
+                                    false,
+                                    "Default",
+                                    exit,
+                                })
+                            end
+                        end
+                    end
+                end
+
+                if #hitTable > 0 then
+                    pcall(function()
+                        FireEvent:FireServer(tool.Name, hitTable, extraTable)
+                    end)
+                end
+            end)
+        end
+        task.wait()
+    end
 end)
 
+-- Listen for incoming game events (display only — no auto-load notification)
 pcall(function()
     ReplicatedStorage.Events.Communication.LavaRising.OnClientEvent:Connect(function()
-        Rayfield:Notify({ Title = "⚠️ Lava Rising!", Content = "Lava is rising — climb fast!", Duration = 4, Image = 4483362458 })
+        Rayfield:Notify({
+            Title    = "⚠️ Lava Rising!",
+            Content  = "Lava is rising — climb fast!",
+            Duration = 4,
+            Image    = 4483362458,
+        })
     end)
 end)
-
--- ================================================================
--- Startup notification
--- ================================================================
-Rayfield:Notify({
-    Title    = T("WindowTitle"),
-    Content  = T("HomeVersion"),
-    Duration = 5,
-    Image    = 4483362458,
-})
