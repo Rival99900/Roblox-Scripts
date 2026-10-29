@@ -2,7 +2,7 @@
     ================================================================
     Skibidi Masters Tower Defense Hub — Skibidi Masters Tower Defense
     Created by Rival960 with the help of Claude
-    Version: 1.1.0 | Languages: 21 | Rayfield UI
+    Version: 1.0.0 | Languages: 21 | Rayfield UI
     Status: untested in-game
     Game: https://www.roblox.com/games/15111895255/Skibidi-Masters-Tower-Defense
     ================================================================
@@ -28,6 +28,10 @@ local Players           = game:GetService("Players")
 local RunService        = game:GetService("RunService")
 local UserInputService  = game:GetService("UserInputService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Lighting          = game:GetService("Lighting")
+
+local ok_vu, VirtualUser = pcall(function() return game:GetService("VirtualUser") end)
+if not ok_vu then VirtualUser = nil end
 
 local LocalPlayer = Players.LocalPlayer
 local Camera      = workspace.CurrentCamera
@@ -51,8 +55,8 @@ local function getRemote(folder, name, timeout)
     return ok and result or nil
 end
 
-local R_UnitUpgrade  = getRemote(ClientServer, "unit_upgrade")   -- RemoteFunction
-local R_TasksUpdate  = getRemote(ServerClient, "tasks_update")   -- RemoteEvent (server→client)
+local R_UnitUpgrade = getRemote(ClientServer, "unit_upgrade")  -- RemoteFunction
+local R_TasksUpdate = getRemote(ServerClient, "tasks_update")  -- RemoteEvent (server→client)
 
 -- ================================================================
 -- LANGUAGE SYSTEM — 21 languages
@@ -71,6 +75,8 @@ local Translations = {
         -- Home
         CreditsTitle      = "Credits",
         CreditsContent    = "Created by Rival960 with the help of Claude\nDiscord: rival960 | GitHub: Rival99900 | YouTube: rival9607",
+        VersionTitle      = "Version",
+        VersionContent    = "v1.0.0 — First Release",
         -- Auto Upgrade
         AutoUpgradeToggle = "Auto Upgrade",
         AutoUpgradeDesc   = "Loops slots 1→10 every 0.5 s and calls unit_upgrade. May fail silently if resources are insufficient.",
@@ -99,7 +105,7 @@ local Translations = {
         LangSelect        = "Language",
         LangReload        = "Re-execute script to apply language change.",
         -- Footer
-        Loaded            = "Hub loaded! Welcome to SMTD Hub v1.1.0",
+        Loaded            = "Hub loaded! Welcome to SMTD Hub v1.0.0",
     },
     FR = {
         WindowTitle       = "SMTD Hub",
@@ -111,6 +117,8 @@ local Translations = {
         TabTools          = "Outils",
         CreditsTitle      = "Crédits",
         CreditsContent    = "Créé par Rival960 avec l'aide de Claude\nDiscord: rival960 | GitHub: Rival99900 | YouTube: rival9607",
+        VersionTitle      = "Version",
+        VersionContent    = "v1.0.0 — Première version",
         AutoUpgradeToggle = "Auto Amélioration",
         AutoUpgradeDesc   = "Boucle slots 1→10 toutes les 0,5 s. Peut échouer silencieusement sans ressources.",
         UpgradeOk         = "Slot {s} amélioré ✓",
@@ -133,7 +141,7 @@ local Translations = {
         AntiAFKToggle     = "Anti-AFK",
         LangSelect        = "Langue",
         LangReload        = "Ré-exécutez le script pour appliquer la langue.",
-        Loaded            = "Hub chargé ! Bienvenue sur SMTD Hub v1.1.0",
+        Loaded            = "Hub chargé ! Bienvenue sur SMTD Hub v1.0.0",
     },
     DE = {
         WindowTitle       = "SMTD Hub",
@@ -145,6 +153,8 @@ local Translations = {
         TabTools          = "Werkzeuge",
         CreditsTitle      = "Danksagungen",
         CreditsContent    = "Erstellt von Rival960 mit Hilfe von Claude\nDiscord: rival960 | GitHub: Rival99900 | YouTube: rival9607",
+        VersionTitle      = "Version",
+        VersionContent    = "v1.0.0 — Erste Version",
         AutoUpgradeToggle = "Auto-Upgrade",
         AutoUpgradeDesc   = "Schleife Slots 1→10 alle 0,5 s. Kann ohne Ressourcen stumm fehlschlagen.",
         UpgradeOk         = "Slot {s} verbessert ✓",
@@ -167,7 +177,7 @@ local Translations = {
         AntiAFKToggle     = "Anti-AFK",
         LangSelect        = "Sprache",
         LangReload        = "Skript neu ausführen, um die Sprache anzuwenden.",
-        Loaded            = "Hub geladen! Willkommen im SMTD Hub v1.1.0",
+        Loaded            = "Hub geladen! Willkommen im SMTD Hub v1.0.0",
     },
     ES = {
         WindowTitle       = "SMTD Hub",
@@ -179,6 +189,8 @@ local Translations = {
         TabTools          = "Herramientas",
         CreditsTitle      = "Créditos",
         CreditsContent    = "Creado por Rival960 con ayuda de Claude\nDiscord: rival960 | GitHub: Rival99900 | YouTube: rival9607",
+        VersionTitle      = "Versión",
+        VersionContent    = "v1.0.0 — Primera versión",
         AutoUpgradeToggle = "Auto Mejora",
         AutoUpgradeDesc   = "Bucle slots 1→10 cada 0,5 s. Puede fallar silenciosamente sin recursos.",
         UpgradeOk         = "Slot {s} mejorado ✓",
@@ -201,7 +213,7 @@ local Translations = {
         AntiAFKToggle     = "Anti-AFK",
         LangSelect        = "Idioma",
         LangReload        = "Vuelve a ejecutar el script para aplicar el idioma.",
-        Loaded            = "¡Hub cargado! Bienvenido al SMTD Hub v1.1.0",
+        Loaded            = "¡Hub cargado! Bienvenido al SMTD Hub v1.0.0",
     },
     PT = {
         WindowTitle       = "SMTD Hub",
@@ -213,6 +225,8 @@ local Translations = {
         TabTools          = "Ferramentas",
         CreditsTitle      = "Créditos",
         CreditsContent    = "Criado por Rival960 com ajuda de Claude\nDiscord: rival960 | GitHub: Rival99900 | YouTube: rival9607",
+        VersionTitle      = "Versão",
+        VersionContent    = "v1.0.0 — Primeiro lançamento",
         AutoUpgradeToggle = "Auto Melhoria",
         AutoUpgradeDesc   = "Loop slots 1→10 a cada 0,5 s. Pode falhar silenciosamente sem recursos.",
         UpgradeOk         = "Slot {s} melhorado ✓",
@@ -235,7 +249,7 @@ local Translations = {
         AntiAFKToggle     = "Anti-AFK",
         LangSelect        = "Idioma",
         LangReload        = "Execute o script novamente para aplicar o idioma.",
-        Loaded            = "Hub carregado! Bem-vindo ao SMTD Hub v1.1.0",
+        Loaded            = "Hub carregado! Bem-vindo ao SMTD Hub v1.0.0",
     },
     RU = {
         WindowTitle       = "SMTD Hub",
@@ -247,6 +261,8 @@ local Translations = {
         TabTools          = "Инструменты",
         CreditsTitle      = "Авторы",
         CreditsContent    = "Создано Rival960 при помощи Claude\nDiscord: rival960 | GitHub: Rival99900 | YouTube: rival9607",
+        VersionTitle      = "Версия",
+        VersionContent    = "v1.0.0 — Первый выпуск",
         AutoUpgradeToggle = "Авто-улучшение",
         AutoUpgradeDesc   = "Цикл слотов 1→10 каждые 0,5 с. Может молча не сработать без ресурсов.",
         UpgradeOk         = "Слот {s} улучшен ✓",
@@ -269,7 +285,7 @@ local Translations = {
         AntiAFKToggle     = "Анти-АФК",
         LangSelect        = "Язык",
         LangReload        = "Перезапустите скрипт для применения языка.",
-        Loaded            = "Hub загружен! Добро пожаловать в SMTD Hub v1.1.0",
+        Loaded            = "Hub загружен! Добро пожаловать в SMTD Hub v1.0.0",
     },
     IT = {
         WindowTitle       = "SMTD Hub",
@@ -281,6 +297,8 @@ local Translations = {
         TabTools          = "Strumenti",
         CreditsTitle      = "Crediti",
         CreditsContent    = "Creato da Rival960 con l'aiuto di Claude\nDiscord: rival960 | GitHub: Rival99900 | YouTube: rival9607",
+        VersionTitle      = "Versione",
+        VersionContent    = "v1.0.0 — Prima versione",
         AutoUpgradeToggle = "Auto Potenziamento",
         AutoUpgradeDesc   = "Ciclo slot 1→10 ogni 0,5 s. Può fallire silenziosamente senza risorse.",
         UpgradeOk         = "Slot {s} potenziato ✓",
@@ -303,7 +321,7 @@ local Translations = {
         AntiAFKToggle     = "Anti-AFK",
         LangSelect        = "Lingua",
         LangReload        = "Riesegui lo script per applicare la lingua.",
-        Loaded            = "Hub caricato! Benvenuto su SMTD Hub v1.1.0",
+        Loaded            = "Hub caricato! Benvenuto su SMTD Hub v1.0.0",
     },
     NL = {
         WindowTitle       = "SMTD Hub",
@@ -315,6 +333,8 @@ local Translations = {
         TabTools          = "Gereedschap",
         CreditsTitle      = "Credits",
         CreditsContent    = "Gemaakt door Rival960 met hulp van Claude\nDiscord: rival960 | GitHub: Rival99900 | YouTube: rival9607",
+        VersionTitle      = "Versie",
+        VersionContent    = "v1.0.0 — Eerste versie",
         AutoUpgradeToggle = "Auto Upgrade",
         AutoUpgradeDesc   = "Lus slots 1→10 elke 0,5 s. Kan stil falen zonder middelen.",
         UpgradeOk         = "Slot {s} geüpgraded ✓",
@@ -337,7 +357,7 @@ local Translations = {
         AntiAFKToggle     = "Anti-AFK",
         LangSelect        = "Taal",
         LangReload        = "Herstart het script om de taal toe te passen.",
-        Loaded            = "Hub geladen! Welkom bij SMTD Hub v1.1.0",
+        Loaded            = "Hub geladen! Welkom bij SMTD Hub v1.0.0",
     },
     PL = {
         WindowTitle       = "SMTD Hub",
@@ -349,6 +369,8 @@ local Translations = {
         TabTools          = "Narzędzia",
         CreditsTitle      = "Podziękowania",
         CreditsContent    = "Stworzone przez Rival960 z pomocą Claude\nDiscord: rival960 | GitHub: Rival99900 | YouTube: rival9607",
+        VersionTitle      = "Wersja",
+        VersionContent    = "v1.0.0 — Pierwsze wydanie",
         AutoUpgradeToggle = "Auto ulepszenie",
         AutoUpgradeDesc   = "Pętla slotów 1→10 co 0,5 s. Może cicho zawieść bez zasobów.",
         UpgradeOk         = "Slot {s} ulepszony ✓",
@@ -371,7 +393,7 @@ local Translations = {
         AntiAFKToggle     = "Anti-AFK",
         LangSelect        = "Język",
         LangReload        = "Uruchom skrypt ponownie, aby zastosować język.",
-        Loaded            = "Hub załadowany! Witaj w SMTD Hub v1.1.0",
+        Loaded            = "Hub załadowany! Witaj w SMTD Hub v1.0.0",
     },
     ZH = {
         WindowTitle       = "SMTD Hub",
@@ -383,6 +405,8 @@ local Translations = {
         TabTools          = "工具",
         CreditsTitle      = "致谢",
         CreditsContent    = "由 Rival960 与 Claude 共同制作\nDiscord: rival960 | GitHub: Rival99900 | YouTube: rival9607",
+        VersionTitle      = "版本",
+        VersionContent    = "v1.0.0 — 首次发布",
         AutoUpgradeToggle = "自动升级",
         AutoUpgradeDesc   = "每 0.5 秒循环槽位 1→10。资源不足时可能静默失败。",
         UpgradeOk         = "槽位 {s} 升级成功 ✓",
@@ -405,7 +429,7 @@ local Translations = {
         AntiAFKToggle     = "防 AFK",
         LangSelect        = "语言",
         LangReload        = "重新执行脚本以应用语言设置。",
-        Loaded            = "Hub 已加载！欢迎使用 SMTD Hub v1.1.0",
+        Loaded            = "Hub 已加载！欢迎使用 SMTD Hub v1.0.0",
     },
     JA = {
         WindowTitle       = "SMTD Hub",
@@ -417,6 +441,8 @@ local Translations = {
         TabTools          = "ツール",
         CreditsTitle      = "クレジット",
         CreditsContent    = "Rival960 と Claude が共同制作\nDiscord: rival960 | GitHub: Rival99900 | YouTube: rival9607",
+        VersionTitle      = "バージョン",
+        VersionContent    = "v1.0.0 — 初回リリース",
         AutoUpgradeToggle = "オートアップグレード",
         AutoUpgradeDesc   = "0.5 秒ごとにスロット 1→10 をループ。リソース不足の場合サイレントに失敗します。",
         UpgradeOk         = "スロット {s} アップグレード ✓",
@@ -439,7 +465,7 @@ local Translations = {
         AntiAFKToggle     = "アンチAFK",
         LangSelect        = "言語",
         LangReload        = "言語を適用するにはスクリプトを再実行してください。",
-        Loaded            = "Hub 読み込み完了！SMTD Hub v1.1.0 へようこそ。",
+        Loaded            = "Hub 読み込み完了！SMTD Hub v1.0.0 へようこそ。",
     },
     TR = {
         WindowTitle       = "SMTD Hub",
@@ -451,6 +477,8 @@ local Translations = {
         TabTools          = "Araçlar",
         CreditsTitle      = "Krediler",
         CreditsContent    = "Rival960 tarafından Claude yardımıyla oluşturuldu\nDiscord: rival960 | GitHub: Rival99900 | YouTube: rival9607",
+        VersionTitle      = "Sürüm",
+        VersionContent    = "v1.0.0 — İlk sürüm",
         AutoUpgradeToggle = "Otomatik Yükseltme",
         AutoUpgradeDesc   = "Her 0,5 s'de slotlar 1→10'u döngüler. Kaynak yoksa sessizce başarısız olabilir.",
         UpgradeOk         = "Slot {s} yükseltildi ✓",
@@ -473,7 +501,7 @@ local Translations = {
         AntiAFKToggle     = "Anti-AFK",
         LangSelect        = "Dil",
         LangReload        = "Dili uygulamak için scripti yeniden çalıştırın.",
-        Loaded            = "Hub yüklendi! SMTD Hub v1.1.0'a hoş geldin.",
+        Loaded            = "Hub yüklendi! SMTD Hub v1.0.0'a hoş geldin.",
     },
     KO = {
         WindowTitle       = "SMTD Hub",
@@ -485,6 +513,8 @@ local Translations = {
         TabTools          = "도구",
         CreditsTitle      = "크레딧",
         CreditsContent    = "Rival960이 Claude의 도움으로 제작\nDiscord: rival960 | GitHub: Rival99900 | YouTube: rival9607",
+        VersionTitle      = "버전",
+        VersionContent    = "v1.0.0 — 첫 번째 출시",
         AutoUpgradeToggle = "자동 업그레이드",
         AutoUpgradeDesc   = "0.5초마다 슬롯 1→10을 반복합니다. 자원이 부족하면 조용히 실패할 수 있습니다.",
         UpgradeOk         = "슬롯 {s} 업그레이드 ✓",
@@ -507,7 +537,7 @@ local Translations = {
         AntiAFKToggle     = "안티 AFK",
         LangSelect        = "언어",
         LangReload        = "언어를 적용하려면 스크립트를 다시 실행하세요.",
-        Loaded            = "Hub 로드 완료! SMTD Hub v1.1.0에 오신 것을 환영합니다.",
+        Loaded            = "Hub 로드 완료! SMTD Hub v1.0.0에 오신 것을 환영합니다.",
     },
     AR = {
         WindowTitle       = "SMTD Hub",
@@ -519,6 +549,8 @@ local Translations = {
         TabTools          = "أدوات",
         CreditsTitle      = "الاعتمادات",
         CreditsContent    = "صنعه Rival960 بمساعدة Claude\nDiscord: rival960 | GitHub: Rival99900 | YouTube: rival9607",
+        VersionTitle      = "الإصدار",
+        VersionContent    = "v1.0.0 — الإصدار الأول",
         AutoUpgradeToggle = "ترقية تلقائية",
         AutoUpgradeDesc   = "حلقة الفتحات 1→10 كل 0,5 ثانية. قد تفشل بصمت دون موارد.",
         UpgradeOk         = "تمت ترقية الفتحة {s} ✓",
@@ -541,7 +573,7 @@ local Translations = {
         AntiAFKToggle     = "مكافحة AFK",
         LangSelect        = "اللغة",
         LangReload        = "أعد تشغيل السكريبت لتطبيق اللغة.",
-        Loaded            = "تم تحميل Hub! مرحباً بك في SMTD Hub v1.1.0",
+        Loaded            = "تم تحميل Hub! مرحباً بك في SMTD Hub v1.0.0",
     },
     VI = {
         WindowTitle       = "SMTD Hub",
@@ -553,6 +585,8 @@ local Translations = {
         TabTools          = "Công cụ",
         CreditsTitle      = "Tín dụng",
         CreditsContent    = "Được tạo bởi Rival960 với sự hỗ trợ của Claude\nDiscord: rival960 | GitHub: Rival99900 | YouTube: rival9607",
+        VersionTitle      = "Phiên bản",
+        VersionContent    = "v1.0.0 — Phát hành đầu tiên",
         AutoUpgradeToggle = "Tự động nâng cấp",
         AutoUpgradeDesc   = "Vòng lặp slot 1→10 mỗi 0,5 giây. Có thể thất bại thầm lặng nếu thiếu tài nguyên.",
         UpgradeOk         = "Slot {s} đã nâng cấp ✓",
@@ -575,7 +609,7 @@ local Translations = {
         AntiAFKToggle     = "Chống AFK",
         LangSelect        = "Ngôn ngữ",
         LangReload        = "Chạy lại script để áp dụng ngôn ngữ.",
-        Loaded            = "Hub đã tải! Chào mừng đến SMTD Hub v1.1.0",
+        Loaded            = "Hub đã tải! Chào mừng đến SMTD Hub v1.0.0",
     },
     SV = {
         WindowTitle       = "SMTD Hub",
@@ -587,6 +621,8 @@ local Translations = {
         TabTools          = "Verktyg",
         CreditsTitle      = "Tack",
         CreditsContent    = "Skapad av Rival960 med hjälp av Claude\nDiscord: rival960 | GitHub: Rival99900 | YouTube: rival9607",
+        VersionTitle      = "Version",
+        VersionContent    = "v1.0.0 — Första utgåvan",
         AutoUpgradeToggle = "Auto-uppgradering",
         AutoUpgradeDesc   = "Loopar slot 1→10 var 0,5 s. Kan misslyckas tyst utan resurser.",
         UpgradeOk         = "Slot {s} uppgraderad ✓",
@@ -609,7 +645,7 @@ local Translations = {
         AntiAFKToggle     = "Anti-AFK",
         LangSelect        = "Språk",
         LangReload        = "Kör om scriptet för att tillämpa språket.",
-        Loaded            = "Hub inläst! Välkommen till SMTD Hub v1.1.0",
+        Loaded            = "Hub inläst! Välkommen till SMTD Hub v1.0.0",
     },
     EL = {
         WindowTitle       = "SMTD Hub",
@@ -621,6 +657,8 @@ local Translations = {
         TabTools          = "Εργαλεία",
         CreditsTitle      = "Χρεώσεις",
         CreditsContent    = "Δημιουργήθηκε από Rival960 με βοήθεια Claude\nDiscord: rival960 | GitHub: Rival99900 | YouTube: rival9607",
+        VersionTitle      = "Έκδοση",
+        VersionContent    = "v1.0.0 — Πρώτη έκδοση",
         AutoUpgradeToggle = "Αυτόματη Αναβάθμιση",
         AutoUpgradeDesc   = "Βρόχος αναβαθμίσεων 1→10 κάθε 0,5 δ. Μπορεί να αποτύχει αθόρυβα χωρίς πόρους.",
         UpgradeOk         = "Θέση {s} αναβαθμίστηκε ✓",
@@ -643,7 +681,7 @@ local Translations = {
         AntiAFKToggle     = "Κατά-AFK",
         LangSelect        = "Γλώσσα",
         LangReload        = "Εκτελέστε ξανά το script για αλλαγή γλώσσας.",
-        Loaded            = "Hub φορτώθηκε! Καλωσήλθατε στο SMTD Hub v1.1.0",
+        Loaded            = "Hub φορτώθηκε! Καλωσήλθατε στο SMTD Hub v1.0.0",
     },
     RO = {
         WindowTitle       = "SMTD Hub",
@@ -655,6 +693,8 @@ local Translations = {
         TabTools          = "Instrumente",
         CreditsTitle      = "Credite",
         CreditsContent    = "Creat de Rival960 cu ajutorul Claude\nDiscord: rival960 | GitHub: Rival99900 | YouTube: rival9607",
+        VersionTitle      = "Versiune",
+        VersionContent    = "v1.0.0 — Prima lansare",
         AutoUpgradeToggle = "Upgrade Automat",
         AutoUpgradeDesc   = "Buclă sloturi 1→10 la fiecare 0,5 s. Poate eșua silențios fără resurse.",
         UpgradeOk         = "Slotul {s} îmbunătățit ✓",
@@ -677,7 +717,7 @@ local Translations = {
         AntiAFKToggle     = "Anti-AFK",
         LangSelect        = "Limbă",
         LangReload        = "Rulați din nou scriptul pentru a aplica limba.",
-        Loaded            = "Hub încărcat! Bun venit la SMTD Hub v1.1.0",
+        Loaded            = "Hub încărcat! Bun venit la SMTD Hub v1.0.0",
     },
     UK = {
         WindowTitle       = "SMTD Hub",
@@ -689,6 +729,8 @@ local Translations = {
         TabTools          = "Інструменти",
         CreditsTitle      = "Автори",
         CreditsContent    = "Створено Rival960 за допомогою Claude\nDiscord: rival960 | GitHub: Rival99900 | YouTube: rival9607",
+        VersionTitle      = "Версія",
+        VersionContent    = "v1.0.0 — Перший випуск",
         AutoUpgradeToggle = "Авто-покращення",
         AutoUpgradeDesc   = "Цикл слотів 1→10 кожні 0,5 с. Може мовчки не спрацювати без ресурсів.",
         UpgradeOk         = "Слот {s} покращено ✓",
@@ -711,7 +753,7 @@ local Translations = {
         AntiAFKToggle     = "Анти-АФК",
         LangSelect        = "Мова",
         LangReload        = "Перезапустіть скрипт для застосування мови.",
-        Loaded            = "Hub завантажено! Ласкаво просимо до SMTD Hub v1.1.0",
+        Loaded            = "Hub завантажено! Ласкаво просимо до SMTD Hub v1.0.0",
     },
     CS = {
         WindowTitle       = "SMTD Hub",
@@ -723,6 +765,8 @@ local Translations = {
         TabTools          = "Nástroje",
         CreditsTitle      = "Zásluhy",
         CreditsContent    = "Vytvořil Rival960 s pomocí Claude\nDiscord: rival960 | GitHub: Rival99900 | YouTube: rival9607",
+        VersionTitle      = "Verze",
+        VersionContent    = "v1.0.0 — První vydání",
         AutoUpgradeToggle = "Automatické vylepšení",
         AutoUpgradeDesc   = "Smyčka slotů 1→10 každých 0,5 s. Může tiše selhat bez zdrojů.",
         UpgradeOk         = "Slot {s} vylepšen ✓",
@@ -745,7 +789,7 @@ local Translations = {
         AntiAFKToggle     = "Anti-AFK",
         LangSelect        = "Jazyk",
         LangReload        = "Spusťte skript znovu pro použití jazyka.",
-        Loaded            = "Hub načten! Vítejte v SMTD Hub v1.1.0",
+        Loaded            = "Hub načten! Vítejte v SMTD Hub v1.0.0",
     },
     DA = {
         WindowTitle       = "SMTD Hub",
@@ -757,6 +801,8 @@ local Translations = {
         TabTools          = "Værktøjer",
         CreditsTitle      = "Tak",
         CreditsContent    = "Lavet af Rival960 med hjælp fra Claude\nDiscord: rival960 | GitHub: Rival99900 | YouTube: rival9607",
+        VersionTitle      = "Version",
+        VersionContent    = "v1.0.0 — Første udgivelse",
         AutoUpgradeToggle = "Auto-opgradering",
         AutoUpgradeDesc   = "Løkke over slots 1→10 hvert 0,5 s. Kan mislykkes lydløst uden ressourcer.",
         UpgradeOk         = "Slot {s} opgraderet ✓",
@@ -779,7 +825,7 @@ local Translations = {
         AntiAFKToggle     = "Anti-AFK",
         LangSelect        = "Sprog",
         LangReload        = "Kør scriptet igen for at anvende sproget.",
-        Loaded            = "Hub indlæst! Velkommen til SMTD Hub v1.1.0",
+        Loaded            = "Hub indlæst! Velkommen til SMTD Hub v1.0.0",
     },
 }
 
@@ -826,9 +872,6 @@ local Codes = {
 -- ================================================================
 local TasksCache = nil
 
--- Connect to tasks_update remote (server→client, read-only)
--- tasks_update is READ-ONLY: claiming rewards requires a server-side
--- remote not visible in logs. This only caches and displays.
 if R_TasksUpdate then
     pcall(function()
         R_TasksUpdate.OnClientEvent:Connect(function(data)
@@ -840,12 +883,19 @@ if R_TasksUpdate then
 end
 
 -- ================================================================
+-- LIGHTING STATE — captured before any fullbright change
+-- ================================================================
+local OrigBrightness    = Lighting.Brightness
+local OrigClockTime     = Lighting.ClockTime
+local OrigGlobalShadows = Lighting.GlobalShadows
+
+-- ================================================================
 -- RAYFIELD LOAD (keyless)
 -- ================================================================
 local success, Rayfield = pcall(function()
     return loadstring(game:HttpGet("https://sirius.menu/rayfield"))()
 end)
-if not success or not Rayfield then
+if not success then
     warn("[SMTD Hub] Rayfield failed to load:", Rayfield)
     return
 end
@@ -870,6 +920,11 @@ local TabHome = Window:CreateTab(T("TabHome"), 4483362458)
 TabHome:CreateParagraph({
     Title   = T("CreditsTitle"),
     Content = T("CreditsContent"),
+})
+
+TabHome:CreateParagraph({
+    Title   = T("VersionTitle"),
+    Content = T("VersionContent"),
 })
 
 -- ================================================================
@@ -909,8 +964,6 @@ TabUpgrade:CreateToggle({
                                 Duration = 2,
                             })
                         end
-                        -- Silent fail is expected when resources are insufficient;
-                        -- no notification on fail to avoid notification spam.
 
                         task.wait(0.5)
                     end
@@ -929,15 +982,8 @@ TabUpgrade:CreateParagraph({
 -- ================================================================
 -- TAB 3 — TASKS WATCHER
 -- ================================================================
--- HONEST LIMIT: tasks_update is server→client read-only.
--- Claiming rewards requires a server-side remote not visible in logs.
--- This tab only reads and displays cached server data.
--- "Spoof" button changes only what the client sees in the UI.
--- No rewards are granted. Server data is unchanged.
-
 local TabTasks = Window:CreateTab(T("TabTasks"), 4483362458)
 
--- Helper: format a task list into readable lines
 local function formatTaskList(taskTable, label)
     if type(taskTable) ~= "table" then return label .. ": N/A\n" end
     local lines = { label .. ":" }
@@ -964,29 +1010,18 @@ TabTasks:CreateButton({
             return
         end
 
-        local lines = {}
-
-        -- Daily tasks
-        local daily = nil
+        local lines  = {}
+        local daily  = nil
         local weekly = nil
+
         pcall(function()
             daily  = TasksCache.tasks and TasksCache.tasks.daily
             weekly = TasksCache.tasks and TasksCache.tasks.weekly
         end)
 
-        if daily then
-            table.insert(lines, formatTaskList(daily, "Daily"))
-        else
-            table.insert(lines, "Daily: N/A")
-        end
+        table.insert(lines, daily  and formatTaskList(daily,  "Daily")  or "Daily: N/A")
+        table.insert(lines, weekly and formatTaskList(weekly, "Weekly") or "Weekly: N/A")
 
-        if weekly then
-            table.insert(lines, formatTaskList(weekly, "Weekly"))
-        else
-            table.insert(lines, "Weekly: N/A")
-        end
-
-        -- Progress totals
         pcall(function()
             if TasksCache.progress then
                 table.insert(lines, "Daily total:  " .. tostring(TasksCache.progress.daily  or "?"))
@@ -1002,17 +1037,11 @@ TabTasks:CreateButton({
     end,
 })
 
-TabTasks:CreateParagraph({
-    Title   = "",
-    Content = T("ShowTasksDesc"),
-})
+TabTasks:CreateParagraph({ Title = "", Content = T("ShowTasksDesc") })
 
--- Spoof button — client-side visual only, no server effect
 TabTasks:CreateButton({
     Name     = T("SpoofTasksBtn"),
     Callback = function()
-        -- HONEST LIMIT: this only changes what the client sees in the UI.
-        -- No rewards are granted. Server data is unchanged.
         if not R_TasksUpdate then
             Rayfield:Notify({
                 Title    = T("TabTasks"),
@@ -1023,13 +1052,11 @@ TabTasks:CreateButton({
         end
 
         pcall(function()
-            -- Build spoofed weekly tasks (9 entries)
             local weeklySpoof = {}
             for i = 1, 9 do
                 weeklySpoof[i] = { id = i, progress = 999999, claimed = true }
             end
 
-            -- Build spoofed daily tasks (15 entries)
             local dailySpoof = {}
             for i = 1, 15 do
                 dailySpoof[i] = { id = i, progress = 999999, claimed = true }
@@ -1037,7 +1064,7 @@ TabTasks:CreateButton({
 
             local spoofPayload = {
                 week  = "2026_43",
-                day   = os.date("%m/%d/%y"),
+                day   = "10/28/26",
                 tasks = {
                     weekly = weeklySpoof,
                     daily  = dailySpoof,
@@ -1052,10 +1079,7 @@ TabTasks:CreateButton({
                 },
             }
 
-            -- Update local cache so "Show Tasks Status" also reflects spoof
             TasksCache = spoofPayload
-
-            -- Fire the signal to the client event so the game's own UI updates
             firesignal(R_TasksUpdate.OnClientEvent, spoofPayload)
         end)
 
@@ -1067,22 +1091,13 @@ TabTasks:CreateButton({
     end,
 })
 
-TabTasks:CreateParagraph({
-    Title   = "",
-    Content = T("SpoofTasksDesc"),
-})
+TabTasks:CreateParagraph({ Title = "", Content = T("SpoofTasksDesc") })
 
 -- ================================================================
 -- TAB 4 — CODES
 -- ================================================================
--- HONEST LIMIT: success depends on the game's server validation.
--- Already-redeemed codes will silently fail.
--- GUI element names may differ between game updates.
--- Open the codes panel in-game before running this.
-
 local TabCodes = Window:CreateTab(T("TabCodes"), 4483362458)
 
--- Helper: recursively find a GUI element matching a name predicate
 local function findInGui(root, predicate)
     for _, obj in ipairs(root:GetDescendants()) do
         if predicate(obj) then return obj end
@@ -1104,16 +1119,11 @@ TabCodes:CreateButton({
         task.spawn(function()
             local playerGui = LocalPlayer:FindFirstChildOfClass("PlayerGui")
             if not playerGui then
-                Rayfield:Notify({
-                    Title    = T("TabCodes"),
-                    Content  = T("RedeemNotFound"),
-                    Duration = 5,
-                })
+                Rayfield:Notify({ Title = T("TabCodes"), Content = T("RedeemNotFound"), Duration = 5 })
                 return
             end
 
-            -- Search for a TextBox whose name suggests code input
-            local codeBox = nil
+            local codeBox   = nil
             local submitBtn = nil
 
             pcall(function()
@@ -1124,16 +1134,10 @@ TabCodes:CreateButton({
             end)
 
             if not codeBox then
-                Rayfield:Notify({
-                    Title    = T("TabCodes"),
-                    Content  = T("RedeemNotFound"),
-                    Duration = 5,
-                })
+                Rayfield:Notify({ Title = T("TabCodes"), Content = T("RedeemNotFound"), Duration = 5 })
                 return
             end
 
-            -- Search for a nearby submit button — first in codeBox's parent chain,
-            -- then fallback to the whole PlayerGui
             local function findSubmitIn(container)
                 return findInGui(container, function(obj)
                     return obj:IsA("TextButton") and
@@ -1142,33 +1146,20 @@ TabCodes:CreateButton({
             end
 
             pcall(function()
-                -- Try the immediate parent first (most likely to be adjacent)
                 local parent = codeBox.Parent
-                if parent then
-                    submitBtn = findSubmitIn(parent)
-                end
-                -- Fallback: whole PlayerGui
-                if not submitBtn then
-                    submitBtn = findSubmitIn(playerGui)
-                end
+                if parent then submitBtn = findSubmitIn(parent) end
+                if not submitBtn then submitBtn = findSubmitIn(playerGui) end
             end)
 
             if not submitBtn then
-                Rayfield:Notify({
-                    Title    = T("TabCodes"),
-                    Content  = T("RedeemNotFound"),
-                    Duration = 5,
-                })
+                Rayfield:Notify({ Title = T("TabCodes"), Content = T("RedeemNotFound"), Duration = 5 })
                 return
             end
 
-            -- Attempt each code
             local attempted = 0
             for _, code in ipairs(Codes) do
                 pcall(function()
                     codeBox.Text = code
-                    -- Fire the button click
-                    fireclickdetector and fireclickdetector(submitBtn) -- executor hook if available
                     pcall(function() submitBtn.MouseButton1Click:Fire() end)
                     attempted = attempted + 1
                 end)
@@ -1184,10 +1175,7 @@ TabCodes:CreateButton({
     end,
 })
 
-TabCodes:CreateParagraph({
-    Title   = "",
-    Content = T("RedeemCodesDesc"),
-})
+TabCodes:CreateParagraph({ Title = "", Content = T("RedeemCodesDesc") })
 
 -- ================================================================
 -- TAB 5 — MOVEMENT
@@ -1228,14 +1216,13 @@ local function enableFly()
         local cf    = Camera.CFrame
         local dir   = Vector3.zero
 
-        if UserInputService:IsKeyDown(Enum.KeyCode.W)          then dir = dir + cf.LookVector  end
-        if UserInputService:IsKeyDown(Enum.KeyCode.S)          then dir = dir - cf.LookVector  end
-        if UserInputService:IsKeyDown(Enum.KeyCode.A)          then dir = dir - cf.RightVector end
-        if UserInputService:IsKeyDown(Enum.KeyCode.D)          then dir = dir + cf.RightVector end
-        if UserInputService:IsKeyDown(Enum.KeyCode.Space)      then dir = dir + Vector3.new(0, 1, 0) end
-        if UserInputService:IsKeyDown(Enum.KeyCode.LeftShift)  then dir = dir - Vector3.new(0, 1, 0) end
+        if UserInputService:IsKeyDown(Enum.KeyCode.W)         then dir = dir + cf.LookVector  end
+        if UserInputService:IsKeyDown(Enum.KeyCode.S)         then dir = dir - cf.LookVector  end
+        if UserInputService:IsKeyDown(Enum.KeyCode.A)         then dir = dir - cf.RightVector end
+        if UserInputService:IsKeyDown(Enum.KeyCode.D)         then dir = dir + cf.RightVector end
+        if UserInputService:IsKeyDown(Enum.KeyCode.Space)     then dir = dir + Vector3.new(0, 1, 0) end
+        if UserInputService:IsKeyDown(Enum.KeyCode.LeftShift) then dir = dir - Vector3.new(0, 1, 0) end
 
-        -- Mobile: use humanoid MoveDirection
         local md = hum.MoveDirection
         if md.Magnitude > 0.1 then
             dir = dir + Vector3.new(md.X, 0, md.Z)
@@ -1258,12 +1245,8 @@ local function disableFly()
         local hrp = char:FindFirstChild("HumanoidRootPart")
         local hum = char:FindFirstChildOfClass("Humanoid")
         if hrp then
-            if FlyBodyVelocity and FlyBodyVelocity.Parent == hrp then
-                FlyBodyVelocity:Destroy()
-            end
-            if FlyBodyGyro and FlyBodyGyro.Parent == hrp then
-                FlyBodyGyro:Destroy()
-            end
+            if FlyBodyVelocity and FlyBodyVelocity.Parent == hrp then FlyBodyVelocity:Destroy() end
+            if FlyBodyGyro     and FlyBodyGyro.Parent     == hrp then FlyBodyGyro:Destroy()     end
         end
         if hum then hum.PlatformStand = false end
     end
@@ -1285,9 +1268,7 @@ TabMove:CreateSlider({
     Increment    = 5,
     CurrentValue = 60,
     Flag         = "FlySpeed",
-    Callback     = function(value)
-        Settings.FlySpeed = value
-    end,
+    Callback     = function(value) Settings.FlySpeed = value end,
 })
 
 -- ---- NOCLIP ----
@@ -1318,10 +1299,8 @@ TabMove:CreateToggle({
             local char = LocalPlayer.Character
             if char then
                 for _, part in ipairs(char:GetDescendants()) do
-                    if part:IsA("BasePart") then
-                        if part.Name:lower() ~= "humanoidrootpart" then
-                            part.CanCollide = true
-                        end
+                    if part:IsA("BasePart") and part.Name:lower() ~= "humanoidrootpart" then
+                        part.CanCollide = true
                     end
                 end
             end
@@ -1346,7 +1325,6 @@ TabMove:CreateSlider({
     end,
 })
 
--- Re-apply WalkSpeed and re-enable Fly on respawn
 LocalPlayer.CharacterAdded:Connect(function(char)
     local hum = char:WaitForChild("Humanoid", 5)
     if hum then hum.WalkSpeed = Settings.WalkSpeed end
@@ -1362,11 +1340,6 @@ end)
 local TabTools = Window:CreateTab(T("TabTools"), 4483362458)
 
 -- ---- FULLBRIGHT ----
-local Lighting = game:GetService("Lighting")
-local OrigBrightness    = Lighting.Brightness
-local OrigClockTime     = Lighting.ClockTime
-local OrigGlobalShadows = Lighting.GlobalShadows
-
 TabTools:CreateToggle({
     Name         = T("FullbrightToggle"),
     CurrentValue = false,
@@ -1386,15 +1359,13 @@ TabTools:CreateToggle({
 })
 
 -- ---- ANTI-AFK ----
-local VirtualUser = game:GetService("VirtualUser")
-
 TabTools:CreateToggle({
     Name         = T("AntiAFKToggle"),
     CurrentValue = false,
     Flag         = "AntiAFK",
     Callback     = function(value)
         Settings.AntiAFK = value
-        if value then
+        if value and VirtualUser then
             LocalPlayer.Idled:Connect(function()
                 if Settings.AntiAFK then
                     pcall(function() VirtualUser:CaptureController() end)
@@ -1440,8 +1411,7 @@ Rayfield:Notify({
 -- DISCLAIMER
 -- ================================================================
 -- This script is for educational and entertainment purposes only.
--- Use at your own risk. The authors take no responsibility for
--- bans or other consequences. No server-side values are modified.
--- All invocations use remotes the game's own client fires during
--- normal gameplay. Spoofed tasks are client-side only.
+-- Use at your own risk. No server-side values are modified.
+-- Spoofed tasks are client-side only. Code redemption depends on
+-- server-side validation.
 -- ================================================================
