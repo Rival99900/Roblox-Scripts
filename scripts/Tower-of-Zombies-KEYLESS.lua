@@ -32,9 +32,9 @@ local Translations = {
         CreditsTitle     = "Credits",
         CreditsContent   = "Created by Rival960 with the help of AI\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.0.0 — First Release",
         Aimbot           = "Aimbot",
-        KillAura         = "Kill Aura",
-        KillAuraDelay    = "Kill Aura Delay (s)",
-        KillAuraRange    = "Kill Aura Range",
+        AutoBring        = "Auto Bring",
+        BringRadius      = "Bring Radius (studs)",
+        BringInterval    = "Bring Interval (s)",
         MaxZombieDist    = "Max Zombie Distance",
         FlyToggle        = "Fly",
         FlySpeed         = "Fly Speed",
@@ -56,9 +56,9 @@ local Translations = {
         CreditsTitle     = "Crédits",
         CreditsContent   = "Créé par Rival960 avec l'aide de l'IA\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.0.0 — Première Release",
         Aimbot           = "Aimbot",
-        KillAura         = "Kill Aura",
-        KillAuraDelay    = "Délai Kill Aura (s)",
-        KillAuraRange    = "Portée Kill Aura",
+        AutoBring        = "Auto Attirer",
+        BringRadius      = "Rayon d'attrait (studs)",
+        BringInterval    = "Intervalle d'attrait (s)",
         MaxZombieDist    = "Distance Max Zombie",
         FlyToggle        = "Vol",
         FlySpeed         = "Vitesse de Vol",
@@ -80,9 +80,9 @@ local Translations = {
         CreditsTitle     = "Credits",
         CreditsContent   = "Erstellt von Rival960 mit KI-Hilfe\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.0.0 — Erstveröffentlichung",
         Aimbot           = "Aimbot",
-        KillAura         = "Kill Aura",
-        KillAuraDelay    = "Kill Aura Verzögerung (s)",
-        KillAuraRange    = "Kill Aura Reichweite",
+        AutoBring        = "Auto Anziehen",
+        BringRadius      = "Anzugsradius (studs)",
+        BringInterval    = "Anzugsintervall (s)",
         MaxZombieDist    = "Max Zombie-Distanz",
         FlyToggle        = "Fliegen",
         FlySpeed         = "Fluggeschwindigkeit",
@@ -104,9 +104,9 @@ local Translations = {
         CreditsTitle     = "Créditos",
         CreditsContent   = "Creado por Rival960 con ayuda de IA\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.0.0 — Primera Versión",
         Aimbot           = "Aimbot",
-        KillAura         = "Kill Aura",
-        KillAuraDelay    = "Retraso Kill Aura (s)",
-        KillAuraRange    = "Alcance Kill Aura",
+        AutoBring        = "Auto Atraer",
+        BringRadius      = "Radio de Atracción (studs)",
+        BringInterval    = "Intervalo de Atracción (s)",
         MaxZombieDist    = "Distancia Máx Zombie",
         FlyToggle        = "Volar",
         FlySpeed         = "Velocidad de Vuelo",
@@ -128,9 +128,9 @@ local Translations = {
         CreditsTitle     = "Créditos",
         CreditsContent   = "Criado por Rival960 com ajuda de IA\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.0.0 — Primeiro Lançamento",
         Aimbot           = "Aimbot",
-        KillAura         = "Kill Aura",
-        KillAuraDelay    = "Atraso Kill Aura (s)",
-        KillAuraRange    = "Alcance Kill Aura",
+        AutoBring        = "Auto Atrair",
+        BringRadius      = "Raio de Atração (studs)",
+        BringInterval    = "Intervalo de Atração (s)",
         MaxZombieDist    = "Distância Máx Zumbi",
         FlyToggle        = "Voar",
         FlySpeed         = "Velocidade de Voo",
@@ -152,9 +152,9 @@ local Translations = {
         CreditsTitle     = "Авторы",
         CreditsContent   = "Создано Rival960 с помощью ИИ\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.0.0 — Первый Выпуск",
         Aimbot           = "Аимбот",
-        KillAura         = "Kill Aura",
-        KillAuraDelay    = "Задержка Kill Aura (с)",
-        KillAuraRange    = "Радиус Kill Aura",
+        AutoBring        = "Авто Притяжение",
+        BringRadius      = "Радиус притяжения (ст.)",
+        BringInterval    = "Интервал притяжения (с)",
         MaxZombieDist    = "Макс дистанция зомби",
         FlyToggle        = "Полёт",
         FlySpeed         = "Скорость полёта",
@@ -176,9 +176,9 @@ local Translations = {
         CreditsTitle     = "Crediti",
         CreditsContent   = "Creato da Rival960 con l'aiuto dell'IA\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.0.0 — Prima Release",
         Aimbot           = "Aimbot",
-        KillAura         = "Kill Aura",
-        KillAuraDelay    = "Ritardo Kill Aura (s)",
-        KillAuraRange    = "Raggio Kill Aura",
+        AutoBring        = "Auto Attira",
+        BringRadius      = "Raggio di Attrazione (studs)",
+        BringInterval    = "Intervallo di Attrazione (s)",
         MaxZombieDist    = "Distanza Max Zombie",
         FlyToggle        = "Volo",
         FlySpeed         = "Velocità di Volo",
@@ -200,9 +200,9 @@ local Translations = {
         CreditsTitle     = "Credits",
         CreditsContent   = "Gemaakt door Rival960 met AI-hulp\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.0.0 — Eerste Release",
         Aimbot           = "Aimbot",
-        KillAura         = "Kill Aura",
-        KillAuraDelay    = "Kill Aura Vertraging (s)",
-        KillAuraRange    = "Kill Aura Bereik",
+        AutoBring        = "Auto Aantrekken",
+        BringRadius      = "Aantrekkingsradius (studs)",
+        BringInterval    = "Aantrekkingsinterval (s)",
         MaxZombieDist    = "Max Zombie Afstand",
         FlyToggle        = "Vliegen",
         FlySpeed         = "Vliegsnelheid",
@@ -224,9 +224,9 @@ local Translations = {
         CreditsTitle     = "Kredyty",
         CreditsContent   = "Stworzone przez Rival960 z pomocą AI\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.0.0 — Pierwsze Wydanie",
         Aimbot           = "Aimbot",
-        KillAura         = "Kill Aura",
-        KillAuraDelay    = "Opóźnienie Kill Aura (s)",
-        KillAuraRange    = "Zasięg Kill Aura",
+        AutoBring        = "Auto Przyciąganie",
+        BringRadius      = "Promień przyciągania (studs)",
+        BringInterval    = "Interwał przyciągania (s)",
         MaxZombieDist    = "Maks. dystans zombie",
         FlyToggle        = "Latanie",
         FlySpeed         = "Prędkość lotu",
@@ -248,9 +248,9 @@ local Translations = {
         CreditsTitle     = "致谢",
         CreditsContent   = "由 Rival960 借助 AI 创建\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.0.0 — 首次发布",
         Aimbot           = "自动瞄准",
-        KillAura         = "杀戮光环",
-        KillAuraDelay    = "杀戮光环延迟 (秒)",
-        KillAuraRange    = "杀戮光环范围",
+        AutoBring        = "自动吸引",
+        BringRadius      = "吸引半径 (格)",
+        BringInterval    = "吸引间隔 (秒)",
         MaxZombieDist    = "最大僵尸距离",
         FlyToggle        = "飞行",
         FlySpeed         = "飞行速度",
@@ -272,9 +272,9 @@ local Translations = {
         CreditsTitle     = "クレジット",
         CreditsContent   = "Rival960 と AI の協力で作成\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.0.0 — 初版",
         Aimbot           = "エイムボット",
-        KillAura         = "キルオーラ",
-        KillAuraDelay    = "キルオーラ遅延 (秒)",
-        KillAuraRange    = "キルオーラ範囲",
+        AutoBring        = "自動引き寄せ",
+        BringRadius      = "引き寄せ半径 (スタッド)",
+        BringInterval    = "引き寄せ間隔 (秒)",
         MaxZombieDist    = "最大ゾンビ距離",
         FlyToggle        = "フライ",
         FlySpeed         = "飛行速度",
@@ -296,9 +296,9 @@ local Translations = {
         CreditsTitle     = "Krediler",
         CreditsContent   = "Rival960 tarafından AI yardımıyla yapılmıştır\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.0.0 — İlk Çıkış",
         Aimbot           = "Aimbot",
-        KillAura         = "Kill Aura",
-        KillAuraDelay    = "Kill Aura Gecikmesi (s)",
-        KillAuraRange    = "Kill Aura Menzili",
+        AutoBring        = "Otomatik Çekme",
+        BringRadius      = "Çekme Yarıçapı (studs)",
+        BringInterval    = "Çekme Aralığı (s)",
         MaxZombieDist    = "Maks Zombi Mesafesi",
         FlyToggle        = "Uçuş",
         FlySpeed         = "Uçuş Hızı",
@@ -320,9 +320,9 @@ local Translations = {
         CreditsTitle     = "크레딧",
         CreditsContent   = "Rival960이 AI의 도움으로 제작\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.0.0 — 첫 번째 릴리즈",
         Aimbot           = "에임봇",
-        KillAura         = "킬 오라",
-        KillAuraDelay    = "킬 오라 지연 (초)",
-        KillAuraRange    = "킬 오라 범위",
+        AutoBring        = "자동 끌어오기",
+        BringRadius      = "끌어오기 반경 (스터드)",
+        BringInterval    = "끌어오기 간격 (초)",
         MaxZombieDist    = "최대 좀비 거리",
         FlyToggle        = "비행",
         FlySpeed         = "비행 속도",
@@ -344,9 +344,9 @@ local Translations = {
         CreditsTitle     = "الاعتمادات",
         CreditsContent   = "تم إنشاؤه بواسطة Rival960 بمساعدة الذكاء الاصطناعي\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.0.0 — الإصدار الأول",
         Aimbot           = "أيمبوت",
-        KillAura         = "هالة القتل",
-        KillAuraDelay    = "تأخير هالة القتل (ث)",
-        KillAuraRange    = "نطاق هالة القتل",
+        AutoBring        = "جذب تلقائي",
+        BringRadius      = "نطاق الجذب (وحدة)",
+        BringInterval    = "فترة الجذب (ث)",
         MaxZombieDist    = "أقصى مسافة للزومبي",
         FlyToggle        = "طيران",
         FlySpeed         = "سرعة الطيران",
@@ -368,9 +368,9 @@ local Translations = {
         CreditsTitle     = "Tín Dụng",
         CreditsContent   = "Tạo bởi Rival960 với sự trợ giúp của AI\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.0.0 — Phát Hành Đầu Tiên",
         Aimbot           = "Aimbot",
-        KillAura         = "Kill Aura",
-        KillAuraDelay    = "Độ trễ Kill Aura (s)",
-        KillAuraRange    = "Tầm Kill Aura",
+        AutoBring        = "Tự Động Kéo",
+        BringRadius      = "Bán Kính Kéo (studs)",
+        BringInterval    = "Khoảng Thời Gian Kéo (s)",
         MaxZombieDist    = "Khoảng Cách Zombie Tối Đa",
         FlyToggle        = "Bay",
         FlySpeed         = "Tốc Độ Bay",
@@ -392,9 +392,9 @@ local Translations = {
         CreditsTitle     = "Erkännanden",
         CreditsContent   = "Skapad av Rival960 med hjälp av AI\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.0.0 — Första Utgåvan",
         Aimbot           = "Aimbot",
-        KillAura         = "Kill Aura",
-        KillAuraDelay    = "Kill Aura Fördröjning (s)",
-        KillAuraRange    = "Kill Aura Räckvidd",
+        AutoBring        = "Auto Hämta",
+        BringRadius      = "Hämtningsradie (studs)",
+        BringInterval    = "Hämtningsintervall (s)",
         MaxZombieDist    = "Max Zombieavstånd",
         FlyToggle        = "Flyg",
         FlySpeed         = "Flyghastighet",
@@ -416,9 +416,9 @@ local Translations = {
         CreditsTitle     = "Εύσημα",
         CreditsContent   = "Δημιουργήθηκε από Rival960 με βοήθεια AI\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.0.0 — Πρώτη Κυκλοφορία",
         Aimbot           = "Aimbot",
-        KillAura         = "Kill Aura",
-        KillAuraDelay    = "Καθυστέρηση Kill Aura (s)",
-        KillAuraRange    = "Εμβέλεια Kill Aura",
+        AutoBring        = "Αυτόματη Έλξη",
+        BringRadius      = "Ακτίνα Έλξης (studs)",
+        BringInterval    = "Διάστημα Έλξης (s)",
         MaxZombieDist    = "Μέγ. Απόσταση Ζόμπι",
         FlyToggle        = "Πτήση",
         FlySpeed         = "Ταχύτητα Πτήσης",
@@ -440,9 +440,9 @@ local Translations = {
         CreditsTitle     = "Credite",
         CreditsContent   = "Creat de Rival960 cu ajutorul AI\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.0.0 — Prima Lansare",
         Aimbot           = "Aimbot",
-        KillAura         = "Kill Aura",
-        KillAuraDelay    = "Întârziere Kill Aura (s)",
-        KillAuraRange    = "Raza Kill Aura",
+        AutoBring        = "Auto Atragere",
+        BringRadius      = "Raza de Atragere (studs)",
+        BringInterval    = "Interval Atragere (s)",
         MaxZombieDist    = "Dist. Maximă Zombie",
         FlyToggle        = "Zbor",
         FlySpeed         = "Viteză Zbor",
@@ -464,9 +464,9 @@ local Translations = {
         CreditsTitle     = "Автори",
         CreditsContent   = "Створено Rival960 за допомогою AI\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.0.0 — Перший Випуск",
         Aimbot           = "Аімбот",
-        KillAura         = "Kill Aura",
-        KillAuraDelay    = "Затримка Kill Aura (с)",
-        KillAuraRange    = "Радіус Kill Aura",
+        AutoBring        = "Авто Притягання",
+        BringRadius      = "Радіус притягання (ст.)",
+        BringInterval    = "Інтервал притягання (с)",
         MaxZombieDist    = "Макс дистанція зомбі",
         FlyToggle        = "Політ",
         FlySpeed         = "Швидкість польоту",
@@ -488,9 +488,9 @@ local Translations = {
         CreditsTitle     = "Poděkování",
         CreditsContent   = "Vytvořeno Rival960 s pomocí AI\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.0.0 — První Vydání",
         Aimbot           = "Aimbot",
-        KillAura         = "Kill Aura",
-        KillAuraDelay    = "Zpoždění Kill Aura (s)",
-        KillAuraRange    = "Dosah Kill Aura",
+        AutoBring        = "Auto Přitáhnout",
+        BringRadius      = "Poloměr přitáhnutí (studs)",
+        BringInterval    = "Interval přitáhnutí (s)",
         MaxZombieDist    = "Max vzdálenost zombie",
         FlyToggle        = "Létání",
         FlySpeed         = "Rychlost letu",
@@ -512,9 +512,9 @@ local Translations = {
         CreditsTitle     = "Anerkendelser",
         CreditsContent   = "Oprettet af Rival960 med hjælp fra AI\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.0.0 — Første Udgivelse",
         Aimbot           = "Aimbot",
-        KillAura         = "Kill Aura",
-        KillAuraDelay    = "Kill Aura Forsinkelse (s)",
-        KillAuraRange    = "Kill Aura Rækkevidde",
+        AutoBring        = "Auto Hent",
+        BringRadius      = "Hentningsradius (studs)",
+        BringInterval    = "Hentningsinterval (s)",
         MaxZombieDist    = "Maks Zombie Afstand",
         FlyToggle        = "Fly",
         FlySpeed         = "Flyvehastighed",
@@ -539,9 +539,9 @@ end
 -- ================================================================
 local Settings = {
     Aimbot        = false,
-    KillAura      = false,
-    KillAuraDelay = 0.15,
-    KillAuraRange = 150,
+    AutoBring     = false,
+    BringRadius   = 3,
+    BringInterval = 0.3,
     MaxZombieDist = 300,
     Fly           = false,
     FlySpeed      = 60,
@@ -663,25 +663,40 @@ CombatTab:CreateSlider({
 })
 
 CombatTab:CreateToggle({
-    Name         = T("KillAura"),
+    Name         = T("AutoBring"),
     CurrentValue = false,
-    Callback     = function(val) Settings.KillAura = val end,
+    Callback     = function(val)
+        Settings.AutoBring = val
+        -- When turned off, restore WalkSpeed of all zombies
+        if not val then
+            pcall(function()
+                local zombieFolder = workspace:FindFirstChild("ActiveZombies")
+                if not zombieFolder then return end
+                for _, zombie in ipairs(zombieFolder:GetChildren()) do
+                    local hum = zombie:FindFirstChildOfClass("Humanoid")
+                    if hum then
+                        hum.WalkSpeed = 16  -- default Roblox walk speed
+                    end
+                end
+            end)
+        end
+    end,
 })
 
 CombatTab:CreateSlider({
-    Name         = T("KillAuraDelay"),
-    Range        = {0.05, 0.5},
-    Increment    = 0.05,
-    CurrentValue = 0.15,
-    Callback     = function(val) Settings.KillAuraDelay = val end,
+    Name         = T("BringRadius"),
+    Range        = {1, 10},
+    Increment    = 1,
+    CurrentValue = 3,
+    Callback     = function(val) Settings.BringRadius = val end,
 })
 
 CombatTab:CreateSlider({
-    Name         = T("KillAuraRange"),
-    Range        = {50, 500},
-    Increment    = 10,
-    CurrentValue = 150,
-    Callback     = function(val) Settings.KillAuraRange = val end,
+    Name         = T("BringInterval"),
+    Range        = {0.1, 2.0},
+    Increment    = 0.1,
+    CurrentValue = 0.3,
+    Callback     = function(val) Settings.BringInterval = val end,
 })
 
 -- ───── Tab 3: Movement ─────
@@ -1014,60 +1029,46 @@ UserInputService.JumpRequest:Connect(function()
     end)
 end)
 
--- Kill Aura: Heartbeat loop, fires at every zombie within range
--- Approach B (primary): set ammo to 9999 then call fireAtTarget via Fire remote
--- Approach A (fallback if no ammo value found): teleport near zombie, tool:Activate(), restore
-local killAuraTimer = 0
+-- Auto Bring: Heartbeat loop — teleports all living zombies in a circle around the player
+-- Pure client-side CFrame manipulation; freezes zombie WalkSpeed while active
+local bringTimer = 0
 RunService.Heartbeat:Connect(function(dt)
-    if not Settings.KillAura then
-        killAuraTimer = 0
+    if not Settings.AutoBring then
+        bringTimer = 0
         return
     end
-    killAuraTimer = killAuraTimer + dt
-    if killAuraTimer < Settings.KillAuraDelay then return end
-    killAuraTimer = 0
+    bringTimer = bringTimer + dt
+    if bringTimer < Settings.BringInterval then return end
+    bringTimer = 0
     task.spawn(function()
         pcall(function()
-            local char = getChar()
-            if not char then return end
-            local tool = char:FindFirstChildOfClass("Tool")
-            if not tool then return end
             local hrp = getHRP()
             if not hrp then return end
             local zombieFolder = workspace:FindFirstChild("ActiveZombies")
             if not zombieFolder then return end
 
-            -- Approach B: locate ammo value once per tick
-            local ammoVal = tool:FindFirstChild("Ammo")
-                or tool:FindFirstChild("MagAmmo")
-                or tool:FindFirstChild("CurrentAmmo")
+            local zombies = zombieFolder:GetChildren()
+            local total   = #zombies
+            if total == 0 then return end
 
-            for _, zombie in ipairs(zombieFolder:GetChildren()) do
+            for i, zombie in ipairs(zombies) do
                 local hum = zombie:FindFirstChildOfClass("Humanoid")
                 if hum and hum.Health > 0 then
                     local zhrp = zombie:FindFirstChild("HumanoidRootPart")
                     if zhrp then
-                        local dist = (zhrp.Position - hrp.Position).Magnitude
-                        if dist <= Settings.KillAuraRange then
-                            local targetPart = zombie:FindFirstChild("HeadHitbox")
-                                or zombie:FindFirstChild("Head")
-                                or zhrp
-                            if ammoVal then
-                                -- Approach B: ensure weapon thinks it has ammo, then fire remote
-                                pcall(function() ammoVal.Value = 9999 end)
-                                fireAtTarget(targetPart)
-                            else
-                                -- Approach A: teleport near zombie, activate tool, restore position
-                                pcall(function()
-                                    local originalCF = hrp.CFrame
-                                    hrp.CFrame = CFrame.new(targetPart.Position + Vector3.new(0, 0, 3))
-                                    tool:Activate()
-                                    task.wait(0.05)
-                                    hrp.CFrame = originalCF
-                                end)
-                            end
-                            task.wait(0.02)
-                        end
+                        -- Spread zombies evenly in a circle around the player
+                        local angle  = ((i - 1) / total) * (2 * math.pi)
+                        local offset = Vector3.new(
+                            math.cos(angle),
+                            0,
+                            math.sin(angle)
+                        ) * Settings.BringRadius
+                        local targetPos = hrp.Position + offset
+                        pcall(function()
+                            zhrp.CFrame   = CFrame.new(targetPos)
+                            hum.WalkSpeed = 0
+                        end)
+                        task.wait(0.01)
                     end
                 end
             end
