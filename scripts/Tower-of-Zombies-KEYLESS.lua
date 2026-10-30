@@ -561,7 +561,7 @@ end
 local Settings = {
     Aimbot           = false,
     RapidFire        = false,
-    RapidFireDelay   = 0.2,
+    RapidFireDelay   = 0.1,
     KillAura         = false,
     KillAuraDistance = 150,
     MaxZombieDist    = 300,
@@ -608,15 +608,13 @@ local Window = Rayfield:CreateWindow({
 -- Combat helpers
 -- ================================================================
 
--- Find closest zombie within maxDist; returns (zombie, targetPart)
-local function getClosestZombie(maxDist)
+-- Find closest zombie within maxDist; returns targetPart
+local function getClosestZombieTarget(maxDist)
     local hrp = getHRP()
-    if not hrp then return nil, nil end
-
-    local best, bestPart, bestDist = nil, nil, maxDist
+    if not hrp then return nil end
+    local bestPart, bestDist = nil, maxDist
     local zombieFolder = workspace:FindFirstChild("ActiveZombies")
-    if not zombieFolder then return nil, nil end
-
+    if not zombieFolder then return nil end
     for _, zombie in ipairs(zombieFolder:GetChildren()) do
         local hum = zombie:FindFirstChildOfClass("Humanoid")
         if hum and hum.Health > 0 then
@@ -625,7 +623,6 @@ local function getClosestZombie(maxDist)
                 local dist = (zhrp.Position - hrp.Position).Magnitude
                 if dist < bestDist then
                     bestDist = dist
-                    best     = zombie
                     bestPart = zombie:FindFirstChild("HeadHitbox")
                         or zombie:FindFirstChild("Head")
                         or zhrp
@@ -633,25 +630,7 @@ local function getClosestZombie(maxDist)
             end
         end
     end
-    return best, bestPart
-end
-
--- Fire at a specific target; confirmed remote structure
-local function fireAtTarget(weaponName, targetPart)
-    local char = LocalPlayer.Character
-    if not char then return end
-    local exitPart = char[weaponName] and char[weaponName]:FindFirstChild("Exit")
-    if not exitPart then return end
-    local rayOrigin = exitPart.WorldPosition
-    local hitPos    = targetPart.Position
-    local normalVec = (rayOrigin - hitPos).Unit
-    pcall(function()
-        game:GetService("ReplicatedStorage").Events.Actions.Fire:FireServer(
-            weaponName,
-            { { targetPart, hitPos, normalVec } },
-            { { weaponName, rayOrigin, hitPos, hitPos, true, targetPart, false, false, "Default", exitPart } }
-        )
-    end)
+    return bestPart
 end
 
 -- ================================================================
@@ -682,9 +661,9 @@ CombatTab:CreateToggle({
 
 CombatTab:CreateSlider({
     Name         = T("RapidFireDelay"),
-    Range        = {0.05, 2},
+    Range        = {0.05, 0.5},
     Increment    = 0.05,
-    CurrentValue = 0.2,
+    CurrentValue = 0.1,
     Callback     = function(val) Settings.RapidFireDelay = val end,
 })
 
@@ -714,7 +693,7 @@ CombatTab:CreateSlider({
 local MovementTab = Window:CreateTab(T("TabMovement"), 4483362458)
 
 -- ================================================================
--- Fly system (exact implementation from spec)
+-- Fly system (exact implementation from spec 097915f3)
 -- ================================================================
 local FLYING       = false
 local FLY_BTN_UP   = 0
@@ -1006,38 +985,17 @@ ToolsTab:CreateLabel(T("LangNote"))
 -- Main Loops
 -- ================================================================
 
--- Aimbot: hook Tool.Activated, disconnect on removal
-local aimbotConn = nil
-
-local function hookChar(char)
-    local function connectTool(tool)
-        if aimbotConn then aimbotConn:Disconnect() aimbotConn = nil end
-        aimbotConn = tool.Activated:Connect(function()
-            if not Settings.Aimbot then return end
-            local _, targetPart = getClosestZombie(Settings.MaxZombieDist)
-            if targetPart then
-                pcall(fireAtTarget, tool.Name, targetPart)
-            end
-        end)
-    end
-
-    for _, obj in ipairs(char:GetChildren()) do
-        if obj:IsA("Tool") then connectTool(obj) end
-    end
-    char.ChildAdded:Connect(function(obj)
-        if obj:IsA("Tool") then connectTool(obj) end
-    end)
-    char.ChildRemoved:Connect(function(obj)
-        if obj:IsA("Tool") then
-            if aimbotConn then aimbotConn:Disconnect() aimbotConn = nil end
+-- Aimbot: RenderStepped camera-lock loop
+RunService.RenderStepped:Connect(function()
+    if not Settings.Aimbot then return end
+    pcall(function()
+        local cam        = workspace.CurrentCamera
+        local targetPart = getClosestZombieTarget(Settings.MaxZombieDist)
+        if targetPart then
+            cam.CFrame = CFrame.lookAt(cam.CFrame.Position, targetPart.Position)
         end
     end)
-end
-
-pcall(function()
-    if LocalPlayer.Character then hookChar(LocalPlayer.Character) end
 end)
-LocalPlayer.CharacterAdded:Connect(function(char) hookChar(char) end)
 
 -- Infinite Jump
 UserInputService.JumpRequest:Connect(function()
@@ -1051,24 +1009,32 @@ end)
 -- Rapid Fire: Heartbeat loop
 local rapidFireTimer = 0
 RunService.Heartbeat:Connect(function(dt)
-    if Settings.RapidFire then
-        rapidFireTimer = rapidFireTimer + dt
-        if rapidFireTimer >= Settings.RapidFireDelay then
-            rapidFireTimer = 0
-            pcall(function()
-                local char = getChar()
-                if not char then return end
-                local tool = char:FindFirstChildOfClass("Tool")
-                if not tool then return end
-                local _, targetPart = getClosestZombie(Settings.MaxZombieDist)
-                if targetPart then
-                    fireAtTarget(tool.Name, targetPart)
-                end
-            end)
-        end
-    else
+    if not Settings.RapidFire then
         rapidFireTimer = 0
+        return
     end
+    rapidFireTimer = rapidFireTimer + dt
+    if rapidFireTimer < Settings.RapidFireDelay then return end
+    rapidFireTimer = 0
+    pcall(function()
+        local char = getChar()
+        if not char then return end
+        local tool = char:FindFirstChildOfClass("Tool")
+        if not tool then return end
+        local weaponName = tool.Name
+        local exitPart   = char[weaponName] and char[weaponName]:FindFirstChild("Exit")
+        if not exitPart then return end
+        local targetPart = getClosestZombieTarget(Settings.MaxZombieDist)
+        if not targetPart then return end
+        local rayOrigin = exitPart.WorldPosition
+        local hitPos    = targetPart.Position
+        local normalVec = (rayOrigin - hitPos).Unit
+        game:GetService("ReplicatedStorage").Events.Actions.Fire:FireServer(
+            weaponName,
+            { { targetPart, hitPos, normalVec } },
+            { { weaponName, rayOrigin, hitPos, hitPos, true, targetPart, false, false, "Default", exitPart } }
+        )
+    end)
 end)
 
 -- Kill Aura: batched, fires at every zombie within KillAuraDistance
@@ -1127,7 +1093,7 @@ task.spawn(function()
     end
 end)
 
--- LavaRising event notification (game-event-driven, not a loop)
+-- LavaRising event notification
 pcall(function()
     ReplicatedStorage.Events.Communication.LavaRising.OnClientEvent:Connect(function()
         Rayfield:Notify({
