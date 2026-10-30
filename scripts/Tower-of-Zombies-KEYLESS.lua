@@ -756,25 +756,37 @@ local function enableFly()
     task.spawn(function()
         while FLYING do
             task.wait()
-            local cam = workspace.CurrentCamera
-            local spd = Settings.FlySpeed
-            local md  = hum.MoveDirection
-            local vel
+            local camCF    = workspace.CurrentCamera.CFrame
+            local rawLook  = camCF.LookVector
+            local rawRight = camCF.RightVector
+            local spd      = Settings.FlySpeed
+
+            -- Flatten to horizontal plane so vertical camera tilt does not affect direction
+            local flatLook  = Vector3.new(rawLook.X,  0, rawLook.Z)
+            local flatRight = Vector3.new(rawRight.X, 0, rawRight.Z)
+            if flatLook.Magnitude  > 0 then flatLook  = flatLook.Unit  end
+            if flatRight.Magnitude > 0 then flatRight = flatRight.Unit end
+
+            -- PC: WASD via CTRL table
+            local pcVel = flatLook  * CTRL.F   -- W: positive
+                        + flatLook  * CTRL.B   -- S: negative
+                        + flatRight * CTRL.R   -- D: positive
+                        + flatRight * CTRL.L   -- A: negative
+
+            -- Mobile: MoveDirection is already world-space horizontal, use directly
+            local md        = hum.MoveDirection
+            local mobileVel = Vector3.new(md.X, 0, md.Z)
+
+            local horizVel
             if md.Magnitude > 0.1 then
-                local fwd   = Vector3.new(cam.CFrame.LookVector.X,  0, cam.CFrame.LookVector.Z)
-                local right = Vector3.new(cam.CFrame.RightVector.X, 0, cam.CFrame.RightVector.Z)
-                if fwd.Magnitude   > 0 then fwd   = fwd.Unit   end
-                if right.Magnitude > 0 then right = right.Unit end
-                -- positive md.Z = forward, md.X = strafe right
-                vel = (fwd * md.Z + right * md.X) * spd
-                    + Vector3.new(0, (CTRL.UP + CTRL.DOWN + FLY_BTN_UP + FLY_BTN_DOWN) * spd, 0)
+                horizVel = mobileVel * spd
             else
-                vel = (cam.CFrame.LookVector  * (CTRL.F + CTRL.B)
-                     + cam.CFrame.RightVector * (CTRL.L + CTRL.R)
-                     + Vector3.new(0, (CTRL.UP + CTRL.DOWN + FLY_BTN_UP + FLY_BTN_DOWN), 0)) * spd
+                horizVel = pcVel * spd
             end
-            bv.Velocity = vel
-            bg.CFrame   = cam.CFrame
+
+            local vertVel = Vector3.new(0, (CTRL.UP + CTRL.DOWN + FLY_BTN_UP + FLY_BTN_DOWN) * spd, 0)
+            bv.Velocity = horizVel + vertVel
+            bg.CFrame   = camCF
         end
     end)
 end
@@ -1002,8 +1014,9 @@ UserInputService.JumpRequest:Connect(function()
     end)
 end)
 
--- Kill Aura: Heartbeat loop, fires at every zombie within range via fireAtTarget
--- Server registers the hit via the Fire remote; no ammo consumed client-side
+-- Kill Aura: Heartbeat loop, fires at every zombie within range
+-- Approach B (primary): set ammo to 9999 then call fireAtTarget via Fire remote
+-- Approach A (fallback if no ammo value found): teleport near zombie, tool:Activate(), restore
 local killAuraTimer = 0
 RunService.Heartbeat:Connect(function(dt)
     if not Settings.KillAura then
@@ -1023,6 +1036,12 @@ RunService.Heartbeat:Connect(function(dt)
             if not hrp then return end
             local zombieFolder = workspace:FindFirstChild("ActiveZombies")
             if not zombieFolder then return end
+
+            -- Approach B: locate ammo value once per tick
+            local ammoVal = tool:FindFirstChild("Ammo")
+                or tool:FindFirstChild("MagAmmo")
+                or tool:FindFirstChild("CurrentAmmo")
+
             for _, zombie in ipairs(zombieFolder:GetChildren()) do
                 local hum = zombie:FindFirstChildOfClass("Humanoid")
                 if hum and hum.Health > 0 then
@@ -1033,7 +1052,20 @@ RunService.Heartbeat:Connect(function(dt)
                             local targetPart = zombie:FindFirstChild("HeadHitbox")
                                 or zombie:FindFirstChild("Head")
                                 or zhrp
-                            fireAtTarget(targetPart)
+                            if ammoVal then
+                                -- Approach B: ensure weapon thinks it has ammo, then fire remote
+                                pcall(function() ammoVal.Value = 9999 end)
+                                fireAtTarget(targetPart)
+                            else
+                                -- Approach A: teleport near zombie, activate tool, restore position
+                                pcall(function()
+                                    local originalCF = hrp.CFrame
+                                    hrp.CFrame = CFrame.new(targetPart.Position + Vector3.new(0, 0, 3))
+                                    tool:Activate()
+                                    task.wait(0.05)
+                                    hrp.CFrame = originalCF
+                                end)
+                            end
                             task.wait(0.02)
                         end
                     end
