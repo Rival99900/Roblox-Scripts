@@ -35,7 +35,8 @@ local Translations = {
         RapidFire        = "Rapid Fire",
         RapidFireDelay   = "Rapid Fire Delay (s)",
         KillAura         = "Kill Aura",
-        KillAuraDistance = "Kill Aura Distance",
+        KillAuraDelay    = "Kill Aura Delay (s)",
+        KillAuraRange    = "Kill Aura Range",
         MaxZombieDist    = "Max Zombie Distance",
         FlyToggle        = "Fly",
         FlySpeed         = "Fly Speed",
@@ -60,7 +61,8 @@ local Translations = {
         RapidFire        = "Tir Rapide",
         RapidFireDelay   = "Délai Tir Rapide (s)",
         KillAura         = "Kill Aura",
-        KillAuraDistance = "Distance Kill Aura",
+        KillAuraDelay    = "Délai Kill Aura (s)",
+        KillAuraRange    = "Portée Kill Aura",
         MaxZombieDist    = "Distance Max Zombie",
         FlyToggle        = "Vol",
         FlySpeed         = "Vitesse de Vol",
@@ -85,7 +87,8 @@ local Translations = {
         RapidFire        = "Schnellfeuer",
         RapidFireDelay   = "Schnellfeuer Verzögerung (s)",
         KillAura         = "Kill Aura",
-        KillAuraDistance = "Kill Aura Distanz",
+        KillAuraDelay    = "Kill Aura Verzögerung (s)",
+        KillAuraRange    = "Kill Aura Reichweite",
         MaxZombieDist    = "Max Zombie-Distanz",
         FlyToggle        = "Fliegen",
         FlySpeed         = "Fluggeschwindigkeit",
@@ -110,7 +113,8 @@ local Translations = {
         RapidFire        = "Fuego Rápido",
         RapidFireDelay   = "Retraso Fuego Rápido (s)",
         KillAura         = "Kill Aura",
-        KillAuraDistance = "Distancia Kill Aura",
+        KillAuraDelay    = "Retraso Kill Aura (s)",
+        KillAuraRange    = "Alcance Kill Aura",
         MaxZombieDist    = "Distancia Máx Zombie",
         FlyToggle        = "Volar",
         FlySpeed         = "Velocidad de Vuelo",
@@ -135,7 +139,8 @@ local Translations = {
         RapidFire        = "Tiro Rápido",
         RapidFireDelay   = "Atraso Tiro Rápido (s)",
         KillAura         = "Kill Aura",
-        KillAuraDistance = "Distância Kill Aura",
+        KillAuraDelay    = "Atraso Kill Aura (s)",
+        KillAuraRange    = "Alcance Kill Aura",
         MaxZombieDist    = "Distância Máx Zumbi",
         FlyToggle        = "Voar",
         FlySpeed         = "Velocidade de Voo",
@@ -160,7 +165,8 @@ local Translations = {
         RapidFire        = "Быстрый Огонь",
         RapidFireDelay   = "Задержка быстрого огня (с)",
         KillAura         = "Kill Aura",
-        KillAuraDistance = "Дистанция Kill Aura",
+        KillAuraDelay    = "Задержка Kill Aura (с)",
+        KillAuraRange    = "Радиус Kill Aura",
         MaxZombieDist    = "Макс дистанция зомби",
         FlyToggle        = "Полёт",
         FlySpeed         = "Скорость полёта",
@@ -185,7 +191,8 @@ local Translations = {
         RapidFire        = "Fuoco Rapido",
         RapidFireDelay   = "Ritardo Fuoco Rapido (s)",
         KillAura         = "Kill Aura",
-        KillAuraDistance = "Distanza Kill Aura",
+        KillAuraDelay    = "Ritardo Kill Aura (s)",
+        KillAuraRange    = "Raggio Kill Aura",
         MaxZombieDist    = "Distanza Max Zombie",
         FlyToggle        = "Volo",
         FlySpeed         = "Velocità di Volo",
@@ -210,7 +217,8 @@ local Translations = {
         RapidFire        = "Snel Vuren",
         RapidFireDelay   = "Snel Vuren Vertraging (s)",
         KillAura         = "Kill Aura",
-        KillAuraDistance = "Kill Aura Afstand",
+        KillAuraDelay    = "Kill Aura Vertraging (s)",
+        KillAuraRange    = "Kill Aura Bereik",
         MaxZombieDist    = "Max Zombie Afstand",
         FlyToggle        = "Vliegen",
         FlySpeed         = "Vliegsnelheid",
@@ -235,7 +243,8 @@ local Translations = {
         RapidFire        = "Szybki Ogień",
         RapidFireDelay   = "Opóźnienie szybkiego ognia (s)",
         KillAura         = "Kill Aura",
-        KillAuraDistance = "Dystans Kill Aura",
+        KillAuraDelay    = "Opóźnienie Kill Aura (s)",
+        KillAuraRange    = "Zasięg Kill Aura",
         MaxZombieDist    = "Maks. dystans zombie",
         FlyToggle        = "Latanie",
         FlySpeed         = "Prędkość lotu",
@@ -260,7 +269,8 @@ local Translations = {
         RapidFire        = "快速射击",
         RapidFireDelay   = "快速射击延迟 (秒)",
         KillAura         = "杀戮光环",
-        KillAuraDistance = "杀戮光环距离",
+        KillAuraDelay    = "杀戮光环延迟 (秒)",
+        KillAuraRange    = "杀戮光环范围",
         MaxZombieDist    = "最大僵尸距离",
         FlyToggle        = "飞行",
         FlySpeed         = "飞行速度",
@@ -285,7 +295,8 @@ local Translations = {
         RapidFire        = "連射",
         RapidFireDelay   = "連射遅延 (秒)",
         KillAura         = "キルオーラ",
-        KillAuraDistance = "キルオーラ距離",
+        KillAuraDelay    = "キルオーラ遅延 (秒)",
+        KillAuraRange    = "キルオーラ範囲",
         MaxZombieDist    = "最大ゾンビ距離",
         FlyToggle        = "フライ",
         FlySpeed         = "飛行速度",
@@ -310,7 +321,8 @@ local Translations = {
         RapidFire        = "Hızlı Ateş",
         RapidFireDelay   = "Hızlı Ateş Gecikmesi (s)",
         KillAura         = "Kill Aura",
-        KillAuraDistance = "Kill Aura Mesafesi",
+        KillAuraDelay    = "Kill Aura Gecikmesi (s)",
+        KillAuraRange    = "Kill Aura Menzili",
         MaxZombieDist    = "Maks Zombi Mesafesi",
         FlyToggle        = "Uçuş",
         FlySpeed         = "Uçuş Hızı",
@@ -335,7 +347,8 @@ local Translations = {
         RapidFire        = "연사",
         RapidFireDelay   = "연사 지연 (초)",
         KillAura         = "킬 오라",
-        KillAuraDistance = "킬 오라 거리",
+        KillAuraDelay    = "킬 오라 지연 (초)",
+        KillAuraRange    = "킬 오라 범위",
         MaxZombieDist    = "최대 좀비 거리",
         FlyToggle        = "비행",
         FlySpeed         = "비행 속도",
@@ -360,7 +373,8 @@ local Translations = {
         RapidFire        = "إطلاق نار سريع",
         RapidFireDelay   = "تأخير الإطلاق السريع (ث)",
         KillAura         = "هالة القتل",
-        KillAuraDistance = "مسافة هالة القتل",
+        KillAuraDelay    = "تأخير هالة القتل (ث)",
+        KillAuraRange    = "نطاق هالة القتل",
         MaxZombieDist    = "أقصى مسافة للزومبي",
         FlyToggle        = "طيران",
         FlySpeed         = "سرعة الطيران",
@@ -385,7 +399,8 @@ local Translations = {
         RapidFire        = "Bắn Nhanh",
         RapidFireDelay   = "Độ trễ bắn nhanh (s)",
         KillAura         = "Kill Aura",
-        KillAuraDistance = "Khoảng cách Kill Aura",
+        KillAuraDelay    = "Độ trễ Kill Aura (s)",
+        KillAuraRange    = "Tầm Kill Aura",
         MaxZombieDist    = "Khoảng Cách Zombie Tối Đa",
         FlyToggle        = "Bay",
         FlySpeed         = "Tốc Độ Bay",
@@ -410,7 +425,8 @@ local Translations = {
         RapidFire        = "Snabbeld",
         RapidFireDelay   = "Snabbeld Fördröjning (s)",
         KillAura         = "Kill Aura",
-        KillAuraDistance = "Kill Aura Avstånd",
+        KillAuraDelay    = "Kill Aura Fördröjning (s)",
+        KillAuraRange    = "Kill Aura Räckvidd",
         MaxZombieDist    = "Max Zombieavstånd",
         FlyToggle        = "Flyg",
         FlySpeed         = "Flyghastighet",
@@ -435,7 +451,8 @@ local Translations = {
         RapidFire        = "Γρήγορα Πυρά",
         RapidFireDelay   = "Καθυστέρηση Γρήγορων Πυρών (s)",
         KillAura         = "Kill Aura",
-        KillAuraDistance = "Απόσταση Kill Aura",
+        KillAuraDelay    = "Καθυστέρηση Kill Aura (s)",
+        KillAuraRange    = "Εμβέλεια Kill Aura",
         MaxZombieDist    = "Μέγ. Απόσταση Ζόμπι",
         FlyToggle        = "Πτήση",
         FlySpeed         = "Ταχύτητα Πτήσης",
@@ -460,7 +477,8 @@ local Translations = {
         RapidFire        = "Foc Rapid",
         RapidFireDelay   = "Întârziere Foc Rapid (s)",
         KillAura         = "Kill Aura",
-        KillAuraDistance = "Distanță Kill Aura",
+        KillAuraDelay    = "Întârziere Kill Aura (s)",
+        KillAuraRange    = "Raza Kill Aura",
         MaxZombieDist    = "Dist. Maximă Zombie",
         FlyToggle        = "Zbor",
         FlySpeed         = "Viteză Zbor",
@@ -485,7 +503,8 @@ local Translations = {
         RapidFire        = "Швидкий Вогонь",
         RapidFireDelay   = "Затримка швидкого вогню (с)",
         KillAura         = "Kill Aura",
-        KillAuraDistance = "Дистанція Kill Aura",
+        KillAuraDelay    = "Затримка Kill Aura (с)",
+        KillAuraRange    = "Радіус Kill Aura",
         MaxZombieDist    = "Макс дистанція зомбі",
         FlyToggle        = "Політ",
         FlySpeed         = "Швидкість польоту",
@@ -510,7 +529,8 @@ local Translations = {
         RapidFire        = "Rychlá Střelba",
         RapidFireDelay   = "Zpoždění rychlé střelby (s)",
         KillAura         = "Kill Aura",
-        KillAuraDistance = "Vzdálenost Kill Aura",
+        KillAuraDelay    = "Zpoždění Kill Aura (s)",
+        KillAuraRange    = "Dosah Kill Aura",
         MaxZombieDist    = "Max vzdálenost zombie",
         FlyToggle        = "Létání",
         FlySpeed         = "Rychlost letu",
@@ -535,7 +555,8 @@ local Translations = {
         RapidFire        = "Hurtig Ild",
         RapidFireDelay   = "Hurtig Ild Forsinkelse (s)",
         KillAura         = "Kill Aura",
-        KillAuraDistance = "Kill Aura Afstand",
+        KillAuraDelay    = "Kill Aura Forsinkelse (s)",
+        KillAuraRange    = "Kill Aura Rækkevidde",
         MaxZombieDist    = "Maks Zombie Afstand",
         FlyToggle        = "Fly",
         FlySpeed         = "Flyvehastighed",
@@ -563,7 +584,8 @@ local Settings = {
     RapidFire        = false,
     RapidFireDelay   = 0.1,
     KillAura         = false,
-    KillAuraDistance = 150,
+    KillAuraDelay    = 0.15,
+    KillAuraRange    = 150,
     MaxZombieDist    = 300,
     Fly              = false,
     FlySpeed         = 60,
@@ -575,7 +597,7 @@ local Settings = {
 }
 
 -- ================================================================
--- Character helpers (used by fly system and combat)
+-- Character helpers
 -- ================================================================
 local function getChar() return LocalPlayer.Character end
 local function getHRP()
@@ -605,10 +627,10 @@ local Window = Rayfield:CreateWindow({
 })
 
 -- ================================================================
--- Combat helpers
+-- Shared combat helpers
 -- ================================================================
 
--- Find closest zombie within maxDist; returns targetPart
+-- Find closest zombie target within maxDist (math only, no raycast)
 local function getClosestZombieTarget(maxDist)
     local hrp = getHRP()
     if not hrp then return nil end
@@ -631,6 +653,26 @@ local function getClosestZombieTarget(maxDist)
         end
     end
     return bestPart
+end
+
+-- Shared fire function — math only, no workspace:Raycast, penetrates all walls
+local function fireAtTarget(weaponName, targetPart)
+    local char = LocalPlayer.Character
+    if not char then return end
+    local weapon   = char:FindFirstChild(weaponName)
+    if not weapon  then return end
+    local exitPart = weapon:FindFirstChild("Exit")
+    if not exitPart then return end
+    local rayOrigin = exitPart.WorldPosition
+    local hitPos    = targetPart.Position
+    local normalVec = (rayOrigin - hitPos).Unit  -- from target back to barrel
+    pcall(function()
+        game:GetService("ReplicatedStorage").Events.Actions.Fire:FireServer(
+            weaponName,
+            { { targetPart, hitPos, normalVec } },
+            { { weaponName, rayOrigin, hitPos, hitPos, true, targetPart, false, false, "Default", exitPart } }
+        )
+    end)
 end
 
 -- ================================================================
@@ -682,18 +724,26 @@ CombatTab:CreateToggle({
 })
 
 CombatTab:CreateSlider({
-    Name         = T("KillAuraDistance"),
+    Name         = T("KillAuraDelay"),
+    Range        = {0.05, 0.5},
+    Increment    = 0.05,
+    CurrentValue = 0.15,
+    Callback     = function(val) Settings.KillAuraDelay = val end,
+})
+
+CombatTab:CreateSlider({
+    Name         = T("KillAuraRange"),
     Range        = {50, 500},
     Increment    = 10,
     CurrentValue = 150,
-    Callback     = function(val) Settings.KillAuraDistance = val end,
+    Callback     = function(val) Settings.KillAuraRange = val end,
 })
 
 -- ───── Tab 3: Movement ─────
 local MovementTab = Window:CreateTab(T("TabMovement"), 4483362458)
 
 -- ================================================================
--- Fly system (exact implementation from spec 097915f3)
+-- Fly system (exact implementation from spec 097915f3 — do not touch)
 -- ================================================================
 local FLYING       = false
 local FLY_BTN_UP   = 0
@@ -985,7 +1035,7 @@ ToolsTab:CreateLabel(T("LangNote"))
 -- Main Loops
 -- ================================================================
 
--- Aimbot: RenderStepped camera-lock loop
+-- Aimbot: RenderStepped camera-lock — do not touch
 RunService.RenderStepped:Connect(function()
     if not Settings.Aimbot then return end
     pcall(function()
@@ -1006,7 +1056,7 @@ UserInputService.JumpRequest:Connect(function()
     end)
 end)
 
--- Rapid Fire: Heartbeat loop
+-- Rapid Fire: Heartbeat loop, fires via shared fireAtTarget
 local rapidFireTimer = 0
 RunService.Heartbeat:Connect(function(dt)
     if not Settings.RapidFire then
@@ -1022,75 +1072,51 @@ RunService.Heartbeat:Connect(function(dt)
         local tool = char:FindFirstChildOfClass("Tool")
         if not tool then return end
         local weaponName = tool.Name
-        local exitPart   = char[weaponName] and char[weaponName]:FindFirstChild("Exit")
-        if not exitPart then return end
         local targetPart = getClosestZombieTarget(Settings.MaxZombieDist)
         if not targetPart then return end
-        local rayOrigin = exitPart.WorldPosition
-        local hitPos    = targetPart.Position
-        local normalVec = (rayOrigin - hitPos).Unit
-        game:GetService("ReplicatedStorage").Events.Actions.Fire:FireServer(
-            weaponName,
-            { { targetPart, hitPos, normalVec } },
-            { { weaponName, rayOrigin, hitPos, hitPos, true, targetPart, false, false, "Default", exitPart } }
-        )
+        fireAtTarget(weaponName, targetPart)
     end)
 end)
 
--- Kill Aura: batched, fires at every zombie within KillAuraDistance
-task.spawn(function()
-    while true do
-        if Settings.KillAura then
-            pcall(function()
-                local hrp = getHRP()
-                if not hrp then return end
-                local char = getChar()
-                if not char then return end
-                local tool = char:FindFirstChildOfClass("Tool")
-                if not tool then return end
-                local exit = tool:FindFirstChild("Exit")
-                if not exit then return end
-
-                local zombieFolder = workspace:FindFirstChild("ActiveZombies")
-                if not zombieFolder then return end
-
-                local hitTable   = {}
-                local extraTable = {}
-
-                for _, zombie in ipairs(zombieFolder:GetChildren()) do
-                    local hum = zombie:FindFirstChildOfClass("Humanoid")
-                    if hum and hum.Health > 0 then
-                        local zhrp = zombie:FindFirstChild("HumanoidRootPart")
-                        if zhrp then
-                            local dist = (zhrp.Position - hrp.Position).Magnitude
-                            if dist <= Settings.KillAuraDistance then
-                                local targetPart = zombie:FindFirstChild("ChestHitbox")
-                                    or zombie:FindFirstChild("HeadHitbox")
-                                    or zombie:FindFirstChild("Head")
-                                    or zhrp
-                                local hitPos    = targetPart.Position
-                                local rayOrigin = exit.WorldPosition
-                                local normalVec = (rayOrigin - hitPos).Unit
-                                table.insert(hitTable,   { targetPart, hitPos, normalVec })
-                                table.insert(extraTable, {
-                                    tool.Name, rayOrigin, hitPos, hitPos,
-                                    true, targetPart, false, false, "Default", exit,
-                                })
-                            end
+-- Kill Aura: Heartbeat loop, fires at every zombie within range via shared fireAtTarget
+local killAuraTimer = 0
+RunService.Heartbeat:Connect(function(dt)
+    if not Settings.KillAura then
+        killAuraTimer = 0
+        return
+    end
+    killAuraTimer = killAuraTimer + dt
+    if killAuraTimer < Settings.KillAuraDelay then return end
+    killAuraTimer = 0
+    task.spawn(function()
+        pcall(function()
+            local char = getChar()
+            if not char then return end
+            local tool = char:FindFirstChildOfClass("Tool")
+            if not tool then return end
+            local weaponName   = tool.Name
+            local hrp          = getHRP()
+            if not hrp then return end
+            local zombieFolder = workspace:FindFirstChild("ActiveZombies")
+            if not zombieFolder then return end
+            for _, zombie in ipairs(zombieFolder:GetChildren()) do
+                local hum = zombie:FindFirstChildOfClass("Humanoid")
+                if hum and hum.Health > 0 then
+                    local zhrp = zombie:FindFirstChild("HumanoidRootPart")
+                    if zhrp then
+                        local dist = (zhrp.Position - hrp.Position).Magnitude
+                        if dist <= Settings.KillAuraRange then
+                            local targetPart = zombie:FindFirstChild("HeadHitbox")
+                                or zombie:FindFirstChild("Head")
+                                or zhrp
+                            fireAtTarget(weaponName, targetPart)
+                            task.wait(0.01)
                         end
                     end
                 end
-
-                if #hitTable > 0 then
-                    pcall(function()
-                        game:GetService("ReplicatedStorage").Events.Actions.Fire
-                            :FireServer(tool.Name, hitTable, extraTable)
-                    end)
-                end
-            end)
-        end
-        task.wait()
-    end
+            end
+        end)
+    end)
 end)
 
 -- LavaRising event notification
