@@ -3,8 +3,6 @@
     Tower of Zombies Hub — Tower of Zombies
     Created by Rival960 with the help of Claude
     Version: v1.0.0 | Languages: 21 | Rayfield UI
-    Status: untested in-game
-    Game: https://www.roblox.com/games/99122501338948/Tower-of-Zombies
     ================================================================
 ]]
 
