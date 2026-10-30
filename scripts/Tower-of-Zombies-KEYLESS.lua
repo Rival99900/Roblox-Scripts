@@ -575,14 +575,6 @@ local Settings = {
 }
 
 -- ================================================================
--- Remote references (confirmed from Cobalt log analysis)
--- ================================================================
-local FireEvent = nil
-pcall(function()
-    FireEvent = ReplicatedStorage.Events.Actions.Fire
-end)
-
--- ================================================================
 -- Rayfield load (keyless)
 -- ================================================================
 local success, Rayfield = pcall(function()
@@ -632,42 +624,34 @@ local function getClosestZombie(maxDist)
 end
 
 -- ================================================================
--- Helper: fire at a specific target part using confirmed remote
+-- Helper: fire at target part — confirmed remote structure
+-- normalVec = (rayOrigin - hitPos).Unit  (pointing FROM target TO exit)
 -- ================================================================
+local function fireSilentShot(weaponName, targetPart)
+    local char = LocalPlayer.Character
+    if not char or not char:FindFirstChild(weaponName) then return end
+    local exitPart = char[weaponName]:FindFirstChild("Exit")
+    if not exitPart then return end
+    local rayOrigin = exitPart.WorldPosition
+    local hitPos    = targetPart.Position
+    local normalVec = (rayOrigin - hitPos).Unit
+    pcall(function()
+        local FireEvent = ReplicatedStorage.Events.Actions.Fire
+        FireEvent:FireServer(
+            weaponName,
+            { { targetPart, hitPos, normalVec } },
+            { { weaponName, rayOrigin, hitPos, hitPos, true, targetPart, false, false, "Default", exitPart } }
+        )
+    end)
+end
+
+-- Wrapper used by Auto Fire and Kill Aura (no weaponName arg needed)
 local function doFire(targetPart)
-    if not FireEvent then return end
     local char = LocalPlayer.Character
     if not char then return end
     local tool = char:FindFirstChildOfClass("Tool")
     if not tool then return end
-    local exit = tool:FindFirstChild("Exit")
-    if not exit then return end
-
-    local weaponName  = tool.Name
-    local rayOrigin   = exit.WorldPosition
-    local hitPosition = targetPart.Position
-    local normal      = (hitPosition - rayOrigin).Unit * -1
-
-    pcall(function()
-        FireEvent:FireServer(
-            weaponName,
-            { { targetPart, hitPosition, normal } },
-            {
-                {
-                    weaponName,
-                    rayOrigin,
-                    hitPosition,
-                    hitPosition,
-                    true,
-                    targetPart,
-                    false,
-                    false,
-                    "Default",
-                    exit,
-                }
-            }
-        )
-    end)
+    fireSilentShot(tool.Name, targetPart)
 end
 
 -- ================================================================
@@ -733,15 +717,21 @@ CombatTab:CreateSlider({
 local MovementTab = Window:CreateTab(T("TabMovement"), 4483362458)
 
 -- Fly
+-- BodyVelocity/BodyGyro are created lazily inside RenderStepped the first
+-- time Fly is enabled, so the toggle callback never touches Character directly.
 local flyBodyVel, flyBodyGyro, flyRenderConn
 
-local function destroyFly()
-    if flyRenderConn then flyRenderConn:Disconnect() flyRenderConn = nil end
+local function destroyFlyObjects()
     if flyBodyVel  then pcall(function() flyBodyVel:Destroy()  end) flyBodyVel  = nil end
     if flyBodyGyro then pcall(function() flyBodyGyro:Destroy() end) flyBodyGyro = nil end
 end
 
--- Mobile up/down overlay (only visible on touch devices when fly is on)
+local function stopFly()
+    if flyRenderConn then flyRenderConn:Disconnect() flyRenderConn = nil end
+    destroyFlyObjects()
+end
+
+-- Mobile up/down overlay: 60×60, bottom-center, visible only when Fly ON + touch
 local flyGui = nil
 local function createFlyGui()
     if not UserInputService.TouchEnabled then return end
@@ -750,32 +740,36 @@ local function createFlyGui()
     if not playerGui then return end
 
     flyGui = Instance.new("ScreenGui")
-    flyGui.Name          = "TozFlyOverlay"
-    flyGui.ResetOnSpawn  = false
+    flyGui.Name           = "TozFlyOverlay"
+    flyGui.ResetOnSpawn   = false
     flyGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
-    flyGui.Parent        = playerGui
+    flyGui.Parent         = playerGui
 
-    local function makeBtn(text, pos)
+    local BTN_SIZE = 60
+    local GAP      = 8
+    -- Centre the pair: total width = 2*60 + gap = 128, offset from centre = -64
+    local function makeBtn(text, xOffset)
         local btn = Instance.new("TextButton")
-        btn.Size               = UDim2.new(0, 70, 0, 70)
-        btn.Position           = pos
-        btn.BackgroundColor3   = Color3.fromRGB(40, 40, 40)
+        btn.Size                   = UDim2.new(0, BTN_SIZE, 0, BTN_SIZE)
+        btn.Position               = UDim2.new(0.5, xOffset, 1, -(BTN_SIZE + 20))
+        btn.AnchorPoint            = Vector2.new(0, 0)
+        btn.BackgroundColor3       = Color3.fromRGB(40, 40, 40)
         btn.BackgroundTransparency = 0.3
-        btn.TextColor3         = Color3.new(1, 1, 1)
-        btn.Text               = text
-        btn.TextScaled         = true
-        btn.Font               = Enum.Font.GothamBold
-        btn.Parent             = flyGui
+        btn.TextColor3             = Color3.new(1, 1, 1)
+        btn.Text                   = text
+        btn.TextScaled             = true
+        btn.Font                   = Enum.Font.GothamBold
+        btn.Parent                 = flyGui
         local corner = Instance.new("UICorner")
-        corner.CornerRadius = UDim.new(0, 12)
+        corner.CornerRadius = UDim.new(0, 10)
         corner.Parent       = btn
         return btn
     end
 
-    local upBtn   = makeBtn("▲", UDim2.new(1, -160, 1, -180))
-    local downBtn = makeBtn("▼", UDim2.new(1, -80,  1, -180))
+    -- ▲ left of centre, ▼ right of centre
+    local upBtn   = makeBtn("▲", -(BTN_SIZE + GAP / 2))
+    local downBtn = makeBtn("▼",   GAP / 2)
 
-    -- Track held state
     local upHeld, downHeld = false, false
 
     upBtn.InputBegan:Connect(function(i)
@@ -791,73 +785,12 @@ local function createFlyGui()
         if i.UserInputType == Enum.UserInputType.Touch then downHeld = false end
     end)
 
-    -- Expose held state for the fly loop
     flyGui._upHeld   = function() return upHeld   end
     flyGui._downHeld = function() return downHeld end
 end
 
 local function destroyFlyGui()
-    if flyGui then
-        pcall(function() flyGui:Destroy() end)
-        flyGui = nil
-    end
-end
-
-local function setupFly()
-    destroyFly()
-    local char = LocalPlayer.Character
-    if not char then return end
-    local hrp = char:FindFirstChild("HumanoidRootPart")
-    if not hrp then return end
-
-    flyBodyVel = Instance.new("BodyVelocity")
-    flyBodyVel.Velocity   = Vector3.zero
-    flyBodyVel.MaxForce   = Vector3.new(1e5, 1e5, 1e5)
-    flyBodyVel.Parent     = hrp
-
-    flyBodyGyro = Instance.new("BodyGyro")
-    flyBodyGyro.MaxTorque = Vector3.new(1e5, 1e5, 1e5)
-    flyBodyGyro.D         = 100
-    flyBodyGyro.CFrame    = hrp.CFrame
-    flyBodyGyro.Parent    = hrp
-
-    flyRenderConn = RunService.RenderStepped:Connect(function()
-        if not Settings.Fly then destroyFly() return end
-        local c2  = LocalPlayer.Character
-        if not c2 then return end
-        local h2  = c2:FindFirstChild("HumanoidRootPart")
-        if not h2 then return end
-
-        local cam = workspace.CurrentCamera
-        local dir = Vector3.zero
-
-        -- PC: WASD + Space/Shift
-        if UserInputService:IsKeyDown(Enum.KeyCode.W) then dir = dir + cam.CFrame.LookVector end
-        if UserInputService:IsKeyDown(Enum.KeyCode.S) then dir = dir - cam.CFrame.LookVector end
-        if UserInputService:IsKeyDown(Enum.KeyCode.A) then dir = dir - cam.CFrame.RightVector end
-        if UserInputService:IsKeyDown(Enum.KeyCode.D) then dir = dir + cam.CFrame.RightVector end
-        if UserInputService:IsKeyDown(Enum.KeyCode.Space)     then dir = dir + Vector3.new(0, 1, 0) end
-        if UserInputService:IsKeyDown(Enum.KeyCode.LeftShift) then dir = dir - Vector3.new(0, 1, 0) end
-
-        -- Mobile: MoveDirection + overlay buttons
-        local hum = c2:FindFirstChildOfClass("Humanoid")
-        if hum and hum.MoveDirection.Magnitude > 0 then
-            dir = dir + hum.MoveDirection
-        end
-        if flyGui then
-            if flyGui._upHeld   and flyGui._upHeld()   then dir = dir + Vector3.new(0,  1, 0) end
-            if flyGui._downHeld and flyGui._downHeld()  then dir = dir + Vector3.new(0, -1, 0) end
-        end
-
-        if flyBodyVel and flyBodyVel.Parent then
-            flyBodyVel.Velocity = dir.Magnitude > 0
-                and dir.Unit * Settings.FlySpeed
-                or  Vector3.zero
-        end
-        if flyBodyGyro and flyBodyGyro.Parent then
-            flyBodyGyro.CFrame = cam.CFrame
-        end
-    end)
+    if flyGui then pcall(function() flyGui:Destroy() end) flyGui = nil end
 end
 
 MovementTab:CreateToggle({
@@ -866,10 +799,63 @@ MovementTab:CreateToggle({
     Callback     = function(val)
         Settings.Fly = val
         if val then
-            setupFly()
+            -- Start the RenderStepped loop; BodyVelocity/BodyGyro created lazily inside
+            if not flyRenderConn then
+                flyRenderConn = RunService.RenderStepped:Connect(function()
+                    if not Settings.Fly then
+                        stopFly()
+                        return
+                    end
+
+                    local char = LocalPlayer.Character
+                    if not char then return end
+                    local hrp = char:FindFirstChild("HumanoidRootPart")
+                    if not hrp then return end
+
+                    -- Lazy creation: build physics objects the first time we have an HRP
+                    if not flyBodyVel or not flyBodyVel.Parent then
+                        destroyFlyObjects()
+                        flyBodyVel            = Instance.new("BodyVelocity")
+                        flyBodyVel.Velocity   = Vector3.zero
+                        flyBodyVel.MaxForce   = Vector3.new(1e5, 1e5, 1e5)
+                        flyBodyVel.Parent     = hrp
+                    end
+                    if not flyBodyGyro or not flyBodyGyro.Parent then
+                        flyBodyGyro           = Instance.new("BodyGyro")
+                        flyBodyGyro.MaxTorque = Vector3.new(1e5, 1e5, 1e5)
+                        flyBodyGyro.D         = 100
+                        flyBodyGyro.CFrame    = hrp.CFrame
+                        flyBodyGyro.Parent    = hrp
+                    end
+
+                    local cam = workspace.CurrentCamera
+                    local dir = Vector3.zero
+
+                    -- PC: WASD + Space/LeftShift
+                    if UserInputService:IsKeyDown(Enum.KeyCode.W)         then dir = dir + cam.CFrame.LookVector  end
+                    if UserInputService:IsKeyDown(Enum.KeyCode.S)         then dir = dir - cam.CFrame.LookVector  end
+                    if UserInputService:IsKeyDown(Enum.KeyCode.A)         then dir = dir - cam.CFrame.RightVector end
+                    if UserInputService:IsKeyDown(Enum.KeyCode.D)         then dir = dir + cam.CFrame.RightVector end
+                    if UserInputService:IsKeyDown(Enum.KeyCode.Space)     then dir = dir + Vector3.new(0,  1, 0)  end
+                    if UserInputService:IsKeyDown(Enum.KeyCode.LeftShift) then dir = dir + Vector3.new(0, -1, 0)  end
+
+                    -- Mobile: thumb-stick direction + overlay buttons
+                    local hum = char:FindFirstChildOfClass("Humanoid")
+                    if hum and hum.MoveDirection.Magnitude > 0 then
+                        dir = dir + hum.MoveDirection
+                    end
+                    if flyGui then
+                        if flyGui._upHeld   and flyGui._upHeld()   then dir = dir + Vector3.new(0,  1, 0) end
+                        if flyGui._downHeld and flyGui._downHeld()  then dir = dir + Vector3.new(0, -1, 0) end
+                    end
+
+                    flyBodyVel.Velocity = dir.Magnitude > 0 and dir.Unit * Settings.FlySpeed or Vector3.zero
+                    flyBodyGyro.CFrame  = cam.CFrame
+                end)
+            end
             createFlyGui()
         else
-            destroyFly()
+            stopFly()
             destroyFlyGui()
             pcall(function()
                 local char = LocalPlayer.Character
@@ -1016,23 +1002,33 @@ ToolsTab:CreateLabel(T("LangNote"))
 -- Main Loops
 -- ================================================================
 
--- Silent Aim: hook Tool.Activated whenever a tool is equipped
-local function hookTool(tool)
-    tool.Activated:Connect(function()
-        if not Settings.SilentAim then return end
-        local _, targetPart = getClosestZombie(Settings.MaxZombieDistance)
-        if targetPart then
-            pcall(doFire, targetPart)
-        end
-    end)
-end
+-- Silent Aim: hook Tool.Activated, disconnect when tool is unequipped
+local activatedConn = nil
 
 local function hookChar(char)
-    for _, obj in ipairs(char:GetChildren()) do
-        if obj:IsA("Tool") then hookTool(obj) end
+    local function connectTool(tool)
+        if activatedConn then activatedConn:Disconnect() activatedConn = nil end
+        activatedConn = tool.Activated:Connect(function()
+            if not Settings.SilentAim then return end
+            local _, targetPart = getClosestZombie(Settings.MaxZombieDistance)
+            if targetPart then
+                pcall(fireSilentShot, tool.Name, targetPart)
+            end
+        end)
     end
+
+    -- Hook any tool already in the character
+    for _, obj in ipairs(char:GetChildren()) do
+        if obj:IsA("Tool") then connectTool(obj) end
+    end
+
     char.ChildAdded:Connect(function(obj)
-        if obj:IsA("Tool") then hookTool(obj) end
+        if obj:IsA("Tool") then connectTool(obj) end
+    end)
+    char.ChildRemoved:Connect(function(obj)
+        if obj:IsA("Tool") then
+            if activatedConn then activatedConn:Disconnect() activatedConn = nil end
+        end
     end)
 end
 
@@ -1086,7 +1082,7 @@ task.spawn(function()
                 local hrp = char:FindFirstChild("HumanoidRootPart")
                 if not hrp then return end
                 local tool = char:FindFirstChildOfClass("Tool")
-                if not tool or not FireEvent then return end
+                if not tool then return end
                 local exit = tool:FindFirstChild("Exit")
                 if not exit then return end
 
@@ -1129,7 +1125,7 @@ task.spawn(function()
 
                 if #hitTable > 0 then
                     pcall(function()
-                        FireEvent:FireServer(tool.Name, hitTable, extraTable)
+                        ReplicatedStorage.Events.Actions.Fire:FireServer(tool.Name, hitTable, extraTable)
                     end)
                 end
             end)
