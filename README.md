@@ -2,7 +2,7 @@
 
 > Keyless Roblox exploit scripts with Rayfield UI — 21 languages, multi-game support.
 
-<a href="https://rscripts.net/user/Rival960" target="_blank"><img alt="Rival960 on Rscripts" loading="lazy" width="360" height="132" src="https://rscripts.net/api/embed/user/Rival960?theme=dark" /></a>
+<a href="https://rscripts.net/user/Rival9601" target="_blank"><img alt="Rival9601 on Rscripts" loading="lazy" width="360" height="132" src="https://rscripts.net/api/embed/user/Rival9601?theme=dark" /></a>
 
 ---
 
