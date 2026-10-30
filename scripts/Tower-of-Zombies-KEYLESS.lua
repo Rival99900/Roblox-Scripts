@@ -32,8 +32,6 @@ local Translations = {
         CreditsTitle     = "Credits",
         CreditsContent   = "Created by Rival960 with the help of AI\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.0.0 — First Release",
         Aimbot           = "Aimbot",
-        RapidFire        = "Rapid Fire",
-        RapidFireDelay   = "Rapid Fire Delay (s)",
         KillAura         = "Kill Aura",
         KillAuraDelay    = "Kill Aura Delay (s)",
         KillAuraRange    = "Kill Aura Range",
@@ -58,8 +56,6 @@ local Translations = {
         CreditsTitle     = "Crédits",
         CreditsContent   = "Créé par Rival960 avec l'aide de l'IA\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.0.0 — Première Release",
         Aimbot           = "Aimbot",
-        RapidFire        = "Tir Rapide",
-        RapidFireDelay   = "Délai Tir Rapide (s)",
         KillAura         = "Kill Aura",
         KillAuraDelay    = "Délai Kill Aura (s)",
         KillAuraRange    = "Portée Kill Aura",
@@ -84,8 +80,6 @@ local Translations = {
         CreditsTitle     = "Credits",
         CreditsContent   = "Erstellt von Rival960 mit KI-Hilfe\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.0.0 — Erstveröffentlichung",
         Aimbot           = "Aimbot",
-        RapidFire        = "Schnellfeuer",
-        RapidFireDelay   = "Schnellfeuer Verzögerung (s)",
         KillAura         = "Kill Aura",
         KillAuraDelay    = "Kill Aura Verzögerung (s)",
         KillAuraRange    = "Kill Aura Reichweite",
@@ -110,8 +104,6 @@ local Translations = {
         CreditsTitle     = "Créditos",
         CreditsContent   = "Creado por Rival960 con ayuda de IA\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.0.0 — Primera Versión",
         Aimbot           = "Aimbot",
-        RapidFire        = "Fuego Rápido",
-        RapidFireDelay   = "Retraso Fuego Rápido (s)",
         KillAura         = "Kill Aura",
         KillAuraDelay    = "Retraso Kill Aura (s)",
         KillAuraRange    = "Alcance Kill Aura",
@@ -136,8 +128,6 @@ local Translations = {
         CreditsTitle     = "Créditos",
         CreditsContent   = "Criado por Rival960 com ajuda de IA\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.0.0 — Primeiro Lançamento",
         Aimbot           = "Aimbot",
-        RapidFire        = "Tiro Rápido",
-        RapidFireDelay   = "Atraso Tiro Rápido (s)",
         KillAura         = "Kill Aura",
         KillAuraDelay    = "Atraso Kill Aura (s)",
         KillAuraRange    = "Alcance Kill Aura",
@@ -162,8 +152,6 @@ local Translations = {
         CreditsTitle     = "Авторы",
         CreditsContent   = "Создано Rival960 с помощью ИИ\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.0.0 — Первый Выпуск",
         Aimbot           = "Аимбот",
-        RapidFire        = "Быстрый Огонь",
-        RapidFireDelay   = "Задержка быстрого огня (с)",
         KillAura         = "Kill Aura",
         KillAuraDelay    = "Задержка Kill Aura (с)",
         KillAuraRange    = "Радиус Kill Aura",
@@ -188,8 +176,6 @@ local Translations = {
         CreditsTitle     = "Crediti",
         CreditsContent   = "Creato da Rival960 con l'aiuto dell'IA\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.0.0 — Prima Release",
         Aimbot           = "Aimbot",
-        RapidFire        = "Fuoco Rapido",
-        RapidFireDelay   = "Ritardo Fuoco Rapido (s)",
         KillAura         = "Kill Aura",
         KillAuraDelay    = "Ritardo Kill Aura (s)",
         KillAuraRange    = "Raggio Kill Aura",
@@ -214,8 +200,6 @@ local Translations = {
         CreditsTitle     = "Credits",
         CreditsContent   = "Gemaakt door Rival960 met AI-hulp\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.0.0 — Eerste Release",
         Aimbot           = "Aimbot",
-        RapidFire        = "Snel Vuren",
-        RapidFireDelay   = "Snel Vuren Vertraging (s)",
         KillAura         = "Kill Aura",
         KillAuraDelay    = "Kill Aura Vertraging (s)",
         KillAuraRange    = "Kill Aura Bereik",
@@ -240,8 +224,6 @@ local Translations = {
         CreditsTitle     = "Kredyty",
         CreditsContent   = "Stworzone przez Rival960 z pomocą AI\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.0.0 — Pierwsze Wydanie",
         Aimbot           = "Aimbot",
-        RapidFire        = "Szybki Ogień",
-        RapidFireDelay   = "Opóźnienie szybkiego ognia (s)",
         KillAura         = "Kill Aura",
         KillAuraDelay    = "Opóźnienie Kill Aura (s)",
         KillAuraRange    = "Zasięg Kill Aura",
@@ -266,8 +248,6 @@ local Translations = {
         CreditsTitle     = "致谢",
         CreditsContent   = "由 Rival960 借助 AI 创建\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.0.0 — 首次发布",
         Aimbot           = "自动瞄准",
-        RapidFire        = "快速射击",
-        RapidFireDelay   = "快速射击延迟 (秒)",
         KillAura         = "杀戮光环",
         KillAuraDelay    = "杀戮光环延迟 (秒)",
         KillAuraRange    = "杀戮光环范围",
@@ -292,8 +272,6 @@ local Translations = {
         CreditsTitle     = "クレジット",
         CreditsContent   = "Rival960 と AI の協力で作成\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.0.0 — 初版",
         Aimbot           = "エイムボット",
-        RapidFire        = "連射",
-        RapidFireDelay   = "連射遅延 (秒)",
         KillAura         = "キルオーラ",
         KillAuraDelay    = "キルオーラ遅延 (秒)",
         KillAuraRange    = "キルオーラ範囲",
@@ -318,8 +296,6 @@ local Translations = {
         CreditsTitle     = "Krediler",
         CreditsContent   = "Rival960 tarafından AI yardımıyla yapılmıştır\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.0.0 — İlk Çıkış",
         Aimbot           = "Aimbot",
-        RapidFire        = "Hızlı Ateş",
-        RapidFireDelay   = "Hızlı Ateş Gecikmesi (s)",
         KillAura         = "Kill Aura",
         KillAuraDelay    = "Kill Aura Gecikmesi (s)",
         KillAuraRange    = "Kill Aura Menzili",
@@ -344,8 +320,6 @@ local Translations = {
         CreditsTitle     = "크레딧",
         CreditsContent   = "Rival960이 AI의 도움으로 제작\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.0.0 — 첫 번째 릴리즈",
         Aimbot           = "에임봇",
-        RapidFire        = "연사",
-        RapidFireDelay   = "연사 지연 (초)",
         KillAura         = "킬 오라",
         KillAuraDelay    = "킬 오라 지연 (초)",
         KillAuraRange    = "킬 오라 범위",
@@ -370,8 +344,6 @@ local Translations = {
         CreditsTitle     = "الاعتمادات",
         CreditsContent   = "تم إنشاؤه بواسطة Rival960 بمساعدة الذكاء الاصطناعي\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.0.0 — الإصدار الأول",
         Aimbot           = "أيمبوت",
-        RapidFire        = "إطلاق نار سريع",
-        RapidFireDelay   = "تأخير الإطلاق السريع (ث)",
         KillAura         = "هالة القتل",
         KillAuraDelay    = "تأخير هالة القتل (ث)",
         KillAuraRange    = "نطاق هالة القتل",
@@ -396,8 +368,6 @@ local Translations = {
         CreditsTitle     = "Tín Dụng",
         CreditsContent   = "Tạo bởi Rival960 với sự trợ giúp của AI\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.0.0 — Phát Hành Đầu Tiên",
         Aimbot           = "Aimbot",
-        RapidFire        = "Bắn Nhanh",
-        RapidFireDelay   = "Độ trễ bắn nhanh (s)",
         KillAura         = "Kill Aura",
         KillAuraDelay    = "Độ trễ Kill Aura (s)",
         KillAuraRange    = "Tầm Kill Aura",
@@ -422,8 +392,6 @@ local Translations = {
         CreditsTitle     = "Erkännanden",
         CreditsContent   = "Skapad av Rival960 med hjälp av AI\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.0.0 — Första Utgåvan",
         Aimbot           = "Aimbot",
-        RapidFire        = "Snabbeld",
-        RapidFireDelay   = "Snabbeld Fördröjning (s)",
         KillAura         = "Kill Aura",
         KillAuraDelay    = "Kill Aura Fördröjning (s)",
         KillAuraRange    = "Kill Aura Räckvidd",
@@ -448,8 +416,6 @@ local Translations = {
         CreditsTitle     = "Εύσημα",
         CreditsContent   = "Δημιουργήθηκε από Rival960 με βοήθεια AI\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.0.0 — Πρώτη Κυκλοφορία",
         Aimbot           = "Aimbot",
-        RapidFire        = "Γρήγορα Πυρά",
-        RapidFireDelay   = "Καθυστέρηση Γρήγορων Πυρών (s)",
         KillAura         = "Kill Aura",
         KillAuraDelay    = "Καθυστέρηση Kill Aura (s)",
         KillAuraRange    = "Εμβέλεια Kill Aura",
@@ -474,8 +440,6 @@ local Translations = {
         CreditsTitle     = "Credite",
         CreditsContent   = "Creat de Rival960 cu ajutorul AI\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.0.0 — Prima Lansare",
         Aimbot           = "Aimbot",
-        RapidFire        = "Foc Rapid",
-        RapidFireDelay   = "Întârziere Foc Rapid (s)",
         KillAura         = "Kill Aura",
         KillAuraDelay    = "Întârziere Kill Aura (s)",
         KillAuraRange    = "Raza Kill Aura",
@@ -500,8 +464,6 @@ local Translations = {
         CreditsTitle     = "Автори",
         CreditsContent   = "Створено Rival960 за допомогою AI\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.0.0 — Перший Випуск",
         Aimbot           = "Аімбот",
-        RapidFire        = "Швидкий Вогонь",
-        RapidFireDelay   = "Затримка швидкого вогню (с)",
         KillAura         = "Kill Aura",
         KillAuraDelay    = "Затримка Kill Aura (с)",
         KillAuraRange    = "Радіус Kill Aura",
@@ -526,8 +488,6 @@ local Translations = {
         CreditsTitle     = "Poděkování",
         CreditsContent   = "Vytvořeno Rival960 s pomocí AI\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.0.0 — První Vydání",
         Aimbot           = "Aimbot",
-        RapidFire        = "Rychlá Střelba",
-        RapidFireDelay   = "Zpoždění rychlé střelby (s)",
         KillAura         = "Kill Aura",
         KillAuraDelay    = "Zpoždění Kill Aura (s)",
         KillAuraRange    = "Dosah Kill Aura",
@@ -552,8 +512,6 @@ local Translations = {
         CreditsTitle     = "Anerkendelser",
         CreditsContent   = "Oprettet af Rival960 med hjælp fra AI\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.0.0 — Første Udgivelse",
         Aimbot           = "Aimbot",
-        RapidFire        = "Hurtig Ild",
-        RapidFireDelay   = "Hurtig Ild Forsinkelse (s)",
         KillAura         = "Kill Aura",
         KillAuraDelay    = "Kill Aura Forsinkelse (s)",
         KillAuraRange    = "Kill Aura Rækkevidde",
@@ -580,20 +538,18 @@ end
 -- Settings
 -- ================================================================
 local Settings = {
-    Aimbot           = false,
-    RapidFire        = false,
-    RapidFireDelay   = 0.1,
-    KillAura         = false,
-    KillAuraDelay    = 0.15,
-    KillAuraRange    = 150,
-    MaxZombieDist    = 300,
-    Fly              = false,
-    FlySpeed         = 60,
-    NoClip           = false,
-    WalkSpeed        = 16,
-    InfJump          = false,
-    AntiAFK          = false,
-    Fullbright       = false,
+    Aimbot        = false,
+    KillAura      = false,
+    KillAuraDelay = 0.15,
+    KillAuraRange = 150,
+    MaxZombieDist = 300,
+    Fly           = false,
+    FlySpeed      = 60,
+    NoClip        = false,
+    WalkSpeed     = 16,
+    InfJump       = false,
+    AntiAFK       = false,
+    Fullbright    = false,
 }
 
 -- ================================================================
@@ -655,19 +611,22 @@ local function getClosestZombieTarget(maxDist)
     return bestPart
 end
 
--- Shared fire function — math only, no workspace:Raycast, penetrates all walls
-local function fireAtTarget(weaponName, targetPart)
+-- Fire remote — math only, no workspace:Raycast, penetrates all walls
+local FireEvent = game:GetService("ReplicatedStorage").Events.Actions.Fire
+
+local function fireAtTarget(targetPart)
     local char = LocalPlayer.Character
     if not char then return end
-    local weapon   = char:FindFirstChild(weaponName)
-    if not weapon  then return end
-    local exitPart = weapon:FindFirstChild("Exit")
+    local tool = char:FindFirstChildOfClass("Tool")
+    if not tool then return end
+    local weaponName = tool.Name
+    local exitPart   = tool:FindFirstChild("Exit")
     if not exitPart then return end
     local rayOrigin = exitPart.WorldPosition
     local hitPos    = targetPart.Position
     local normalVec = (rayOrigin - hitPos).Unit  -- from target back to barrel
     pcall(function()
-        game:GetService("ReplicatedStorage").Events.Actions.Fire:FireServer(
+        FireEvent:FireServer(
             weaponName,
             { { targetPart, hitPos, normalVec } },
             { { weaponName, rayOrigin, hitPos, hitPos, true, targetPart, false, false, "Default", exitPart } }
@@ -693,20 +652,6 @@ CombatTab:CreateToggle({
     Name         = T("Aimbot"),
     CurrentValue = false,
     Callback     = function(val) Settings.Aimbot = val end,
-})
-
-CombatTab:CreateToggle({
-    Name         = T("RapidFire"),
-    CurrentValue = false,
-    Callback     = function(val) Settings.RapidFire = val end,
-})
-
-CombatTab:CreateSlider({
-    Name         = T("RapidFireDelay"),
-    Range        = {0.05, 0.5},
-    Increment    = 0.05,
-    CurrentValue = 0.1,
-    Callback     = function(val) Settings.RapidFireDelay = val end,
 })
 
 CombatTab:CreateSlider({
@@ -743,7 +688,7 @@ CombatTab:CreateSlider({
 local MovementTab = Window:CreateTab(T("TabMovement"), 4483362458)
 
 -- ================================================================
--- Fly system (exact implementation from spec 097915f3 — do not touch)
+-- Fly system (confirmed working — do not touch)
 -- ================================================================
 local FLYING       = false
 local FLY_BTN_UP   = 0
@@ -820,7 +765,8 @@ local function enableFly()
                 local right = Vector3.new(cam.CFrame.RightVector.X, 0, cam.CFrame.RightVector.Z)
                 if fwd.Magnitude   > 0 then fwd   = fwd.Unit   end
                 if right.Magnitude > 0 then right = right.Unit end
-                vel = (fwd * (-md.Z) + right * md.X) * spd
+                -- positive md.Z = forward, md.X = strafe right
+                vel = (fwd * md.Z + right * md.X) * spd
                     + Vector3.new(0, (CTRL.UP + CTRL.DOWN + FLY_BTN_UP + FLY_BTN_DOWN) * spd, 0)
             else
                 vel = (cam.CFrame.LookVector  * (CTRL.F + CTRL.B)
@@ -1056,29 +1002,8 @@ UserInputService.JumpRequest:Connect(function()
     end)
 end)
 
--- Rapid Fire: Heartbeat loop, fires via shared fireAtTarget
-local rapidFireTimer = 0
-RunService.Heartbeat:Connect(function(dt)
-    if not Settings.RapidFire then
-        rapidFireTimer = 0
-        return
-    end
-    rapidFireTimer = rapidFireTimer + dt
-    if rapidFireTimer < Settings.RapidFireDelay then return end
-    rapidFireTimer = 0
-    pcall(function()
-        local char = getChar()
-        if not char then return end
-        local tool = char:FindFirstChildOfClass("Tool")
-        if not tool then return end
-        local weaponName = tool.Name
-        local targetPart = getClosestZombieTarget(Settings.MaxZombieDist)
-        if not targetPart then return end
-        fireAtTarget(weaponName, targetPart)
-    end)
-end)
-
--- Kill Aura: Heartbeat loop, fires at every zombie within range via shared fireAtTarget
+-- Kill Aura: Heartbeat loop, fires at every zombie within range via fireAtTarget
+-- Server registers the hit via the Fire remote; no ammo consumed client-side
 local killAuraTimer = 0
 RunService.Heartbeat:Connect(function(dt)
     if not Settings.KillAura then
@@ -1094,8 +1019,7 @@ RunService.Heartbeat:Connect(function(dt)
             if not char then return end
             local tool = char:FindFirstChildOfClass("Tool")
             if not tool then return end
-            local weaponName   = tool.Name
-            local hrp          = getHRP()
+            local hrp = getHRP()
             if not hrp then return end
             local zombieFolder = workspace:FindFirstChild("ActiveZombies")
             if not zombieFolder then return end
@@ -1109,8 +1033,8 @@ RunService.Heartbeat:Connect(function(dt)
                             local targetPart = zombie:FindFirstChild("HeadHitbox")
                                 or zombie:FindFirstChild("Head")
                                 or zhrp
-                            fireAtTarget(weaponName, targetPart)
-                            task.wait(0.01)
+                            fireAtTarget(targetPart)
+                            task.wait(0.02)
                         end
                     end
                 end
