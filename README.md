@@ -12,6 +12,7 @@
 |--------|------|----------|--------|
 | [SCP vs Guard Hub](#-scp-vs-guard-hub) | [Be an SCP or Guard](https://www.roblox.com/games/121461214257813/Be-an-SCP-or-Guard) | ESP, Silent Aim, Fly, Hitbox, Doors | work |
 | [Tactical SWAT Hub](#-tactical-swat-hub) | [Tactical: Swat Simulator](https://www.roblox.com/games/102837194624695/Tactical-Swat-Simulator) | NPC ESP, Hitbox, Auto Arrest, Fly, Doors | work |
+| [Tower of Zombies Hub](#-tower-of-zombies-hub) | [Tower of Zombies](https://www.roblox.com/games/99122501338948/Tower-of-Zombies) | Aimbot, Auto Bring, Fly, NoClip, WalkSpeed | untested |
 
 ---
 
@@ -71,6 +72,37 @@ loadstring(game:HttpGet("https://raw.githubusercontent.com/Rival99900/Roblox-Scr
 **NPC Detection** — works across all maps including Broken Bars:
 - **Suspect** = NPC carrying a `Tool` (weapon), or name contains `Suspect / Criminal / Prisoner / Inmate`
 - **Civilian** = any other live NPC (unarmed → arrest target)
+
+---
+
+## 🟢 Tower of Zombies Hub
+
+**Game**: [Tower of Zombies](https://www.roblox.com/games/99122501338948/Tower-of-Zombies)
+
+```lua
+loadstring(game:HttpGet("https://raw.githubusercontent.com/Rival99900/Roblox-Scripts/refs/heads/main/scripts/Tower-of-Zombies-KEYLESS.lua"))()
+```
+
+### Features
+
+| Category | Feature | Notes |
+|----------|---------|-------|
+| **Combat** | Aimbot | Locks camera onto the nearest zombie; HeadHitbox → Head → HRP fallback |
+| **Combat** | Auto Bring | Teleports all living zombies around you in a spread circle; client-side only |
+| **Combat** | Bring Radius | 1–10 studs — controls how tightly zombies cluster |
+| **Combat** | Bring Interval | 0.1–2.0 s — controls how often the teleport runs |
+| **Movement** | Fly | PC (WASD + Space/Shift) + Mobile overlay buttons |
+| **Movement** | NoClip | Pass through walls |
+| **Movement** | Walk Speed | Adjustable slider |
+| **Movement** | Infinite Jump | Hold Space to keep jumping |
+| **Utility** | Fullbright | Fixed clock 14h, shadows off |
+| **Utility** | Anti-AFK | Micro-rotation every 60 s to avoid kick |
+| **Utility** | 21 Languages | Re-execute to apply change |
+
+**Auto Bring notes**:
+- Pure client-side CFrame manipulation — no server remotes involved
+- Sets zombie `WalkSpeed = 0` while active; restores `WalkSpeed = 16` on toggle off
+- Zombies must be in `workspace.ActiveZombies` (standard Tower of Zombies folder)
 
 ---
 
