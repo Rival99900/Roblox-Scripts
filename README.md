@@ -12,7 +12,7 @@
 |--------|------|----------|--------|
 | [SCP vs Guard Hub](#-scp-vs-guard-hub) | [Be an SCP or Guard](https://www.roblox.com/games/121461214257813/Be-an-SCP-or-Guard) | ESP, Silent Aim, Fly, Hitbox, Doors | work |
 | [Tactical SWAT Hub](#-tactical-swat-hub) | [Tactical: Swat Simulator](https://www.roblox.com/games/102837194624695/Tactical-Swat-Simulator) | NPC ESP, Hitbox, Auto Arrest, Fly, Doors | work |
-| [Tower of Zombies Hub](#-tower-of-zombies-hub) | [Tower of Zombies](https://www.roblox.com/games/99122501338948/Tower-of-Zombies) | Aimbot, Auto Bring, Fly, NoClip, WalkSpeed | untested |
+| [Tower of Zombies Hub](#-tower-of-zombies-hub) | [Tower of Zombies](https://www.roblox.com/games/99122501338948/Tower-of-Zombies) | Aimbot, Auto Bring, Fly, NoClip, WalkSpeed | work |
 
 ---
 
@@ -44,7 +44,7 @@ loadstring(game:HttpGet("https://raw.githubusercontent.com/Rival99900/Roblox-Scr
 
 ## 🔴 Tactical SWAT Hub
 
-**Game**: [Tactical: Swat Simulator](https://www.roblox.com/games/6571478429)
+**Game**: [Tactical: Swat Simulator](https://www.roblox.com/games/102837194624695/Tactical-Swat-Simulator)
 
 ```lua
 loadstring(game:HttpGet("https://raw.githubusercontent.com/Rival99900/Roblox-Scripts/refs/heads/main/scripts/Tactical-Swat-Simulator-KEYLESS.lua"))()
