@@ -41,6 +41,7 @@ local Translations = {
         InfJump          = "Infinite Jump",
         AntiAFK          = "Anti-AFK",
         Fullbright       = "Fullbright",
+        RapidFireSpeed   = "Rapid Fire Speed (s)",
         LanguageSelect   = "Language",
         LangNote         = "Language change requires re-execution",
     },
@@ -65,6 +66,7 @@ local Translations = {
         InfJump          = "Saut Infini",
         AntiAFK          = "Anti-AFK",
         Fullbright       = "Luminosité Max",
+        RapidFireSpeed   = "Vitesse Tir Rapide (s)",
         LanguageSelect   = "Langue",
         LangNote         = "Le changement de langue nécessite une ré-exécution",
     },
@@ -89,6 +91,7 @@ local Translations = {
         InfJump          = "Unendlicher Sprung",
         AntiAFK          = "Anti-AFK",
         Fullbright       = "Vollhelligkeit",
+        RapidFireSpeed   = "Schnellfeuer-Speed (s)",
         LanguageSelect   = "Sprache",
         LangNote         = "Sprachänderung erfordert Neuausführung",
     },
@@ -113,6 +116,7 @@ local Translations = {
         InfJump          = "Salto Infinito",
         AntiAFK          = "Anti-AFK",
         Fullbright       = "Brillo Total",
+        RapidFireSpeed   = "Velocidad Disparo Rápido (s)",
         LanguageSelect   = "Idioma",
         LangNote         = "El cambio de idioma requiere re-ejecución",
     },
@@ -137,6 +141,7 @@ local Translations = {
         InfJump          = "Salto Infinito",
         AntiAFK          = "Anti-AFK",
         Fullbright       = "Brilho Total",
+        RapidFireSpeed   = "Velocidade Tiro Rápido (s)",
         LanguageSelect   = "Idioma",
         LangNote         = "Mudança de idioma requer re-execução",
     },
@@ -161,6 +166,7 @@ local Translations = {
         InfJump          = "Бесконечный прыжок",
         AntiAFK          = "Анти-АФК",
         Fullbright       = "Полная яркость",
+        RapidFireSpeed   = "Скорость очереди (с)",
         LanguageSelect   = "Язык",
         LangNote         = "Смена языка требует повторного запуска",
     },
@@ -185,6 +191,7 @@ local Translations = {
         InfJump          = "Salto Infinito",
         AntiAFK          = "Anti-AFK",
         Fullbright       = "Piena Luminosità",
+        RapidFireSpeed   = "Velocità Fuoco Rapido (s)",
         LanguageSelect   = "Lingua",
         LangNote         = "Il cambio lingua richiede una ri-esecuzione",
     },
@@ -209,6 +216,7 @@ local Translations = {
         InfJump          = "Oneindig Springen",
         AntiAFK          = "Anti-AFK",
         Fullbright       = "Maximale Helderheid",
+        RapidFireSpeed   = "Snelvuursnelheid (s)",
         LanguageSelect   = "Taal",
         LangNote         = "Taalwijziging vereist heruitvoering",
     },
@@ -233,6 +241,7 @@ local Translations = {
         InfJump          = "Nieskończony Skok",
         AntiAFK          = "Anti-AFK",
         Fullbright       = "Pełna jasność",
+        RapidFireSpeed   = "Prędkość szybkiego strzału (s)",
         LanguageSelect   = "Język",
         LangNote         = "Zmiana języka wymaga ponownego uruchomienia",
     },
@@ -257,6 +266,7 @@ local Translations = {
         InfJump          = "无限跳跃",
         AntiAFK          = "防离线",
         Fullbright       = "全亮",
+        RapidFireSpeed   = "速射速度 (秒)",
         LanguageSelect   = "语言",
         LangNote         = "语言更改需要重新执行",
     },
@@ -281,6 +291,7 @@ local Translations = {
         InfJump          = "無限ジャンプ",
         AntiAFK          = "アンチAFK",
         Fullbright       = "フルブライト",
+        RapidFireSpeed   = "速射速度 (秒)",
         LanguageSelect   = "言語",
         LangNote         = "言語変更は再実行が必要です",
     },
@@ -305,6 +316,7 @@ local Translations = {
         InfJump          = "Sonsuz Zıplama",
         AntiAFK          = "Anti-AFK",
         Fullbright       = "Tam Parlaklık",
+        RapidFireSpeed   = "Hızlı Ateş Hızı (s)",
         LanguageSelect   = "Dil",
         LangNote         = "Dil değişikliği yeniden başlatma gerektirir",
     },
@@ -329,6 +341,7 @@ local Translations = {
         InfJump          = "무한 점프",
         AntiAFK          = "Anti-AFK",
         Fullbright       = "전체 밝기",
+        RapidFireSpeed   = "연사 속도 (초)",
         LanguageSelect   = "언어",
         LangNote         = "언어 변경은 재실행이 필요합니다",
     },
@@ -353,6 +366,7 @@ local Translations = {
         InfJump          = "قفز لانهائي",
         AntiAFK          = "مانع الخمول",
         Fullbright       = "سطوع كامل",
+        RapidFireSpeed   = "سرعة الإطلاق السريع (ث)",
         LanguageSelect   = "اللغة",
         LangNote         = "تغيير اللغة يتطلب إعادة التشغيل",
     },
@@ -377,6 +391,7 @@ local Translations = {
         InfJump          = "Nhảy Vô Hạn",
         AntiAFK          = "Chống AFK",
         Fullbright       = "Độ Sáng Tối Đa",
+        RapidFireSpeed   = "Tốc Độ Bắn Nhanh (s)",
         LanguageSelect   = "Ngôn Ngữ",
         LangNote         = "Thay đổi ngôn ngữ cần khởi động lại",
     },
@@ -401,6 +416,7 @@ local Translations = {
         InfJump          = "Oändligt Hopp",
         AntiAFK          = "Anti-AFK",
         Fullbright       = "Full Ljusstyrka",
+        RapidFireSpeed   = "Snabbeldshastighet (s)",
         LanguageSelect   = "Språk",
         LangNote         = "Språkändring kräver omstartning",
     },
@@ -425,6 +441,7 @@ local Translations = {
         InfJump          = "Άπειρο Άλμα",
         AntiAFK          = "Anti-AFK",
         Fullbright       = "Πλήρης Φωτεινότητα",
+        RapidFireSpeed   = "Ταχύτητα Ριπής (s)",
         LanguageSelect   = "Γλώσσα",
         LangNote         = "Η αλλαγή γλώσσας απαιτεί επανεκτέλεση",
     },
@@ -449,6 +466,7 @@ local Translations = {
         InfJump          = "Salt Infinit",
         AntiAFK          = "Anti-AFK",
         Fullbright       = "Luminozitate Maximă",
+        RapidFireSpeed   = "Viteză Foc Rapid (s)",
         LanguageSelect   = "Limbă",
         LangNote         = "Schimbarea limbii necesită re-executare",
     },
@@ -473,6 +491,7 @@ local Translations = {
         InfJump          = "Нескінченний Стрибок",
         AntiAFK          = "Анти-АФК",
         Fullbright       = "Повна яскравість",
+        RapidFireSpeed   = "Швидкість черги (с)",
         LanguageSelect   = "Мова",
         LangNote         = "Зміна мови потребує перезапуску",
     },
@@ -497,6 +516,7 @@ local Translations = {
         InfJump          = "Nekonečný Skok",
         AntiAFK          = "Anti-AFK",
         Fullbright       = "Plný jas",
+        RapidFireSpeed   = "Rychlost rychlopalby (s)",
         LanguageSelect   = "Jazyk",
         LangNote         = "Změna jazyka vyžaduje restartování",
     },
@@ -521,6 +541,7 @@ local Translations = {
         InfJump          = "Uendeligt Hop",
         AntiAFK          = "Anti-AFK",
         Fullbright       = "Fuld Lysstyrke",
+        RapidFireSpeed   = "Hurtigskydningshastighed (s)",
         LanguageSelect   = "Sprog",
         LangNote         = "Sprogændring kræver genstart",
     },
@@ -536,18 +557,19 @@ end
 -- Settings
 -- ================================================================
 local Settings = {
-    Aimbot        = false,
-    AutoBring     = false,
-    BringRadius   = 3,
-    BringInterval = 0.3,
-    MaxZombieDist = 300,
-    Fly           = false,
-    FlySpeed      = 60,
-    NoClip        = false,
-    WalkSpeed     = 16,
-    InfJump       = false,
-    AntiAFK       = false,
-    Fullbright    = false,
+    Aimbot          = false,
+    AutoBring       = false,
+    BringRadius     = 3,
+    BringInterval   = 0.3,
+    MaxZombieDist   = 300,
+    RapidFireDelay  = 0.1,
+    Fly             = false,
+    FlySpeed        = 60,
+    NoClip          = false,
+    WalkSpeed       = 16,
+    InfJump         = false,
+    AntiAFK         = false,
+    Fullbright      = false,
 }
 
 -- ================================================================
@@ -610,8 +632,7 @@ local function getClosestZombieTarget(maxDist)
 end
 
 -- Fire remote — math only, no workspace:Raycast, penetrates all walls
-local FireEvent = game:GetService("ReplicatedStorage").Events.Actions.Fire
-
+-- Sets ammo to prevent reload interrupting fire; fires both Fire and Fire_2 remotes
 local function fireAtTarget(targetPart)
     local char = LocalPlayer.Character
     if not char then return end
@@ -620,14 +641,32 @@ local function fireAtTarget(targetPart)
     local weaponName = tool.Name
     local exitPart   = tool:FindFirstChild("Exit")
     if not exitPart then return end
+
+    -- Set ammo to prevent reload interrupting fire
+    local info = tool:FindFirstChild("Info")
+    if info then
+        local clip    = info:FindFirstChild("Clip")
+        local reserve = info:FindFirstChild("Reserve")
+        if clip    then clip.Value    = 9999 end
+        if reserve then reserve.Value = 9999 end
+    end
+
     local rayOrigin = exitPart.WorldPosition
     local hitPos    = targetPart.Position
     local normalVec = (rayOrigin - hitPos).Unit  -- from target back to barrel
+
     pcall(function()
-        FireEvent:FireServer(
+        game:GetService("ReplicatedStorage").Events.Actions.Fire:FireServer(
             weaponName,
-            { { targetPart, hitPos, normalVec } },
-            { { weaponName, rayOrigin, hitPos, hitPos, true, targetPart, false, false, "Default", exitPart } }
+            {{ targetPart, hitPos, normalVec }},
+            {{ weaponName, rayOrigin, hitPos, hitPos, true, targetPart, false, false, "Default", exitPart }}
+        )
+    end)
+    pcall(function()
+        game:GetService("ReplicatedStorage").Events.Actions.Fire_2:FireServer(
+            weaponName,
+            {{ targetPart, hitPos, normalVec }},
+            {{ weaponName, rayOrigin, hitPos, hitPos, true, targetPart, false, false, "Default", exitPart }}
         )
     end)
 end
@@ -695,6 +734,14 @@ CombatTab:CreateSlider({
     Increment    = 0.1,
     CurrentValue = 0.3,
     Callback     = function(val) Settings.BringInterval = val end,
+})
+
+CombatTab:CreateSlider({
+    Name         = T("RapidFireSpeed"),
+    Range        = {0.05, 0.5},
+    Increment    = 0.05,
+    CurrentValue = 0.1,
+    Callback     = function(val) Settings.RapidFireDelay = val end,
 })
 
 -- ───── Tab 3: Movement ─────
@@ -1006,7 +1053,8 @@ ToolsTab:CreateLabel(T("LangNote"))
 -- Main Loops
 -- ================================================================
 
--- Aimbot: RenderStepped camera-lock — do not touch
+-- Aimbot: RenderStepped camera-lock + Rapid Fire
+local lastAimbotFire = 0
 RunService.RenderStepped:Connect(function()
     if not Settings.Aimbot then return end
     pcall(function()
@@ -1014,6 +1062,12 @@ RunService.RenderStepped:Connect(function()
         local targetPart = getClosestZombieTarget(Settings.MaxZombieDist)
         if targetPart then
             cam.CFrame = CFrame.lookAt(cam.CFrame.Position, targetPart.Position)
+            -- Rapid fire: fire at the target every Settings.RapidFireDelay seconds
+            local now = tick()
+            if (now - lastAimbotFire) >= Settings.RapidFireDelay then
+                lastAimbotFire = now
+                task.spawn(function() fireAtTarget(targetPart) end)
+            end
         end
     end)
 end)
@@ -1066,6 +1120,13 @@ RunService.Heartbeat:Connect(function(dt)
                             zhrp.CFrame   = CFrame.new(targetPos)
                             hum.WalkSpeed = 0
                         end)
+                        -- When Aimbot is also ON, fire at each brought zombie
+                        if Settings.Aimbot then
+                            local target = zombie:FindFirstChild("HeadHitbox")
+                                        or zombie:FindFirstChild("Head")
+                                        or zhrp
+                            task.spawn(function() fireAtTarget(target) end)
+                        end
                         task.wait(0.01)
                     end
                 end
