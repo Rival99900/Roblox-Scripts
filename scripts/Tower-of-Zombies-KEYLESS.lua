@@ -637,6 +637,10 @@ local Settings = {
     Fullbright    = false,
 }
 
+-- Ammo state for Freeze Ammo (cached at toggle-ON time)
+local _frozenClip    = nil
+local _frozenReserve = nil
+
 -- ================================================================
 -- Character helpers
 -- ================================================================
@@ -671,7 +675,7 @@ local Window = Rayfield:CreateWindow({
 -- Shared combat helpers
 -- ================================================================
 
--- Find closest zombie target within maxDist (math only, no raycast)
+-- Find closest living zombie part within maxDist
 local function getClosestZombieTarget(maxDist)
     local hrp = getHRP()
     if not hrp then return nil end
@@ -687,8 +691,8 @@ local function getClosestZombieTarget(maxDist)
                 if dist < bestDist then
                     bestDist = dist
                     bestPart = zombie:FindFirstChild("HeadHitbox")
-                        or zombie:FindFirstChild("Head")
-                        or zhrp
+                           or zombie:FindFirstChild("Head")
+                           or zhrp
                 end
             end
         end
@@ -696,8 +700,8 @@ local function getClosestZombieTarget(maxDist)
     return bestPart
 end
 
--- Fire remote — wall-penetrating: rayOrigin placed 1 stud behind target toward player,
--- making server believe the ray originated inside the zombie model at point-blank range.
+-- Fire both remotes with epsilon rayOrigin (ray appears to originate from inside the zombie,
+-- zero geometry to cross — bypasses all server-side RaycastParams validation regardless of walls)
 local function fireAtTarget(targetPart)
     local char = LocalPlayer.Character
     if not char then return end
@@ -707,42 +711,34 @@ local function fireAtTarget(targetPart)
     local exitPart   = tool:FindFirstChild("Exit")
     if not exitPart then return end
 
-    -- Ammo fallback: ensure non-zero before fire in case hooks haven't fired yet
-    local info = tool:FindFirstChild("Info")
-    if info then
-        local clip    = info:FindFirstChild("Clip")
-        local reserve = info:FindFirstChild("Reserve")
-        if clip    and clip.Value    < 1 then clip.Value    = 99999 end
-        if reserve and reserve.Value < 1 then reserve.Value = 99999 end
-    end
-
-    -- Wall-penetration: place rayOrigin 1 stud behind target toward the player's barrel,
-    -- so the server sees a point-blank hit from inside the zombie, bypassing all geometry.
-    local hitPos   = targetPart.Position
-    local toPlayer = (exitPart.WorldPosition - hitPos)
-    local rayOrigin = hitPos + (toPlayer.Magnitude > 0 and toPlayer.Unit or Vector3.new(0, 0, 1)) * 1
-
-    local normalVec = (rayOrigin - hitPos).Unit
-
-    -- Reset debounce attributes BEFORE firing to prevent lockout
-    pcall(function()
-        tool:SetAttribute("Firing", false)
-        tool:SetAttribute("ContinuousFireActive", false)
-    end)
+    -- Epsilon offset: ray origin at the target's own position, effectively zero travel distance,
+    -- so no wall or geometry can intercept it on the server
+    local hitPos    = targetPart.Position
+    local rayOrigin = hitPos + Vector3.new(0, 0.01, 0)
+    local normalVec = Vector3.new(0, 1, 0)
 
     pcall(function()
-        game:GetService("ReplicatedStorage").Events.Actions.Fire:FireServer(
+        ReplicatedStorage.Events.Actions.Fire:FireServer(
             weaponName,
             {{ targetPart, hitPos, normalVec }},
             {{ weaponName, rayOrigin, hitPos, hitPos, true, targetPart, false, false, "Default", exitPart }}
         )
     end)
     pcall(function()
-        game:GetService("ReplicatedStorage").Events.Actions.Fire_2:FireServer(
+        ReplicatedStorage.Events.Actions.Fire_2:FireServer(
             weaponName,
             {{ targetPart, hitPos, normalVec }},
             {{ weaponName, rayOrigin, hitPos, hitPos, true, targetPart, false, false, "Default", exitPart }}
         )
+    end)
+
+    -- Reset weapon debounce attributes after firing
+    pcall(function()
+        local t = LocalPlayer.Character and LocalPlayer.Character:FindFirstChildOfClass("Tool")
+        if t then
+            t:SetAttribute("Firing", false)
+            t:SetAttribute("ContinuousFireActive", false)
+        end
     end)
 end
 
@@ -783,16 +779,13 @@ CombatTab:CreateToggle({
     CurrentValue = false,
     Callback     = function(val)
         Settings.AutoBring = val
-        -- When turned off, restore WalkSpeed of all zombies
         if not val then
             pcall(function()
                 local zombieFolder = workspace:FindFirstChild("ActiveZombies")
                 if not zombieFolder then return end
                 for _, zombie in ipairs(zombieFolder:GetChildren()) do
                     local hum = zombie:FindFirstChildOfClass("Humanoid")
-                    if hum then
-                        hum.WalkSpeed = 16  -- default Roblox walk speed
-                    end
+                    if hum then hum.WalkSpeed = 16 end
                 end
             end)
         end
@@ -820,10 +813,11 @@ CombatTab:CreateToggle({
     CurrentValue = false,
     Callback     = function(val)
         Settings.InfiniteAmmo = val
-        if not val then
-            -- Disconnect all property hooks when toggled off
-            for _, conn in pairs(_G._infiniteAmmoConns or {}) do pcall(function() conn:Disconnect() end) end
-            _G._infiniteAmmoConns = {}
+        -- FreezeAmmo is mutually exclusive: clear frozen values when switching
+        if val then
+            Settings.FreezeAmmo = false
+            _frozenClip    = nil
+            _frozenReserve = nil
         end
     end,
 })
@@ -833,11 +827,25 @@ CombatTab:CreateToggle({
     CurrentValue = false,
     Callback     = function(val)
         Settings.FreezeAmmo = val
-        if not val then
-            -- Disconnect all property hooks and clear frozen values
-            for _, conn in pairs(_G._freezeAmmoConns or {}) do pcall(function() conn:Disconnect() end) end
-            _G._freezeAmmoConns = {}
-            _G._frozenAmmoValues = {}
+        if val then
+            Settings.InfiniteAmmo = false
+            -- Cache current ammo values at the moment of enabling
+            pcall(function()
+                local char = LocalPlayer.Character
+                local tool = char and char:FindFirstChildOfClass("Tool")
+                if tool then
+                    local info = tool:FindFirstChild("Info")
+                    if info then
+                        local clip    = info:FindFirstChild("Clip")
+                        local reserve = info:FindFirstChild("Reserve")
+                        _frozenClip    = clip    and clip.Value    or 99
+                        _frozenReserve = reserve and reserve.Value or 99999
+                    end
+                end
+            end)
+        else
+            _frozenClip    = nil
+            _frozenReserve = nil
         end
     end,
 })
@@ -908,8 +916,8 @@ local function enableFly()
         end
     end)
 
-    if _flyUpBtn   then _flyUpBtn.Visible   = true  end
-    if _flyDownBtn then _flyDownBtn.Visible = true   end
+    if _flyUpBtn   then _flyUpBtn.Visible   = true end
+    if _flyDownBtn then _flyDownBtn.Visible = true end
 
     task.spawn(function()
         while FLYING do
@@ -919,19 +927,16 @@ local function enableFly()
             local rawRight = camCF.RightVector
             local spd      = Settings.FlySpeed
 
-            -- Flatten to horizontal plane so vertical camera tilt does not affect direction
             local flatLook  = Vector3.new(rawLook.X,  0, rawLook.Z)
             local flatRight = Vector3.new(rawRight.X, 0, rawRight.Z)
             if flatLook.Magnitude  > 0 then flatLook  = flatLook.Unit  end
             if flatRight.Magnitude > 0 then flatRight = flatRight.Unit end
 
-            -- PC: WASD via CTRL table
-            local pcVel = flatLook  * CTRL.F   -- W: positive
-                        + flatLook  * CTRL.B   -- S: negative
-                        + flatRight * CTRL.R   -- D: positive
-                        + flatRight * CTRL.L   -- A: negative
+            local pcVel = flatLook  * CTRL.F
+                        + flatLook  * CTRL.B
+                        + flatRight * CTRL.R
+                        + flatRight * CTRL.L
 
-            -- Mobile: MoveDirection is already world-space horizontal, use directly
             local md        = hum.MoveDirection
             local mobileVel = Vector3.new(md.X, 0, md.Z)
 
@@ -966,7 +971,7 @@ local function disableFly()
     if _flyDownBtn then _flyDownBtn.Visible = false end
 end
 
--- Mobile ▲▼ buttons: 60×60, bottom-center, hidden until fly is on
+-- Mobile ▲▼ buttons
 if UserInputService.TouchEnabled then
     local playerGui = LocalPlayer:FindFirstChild("PlayerGui")
     if playerGui then
@@ -1063,7 +1068,6 @@ MovementTab:CreateToggle({
     end,
 })
 
--- WalkSpeed
 MovementTab:CreateSlider({
     Name         = T("WalkSpeed"),
     Range        = {16, 250},
@@ -1078,7 +1082,6 @@ MovementTab:CreateSlider({
     end,
 })
 
--- Infinite Jump
 MovementTab:CreateToggle({
     Name         = T("InfJump"),
     CurrentValue = false,
@@ -1088,7 +1091,6 @@ MovementTab:CreateToggle({
 -- ───── Tab 4: Tools & Visuals ─────
 local ToolsTab = Window:CreateTab(T("TabTools"), 4483362458)
 
--- Fullbright
 ToolsTab:CreateToggle({
     Name         = T("Fullbright"),
     CurrentValue = false,
@@ -1109,7 +1111,6 @@ ToolsTab:CreateToggle({
     end,
 })
 
--- Anti-AFK
 local afkThread
 ToolsTab:CreateToggle({
     Name         = T("AntiAFK"),
@@ -1135,7 +1136,6 @@ ToolsTab:CreateToggle({
     end,
 })
 
--- Language selector
 ToolsTab:CreateDropdown({
     Name          = T("LanguageSelect"),
     Options       = {"EN","FR","DE","ES","PT","RU","IT","NL","PL","ZH","JA","TR","KO","AR","VI","SV","EL","RO","UK","CS","DA"},
@@ -1148,96 +1148,39 @@ ToolsTab:CreateDropdown({
 ToolsTab:CreateLabel(T("LangNote"))
 
 -- ================================================================
--- Ammo hook system (GetPropertyChangedSignal — no polling loops)
+-- Ammo maintenance loop — 0.3s interval, no GetPropertyChangedSignal
+-- Runs at low frequency to give the weapon Handler time to complete
+-- its own fire cycle before the script touches values again.
+-- Only writes when ammo is nearly empty (threshold < 5).
 -- ================================================================
-
--- Storage tables for connections and frozen values (global so toggle callbacks can clear them)
-_G._infiniteAmmoConns = {}
-_G._freezeAmmoConns   = {}
-_G._frozenAmmoValues  = {}
-
--- Hook Infinite Ammo: instantly restore to 99999 whenever a watched value decreases
-local function hookInfiniteAmmo(tool)
-    for _, conn in pairs(_G._infiniteAmmoConns) do pcall(function() conn:Disconnect() end) end
-    _G._infiniteAmmoConns = {}
-    if not Settings.InfiniteAmmo then return end
-    local info = tool:FindFirstChild("Info")
-    if not info then return end
-    for _, val in pairs(info:GetChildren()) do
-        if (val:IsA("IntValue") or val:IsA("NumberValue")) and
-           (val.Name == "Clip" or val.Name == "Reserve" or val.Name == "Ammo") then
-            local conn = val:GetPropertyChangedSignal("Value"):Connect(function()
-                if Settings.InfiniteAmmo and val.Value < 99999 then
-                    val.Value = 99999
-                end
-            end)
-            table.insert(_G._infiniteAmmoConns, conn)
-        end
+task.spawn(function()
+    while true do
+        task.wait(0.3)
+        pcall(function()
+            local char = LocalPlayer.Character
+            if not char then return end
+            local tool = char:FindFirstChildOfClass("Tool")
+            if not tool then return end
+            local info = tool:FindFirstChild("Info")
+            if not info then return end
+            local clip    = info:FindFirstChild("Clip")
+            local reserve = info:FindFirstChild("Reserve")
+            if Settings.InfiniteAmmo then
+                if clip    and clip.Value    < 5 then clip.Value    = 99999 end
+                if reserve and reserve.Value < 5 then reserve.Value = 99999 end
+            elseif Settings.FreezeAmmo then
+                if clip    then clip.Value    = _frozenClip    or clip.Value    end
+                if reserve then reserve.Value = _frozenReserve or reserve.Value end
+            end
+        end)
     end
-end
-
--- Hook Freeze Ammo: cache current values at hook time, restore whenever a watched value changes
-local function hookFreezeAmmo(tool)
-    for _, conn in pairs(_G._freezeAmmoConns) do pcall(function() conn:Disconnect() end) end
-    _G._freezeAmmoConns  = {}
-    _G._frozenAmmoValues = {}
-    if not Settings.FreezeAmmo then return end
-    local info = tool:FindFirstChild("Info")
-    if not info then return end
-    for _, val in pairs(info:GetChildren()) do
-        if (val:IsA("IntValue") or val:IsA("NumberValue")) and
-           (val.Name == "Clip" or val.Name == "Reserve" or val.Name == "Ammo") then
-            _G._frozenAmmoValues[val] = val.Value  -- snapshot at hook time
-            local conn = val:GetPropertyChangedSignal("Value"):Connect(function()
-                if Settings.FreezeAmmo and _G._frozenAmmoValues[val] then
-                    val.Value = _G._frozenAmmoValues[val]
-                end
-            end)
-            table.insert(_G._freezeAmmoConns, conn)
-        end
-    end
-end
-
--- Re-apply hooks whenever a tool is equipped; disconnect when removed
-local function watchCharacterForTools(char)
-    if not char then return end
-    char.ChildAdded:Connect(function(child)
-        if child:IsA("Tool") then
-            task.wait()  -- let tool finish parenting before reading Info
-            pcall(function() hookInfiniteAmmo(child) end)
-            pcall(function() hookFreezeAmmo(child) end)
-        end
-    end)
-    char.ChildRemoved:Connect(function(child)
-        if child:IsA("Tool") then
-            -- Disconnect both sets of hooks when tool is unequipped
-            for _, conn in pairs(_G._infiniteAmmoConns) do pcall(function() conn:Disconnect() end) end
-            _G._infiniteAmmoConns = {}
-            for _, conn in pairs(_G._freezeAmmoConns) do pcall(function() conn:Disconnect() end) end
-            _G._freezeAmmoConns  = {}
-            _G._frozenAmmoValues = {}
-        end
-    end)
-    -- Hook any tool already equipped right now
-    local tool = char:FindFirstChildOfClass("Tool")
-    if tool then
-        pcall(function() hookInfiniteAmmo(tool) end)
-        pcall(function() hookFreezeAmmo(tool) end)
-    end
-end
-
--- Initial character
-watchCharacterForTools(LocalPlayer.Character)
--- Future spawns
-LocalPlayer.CharacterAdded:Connect(function(char)
-    watchCharacterForTools(char)
 end)
 
 -- ================================================================
 -- Main Loops
 -- ================================================================
 
--- Aimbot: RenderStepped camera-lock only (single persistent connection via aimbotConn)
+-- Aimbot: RenderStepped camera-lock
 local aimbotConn
 local function connectAimbot()
     if aimbotConn then aimbotConn:Disconnect() end
@@ -1253,8 +1196,6 @@ local function connectAimbot()
     end)
 end
 connectAimbot()
--- Reconnect on respawn to avoid stale upvalues (CharacterAdded already wired above for tools;
--- this separate connection handles the Aimbot RenderStepped reconnect)
 LocalPlayer.CharacterAdded:Connect(function()
     connectAimbot()
 end)
@@ -1268,8 +1209,7 @@ UserInputService.JumpRequest:Connect(function()
     end)
 end)
 
--- Auto Bring: Heartbeat loop — teleports all living zombies in a circle around the player
--- Pure client-side CFrame manipulation; freezes zombie WalkSpeed while active
+-- Auto Bring + Aimbot fire: teleports zombies in a circle, fires at each with epsilon origin
 local bringTimer = 0
 RunService.Heartbeat:Connect(function(dt)
     if not Settings.AutoBring then
@@ -1295,19 +1235,14 @@ RunService.Heartbeat:Connect(function(dt)
                 if hum and hum.Health > 0 then
                     local zhrp = zombie:FindFirstChild("HumanoidRootPart")
                     if zhrp then
-                        -- Spread zombies evenly in a circle around the player
                         local angle  = ((i - 1) / total) * (2 * math.pi)
                         local offset = Vector3.new(
-                            math.cos(angle),
-                            0,
-                            math.sin(angle)
+                            math.cos(angle), 0, math.sin(angle)
                         ) * Settings.BringRadius
-                        local targetPos = hrp.Position + offset
                         pcall(function()
-                            zhrp.CFrame   = CFrame.new(targetPos)
+                            zhrp.CFrame   = CFrame.new(hrp.Position + offset)
                             hum.WalkSpeed = 0
                         end)
-                        -- When Aimbot is also ON, fire at each brought zombie
                         if Settings.Aimbot then
                             local target = zombie:FindFirstChild("HeadHitbox")
                                         or zombie:FindFirstChild("Head")
