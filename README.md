@@ -2,8 +2,6 @@
 
 > Keyless Roblox exploit scripts with Rayfield UI — 21 languages, multi-game support.
 
-<a href="https://rscripts.net/user/Rival9601" target="_blank"><img alt="Rival9601 on Rscripts" loading="lazy" width="360" height="132" src="https://rscripts.net/api/embed/user/Rival9601?theme=dark" /></a>
-
 ---
 
 ## 📜 Available Scripts
@@ -44,8 +42,7 @@ loadstring(game:HttpGet("https://raw.githubusercontent.com/Rival99900/Roblox-Scr
 
 ## 🔴 Tactical SWAT Hub
 
-**Game**: [Tactical: Swat Simulator](https://www.roblox.com/games/102837194624695/Tactical-Swat-Simulator)
-
+**Game**: [Tactical: Swat Simulator](https://www.roblox.com/games/102837194624695/Tactical-Swat-Simulator) - [Reviewed on ScriptBlox](https://scriptblox.com/badge/Tactical-Swat-Simulator-KEYLESS-Dynamic-ESP-Auto-Arrest-Hitbox-Bring-all-more-234036)
 ```lua
 loadstring(game:HttpGet("https://raw.githubusercontent.com/Rival99900/Roblox-Scripts/refs/heads/main/scripts/Tactical-Swat-Simulator-KEYLESS.lua"))()
 ```
@@ -130,4 +127,4 @@ The author assumes **no responsibility** for any consequences. Use at your own r
 
 ## 👤 Author
 
-**Rival960** — [Rscripts Profile](https://rscripts.net/@Rival960) · [GitHub](https://github.com/Rival99900) · Discord: `rival960` · YouTube: [rival9607](https://www.youtube.com/@rival9607)
+**Rival960** — [ScriptBlox Profile](https://scriptblox.com/profile/) · [GitHub](https://github.com/Rival99900) · Discord: `rival960` · YouTube: [rival9607](https://www.youtube.com/@rival9607)
