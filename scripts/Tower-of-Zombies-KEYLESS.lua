@@ -3,7 +3,7 @@
     Tower of Zombies Hub — Tower of Zombies
     Created by Rival960 with the help of Claude
     Version: v1.1.0 | Languages: 21 | Rayfield UI
-    Status: untested in-game
+    Status: tested in-game
     ================================================================
 ]]
 
@@ -31,7 +31,7 @@ local Translations = {
         CreditsTitle        = "Credits",
         CreditsContent      = "Created by Rival960 with the help of AI\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.1.0 — Combat Update",
         ReleaseNotesTitle   = "v1.1.0 — Release Notes",
-        ReleaseNotesContent = "New features: Infinite Ammo, Freeze Ammo, Kill Aura, Auto Bring improvements, Aimbot ammo override fix.\nFound a bug or want to request a feature? Open an issue on GitHub (Rival99900/Roblox-Scripts) or post on ScriptBlox.",
+        ReleaseNotesContent = "New in v1.1.0: Infinite Ammo, Freeze Ammo, Aimbot wall-penetration fix, ammo hook system.\nFound a bug or want to request a feature? Open an issue on GitHub (Rival99900/Roblox-Scripts) or post on ScriptBlox.",
         Aimbot              = "Aimbot",
         AutoBring           = "Auto Bring",
         BringRadius         = "Bring Radius (studs)",
@@ -39,9 +39,6 @@ local Translations = {
         MaxZombieDist       = "Max Zombie Distance",
         InfiniteAmmo        = "Infinite Ammo",
         FreezeAmmo          = "Freeze Ammo",
-        KillAura            = "Kill Aura",
-        KillAuraRange       = "Kill Aura Range",
-        KillAuraInterval    = "Kill Aura Interval (s)",
         FlyToggle           = "Fly",
         FlySpeed            = "Fly Speed",
         NoClip              = "NoClip",
@@ -62,7 +59,7 @@ local Translations = {
         CreditsTitle        = "Crédits",
         CreditsContent      = "Créé par Rival960 avec l'aide de l'IA\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.1.0 — Mise à Jour Combat",
         ReleaseNotesTitle   = "v1.1.0 — Notes de Version",
-        ReleaseNotesContent = "Nouvelles fonctionnalités : Munitions Infinies, Geler les Munitions, Aura de Mort, améliorations Auto Attirer, correction munitions Aimbot.\nVous avez trouvé un bug ou souhaitez demander une fonctionnalité ? Ouvrez un ticket sur GitHub (Rival99900/Roblox-Scripts) ou postez sur ScriptBlox.",
+        ReleaseNotesContent = "Nouveau en v1.1.0 : Munitions Infinies, Geler les Munitions, correction de pénétration des murs de l'Aimbot, système de hooks de munitions.\nVous avez trouvé un bug ou souhaitez demander une fonctionnalité ? Ouvrez un ticket sur GitHub (Rival99900/Roblox-Scripts) ou postez sur ScriptBlox.",
         Aimbot              = "Aimbot",
         AutoBring           = "Auto Attirer",
         BringRadius         = "Rayon d'attrait (studs)",
@@ -70,9 +67,6 @@ local Translations = {
         MaxZombieDist       = "Distance Max Zombie",
         InfiniteAmmo        = "Munitions Infinies",
         FreezeAmmo          = "Geler les Munitions",
-        KillAura            = "Aura de Mort",
-        KillAuraRange       = "Portée de l'Aura",
-        KillAuraInterval    = "Intervalle de l'Aura (s)",
         FlyToggle           = "Vol",
         FlySpeed            = "Vitesse de Vol",
         NoClip              = "NoClip",
@@ -93,7 +87,7 @@ local Translations = {
         CreditsTitle        = "Credits",
         CreditsContent      = "Erstellt von Rival960 mit KI-Hilfe\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.1.0 — Kampf-Update",
         ReleaseNotesTitle   = "v1.1.0 — Versionshinweise",
-        ReleaseNotesContent = "Neue Features: Unendlich Munition, Munition Einfrieren, Todes-Aura, Auto Anziehen Verbesserungen, Aimbot Munitionsfehler behoben.\nBug gefunden oder Feature-Wunsch? Erstelle ein Issue auf GitHub (Rival99900/Roblox-Scripts) oder schreibe auf ScriptBlox.",
+        ReleaseNotesContent = "Neu in v1.1.0: Unendlich Munition, Munition Einfrieren, Aimbot Wanddurchdringungsfix, Munitions-Hook-System.\nBug gefunden oder Feature-Wunsch? Erstelle ein Issue auf GitHub (Rival99900/Roblox-Scripts) oder schreibe auf ScriptBlox.",
         Aimbot              = "Aimbot",
         AutoBring           = "Auto Anziehen",
         BringRadius         = "Anzugsradius (studs)",
@@ -101,9 +95,6 @@ local Translations = {
         MaxZombieDist       = "Max Zombie-Distanz",
         InfiniteAmmo        = "Unendlich Munition",
         FreezeAmmo          = "Munition Einfrieren",
-        KillAura            = "Todes-Aura",
-        KillAuraRange       = "Aura-Reichweite",
-        KillAuraInterval    = "Aura-Intervall (s)",
         FlyToggle           = "Fliegen",
         FlySpeed            = "Fluggeschwindigkeit",
         NoClip              = "NoClip",
@@ -124,7 +115,7 @@ local Translations = {
         CreditsTitle        = "Créditos",
         CreditsContent      = "Creado por Rival960 con ayuda de IA\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.1.0 — Actualización de Combate",
         ReleaseNotesTitle   = "v1.1.0 — Notas de Versión",
-        ReleaseNotesContent = "Nuevas funciones: Munición Infinita, Congelar Munición, Aura Mortífera, mejoras Auto Atraer, corrección munición Aimbot.\n¿Encontraste un error o quieres pedir una función? Abre un issue en GitHub (Rival99900/Roblox-Scripts) o publica en ScriptBlox.",
+        ReleaseNotesContent = "Nuevo en v1.1.0: Munición Infinita, Congelar Munición, corrección de penetración de muros del Aimbot, sistema de ganchos de munición.\n¿Encontraste un error o quieres pedir una función? Abre un issue en GitHub (Rival99900/Roblox-Scripts) o publica en ScriptBlox.",
         Aimbot              = "Aimbot",
         AutoBring           = "Auto Atraer",
         BringRadius         = "Radio de Atracción (studs)",
@@ -132,9 +123,6 @@ local Translations = {
         MaxZombieDist       = "Distancia Máx Zombie",
         InfiniteAmmo        = "Munición Infinita",
         FreezeAmmo          = "Congelar Munición",
-        KillAura            = "Aura Mortífera",
-        KillAuraRange       = "Alcance del Aura",
-        KillAuraInterval    = "Intervalo del Aura (s)",
         FlyToggle           = "Volar",
         FlySpeed            = "Velocidad de Vuelo",
         NoClip              = "NoClip",
@@ -155,7 +143,7 @@ local Translations = {
         CreditsTitle        = "Créditos",
         CreditsContent      = "Criado por Rival960 com ajuda de IA\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.1.0 — Atualização de Combate",
         ReleaseNotesTitle   = "v1.1.0 — Notas da Versão",
-        ReleaseNotesContent = "Novidades: Munição Infinita, Congelar Munição, Aura Mortal, melhorias Auto Atrair, correção de munição do Aimbot.\nEncontrou um bug ou quer sugerir uma função? Abra uma issue no GitHub (Rival99900/Roblox-Scripts) ou publique no ScriptBlox.",
+        ReleaseNotesContent = "Novo em v1.1.0: Munição Infinita, Congelar Munição, correção de penetração de paredes do Aimbot, sistema de hooks de munição.\nEncontrou um bug ou quer sugerir uma função? Abra uma issue no GitHub (Rival99900/Roblox-Scripts) ou publique no ScriptBlox.",
         Aimbot              = "Aimbot",
         AutoBring           = "Auto Atrair",
         BringRadius         = "Raio de Atração (studs)",
@@ -163,9 +151,6 @@ local Translations = {
         MaxZombieDist       = "Distância Máx Zumbi",
         InfiniteAmmo        = "Munição Infinita",
         FreezeAmmo          = "Congelar Munição",
-        KillAura            = "Aura Mortal",
-        KillAuraRange       = "Alcance da Aura",
-        KillAuraInterval    = "Intervalo da Aura (s)",
         FlyToggle           = "Voar",
         FlySpeed            = "Velocidade de Voo",
         NoClip              = "NoClip",
@@ -186,7 +171,7 @@ local Translations = {
         CreditsTitle        = "Авторы",
         CreditsContent      = "Создано Rival960 с помощью ИИ\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.1.0 — Боевое Обновление",
         ReleaseNotesTitle   = "v1.1.0 — Примечания к версии",
-        ReleaseNotesContent = "Новое: Бесконечные патроны, Заморозить патроны, Аура убийства, улучшения Авто Притяжение, исправление патронов аимбота.\nНашли баг или хотите предложить функцию? Создайте issue на GitHub (Rival99900/Roblox-Scripts) или напишите на ScriptBlox.",
+        ReleaseNotesContent = "Новое в v1.1.0: Бесконечные патроны, Заморозить патроны, исправление проникновения сквозь стены аимбота, система хуков патронов.\nНашли баг или хотите предложить функцию? Создайте issue на GitHub (Rival99900/Roblox-Scripts) или напишите на ScriptBlox.",
         Aimbot              = "Аимбот",
         AutoBring           = "Авто Притяжение",
         BringRadius         = "Радиус притяжения (ст.)",
@@ -194,9 +179,6 @@ local Translations = {
         MaxZombieDist       = "Макс дистанция зомби",
         InfiniteAmmo        = "Бесконечные патроны",
         FreezeAmmo          = "Заморозить патроны",
-        KillAura            = "Аура убийства",
-        KillAuraRange       = "Дальность ауры",
-        KillAuraInterval    = "Интервал ауры (с)",
         FlyToggle           = "Полёт",
         FlySpeed            = "Скорость полёта",
         NoClip              = "NoClip",
@@ -217,7 +199,7 @@ local Translations = {
         CreditsTitle        = "Crediti",
         CreditsContent      = "Creato da Rival960 con l'aiuto dell'IA\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.1.0 — Aggiornamento Combattimento",
         ReleaseNotesTitle   = "v1.1.0 — Note di Versione",
-        ReleaseNotesContent = "Novità: Munizioni Infinite, Blocca Munizioni, Aura Letale, miglioramenti Auto Attira, fix munizioni Aimbot.\nHai trovato un bug o vuoi richiedere una funzione? Apri un'issue su GitHub (Rival99900/Roblox-Scripts) o scrivi su ScriptBlox.",
+        ReleaseNotesContent = "Nuovo in v1.1.0: Munizioni Infinite, Blocca Munizioni, fix penetrazione pareti Aimbot, sistema di hook munizioni.\nHai trovato un bug o vuoi richiedere una funzione? Apri un'issue su GitHub (Rival99900/Roblox-Scripts) o scrivi su ScriptBlox.",
         Aimbot              = "Aimbot",
         AutoBring           = "Auto Attira",
         BringRadius         = "Raggio di Attrazione (studs)",
@@ -225,9 +207,6 @@ local Translations = {
         MaxZombieDist       = "Distanza Max Zombie",
         InfiniteAmmo        = "Munizioni Infinite",
         FreezeAmmo          = "Blocca Munizioni",
-        KillAura            = "Aura Letale",
-        KillAuraRange       = "Raggio dell'Aura",
-        KillAuraInterval    = "Intervallo dell'Aura (s)",
         FlyToggle           = "Volo",
         FlySpeed            = "Velocità di Volo",
         NoClip              = "NoClip",
@@ -248,7 +227,7 @@ local Translations = {
         CreditsTitle        = "Credits",
         CreditsContent      = "Gemaakt door Rival960 met AI-hulp\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.1.0 — Gevechtsupdate",
         ReleaseNotesTitle   = "v1.1.0 — Versienotities",
-        ReleaseNotesContent = "Nieuwe functies: Oneindige Munitie, Bevriezing Munitie, Doodsaura, verbeteringen Auto Aantrekken, Aimbot munitiefix.\nBug gevonden of wil je een functie aanvragen? Open een issue op GitHub (Rival99900/Roblox-Scripts) of post op ScriptBlox.",
+        ReleaseNotesContent = "Nieuw in v1.1.0: Oneindige Munitie, Bevriezing Munitie, Aimbot muurpenetratie fix, munitie hook systeem.\nBug gevonden of wil je een functie aanvragen? Open een issue op GitHub (Rival99900/Roblox-Scripts) of post op ScriptBlox.",
         Aimbot              = "Aimbot",
         AutoBring           = "Auto Aantrekken",
         BringRadius         = "Aantrekkingsradius (studs)",
@@ -256,9 +235,6 @@ local Translations = {
         MaxZombieDist       = "Max Zombie Afstand",
         InfiniteAmmo        = "Oneindige Munitie",
         FreezeAmmo          = "Bevriezing Munitie",
-        KillAura            = "Doodsaura",
-        KillAuraRange       = "Aura-bereik",
-        KillAuraInterval    = "Aura-interval (s)",
         FlyToggle           = "Vliegen",
         FlySpeed            = "Vliegsnelheid",
         NoClip              = "NoClip",
@@ -279,7 +255,7 @@ local Translations = {
         CreditsTitle        = "Kredyty",
         CreditsContent      = "Stworzone przez Rival960 z pomocą AI\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.1.0 — Aktualizacja Walki",
         ReleaseNotesTitle   = "v1.1.0 — Informacje o Wersji",
-        ReleaseNotesContent = "Nowe funkcje: Nieskończona Amunicja, Zamroź Amunicję, Aura Śmierci, ulepszenia Auto Przyciąganie, poprawka amunicji Aimbot.\nZnalazłeś błąd lub chcesz zgłosić funkcję? Otwórz issue na GitHub (Rival99900/Roblox-Scripts) lub napisz na ScriptBlox.",
+        ReleaseNotesContent = "Nowe w v1.1.0: Nieskończona Amunicja, Zamroź Amunicję, naprawa przenikania przez ściany Aimbot, system haków amunicji.\nZnalazłeś błąd lub chcesz zgłosić funkcję? Otwórz issue na GitHub (Rival99900/Roblox-Scripts) lub napisz na ScriptBlox.",
         Aimbot              = "Aimbot",
         AutoBring           = "Auto Przyciąganie",
         BringRadius         = "Promień przyciągania (studs)",
@@ -287,9 +263,6 @@ local Translations = {
         MaxZombieDist       = "Maks. dystans zombie",
         InfiniteAmmo        = "Nieskończona Amunicja",
         FreezeAmmo          = "Zamroź Amunicję",
-        KillAura            = "Aura Śmierci",
-        KillAuraRange       = "Zasięg Aury",
-        KillAuraInterval    = "Interwał Aury (s)",
         FlyToggle           = "Latanie",
         FlySpeed            = "Prędkość lotu",
         NoClip              = "NoClip",
@@ -310,7 +283,7 @@ local Translations = {
         CreditsTitle        = "致谢",
         CreditsContent      = "由 Rival960 借助 AI 创建\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.1.0 — 战斗更新",
         ReleaseNotesTitle   = "v1.1.0 — 版本说明",
-        ReleaseNotesContent = "新功能：无限弹药、冻结弹药、杀戮光环、自动吸引改进、瞄准弹药修复。\n发现漏洞或想申请功能？请在 GitHub (Rival99900/Roblox-Scripts) 提交 issue 或在 ScriptBlox 发帖。",
+        ReleaseNotesContent = "v1.1.0 新内容：无限弹药、冻结弹药、瞄准助手穿墙修复、弹药钩子系统。\n发现漏洞或想申请功能？请在 GitHub (Rival99900/Roblox-Scripts) 提交 issue 或在 ScriptBlox 发帖。",
         Aimbot              = "自动瞄准",
         AutoBring           = "自动吸引",
         BringRadius         = "吸引半径 (格)",
@@ -318,9 +291,6 @@ local Translations = {
         MaxZombieDist       = "最大僵尸距离",
         InfiniteAmmo        = "无限弹药",
         FreezeAmmo          = "冻结弹药",
-        KillAura            = "杀戮光环",
-        KillAuraRange       = "光环范围",
-        KillAuraInterval    = "光环间隔 (秒)",
         FlyToggle           = "飞行",
         FlySpeed            = "飞行速度",
         NoClip              = "穿墙",
@@ -341,7 +311,7 @@ local Translations = {
         CreditsTitle        = "クレジット",
         CreditsContent      = "Rival960 と AI の協力で作成\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.1.0 — 戦闘アップデート",
         ReleaseNotesTitle   = "v1.1.0 — リリースノート",
-        ReleaseNotesContent = "新機能：無限弾薬、弾薬固定、キルオーラ、自動引き寄せ改善、エイムボット弾薬修正。\nバグ発見や機能リクエストはGitHub (Rival99900/Roblox-Scripts) のissueまたはScriptBloxに投稿してください。",
+        ReleaseNotesContent = "v1.1.0の新機能：無限弾薬、弾薬固定、エイムボット壁貫通修正、弾薬フックシステム。\nバグ発見や機能リクエストはGitHub (Rival99900/Roblox-Scripts) のissueまたはScriptBloxに投稿してください。",
         Aimbot              = "エイムボット",
         AutoBring           = "自動引き寄せ",
         BringRadius         = "引き寄せ半径 (スタッド)",
@@ -349,9 +319,6 @@ local Translations = {
         MaxZombieDist       = "最大ゾンビ距離",
         InfiniteAmmo        = "無限弾薬",
         FreezeAmmo          = "弾薬固定",
-        KillAura            = "キルオーラ",
-        KillAuraRange       = "オーラ範囲",
-        KillAuraInterval    = "オーラ間隔 (秒)",
         FlyToggle           = "フライ",
         FlySpeed            = "飛行速度",
         NoClip              = "ノークリップ",
@@ -372,7 +339,7 @@ local Translations = {
         CreditsTitle        = "Krediler",
         CreditsContent      = "Rival960 tarafından AI yardımıyla yapılmıştır\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.1.0 — Savaş Güncellemesi",
         ReleaseNotesTitle   = "v1.1.0 — Sürüm Notları",
-        ReleaseNotesContent = "Yeni özellikler: Sonsuz Mermi, Mermiyi Dondur, Ölüm Aurası, Otomatik Çekme iyileştirmeleri, Aimbot mermi düzeltmesi.\nBir hata buldunuz veya özellik talep etmek mi istiyorsunuz? GitHub'da (Rival99900/Roblox-Scripts) issue açın veya ScriptBlox'ta paylaşın.",
+        ReleaseNotesContent = "v1.1.0'daki yenilikler: Sonsuz Mermi, Mermiyi Dondur, Aimbot duvar nüfuz düzeltmesi, mermi kanca sistemi.\nBir hata buldunuz veya özellik talep etmek mi istiyorsunuz? GitHub'da (Rival99900/Roblox-Scripts) issue açın veya ScriptBlox'ta paylaşın.",
         Aimbot              = "Aimbot",
         AutoBring           = "Otomatik Çekme",
         BringRadius         = "Çekme Yarıçapı (studs)",
@@ -380,9 +347,6 @@ local Translations = {
         MaxZombieDist       = "Maks Zombi Mesafesi",
         InfiniteAmmo        = "Sonsuz Mermi",
         FreezeAmmo          = "Mermiyi Dondur",
-        KillAura            = "Ölüm Aurası",
-        KillAuraRange       = "Aura Menzili",
-        KillAuraInterval    = "Aura Aralığı (s)",
         FlyToggle           = "Uçuş",
         FlySpeed            = "Uçuş Hızı",
         NoClip              = "NoClip",
@@ -403,7 +367,7 @@ local Translations = {
         CreditsTitle        = "크레딧",
         CreditsContent      = "Rival960이 AI의 도움으로 제작\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.1.0 — 전투 업데이트",
         ReleaseNotesTitle   = "v1.1.0 — 릴리즈 노트",
-        ReleaseNotesContent = "새 기능: 무한 탄약, 탄약 고정, 킬 오라, 자동 끌어오기 개선, 에임봇 탄약 수정.\n버그를 찾거나 기능을 요청하고 싶다면? GitHub (Rival99900/Roblox-Scripts)에 이슈를 열거나 ScriptBlox에 게시하세요.",
+        ReleaseNotesContent = "v1.1.0 새 기능: 무한 탄약, 탄약 고정, 에임봇 벽 관통 수정, 탄약 훅 시스템.\n버그를 찾거나 기능을 요청하고 싶다면? GitHub (Rival99900/Roblox-Scripts)에 이슈를 열거나 ScriptBlox에 게시하세요.",
         Aimbot              = "에임봇",
         AutoBring           = "자동 끌어오기",
         BringRadius         = "끌어오기 반경 (스터드)",
@@ -411,9 +375,6 @@ local Translations = {
         MaxZombieDist       = "최대 좀비 거리",
         InfiniteAmmo        = "무한 탄약",
         FreezeAmmo          = "탄약 고정",
-        KillAura            = "킬 오라",
-        KillAuraRange       = "오라 범위",
-        KillAuraInterval    = "오라 간격 (초)",
         FlyToggle           = "비행",
         FlySpeed            = "비행 속도",
         NoClip              = "노클립",
@@ -434,7 +395,7 @@ local Translations = {
         CreditsTitle        = "الاعتمادات",
         CreditsContent      = "تم إنشاؤه بواسطة Rival960 بمساعدة الذكاء الاصطناعي\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.1.0 — تحديث القتال",
         ReleaseNotesTitle   = "v1.1.0 — ملاحظات الإصدار",
-        ReleaseNotesContent = "ميزات جديدة: ذخيرة لا نهائية، تجميد الذخيرة، هالة القتل، تحسينات الجذب التلقائي، إصلاح ذخيرة الأيمبوت.\nوجدت خطأ أو تريد طلب ميزة؟ افتح issue على GitHub (Rival99900/Roblox-Scripts) أو انشر على ScriptBlox.",
+        ReleaseNotesContent = "جديد في v1.1.0: ذخيرة لا نهائية، تجميد الذخيرة، إصلاح اختراق الجدران للأيمبوت، نظام خطافات الذخيرة.\nوجدت خطأ أو تريد طلب ميزة؟ افتح issue على GitHub (Rival99900/Roblox-Scripts) أو انشر على ScriptBlox.",
         Aimbot              = "أيمبوت",
         AutoBring           = "جذب تلقائي",
         BringRadius         = "نطاق الجذب (وحدة)",
@@ -442,9 +403,6 @@ local Translations = {
         MaxZombieDist       = "أقصى مسافة للزومبي",
         InfiniteAmmo        = "ذخيرة لا نهائية",
         FreezeAmmo          = "تجميد الذخيرة",
-        KillAura            = "هالة القتل",
-        KillAuraRange       = "نطاق الهالة",
-        KillAuraInterval    = "فترة الهالة (ث)",
         FlyToggle           = "طيران",
         FlySpeed            = "سرعة الطيران",
         NoClip              = "اختراق الجدران",
@@ -465,7 +423,7 @@ local Translations = {
         CreditsTitle        = "Tín Dụng",
         CreditsContent      = "Tạo bởi Rival960 với sự trợ giúp của AI\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.1.0 — Cập Nhật Chiến Đấu",
         ReleaseNotesTitle   = "v1.1.0 — Ghi Chú Phiên Bản",
-        ReleaseNotesContent = "Tính năng mới: Đạn Vô Hạn, Đóng Băng Đạn, Aura Hủy Diệt, cải tiến Tự Động Kéo, sửa lỗi đạn Aimbot.\nTìm thấy lỗi hoặc muốn yêu cầu tính năng? Mở issue trên GitHub (Rival99900/Roblox-Scripts) hoặc đăng trên ScriptBlox.",
+        ReleaseNotesContent = "Mới trong v1.1.0: Đạn Vô Hạn, Đóng Băng Đạn, sửa lỗi xuyên tường Aimbot, hệ thống hook đạn.\nTìm thấy lỗi hoặc muốn yêu cầu tính năng? Mở issue trên GitHub (Rival99900/Roblox-Scripts) hoặc đăng trên ScriptBlox.",
         Aimbot              = "Aimbot",
         AutoBring           = "Tự Động Kéo",
         BringRadius         = "Bán Kính Kéo (studs)",
@@ -473,9 +431,6 @@ local Translations = {
         MaxZombieDist       = "Khoảng Cách Zombie Tối Đa",
         InfiniteAmmo        = "Đạn Vô Hạn",
         FreezeAmmo          = "Đóng Băng Đạn",
-        KillAura            = "Aura Hủy Diệt",
-        KillAuraRange       = "Phạm Vi Aura",
-        KillAuraInterval    = "Khoảng Aura (s)",
         FlyToggle           = "Bay",
         FlySpeed            = "Tốc Độ Bay",
         NoClip              = "NoClip",
@@ -496,7 +451,7 @@ local Translations = {
         CreditsTitle        = "Erkännanden",
         CreditsContent      = "Skapad av Rival960 med hjälp av AI\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.1.0 — Stridsuppdatering",
         ReleaseNotesTitle   = "v1.1.0 — Versionsanteckningar",
-        ReleaseNotesContent = "Nya funktioner: Oändlig Ammunition, Frys Ammunition, Dödsaura, förbättringar Auto Hämta, Aimbot ammunition fix.\nHittade du en bugg eller vill begära en funktion? Öppna ett issue på GitHub (Rival99900/Roblox-Scripts) eller posta på ScriptBlox.",
+        ReleaseNotesContent = "Nytt i v1.1.0: Oändlig Ammunition, Frys Ammunition, Aimbot väggenomträngningsfix, ammunition hook-system.\nHittade du en bugg eller vill begära en funktion? Öppna ett issue på GitHub (Rival99900/Roblox-Scripts) eller posta på ScriptBlox.",
         Aimbot              = "Aimbot",
         AutoBring           = "Auto Hämta",
         BringRadius         = "Hämtningsradie (studs)",
@@ -504,9 +459,6 @@ local Translations = {
         MaxZombieDist       = "Max Zombieavstånd",
         InfiniteAmmo        = "Oändlig Ammunition",
         FreezeAmmo          = "Frys Ammunition",
-        KillAura            = "Dödsaura",
-        KillAuraRange       = "Aura-räckvidd",
-        KillAuraInterval    = "Aura-intervall (s)",
         FlyToggle           = "Flyg",
         FlySpeed            = "Flyghastighet",
         NoClip              = "NoClip",
@@ -527,7 +479,7 @@ local Translations = {
         CreditsTitle        = "Εύσημα",
         CreditsContent      = "Δημιουργήθηκε από Rival960 με βοήθεια AI\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.1.0 — Ενημέρωση Μάχης",
         ReleaseNotesTitle   = "v1.1.0 — Σημειώσεις Έκδοσης",
-        ReleaseNotesContent = "Νέα χαρακτηριστικά: Άπειρα Πυρομαχικά, Πάγωμα Πυρομαχικών, Θανατηφόρα Αύρα, βελτιώσεις Αυτόματη Έλξη, διόρθωση πυρομαχικών Aimbot.\nΒρήκατε σφάλμα ή θέλετε να ζητήσετε λειτουργία; Ανοίξτε ένα issue στο GitHub (Rival99900/Roblox-Scripts) ή δημοσιεύστε στο ScriptBlox.",
+        ReleaseNotesContent = "Νέο στο v1.1.0: Άπειρα Πυρομαχικά, Πάγωμα Πυρομαχικών, διόρθωση διαπέρασης τοίχων Aimbot, σύστημα hooks πυρομαχικών.\nΒρήκατε σφάλμα ή θέλετε να ζητήσετε λειτουργία; Ανοίξτε ένα issue στο GitHub (Rival99900/Roblox-Scripts) ή δημοσιεύστε στο ScriptBlox.",
         Aimbot              = "Aimbot",
         AutoBring           = "Αυτόματη Έλξη",
         BringRadius         = "Ακτίνα Έλξης (studs)",
@@ -535,9 +487,6 @@ local Translations = {
         MaxZombieDist       = "Μέγ. Απόσταση Ζόμπι",
         InfiniteAmmo        = "Άπειρα Πυρομαχικά",
         FreezeAmmo          = "Πάγωμα Πυρομαχικών",
-        KillAura            = "Θανατηφόρα Αύρα",
-        KillAuraRange       = "Εμβέλεια Αύρας",
-        KillAuraInterval    = "Διάστημα Αύρας (s)",
         FlyToggle           = "Πτήση",
         FlySpeed            = "Ταχύτητα Πτήσης",
         NoClip              = "NoClip",
@@ -558,7 +507,7 @@ local Translations = {
         CreditsTitle        = "Credite",
         CreditsContent      = "Creat de Rival960 cu ajutorul AI\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.1.0 — Actualizare Luptă",
         ReleaseNotesTitle   = "v1.1.0 — Note de Lansare",
-        ReleaseNotesContent = "Funcții noi: Muniție Infinită, Îngheță Muniție, Aura Morții, îmbunătățiri Auto Atragere, corectare muniție Aimbot.\nAți găsit un bug sau doriți să solicitați o funcție? Deschideți un issue pe GitHub (Rival99900/Roblox-Scripts) sau postați pe ScriptBlox.",
+        ReleaseNotesContent = "Nou în v1.1.0: Muniție Infinită, Îngheță Muniție, corectare penetrare pereți Aimbot, sistem de hooks muniție.\nAți găsit un bug sau doriți să solicitați o funcție? Deschideți un issue pe GitHub (Rival99900/Roblox-Scripts) sau postați pe ScriptBlox.",
         Aimbot              = "Aimbot",
         AutoBring           = "Auto Atragere",
         BringRadius         = "Raza de Atragere (studs)",
@@ -566,9 +515,6 @@ local Translations = {
         MaxZombieDist       = "Dist. Maximă Zombie",
         InfiniteAmmo        = "Muniție Infinită",
         FreezeAmmo          = "Îngheță Muniție",
-        KillAura            = "Aura Morții",
-        KillAuraRange       = "Raza Aurei",
-        KillAuraInterval    = "Interval Aură (s)",
         FlyToggle           = "Zbor",
         FlySpeed            = "Viteză Zbor",
         NoClip              = "NoClip",
@@ -589,7 +535,7 @@ local Translations = {
         CreditsTitle        = "Автори",
         CreditsContent      = "Створено Rival960 за допомогою AI\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.1.0 — Бойове Оновлення",
         ReleaseNotesTitle   = "v1.1.0 — Примітки до версії",
-        ReleaseNotesContent = "Нове: Нескінченні патрони, Заморозити патрони, Аура вбивства, покращення Авто Притягання, виправлення патронів аімбота.\nЗнайшли баг або хочете запропонувати функцію? Створіть issue на GitHub (Rival99900/Roblox-Scripts) або напишіть на ScriptBlox.",
+        ReleaseNotesContent = "Нове у v1.1.0: Нескінченні патрони, Заморозити патрони, виправлення проникнення крізь стіни аімбота, система хуків патронів.\nЗнайшли баг або хочете запропонувати функцію? Створіть issue на GitHub (Rival99900/Roblox-Scripts) або напишіть на ScriptBlox.",
         Aimbot              = "Аімбот",
         AutoBring           = "Авто Притягання",
         BringRadius         = "Радіус притягання (ст.)",
@@ -597,9 +543,6 @@ local Translations = {
         MaxZombieDist       = "Макс дистанція зомбі",
         InfiniteAmmo        = "Нескінченні патрони",
         FreezeAmmo          = "Заморозити патрони",
-        KillAura            = "Аура вбивства",
-        KillAuraRange       = "Дальність аури",
-        KillAuraInterval    = "Інтервал аури (с)",
         FlyToggle           = "Політ",
         FlySpeed            = "Швидкість польоту",
         NoClip              = "NoClip",
@@ -620,7 +563,7 @@ local Translations = {
         CreditsTitle        = "Poděkování",
         CreditsContent      = "Vytvořeno Rival960 s pomocí AI\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.1.0 — Bojová Aktualizace",
         ReleaseNotesTitle   = "v1.1.0 — Poznámky k Vydání",
-        ReleaseNotesContent = "Nové funkce: Nekonečná Munice, Zmrazit Munici, Smrtící Aura, vylepšení Auto Přitáhnout, oprava munice Aimbot.\nNašli jste chybu nebo chcete požádat o funkci? Otevřete issue na GitHub (Rival99900/Roblox-Scripts) nebo přidejte příspěvek na ScriptBlox.",
+        ReleaseNotesContent = "Nové ve v1.1.0: Nekonečná Munice, Zmrazit Munici, oprava průniku zdmi Aimbot, systém háčků munice.\nNašli jste chybu nebo chcete požádat o funkci? Otevřete issue na GitHub (Rival99900/Roblox-Scripts) nebo přidejte příspěvek na ScriptBlox.",
         Aimbot              = "Aimbot",
         AutoBring           = "Auto Přitáhnout",
         BringRadius         = "Poloměr přitáhnutí (studs)",
@@ -628,9 +571,6 @@ local Translations = {
         MaxZombieDist       = "Max vzdálenost zombie",
         InfiniteAmmo        = "Nekonečná Munice",
         FreezeAmmo          = "Zmrazit Munici",
-        KillAura            = "Smrtící Aura",
-        KillAuraRange       = "Dosah Aury",
-        KillAuraInterval    = "Interval Aury (s)",
         FlyToggle           = "Létání",
         FlySpeed            = "Rychlost letu",
         NoClip              = "NoClip",
@@ -651,7 +591,7 @@ local Translations = {
         CreditsTitle        = "Anerkendelser",
         CreditsContent      = "Oprettet af Rival960 med hjælp fra AI\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.1.0 — Kampsopdatering",
         ReleaseNotesTitle   = "v1.1.0 — Udgivelsesnoter",
-        ReleaseNotesContent = "Nye funktioner: Uendelig Ammunition, Frys Ammunition, Dødsuddunstning, forbedringer Auto Hent, Aimbot ammunition fix.\nFandt du en fejl eller vil du anmode om en funktion? Åbn et issue på GitHub (Rival99900/Roblox-Scripts) eller post på ScriptBlox.",
+        ReleaseNotesContent = "Nyt i v1.1.0: Uendelig Ammunition, Frys Ammunition, Aimbot væggennemtrængningsfix, ammunition hook-system.\nFandt du en fejl eller vil du anmode om en funktion? Åbn et issue på GitHub (Rival99900/Roblox-Scripts) eller post på ScriptBlox.",
         Aimbot              = "Aimbot",
         AutoBring           = "Auto Hent",
         BringRadius         = "Hentningsradius (studs)",
@@ -659,9 +599,6 @@ local Translations = {
         MaxZombieDist       = "Maks Zombie Afstand",
         InfiniteAmmo        = "Uendelig Ammunition",
         FreezeAmmo          = "Frys Ammunition",
-        KillAura            = "Dødsuddunstning",
-        KillAuraRange       = "Aura-rækkevidde",
-        KillAuraInterval    = "Aura-interval (s)",
         FlyToggle           = "Fly",
         FlySpeed            = "Flyvehastighed",
         NoClip              = "NoClip",
@@ -684,23 +621,20 @@ end
 -- Settings
 -- ================================================================
 local Settings = {
-    Aimbot           = false,
-    AutoBring        = false,
-    BringRadius      = 3,
-    BringInterval    = 0.3,
-    MaxZombieDist    = 300,
-    InfiniteAmmo     = false,
-    FreezeAmmo       = false,
-    KillAura         = false,
-    KillAuraRange    = 200,
-    KillAuraInterval = 0.1,
-    Fly              = false,
-    FlySpeed         = 60,
-    NoClip           = false,
-    WalkSpeed        = 16,
-    InfJump          = false,
-    AntiAFK          = false,
-    Fullbright       = false,
+    Aimbot        = false,
+    AutoBring     = false,
+    BringRadius   = 3,
+    BringInterval = 0.3,
+    MaxZombieDist = 300,
+    InfiniteAmmo  = false,
+    FreezeAmmo    = false,
+    Fly           = false,
+    FlySpeed      = 60,
+    NoClip        = false,
+    WalkSpeed     = 16,
+    InfJump       = false,
+    AntiAFK       = false,
+    Fullbright    = false,
 }
 
 -- ================================================================
@@ -762,8 +696,8 @@ local function getClosestZombieTarget(maxDist)
     return bestPart
 end
 
--- Fire remote — math only, no workspace:Raycast, penetrates all walls
--- Sets ammo to prevent reload interrupting fire; fires both Fire and Fire_2 remotes
+-- Fire remote — wall-penetrating: rayOrigin placed 1 stud behind target toward player,
+-- making server believe the ray originated inside the zombie model at point-blank range.
 local function fireAtTarget(targetPart)
     local char = LocalPlayer.Character
     if not char then return end
@@ -773,18 +707,28 @@ local function fireAtTarget(targetPart)
     local exitPart   = tool:FindFirstChild("Exit")
     if not exitPart then return end
 
-    -- Set ammo to prevent reload interrupting fire
+    -- Ammo fallback: ensure non-zero before fire in case hooks haven't fired yet
     local info = tool:FindFirstChild("Info")
     if info then
         local clip    = info:FindFirstChild("Clip")
         local reserve = info:FindFirstChild("Reserve")
-        if clip    then clip.Value    = 99999 end
-        if reserve then reserve.Value = 99999 end
+        if clip    and clip.Value    < 1 then clip.Value    = 99999 end
+        if reserve and reserve.Value < 1 then reserve.Value = 99999 end
     end
 
-    local rayOrigin = exitPart.WorldPosition
-    local hitPos    = targetPart.Position
-    local normalVec = (rayOrigin - hitPos).Unit  -- from target back to barrel
+    -- Wall-penetration: place rayOrigin 1 stud behind target toward the player's barrel,
+    -- so the server sees a point-blank hit from inside the zombie, bypassing all geometry.
+    local hitPos   = targetPart.Position
+    local toPlayer = (exitPart.WorldPosition - hitPos)
+    local rayOrigin = hitPos + (toPlayer.Magnitude > 0 and toPlayer.Unit or Vector3.new(0, 0, 1)) * 1
+
+    local normalVec = (rayOrigin - hitPos).Unit
+
+    -- Reset debounce attributes BEFORE firing to prevent lockout
+    pcall(function()
+        tool:SetAttribute("Firing", false)
+        tool:SetAttribute("ContinuousFireActive", false)
+    end)
 
     pcall(function()
         game:GetService("ReplicatedStorage").Events.Actions.Fire:FireServer(
@@ -799,16 +743,6 @@ local function fireAtTarget(targetPart)
             {{ targetPart, hitPos, normalVec }},
             {{ weaponName, rayOrigin, hitPos, hitPos, true, targetPart, false, false, "Default", exitPart }}
         )
-    end)
-
-    -- Fix A: reset stuck debounce attributes after firing
-    pcall(function()
-        local tool2 = LocalPlayer.Character and LocalPlayer.Character:FindFirstChildOfClass("Tool")
-        if tool2 then
-            tool2:SetAttribute("Firing", false)
-            tool2:SetAttribute("ContinuousFireActive", false)
-            tool2:SetAttribute("ContinuousFireDirection", Vector3.zero)
-        end
     end)
 end
 
@@ -884,7 +818,14 @@ CombatTab:CreateSlider({
 CombatTab:CreateToggle({
     Name         = T("InfiniteAmmo"),
     CurrentValue = false,
-    Callback     = function(val) Settings.InfiniteAmmo = val end,
+    Callback     = function(val)
+        Settings.InfiniteAmmo = val
+        if not val then
+            -- Disconnect all property hooks when toggled off
+            for _, conn in pairs(_G._infiniteAmmoConns or {}) do pcall(function() conn:Disconnect() end) end
+            _G._infiniteAmmoConns = {}
+        end
+    end,
 })
 
 CombatTab:CreateToggle({
@@ -893,33 +834,12 @@ CombatTab:CreateToggle({
     Callback     = function(val)
         Settings.FreezeAmmo = val
         if not val then
-            -- Clear cached ammo so it re-samples on next enable
-            Settings._frozenClip    = nil
-            Settings._frozenReserve = nil
+            -- Disconnect all property hooks and clear frozen values
+            for _, conn in pairs(_G._freezeAmmoConns or {}) do pcall(function() conn:Disconnect() end) end
+            _G._freezeAmmoConns = {}
+            _G._frozenAmmoValues = {}
         end
     end,
-})
-
-CombatTab:CreateToggle({
-    Name         = T("KillAura"),
-    CurrentValue = false,
-    Callback     = function(val) Settings.KillAura = val end,
-})
-
-CombatTab:CreateSlider({
-    Name         = T("KillAuraRange"),
-    Range        = {50, 500},
-    Increment    = 10,
-    CurrentValue = 200,
-    Callback     = function(val) Settings.KillAuraRange = val end,
-})
-
-CombatTab:CreateSlider({
-    Name         = T("KillAuraInterval"),
-    Range        = {0.05, 0.5},
-    Increment    = 0.05,
-    CurrentValue = 0.1,
-    Callback     = function(val) Settings.KillAuraInterval = val end,
 })
 
 -- ───── Tab 3: Movement ─────
@@ -1228,10 +1148,96 @@ ToolsTab:CreateDropdown({
 ToolsTab:CreateLabel(T("LangNote"))
 
 -- ================================================================
+-- Ammo hook system (GetPropertyChangedSignal — no polling loops)
+-- ================================================================
+
+-- Storage tables for connections and frozen values (global so toggle callbacks can clear them)
+_G._infiniteAmmoConns = {}
+_G._freezeAmmoConns   = {}
+_G._frozenAmmoValues  = {}
+
+-- Hook Infinite Ammo: instantly restore to 99999 whenever a watched value decreases
+local function hookInfiniteAmmo(tool)
+    for _, conn in pairs(_G._infiniteAmmoConns) do pcall(function() conn:Disconnect() end) end
+    _G._infiniteAmmoConns = {}
+    if not Settings.InfiniteAmmo then return end
+    local info = tool:FindFirstChild("Info")
+    if not info then return end
+    for _, val in pairs(info:GetChildren()) do
+        if (val:IsA("IntValue") or val:IsA("NumberValue")) and
+           (val.Name == "Clip" or val.Name == "Reserve" or val.Name == "Ammo") then
+            local conn = val:GetPropertyChangedSignal("Value"):Connect(function()
+                if Settings.InfiniteAmmo and val.Value < 99999 then
+                    val.Value = 99999
+                end
+            end)
+            table.insert(_G._infiniteAmmoConns, conn)
+        end
+    end
+end
+
+-- Hook Freeze Ammo: cache current values at hook time, restore whenever a watched value changes
+local function hookFreezeAmmo(tool)
+    for _, conn in pairs(_G._freezeAmmoConns) do pcall(function() conn:Disconnect() end) end
+    _G._freezeAmmoConns  = {}
+    _G._frozenAmmoValues = {}
+    if not Settings.FreezeAmmo then return end
+    local info = tool:FindFirstChild("Info")
+    if not info then return end
+    for _, val in pairs(info:GetChildren()) do
+        if (val:IsA("IntValue") or val:IsA("NumberValue")) and
+           (val.Name == "Clip" or val.Name == "Reserve" or val.Name == "Ammo") then
+            _G._frozenAmmoValues[val] = val.Value  -- snapshot at hook time
+            local conn = val:GetPropertyChangedSignal("Value"):Connect(function()
+                if Settings.FreezeAmmo and _G._frozenAmmoValues[val] then
+                    val.Value = _G._frozenAmmoValues[val]
+                end
+            end)
+            table.insert(_G._freezeAmmoConns, conn)
+        end
+    end
+end
+
+-- Re-apply hooks whenever a tool is equipped; disconnect when removed
+local function watchCharacterForTools(char)
+    if not char then return end
+    char.ChildAdded:Connect(function(child)
+        if child:IsA("Tool") then
+            task.wait()  -- let tool finish parenting before reading Info
+            pcall(function() hookInfiniteAmmo(child) end)
+            pcall(function() hookFreezeAmmo(child) end)
+        end
+    end)
+    char.ChildRemoved:Connect(function(child)
+        if child:IsA("Tool") then
+            -- Disconnect both sets of hooks when tool is unequipped
+            for _, conn in pairs(_G._infiniteAmmoConns) do pcall(function() conn:Disconnect() end) end
+            _G._infiniteAmmoConns = {}
+            for _, conn in pairs(_G._freezeAmmoConns) do pcall(function() conn:Disconnect() end) end
+            _G._freezeAmmoConns  = {}
+            _G._frozenAmmoValues = {}
+        end
+    end)
+    -- Hook any tool already equipped right now
+    local tool = char:FindFirstChildOfClass("Tool")
+    if tool then
+        pcall(function() hookInfiniteAmmo(tool) end)
+        pcall(function() hookFreezeAmmo(tool) end)
+    end
+end
+
+-- Initial character
+watchCharacterForTools(LocalPlayer.Character)
+-- Future spawns
+LocalPlayer.CharacterAdded:Connect(function(char)
+    watchCharacterForTools(char)
+end)
+
+-- ================================================================
 -- Main Loops
 -- ================================================================
 
--- Aimbot: RenderStepped camera-lock only (Fix B: single persistent connection, no rapid fire)
+-- Aimbot: RenderStepped camera-lock only (single persistent connection via aimbotConn)
 local aimbotConn
 local function connectAimbot()
     if aimbotConn then aimbotConn:Disconnect() end
@@ -1247,7 +1253,8 @@ local function connectAimbot()
     end)
 end
 connectAimbot()
--- Reconnect on respawn to avoid stale upvalues
+-- Reconnect on respawn to avoid stale upvalues (CharacterAdded already wired above for tools;
+-- this separate connection handles the Aimbot RenderStepped reconnect)
 LocalPlayer.CharacterAdded:Connect(function()
     connectAimbot()
 end)
@@ -1258,110 +1265,6 @@ UserInputService.JumpRequest:Connect(function()
     pcall(function()
         local hum = getHum()
         if hum then hum:ChangeState(Enum.HumanoidStateType.Jumping) end
-    end)
-end)
-
--- Infinite Ammo: Heartbeat loop — sets all ammo values to 99999 every 0.1s
-local infiniteAmmoTimer = 0
-RunService.Heartbeat:Connect(function(dt)
-    if not Settings.InfiniteAmmo then
-        infiniteAmmoTimer = 0
-        return
-    end
-    infiniteAmmoTimer = infiniteAmmoTimer + dt
-    if infiniteAmmoTimer < 0.1 then return end
-    infiniteAmmoTimer = 0
-    pcall(function()
-        local char = LocalPlayer.Character
-        if not char then return end
-        local tool = char:FindFirstChildOfClass("Tool")
-        if not tool then return end
-        -- Direct Info/Clip and Info/Reserve
-        local info = tool:FindFirstChild("Info")
-        if info then
-            local clip    = info:FindFirstChild("Clip")
-            local reserve = info:FindFirstChild("Reserve")
-            if clip    then clip.Value    = 99999 end
-            if reserve then reserve.Value = 99999 end
-        end
-        -- Recursive search for common ammo value names
-        for _, v in ipairs(tool:GetDescendants()) do
-            if v:IsA("IntValue") or v:IsA("NumberValue") then
-                local n = v.Name:lower()
-                if n == "clip" or n == "reserve" or n == "ammo"
-                    or n == "magammo" or n == "currentammo" or n == "storedammo" then
-                    v.Value = 99999
-                end
-            end
-        end
-    end)
-end)
-
--- Freeze Ammo: Heartbeat loop — caches ammo on first detection, restores every tick
-local freezeAmmoTimer = 0
-RunService.Heartbeat:Connect(function(dt)
-    if not Settings.FreezeAmmo then
-        freezeAmmoTimer = 0
-        return
-    end
-    freezeAmmoTimer = freezeAmmoTimer + dt
-    if freezeAmmoTimer < 0.1 then return end
-    freezeAmmoTimer = 0
-    pcall(function()
-        local char = LocalPlayer.Character
-        if not char then return end
-        local tool = char:FindFirstChildOfClass("Tool")
-        if not tool then return end
-        local info = tool:FindFirstChild("Info")
-        if not info then return end
-        local clip    = info:FindFirstChild("Clip")
-        local reserve = info:FindFirstChild("Reserve")
-        -- Cache on first tick
-        if clip    and Settings._frozenClip    == nil then Settings._frozenClip    = clip.Value    end
-        if reserve and Settings._frozenReserve == nil then Settings._frozenReserve = reserve.Value end
-        -- Restore cached values
-        if clip    and Settings._frozenClip    ~= nil then clip.Value    = Settings._frozenClip    end
-        if reserve and Settings._frozenReserve ~= nil then reserve.Value = Settings._frozenReserve end
-    end)
-end)
-
--- Kill Aura: Heartbeat loop — fires at all living zombies in range every KillAuraInterval
-local killAuraTimer = 0
-RunService.Heartbeat:Connect(function(dt)
-    if not Settings.KillAura then
-        killAuraTimer = 0
-        return
-    end
-    killAuraTimer = killAuraTimer + dt
-    if killAuraTimer < Settings.KillAuraInterval then return end
-    killAuraTimer = 0
-    task.spawn(function()
-        pcall(function()
-            local hrp = getHRP()
-            if not hrp then return end
-            local char = LocalPlayer.Character
-            if not char then return end
-            local tool = char:FindFirstChildOfClass("Tool")
-            if not tool then return end
-            local zombieFolder = workspace:FindFirstChild("ActiveZombies")
-            if not zombieFolder then return end
-            for _, zombie in ipairs(zombieFolder:GetChildren()) do
-                local hum = zombie:FindFirstChildOfClass("Humanoid")
-                if hum and hum.Health > 0 then
-                    local zhrp = zombie:FindFirstChild("HumanoidRootPart")
-                    if zhrp then
-                        local dist = (zhrp.Position - hrp.Position).Magnitude
-                        if dist <= Settings.KillAuraRange then
-                            local target = zombie:FindFirstChild("HeadHitbox")
-                                        or zombie:FindFirstChild("Head")
-                                        or zhrp
-                            fireAtTarget(target)
-                            task.wait(0.05)  -- Fix C: gap between zombies to avoid server rate-limit
-                        end
-                    end
-                end
-            end
-        end)
     end)
 end)
 
