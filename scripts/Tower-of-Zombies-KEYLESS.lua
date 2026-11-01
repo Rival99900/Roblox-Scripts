@@ -3,7 +3,7 @@
     Tower of Zombies Hub — Tower of Zombies
     Created by Rival960 with the help of Claude
     Version: v1.1.0 | Languages: 21 | Rayfield UI
-    Status: untested in-game
+    Status: tested in-game
     ================================================================
 ]]
 
@@ -637,13 +637,17 @@ local Settings = {
     Fullbright    = false,
 }
 
--- Ammo state for Freeze Ammo (cached at toggle-ON time)
-local _frozenClip    = nil
-local _frozenReserve = nil
+-- Ammo state
+local _frozenClip    = nil   -- cached clip value at FreezeAmmo toggle-ON time
+local _frozenReserve = nil   -- cached reserve value at FreezeAmmo toggle-ON time
+local CLIP_THRESHOLD = 99    -- write when value drops below this (weapon ClipSize)
 
 -- Fire rate limiting
 local lastFireTime  = 0
-local FIRE_COOLDOWN = 0.15  -- seconds
+local FIRE_COOLDOWN = 0.08   -- 0.08s safe below the 0.18s minimum FinalFireRate
+
+-- Aimbot lockout detection
+local lastDamageTime = tick()  -- updated on every successful fireAtTarget call
 
 -- ================================================================
 -- Character helpers
@@ -659,12 +663,30 @@ local function getHum()
 end
 
 -- ================================================================
+-- Ammo helpers
+-- ================================================================
+
+-- Immediately write ammo values to the equipped tool's Info children
+local function applyAmmoNow(clipVal, reserveVal)
+    pcall(function()
+        local char = LocalPlayer.Character
+        if not char then return end
+        local tool = char:FindFirstChildOfClass("Tool")
+        if not tool then return end
+        local info = tool:FindFirstChild("Info")
+        if not info then return end
+        local clip    = info:FindFirstChild("Clip")
+        local reserve = info:FindFirstChild("Reserve")
+        if clip    then clip.Value    = clipVal    end
+        if reserve then reserve.Value = reserveVal end
+    end)
+end
+
+-- ================================================================
 -- forceHandlerAmmo — directly patch the Handler's internal upvalue
 -- The Handler stores clip count internally (upvalue ~[40] in FireGun closure).
 -- When this internal counter hits 0 it calls BeginReload, blocking all shots.
 -- Writing Info.Clip.Value alone does NOT update that counter.
--- This function uses the exploit debug API (getupvalue/setupvalue) to find
--- the matching numeric upvalue and overwrite it with the target value.
 -- ================================================================
 local function forceHandlerAmmo(tool, targetValue)
     if not tool then return end
@@ -676,7 +698,6 @@ local function forceHandlerAmmo(tool, targetValue)
         local clipObj = info and info:FindFirstChild("Clip")
         if not clipObj then return end
         local currentClip = clipObj.Value
-        -- Walk upvalues; find integer matching current clip value (range 0–10000)
         if debug and debug.getupvalue and debug.setupvalue then
             for i = 1, 80 do
                 pcall(function()
@@ -689,6 +710,32 @@ local function forceHandlerAmmo(tool, targetValue)
                     end
                 end)
             end
+        end
+    end)
+end
+
+-- ================================================================
+-- softReequip — reset Handler state by moving tool through backpack
+-- Called automatically when aimbot lockout (>3s without a successful shot) is detected.
+-- After re-equip, immediately re-applies the active ammo mode.
+-- ================================================================
+local function softReequip()
+    pcall(function()
+        local char    = LocalPlayer.Character
+        if not char then return end
+        local tool    = char:FindFirstChildOfClass("Tool")
+        if not tool then return end
+        local backpack = LocalPlayer:FindFirstChild("Backpack")
+        if not backpack then return end
+        tool.Parent = backpack
+        task.wait(0.1)
+        tool.Parent = char
+        -- Re-apply ammo immediately after re-equip
+        task.wait(0.05)
+        if Settings.InfiniteAmmo then
+            applyAmmoNow(99999, 99999)
+        elseif Settings.FreezeAmmo and _frozenClip then
+            applyAmmoNow(_frozenClip, _frozenReserve or 99999)
         end
     end)
 end
@@ -714,7 +761,6 @@ local Window = Rayfield:CreateWindow({
 -- Shared combat helpers
 -- ================================================================
 
--- Find closest living zombie part within maxDist
 local function getClosestZombieTarget(maxDist)
     local hrp = getHRP()
     if not hrp then return nil end
@@ -739,23 +785,22 @@ local function getClosestZombieTarget(maxDist)
     return bestPart
 end
 
--- Fire both remotes with epsilon rayOrigin + 0.15s rate limiter
--- ray starts at the target's own position → zero geometry to cross → no wall blocks it
+-- Fire both remotes with epsilon rayOrigin + 0.08s rate limiter.
+-- Returns true when at least one fire call succeeded (used for lockout tracking).
 local function fireAtTarget(targetPart)
-    -- Rate limit: prevent server-side hit dropping from rapid successive calls
     local now = tick()
-    if (now - lastFireTime) < FIRE_COOLDOWN then return end
+    if (now - lastFireTime) < FIRE_COOLDOWN then return false end
     lastFireTime = now
 
     local char = LocalPlayer.Character
-    if not char then return end
+    if not char then return false end
     local tool = char:FindFirstChildOfClass("Tool")
-    if not tool then return end
+    if not tool then return false end
     local weaponName = tool.Name
     local exitPart   = tool:FindFirstChild("Exit")
-    if not exitPart then return end
+    if not exitPart then return false end
 
-    -- Ensure ammo is non-zero before firing (prevents Handler reload block)
+    -- Ensure ammo is non-zero before firing
     pcall(function()
         local info = tool:FindFirstChild("Info")
         if info then
@@ -766,7 +811,6 @@ local function fireAtTarget(targetPart)
         end
     end)
 
-    -- Epsilon offset: ray appears to originate inside the zombie, zero distance to travel
     local hitPos    = targetPart.Position
     local rayOrigin = hitPos + Vector3.new(0, 0.01, 0)
     local normalVec = Vector3.new(0, 1, 0)
@@ -777,12 +821,14 @@ local function fireAtTarget(targetPart)
         tool:SetAttribute("ContinuousFireActive", false)
     end)
 
+    local fired = false
     pcall(function()
         ReplicatedStorage.Events.Actions.Fire:FireServer(
             weaponName,
             {{ targetPart, hitPos, normalVec }},
             {{ weaponName, rayOrigin, hitPos, hitPos, true, targetPart, false, false, "Default", exitPart }}
         )
+        fired = true
     end)
     pcall(function()
         ReplicatedStorage.Events.Actions.Fire_2:FireServer(
@@ -790,14 +836,19 @@ local function fireAtTarget(targetPart)
             {{ targetPart, hitPos, normalVec }},
             {{ weaponName, rayOrigin, hitPos, hitPos, true, targetPart, false, false, "Default", exitPart }}
         )
+        fired = true
     end)
+
+    if fired then
+        lastDamageTime = tick()
+    end
+    return fired
 end
 
 -- ================================================================
 -- TABS
 -- ================================================================
 
--- ───── Tab 1: Home ─────
 local HomeTab = Window:CreateTab(T("TabHome"), 4483362458)
 HomeTab:CreateParagraph({
     Title   = T("CreditsTitle"),
@@ -808,13 +859,17 @@ HomeTab:CreateParagraph({
     Content = T("ReleaseNotesContent"),
 })
 
--- ───── Tab 2: Combat ─────
 local CombatTab = Window:CreateTab(T("TabCombat"), 4483362458)
 
 CombatTab:CreateToggle({
     Name         = T("Aimbot"),
     CurrentValue = false,
-    Callback     = function(val) Settings.Aimbot = val end,
+    Callback     = function(val)
+        Settings.Aimbot = val
+        if val then
+            lastDamageTime = tick()  -- reset lockout timer on enable
+        end
+    end,
 })
 
 CombatTab:CreateSlider({
@@ -864,11 +919,12 @@ CombatTab:CreateToggle({
     CurrentValue = false,
     Callback     = function(val)
         Settings.InfiniteAmmo = val
-        -- FreezeAmmo is mutually exclusive
         if val then
             Settings.FreezeAmmo = false
             _frozenClip    = nil
             _frozenReserve = nil
+            -- Apply immediately, before the next loop tick
+            applyAmmoNow(99999, 99999)
         end
     end,
 })
@@ -880,7 +936,7 @@ CombatTab:CreateToggle({
         Settings.FreezeAmmo = val
         if val then
             Settings.InfiniteAmmo = false
-            -- Cache current ammo values at the moment of enabling
+            -- Cache current values immediately at toggle-ON time
             pcall(function()
                 local char = LocalPlayer.Character
                 local tool = char and char:FindFirstChildOfClass("Tool")
@@ -889,11 +945,18 @@ CombatTab:CreateToggle({
                     if info then
                         local clip    = info:FindFirstChild("Clip")
                         local reserve = info:FindFirstChild("Reserve")
-                        _frozenClip    = clip    and clip.Value    or 99
-                        _frozenReserve = reserve and reserve.Value or 99999
+                        -- If clip is already 0, freeze at ClipSize (12) instead
+                        local cv = clip    and clip.Value    or 12
+                        local rv = reserve and reserve.Value or 99999
+                        _frozenClip    = (cv > 0) and cv or 12
+                        _frozenReserve = (rv > 0) and rv or 99999
                     end
                 end
             end)
+            -- Apply immediately
+            if _frozenClip then
+                applyAmmoNow(_frozenClip, _frozenReserve or 99999)
+            end
         else
             _frozenClip    = nil
             _frozenReserve = nil
@@ -1089,7 +1152,6 @@ MovementTab:CreateSlider({
     Callback     = function(val) Settings.FlySpeed = val end,
 })
 
--- NoClip
 local noClipConn
 MovementTab:CreateToggle({
     Name         = T("NoClip"),
@@ -1139,7 +1201,6 @@ MovementTab:CreateToggle({
     Callback     = function(val) Settings.InfJump = val end,
 })
 
--- ───── Tab 4: Tools & Visuals ─────
 local ToolsTab = Window:CreateTab(T("TabTools"), 4483362458)
 
 ToolsTab:CreateToggle({
@@ -1199,14 +1260,14 @@ ToolsTab:CreateDropdown({
 ToolsTab:CreateLabel(T("LangNote"))
 
 -- ================================================================
--- Ammo maintenance loop — 0.3s interval, no GetPropertyChangedSignal
--- Writes Info.Clip/Reserve AND patches Handler's internal upvalue via
--- forceHandlerAmmo to prevent BeginReload from blocking damage.
--- Only writes when ammo is nearly empty (threshold < 5).
+-- Ammo maintenance loop — 0.05s interval
+-- Threshold-based: only writes when value < CLIP_THRESHOLD (99).
+-- InfiniteAmmo takes priority over FreezeAmmo when both are ON.
+-- After writing Info values, also patches Handler's internal upvalue.
 -- ================================================================
 task.spawn(function()
     while true do
-        task.wait(0.3)
+        task.wait(0.05)
         pcall(function()
             local char = LocalPlayer.Character
             if not char then return end
@@ -1219,20 +1280,37 @@ task.spawn(function()
 
             if Settings.InfiniteAmmo then
                 local wrote = false
-                if clip    and clip.Value    < 5 then clip.Value    = 99999; wrote = true end
-                if reserve and reserve.Value < 5 then reserve.Value = 99999; wrote = true end
+                if clip    and clip.Value    < CLIP_THRESHOLD then clip.Value    = 99999; wrote = true end
+                if reserve and reserve.Value < CLIP_THRESHOLD then reserve.Value = 99999; wrote = true end
                 if wrote then forceHandlerAmmo(tool, 99999) end
 
-            elseif Settings.FreezeAmmo then
-                local targetClip    = _frozenClip    or (clip    and clip.Value)
-                local targetReserve = _frozenReserve or (reserve and reserve.Value)
-                if clip    then clip.Value    = targetClip    end
-                if reserve then reserve.Value = targetReserve end
-                if targetClip and targetClip > 0 then
-                    forceHandlerAmmo(tool, targetClip)
-                end
+            elseif Settings.FreezeAmmo and _frozenClip then
+                local cv = _frozenClip
+                local rv = _frozenReserve or 99999
+                local wrote = false
+                if clip    and clip.Value    ~= cv then clip.Value    = cv; wrote = true end
+                if reserve and reserve.Value ~= rv then reserve.Value = rv; wrote = true end
+                if wrote and cv > 0 then forceHandlerAmmo(tool, cv) end
             end
         end)
+    end
+end)
+
+-- ================================================================
+-- Lockout watchdog — checks every 0.5s whether aimbot has gone
+-- 3s without a successful shot, and triggers a soft re-equip if so.
+-- ================================================================
+task.spawn(function()
+    while true do
+        task.wait(0.5)
+        if Settings.Aimbot and (tick() - lastDamageTime) > 3 then
+            -- Only attempt re-equip if we actually have a target (not just idle)
+            local target = getClosestZombieTarget(Settings.MaxZombieDist)
+            if target then
+                softReequip()
+                lastDamageTime = tick()  -- reset after re-equip attempt
+            end
+        end
     end
 end)
 
@@ -1240,7 +1318,6 @@ end)
 -- Main Loops
 -- ================================================================
 
--- Aimbot: RenderStepped camera-lock
 local aimbotConn
 local function connectAimbot()
     if aimbotConn then aimbotConn:Disconnect() end
@@ -1258,9 +1335,9 @@ end
 connectAimbot()
 LocalPlayer.CharacterAdded:Connect(function()
     connectAimbot()
+    lastDamageTime = tick()
 end)
 
--- Infinite Jump
 UserInputService.JumpRequest:Connect(function()
     if not Settings.InfJump then return end
     pcall(function()
@@ -1269,8 +1346,8 @@ UserInputService.JumpRequest:Connect(function()
     end)
 end)
 
--- Auto Bring: teleport zombies into a circle, fire at each if Aimbot also ON
--- Never calls tool:Activate() — only CFrame manipulation + fireAtTarget
+-- Auto Bring: teleport zombies into a circle, fire at each if Aimbot also ON.
+-- Never calls tool:Activate() — only CFrame manipulation + fireAtTarget.
 local bringTimer = 0
 RunService.Heartbeat:Connect(function(dt)
     if not Settings.AutoBring then
@@ -1318,7 +1395,6 @@ RunService.Heartbeat:Connect(function(dt)
     end)
 end)
 
--- LavaRising event notification
 pcall(function()
     ReplicatedStorage.Events.Communication.LavaRising.OnClientEvent:Connect(function()
         Rayfield:Notify({
