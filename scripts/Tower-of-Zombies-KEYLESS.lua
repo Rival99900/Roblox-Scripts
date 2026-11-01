@@ -3,7 +3,7 @@
     Tower of Zombies Hub — Tower of Zombies
     Created by Rival960 with the help of Claude
     Version: v1.1.0 | Languages: 21 | Rayfield UI
-    Status: tested in-game
+    Status: untested in-game
     ================================================================
 ]]
 
@@ -641,6 +641,10 @@ local Settings = {
 local _frozenClip    = nil
 local _frozenReserve = nil
 
+-- Fire rate limiting
+local lastFireTime  = 0
+local FIRE_COOLDOWN = 0.15  -- seconds
+
 -- ================================================================
 -- Character helpers
 -- ================================================================
@@ -652,6 +656,41 @@ end
 local function getHum()
     local c = getChar()
     return c and c:FindFirstChildOfClass("Humanoid")
+end
+
+-- ================================================================
+-- forceHandlerAmmo — directly patch the Handler's internal upvalue
+-- The Handler stores clip count internally (upvalue ~[40] in FireGun closure).
+-- When this internal counter hits 0 it calls BeginReload, blocking all shots.
+-- Writing Info.Clip.Value alone does NOT update that counter.
+-- This function uses the exploit debug API (getupvalue/setupvalue) to find
+-- the matching numeric upvalue and overwrite it with the target value.
+-- ================================================================
+local function forceHandlerAmmo(tool, targetValue)
+    if not tool then return end
+    local handler = tool:FindFirstChildOfClass("LocalScript")
+               or  tool:FindFirstChild("Handler")
+    if not handler then return end
+    pcall(function()
+        local info    = tool:FindFirstChild("Info")
+        local clipObj = info and info:FindFirstChild("Clip")
+        if not clipObj then return end
+        local currentClip = clipObj.Value
+        -- Walk upvalues; find integer matching current clip value (range 0–10000)
+        if debug and debug.getupvalue and debug.setupvalue then
+            for i = 1, 80 do
+                pcall(function()
+                    local _, val = debug.getupvalue(handler, i)
+                    if type(val) == "number"
+                    and val >= 0
+                    and val <= 10000
+                    and math.floor(val) == math.floor(currentClip) then
+                        debug.setupvalue(handler, i, targetValue)
+                    end
+                end)
+            end
+        end
+    end)
 end
 
 -- ================================================================
@@ -700,9 +739,14 @@ local function getClosestZombieTarget(maxDist)
     return bestPart
 end
 
--- Fire both remotes with epsilon rayOrigin (ray appears to originate from inside the zombie,
--- zero geometry to cross — bypasses all server-side RaycastParams validation regardless of walls)
+-- Fire both remotes with epsilon rayOrigin + 0.15s rate limiter
+-- ray starts at the target's own position → zero geometry to cross → no wall blocks it
 local function fireAtTarget(targetPart)
+    -- Rate limit: prevent server-side hit dropping from rapid successive calls
+    local now = tick()
+    if (now - lastFireTime) < FIRE_COOLDOWN then return end
+    lastFireTime = now
+
     local char = LocalPlayer.Character
     if not char then return end
     local tool = char:FindFirstChildOfClass("Tool")
@@ -711,11 +755,27 @@ local function fireAtTarget(targetPart)
     local exitPart   = tool:FindFirstChild("Exit")
     if not exitPart then return end
 
-    -- Epsilon offset: ray origin at the target's own position, effectively zero travel distance,
-    -- so no wall or geometry can intercept it on the server
+    -- Ensure ammo is non-zero before firing (prevents Handler reload block)
+    pcall(function()
+        local info = tool:FindFirstChild("Info")
+        if info then
+            local clip    = info:FindFirstChild("Clip")
+            local reserve = info:FindFirstChild("Reserve")
+            if clip    and clip.Value    < 1 then clip.Value    = 99999 end
+            if reserve and reserve.Value < 1 then reserve.Value = 99999 end
+        end
+    end)
+
+    -- Epsilon offset: ray appears to originate inside the zombie, zero distance to travel
     local hitPos    = targetPart.Position
     local rayOrigin = hitPos + Vector3.new(0, 0.01, 0)
     local normalVec = Vector3.new(0, 1, 0)
+
+    -- Clear weapon debounce state before firing
+    pcall(function()
+        tool:SetAttribute("Firing", false)
+        tool:SetAttribute("ContinuousFireActive", false)
+    end)
 
     pcall(function()
         ReplicatedStorage.Events.Actions.Fire:FireServer(
@@ -730,15 +790,6 @@ local function fireAtTarget(targetPart)
             {{ targetPart, hitPos, normalVec }},
             {{ weaponName, rayOrigin, hitPos, hitPos, true, targetPart, false, false, "Default", exitPart }}
         )
-    end)
-
-    -- Reset weapon debounce attributes after firing
-    pcall(function()
-        local t = LocalPlayer.Character and LocalPlayer.Character:FindFirstChildOfClass("Tool")
-        if t then
-            t:SetAttribute("Firing", false)
-            t:SetAttribute("ContinuousFireActive", false)
-        end
     end)
 end
 
@@ -813,7 +864,7 @@ CombatTab:CreateToggle({
     CurrentValue = false,
     Callback     = function(val)
         Settings.InfiniteAmmo = val
-        -- FreezeAmmo is mutually exclusive: clear frozen values when switching
+        -- FreezeAmmo is mutually exclusive
         if val then
             Settings.FreezeAmmo = false
             _frozenClip    = nil
@@ -1149,8 +1200,8 @@ ToolsTab:CreateLabel(T("LangNote"))
 
 -- ================================================================
 -- Ammo maintenance loop — 0.3s interval, no GetPropertyChangedSignal
--- Runs at low frequency to give the weapon Handler time to complete
--- its own fire cycle before the script touches values again.
+-- Writes Info.Clip/Reserve AND patches Handler's internal upvalue via
+-- forceHandlerAmmo to prevent BeginReload from blocking damage.
 -- Only writes when ammo is nearly empty (threshold < 5).
 -- ================================================================
 task.spawn(function()
@@ -1165,12 +1216,21 @@ task.spawn(function()
             if not info then return end
             local clip    = info:FindFirstChild("Clip")
             local reserve = info:FindFirstChild("Reserve")
+
             if Settings.InfiniteAmmo then
-                if clip    and clip.Value    < 5 then clip.Value    = 99999 end
-                if reserve and reserve.Value < 5 then reserve.Value = 99999 end
+                local wrote = false
+                if clip    and clip.Value    < 5 then clip.Value    = 99999; wrote = true end
+                if reserve and reserve.Value < 5 then reserve.Value = 99999; wrote = true end
+                if wrote then forceHandlerAmmo(tool, 99999) end
+
             elseif Settings.FreezeAmmo then
-                if clip    then clip.Value    = _frozenClip    or clip.Value    end
-                if reserve then reserve.Value = _frozenReserve or reserve.Value end
+                local targetClip    = _frozenClip    or (clip    and clip.Value)
+                local targetReserve = _frozenReserve or (reserve and reserve.Value)
+                if clip    then clip.Value    = targetClip    end
+                if reserve then reserve.Value = targetReserve end
+                if targetClip and targetClip > 0 then
+                    forceHandlerAmmo(tool, targetClip)
+                end
             end
         end)
     end
@@ -1209,7 +1269,8 @@ UserInputService.JumpRequest:Connect(function()
     end)
 end)
 
--- Auto Bring + Aimbot fire: teleports zombies in a circle, fires at each with epsilon origin
+-- Auto Bring: teleport zombies into a circle, fire at each if Aimbot also ON
+-- Never calls tool:Activate() — only CFrame manipulation + fireAtTarget
 local bringTimer = 0
 RunService.Heartbeat:Connect(function(dt)
     if not Settings.AutoBring then
