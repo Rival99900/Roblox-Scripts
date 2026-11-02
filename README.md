@@ -74,7 +74,7 @@ loadstring(game:HttpGet("https://raw.githubusercontent.com/Rival99900/Roblox-Scr
 
 ## 🟢 Tower of Zombies Hub
 
-**Game**: [Tower of Zombies](https://www.roblox.com/games/99122501338948/Tower-of-Zombies)
+**Game**: [Tower of Zombies](https://www.roblox.com/games/99122501338948/Tower-of-Zombies) - [Reviewed on ScriptBlox](https://scriptblox.com/script/Tower-of-Zombies-KEYLESS-Aimbot-Bring-auto-more-234372)
 
 ```lua
 loadstring(game:HttpGet("https://raw.githubusercontent.com/Rival99900/Roblox-Scripts/refs/heads/main/scripts/Tower-of-Zombies-KEYLESS.lua"))()
