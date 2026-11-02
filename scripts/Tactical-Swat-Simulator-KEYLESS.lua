@@ -20,6 +20,17 @@ local VirtualUser        = game:GetService("VirtualUser")
 local LocalPlayer        = Players.LocalPlayer
 
 -- ───────────────────────────────────────────────────────────────
+-- EXECUTOR COMPATIBILITY SHIM
+-- ───────────────────────────────────────────────────────────────
+if not task then
+    task = {
+        wait  = function(t) return wait(t) end,
+        spawn = function(f, ...) return spawn(f, ...) end,
+        defer = function(f, ...) return spawn(f, ...) end,
+    }
+end
+
+-- ───────────────────────────────────────────────────────────────
 -- 21-LANGUAGE SYSTEM
 -- ───────────────────────────────────────────────────────────────
 local CurrentLang = "EN"
@@ -1111,11 +1122,12 @@ local Settings = {
 -- ───────────────────────────────────────────────────────────────
 -- LOAD RAYFIELD (keyless)
 -- ───────────────────────────────────────────────────────────────
-local ok, Rayfield = pcall(function()
-    return loadstring(game:HttpGet("https://sirius.menu/rayfield"))()
+local Rayfield
+local ok, err = pcall(function()
+    Rayfield = loadstring(game:HttpGet("https://sirius.menu/rayfield"))()
 end)
 if not ok or not Rayfield then
-    warn("[TacticalSWATHub] Could not load Rayfield UI.")
+    warn("[Hub] Rayfield failed to load: " .. tostring(err))
     return
 end
 
@@ -1170,9 +1182,12 @@ local function isSuspect(model)
     -- Armed check: any Tool in the model = this NPC is a criminal
     if model:FindFirstChildOfClass("Tool") then return true end
     -- Name keyword fallback
-    local n = model.Name:lower()
-    for _, kw in ipairs(SUSPECT_NAME_KW) do
-        if n:find(kw, 1, true) then return true end
+    local ok2, n = pcall(function() return model.Name:lower() end)
+    if ok2 and n then
+        for _, kw in ipairs(SUSPECT_NAME_KW) do
+            local fm = pcall(function() return n:find(kw, 1, true) end)
+            if fm and n:find(kw, 1, true) then return true end
+        end
     end
     return false
 end
@@ -1302,18 +1317,27 @@ local function enableFly()
 
     local CTRL = {F=0, B=0, L=0, R=0, UP=0, DOWN=0}
 
-    local bv = Instance.new("BodyVelocity")
-    bv.Name      = "_SWAT_FLY_BV"
-    bv.MaxForce  = Vector3.new(9e9, 9e9, 9e9)
-    bv.Velocity  = Vector3.zero
-    bv.Parent    = hrp
+    local bv, bg
+    local physOk = pcall(function()
+        bv = Instance.new("BodyVelocity")
+        bv.Name      = "_SWAT_FLY_BV"
+        bv.MaxForce  = Vector3.new(9e9, 9e9, 9e9)
+        bv.Velocity  = Vector3.zero
+        bv.Parent    = hrp
 
-    local bg = Instance.new("BodyGyro")
-    bg.Name      = "_SWAT_FLY_BG"
-    bg.P         = 9e4
-    bg.MaxTorque = Vector3.new(9e9, 9e9, 9e9)
-    bg.CFrame    = hrp.CFrame
-    bg.Parent    = hrp
+        bg = Instance.new("BodyGyro")
+        bg.Name      = "_SWAT_FLY_BG"
+        bg.P         = 9e4
+        bg.MaxTorque = Vector3.new(9e9, 9e9, 9e9)
+        bg.CFrame    = hrp.CFrame
+        bg.Parent    = hrp
+    end)
+    if not physOk or not bv or not bg then
+        warn("[Hub] Fly: BodyVelocity/BodyGyro unavailable on this executor.")
+        FLYING = false
+        Settings.Fly = false
+        return
+    end
 
     hum.PlatformStand = true
 
@@ -1413,21 +1437,28 @@ local SURRENDER_TAGS = {
 local function isSurrendered(model)
     for _, v in ipairs(model:GetDescendants()) do
         if v:IsA("BoolValue") then
-            local vn = v.Name:lower()
-            for _, tag in ipairs(SURRENDER_TAGS) do
-                if vn:find(tag) and v.Value == true then return true end
+            local ok2, vn = pcall(function() return v.Name:lower() end)
+            if ok2 and vn then
+                for _, tag in ipairs(SURRENDER_TAGS) do
+                    local fm = pcall(function() return vn:find(tag) end)
+                    if fm and vn:find(tag) and v.Value == true then return true end
+                end
             end
         elseif v:IsA("StringValue") then
-            local vn = v.Name:lower()
-            local vv = v.Value:lower()
-            for _, tag in ipairs(SURRENDER_TAGS) do
-                if vn:find(tag) then
-                    if vv == "true" or vv == "yes" or vv == "1"
-                    or vv == "surrendered" or vv == "up" then
-                        return true
+            local ok2, vn = pcall(function() return v.Name:lower() end)
+            local ok3, vv = pcall(function() return v.Value:lower() end)
+            if ok2 and ok3 and vn and vv then
+                for _, tag in ipairs(SURRENDER_TAGS) do
+                    local fnOk, fnRes = pcall(function() return vn:find(tag) end)
+                    if fnOk and fnRes then
+                        if vv == "true" or vv == "yes" or vv == "1"
+                        or vv == "surrendered" or vv == "up" then
+                            return true
+                        end
                     end
+                    local fvOk, fvRes = pcall(function() return vv:find(tag) end)
+                    if fvOk and fvRes then return true end
                 end
-                if vv:find(tag) then return true end
             end
         end
     end
@@ -1436,9 +1467,12 @@ local function isSurrendered(model)
         local anim = hum:FindFirstChildOfClass("Animator")
         if anim then
             for _, track in ipairs(anim:GetPlayingAnimationTracks()) do
-                local tn = track.Name:lower()
-                for _, tag in ipairs(SURRENDER_TAGS) do
-                    if tn:find(tag) then return true end
+                local ok2, tn = pcall(function() return track.Name:lower() end)
+                if ok2 and tn then
+                    for _, tag in ipairs(SURRENDER_TAGS) do
+                        local fm = pcall(function() return tn:find(tag) end)
+                        if fm and tn:find(tag) then return true end
+                    end
                 end
             end
         end
@@ -2366,7 +2400,6 @@ end)
 -- ───────────────────────────────────────────────────────────────
 LocalPlayer.CharacterAdded:Connect(function(char)
     task.wait(0.5)
-    hookChar(char)
     createOverlayUI()  -- rebuild overlay buttons after respawn
     if Settings.Fly then
         disableFly()
