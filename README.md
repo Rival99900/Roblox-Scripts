@@ -42,7 +42,9 @@ loadstring(game:HttpGet("https://raw.githubusercontent.com/Rival99900/Roblox-Scr
 
 ## 🔴 Tactical SWAT Hub
 
-**Game**: [Tactical: Swat Simulator](https://www.roblox.com/games/102837194624695/Tactical-Swat-Simulator) - [Reviewed on ScriptBlox](https://scriptblox.com/badge/Tactical-Swat-Simulator-KEYLESS-Dynamic-ESP-Auto-Arrest-Hitbox-Bring-all-more-234036)
+**Game**: [Tactical: Swat Simulator](https://www.roblox.com/games/102837194624695/Tactical-Swat-Simulator)
+
+[![ScriptBlox Status](https://img.shields.io/badge/ScriptBlox-reviewed%20by%20a%20person%20%C2%B7%20Oct%2031%2C%202026-vert?style=for-the-badge)](https://scriptblox.com/badge/Tactical-Swat-Simulator-KEYLESS-Dynamic-ESP-Auto-Arrest-Hitbox-Bring-all-more-234036)
 ```lua
 loadstring(game:HttpGet("https://raw.githubusercontent.com/Rival99900/Roblox-Scripts/refs/heads/main/scripts/Tactical-Swat-Simulator-KEYLESS.lua"))()
 ```
@@ -74,8 +76,9 @@ loadstring(game:HttpGet("https://raw.githubusercontent.com/Rival99900/Roblox-Scr
 
 ## 🟢 Tower of Zombies Hub
 
-**Game**: [Tower of Zombies](https://www.roblox.com/games/99122501338948/Tower-of-Zombies) - [Reviewed on ScriptBlox](https://scriptblox.com/script/Tower-of-Zombies-KEYLESS-Aimbot-Bring-auto-more-234372)
+**Game**: [Tower of Zombies](https://www.roblox.com/games/99122501338948/Tower-of-Zombies)
 
+[![ScriptBlox Status](https://img.shields.io/badge/ScriptBlox-reviewed%20by%20a%20person%20%C2%B7%20Nov%202%2C%202026-vert?style=for-the-badge)](https://scriptblox.com/script/Tower-of-Zombies-KEYLESS-Aimbot-Bring-auto-more-234372)
 ```lua
 loadstring(game:HttpGet("https://raw.githubusercontent.com/Rival99900/Roblox-Scripts/refs/heads/main/scripts/Tower-of-Zombies-KEYLESS.lua"))()
 ```
