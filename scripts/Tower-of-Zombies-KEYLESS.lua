@@ -2,10 +2,19 @@
     ================================================================
     Tower of Zombies Hub — Tower of Zombies
     Created by Rival960 with the help of Claude
-    Version: v1.1.0 | Languages: 21 | Rayfield UI
+    Version: v1.1.1 | Languages: 21 | Rayfield UI
     Status: tested in-game
     ================================================================
 ]]
+
+-- Task library compatibility shim (Volt and other executors)
+if not task then
+    task = {
+        wait  = function(t) return wait(t or 0) end,
+        spawn = function(f, ...) return spawn(f, ...) end,
+        defer = function(f, ...) return spawn(f, ...) end,
+    }
+end
 
 -- Services
 local Players           = game:GetService("Players")
@@ -29,9 +38,9 @@ local Translations = {
         TabMovement         = "Movement",
         TabTools            = "Tools & Visuals",
         CreditsTitle        = "Credits",
-        CreditsContent      = "Created by Rival960 with the help of AI\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.1.0 — Combat Update",
-        ReleaseNotesTitle   = "v1.1.0 — Release Notes",
-        ReleaseNotesContent = "New in v1.1.0: Infinite Ammo, Freeze Ammo, Aimbot wall-penetration fix, ammo hook system.\nFound a bug or want to request a feature? Open an issue on GitHub (Rival99900/Roblox-Scripts) or post on ScriptBlox.",
+        CreditsContent      = "Created by Rival960 with the help of AI\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.1.1 — Combat Update",
+        ReleaseNotesTitle   = "v1.1.1 — Release Notes",
+        ReleaseNotesContent = "v1.1.0: Infinite Ammo, Freeze Ammo, Aimbot improvements.\nv1.1.1: Executor compatibility fix — resolved game freeze on Volt and other executors.\nFound a bug or want to request a feature? Open an issue on GitHub (Rival99900/Roblox-Scripts) or post on ScriptBlox.",
         Aimbot              = "Aimbot",
         AutoBring           = "Auto Bring",
         BringRadius         = "Bring Radius (studs)",
@@ -57,9 +66,9 @@ local Translations = {
         TabMovement         = "Déplacement",
         TabTools            = "Outils & Visuels",
         CreditsTitle        = "Crédits",
-        CreditsContent      = "Créé par Rival960 avec l'aide de l'IA\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.1.0 — Mise à Jour Combat",
-        ReleaseNotesTitle   = "v1.1.0 — Notes de Version",
-        ReleaseNotesContent = "Nouveau en v1.1.0 : Munitions Infinies, Geler les Munitions, correction de pénétration des murs de l'Aimbot, système de hooks de munitions.\nVous avez trouvé un bug ou souhaitez demander une fonctionnalité ? Ouvrez un ticket sur GitHub (Rival99900/Roblox-Scripts) ou postez sur ScriptBlox.",
+        CreditsContent      = "Créé par Rival960 avec l'aide de l'IA\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.1.1 — Mise à Jour Combat",
+        ReleaseNotesTitle   = "v1.1.1 — Notes de Version",
+        ReleaseNotesContent = "Nouveau en v1.1.0 : Munitions Infinies, Geler les Munitions, correction de pénétration des murs de l'Aimbot, système de hooks de munitions.\nv1.1.1 : Executor compatibility fix — resolved game freeze on Volt and other executors.\nVous avez trouvé un bug ou souhaitez demander une fonctionnalité ? Ouvrez un ticket sur GitHub (Rival99900/Roblox-Scripts) ou postez sur ScriptBlox.",
         Aimbot              = "Aimbot",
         AutoBring           = "Auto Attirer",
         BringRadius         = "Rayon d'attrait (studs)",
@@ -85,9 +94,9 @@ local Translations = {
         TabMovement         = "Bewegung",
         TabTools            = "Tools & Visuals",
         CreditsTitle        = "Credits",
-        CreditsContent      = "Erstellt von Rival960 mit KI-Hilfe\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.1.0 — Kampf-Update",
-        ReleaseNotesTitle   = "v1.1.0 — Versionshinweise",
-        ReleaseNotesContent = "Neu in v1.1.0: Unendlich Munition, Munition Einfrieren, Aimbot Wanddurchdringungsfix, Munitions-Hook-System.\nBug gefunden oder Feature-Wunsch? Erstelle ein Issue auf GitHub (Rival99900/Roblox-Scripts) oder schreibe auf ScriptBlox.",
+        CreditsContent      = "Erstellt von Rival960 mit KI-Hilfe\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.1.1 — Kampf-Update",
+        ReleaseNotesTitle   = "v1.1.1 — Versionshinweise",
+        ReleaseNotesContent = "Neu in v1.1.0: Unendlich Munition, Munition Einfrieren, Aimbot Wanddurchdringungsfix, Munitions-Hook-System.\nv1.1.1: Executor compatibility fix — resolved game freeze on Volt and other executors.\nBug gefunden oder Feature-Wunsch? Erstelle ein Issue auf GitHub (Rival99900/Roblox-Scripts) oder schreibe auf ScriptBlox.",
         Aimbot              = "Aimbot",
         AutoBring           = "Auto Anziehen",
         BringRadius         = "Anzugsradius (studs)",
@@ -113,9 +122,9 @@ local Translations = {
         TabMovement         = "Movimiento",
         TabTools            = "Herramientas",
         CreditsTitle        = "Créditos",
-        CreditsContent      = "Creado por Rival960 con ayuda de IA\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.1.0 — Actualización de Combate",
-        ReleaseNotesTitle   = "v1.1.0 — Notas de Versión",
-        ReleaseNotesContent = "Nuevo en v1.1.0: Munición Infinita, Congelar Munición, corrección de penetración de muros del Aimbot, sistema de ganchos de munición.\n¿Encontraste un error o quieres pedir una función? Abre un issue en GitHub (Rival99900/Roblox-Scripts) o publica en ScriptBlox.",
+        CreditsContent      = "Creado por Rival960 con ayuda de IA\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.1.1 — Actualización de Combate",
+        ReleaseNotesTitle   = "v1.1.1 — Notas de Versión",
+        ReleaseNotesContent = "Nuevo en v1.1.0: Munición Infinita, Congelar Munición, corrección de penetración de muros del Aimbot, sistema de ganchos de munición.\nv1.1.1: Executor compatibility fix — resolved game freeze on Volt and other executors.\n¿Encontraste un error o quieres pedir una función? Abre un issue en GitHub (Rival99900/Roblox-Scripts) o publica en ScriptBlox.",
         Aimbot              = "Aimbot",
         AutoBring           = "Auto Atraer",
         BringRadius         = "Radio de Atracción (studs)",
@@ -141,9 +150,9 @@ local Translations = {
         TabMovement         = "Movimento",
         TabTools            = "Ferramentas",
         CreditsTitle        = "Créditos",
-        CreditsContent      = "Criado por Rival960 com ajuda de IA\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.1.0 — Atualização de Combate",
-        ReleaseNotesTitle   = "v1.1.0 — Notas da Versão",
-        ReleaseNotesContent = "Novo em v1.1.0: Munição Infinita, Congelar Munição, correção de penetração de paredes do Aimbot, sistema de hooks de munição.\nEncontrou um bug ou quer sugerir uma função? Abra uma issue no GitHub (Rival99900/Roblox-Scripts) ou publique no ScriptBlox.",
+        CreditsContent      = "Criado por Rival960 com ajuda de IA\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.1.1 — Atualização de Combate",
+        ReleaseNotesTitle   = "v1.1.1 — Notas da Versão",
+        ReleaseNotesContent = "Novo em v1.1.0: Munição Infinita, Congelar Munição, correção de penetração de paredes do Aimbot, sistema de hooks de munição.\nv1.1.1: Executor compatibility fix — resolved game freeze on Volt and other executors.\nEncontrou um bug ou quer sugerir uma função? Abra uma issue no GitHub (Rival99900/Roblox-Scripts) ou publique no ScriptBlox.",
         Aimbot              = "Aimbot",
         AutoBring           = "Auto Atrair",
         BringRadius         = "Raio de Atração (studs)",
@@ -169,9 +178,9 @@ local Translations = {
         TabMovement         = "Движение",
         TabTools            = "Инструменты",
         CreditsTitle        = "Авторы",
-        CreditsContent      = "Создано Rival960 с помощью ИИ\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.1.0 — Боевое Обновление",
-        ReleaseNotesTitle   = "v1.1.0 — Примечания к версии",
-        ReleaseNotesContent = "Новое в v1.1.0: Бесконечные патроны, Заморозить патроны, исправление проникновения сквозь стены аимбота, система хуков патронов.\nНашли баг или хотите предложить функцию? Создайте issue на GitHub (Rival99900/Roblox-Scripts) или напишите на ScriptBlox.",
+        CreditsContent      = "Создано Rival960 с помощью ИИ\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.1.1 — Боевое Обновление",
+        ReleaseNotesTitle   = "v1.1.1 — Примечания к версии",
+        ReleaseNotesContent = "Новое в v1.1.0: Бесконечные патроны, Заморозить патроны, исправление проникновения сквозь стены аимбота, система хуков патронов.\nv1.1.1: Executor compatibility fix — resolved game freeze on Volt and other executors.\nНашли баг или хотите предложить функцию? Создайте issue на GitHub (Rival99900/Roblox-Scripts) или напишите на ScriptBlox.",
         Aimbot              = "Аимбот",
         AutoBring           = "Авто Притяжение",
         BringRadius         = "Радиус притяжения (ст.)",
@@ -197,9 +206,9 @@ local Translations = {
         TabMovement         = "Movimento",
         TabTools            = "Strumenti",
         CreditsTitle        = "Crediti",
-        CreditsContent      = "Creato da Rival960 con l'aiuto dell'IA\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.1.0 — Aggiornamento Combattimento",
-        ReleaseNotesTitle   = "v1.1.0 — Note di Versione",
-        ReleaseNotesContent = "Nuovo in v1.1.0: Munizioni Infinite, Blocca Munizioni, fix penetrazione pareti Aimbot, sistema di hook munizioni.\nHai trovato un bug o vuoi richiedere una funzione? Apri un'issue su GitHub (Rival99900/Roblox-Scripts) o scrivi su ScriptBlox.",
+        CreditsContent      = "Creato da Rival960 con l'aiuto dell'IA\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.1.1 — Aggiornamento Combattimento",
+        ReleaseNotesTitle   = "v1.1.1 — Note di Versione",
+        ReleaseNotesContent = "Nuovo in v1.1.0: Munizioni Infinite, Blocca Munizioni, fix penetrazione pareti Aimbot, sistema di hook munizioni.\nv1.1.1: Executor compatibility fix — resolved game freeze on Volt and other executors.\nHai trovato un bug o vuoi richiedere una funzione? Apri un'issue su GitHub (Rival99900/Roblox-Scripts) o scrivi su ScriptBlox.",
         Aimbot              = "Aimbot",
         AutoBring           = "Auto Attira",
         BringRadius         = "Raggio di Attrazione (studs)",
@@ -225,9 +234,9 @@ local Translations = {
         TabMovement         = "Beweging",
         TabTools            = "Tools & Visuals",
         CreditsTitle        = "Credits",
-        CreditsContent      = "Gemaakt door Rival960 met AI-hulp\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.1.0 — Gevechtsupdate",
-        ReleaseNotesTitle   = "v1.1.0 — Versienotities",
-        ReleaseNotesContent = "Nieuw in v1.1.0: Oneindige Munitie, Bevriezing Munitie, Aimbot muurpenetratie fix, munitie hook systeem.\nBug gevonden of wil je een functie aanvragen? Open een issue op GitHub (Rival99900/Roblox-Scripts) of post op ScriptBlox.",
+        CreditsContent      = "Gemaakt door Rival960 met AI-hulp\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.1.1 — Gevechtsupdate",
+        ReleaseNotesTitle   = "v1.1.1 — Versienotities",
+        ReleaseNotesContent = "Nieuw in v1.1.0: Oneindige Munitie, Bevriezing Munitie, Aimbot muurpenetratie fix, munitie hook systeem.\nv1.1.1: Executor compatibility fix — resolved game freeze on Volt and other executors.\nBug gevonden of wil je een functie aanvragen? Open een issue op GitHub (Rival99900/Roblox-Scripts) of post op ScriptBlox.",
         Aimbot              = "Aimbot",
         AutoBring           = "Auto Aantrekken",
         BringRadius         = "Aantrekkingsradius (studs)",
@@ -253,9 +262,9 @@ local Translations = {
         TabMovement         = "Ruch",
         TabTools            = "Narzędzia",
         CreditsTitle        = "Kredyty",
-        CreditsContent      = "Stworzone przez Rival960 z pomocą AI\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.1.0 — Aktualizacja Walki",
-        ReleaseNotesTitle   = "v1.1.0 — Informacje o Wersji",
-        ReleaseNotesContent = "Nowe w v1.1.0: Nieskończona Amunicja, Zamroź Amunicję, naprawa przenikania przez ściany Aimbot, system haków amunicji.\nZnalazłeś błąd lub chcesz zgłosić funkcję? Otwórz issue na GitHub (Rival99900/Roblox-Scripts) lub napisz na ScriptBlox.",
+        CreditsContent      = "Stworzone przez Rival960 z pomocą AI\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.1.1 — Aktualizacja Walki",
+        ReleaseNotesTitle   = "v1.1.1 — Informacje o Wersji",
+        ReleaseNotesContent = "Nowe w v1.1.0: Nieskończona Amunicja, Zamroź Amunicję, naprawa przenikania przez ściany Aimbot, system haków amunicji.\nv1.1.1: Executor compatibility fix — resolved game freeze on Volt and other executors.\nZnalazłeś błąd lub chcesz zgłosić funkcję? Otwórz issue na GitHub (Rival99900/Roblox-Scripts) lub napisz na ScriptBlox.",
         Aimbot              = "Aimbot",
         AutoBring           = "Auto Przyciąganie",
         BringRadius         = "Promień przyciągania (studs)",
@@ -281,9 +290,9 @@ local Translations = {
         TabMovement         = "移动",
         TabTools            = "工具与视觉",
         CreditsTitle        = "致谢",
-        CreditsContent      = "由 Rival960 借助 AI 创建\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.1.0 — 战斗更新",
-        ReleaseNotesTitle   = "v1.1.0 — 版本说明",
-        ReleaseNotesContent = "v1.1.0 新内容：无限弹药、冻结弹药、瞄准助手穿墙修复、弹药钩子系统。\n发现漏洞或想申请功能？请在 GitHub (Rival99900/Roblox-Scripts) 提交 issue 或在 ScriptBlox 发帖。",
+        CreditsContent      = "由 Rival960 借助 AI 创建\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.1.1 — 战斗更新",
+        ReleaseNotesTitle   = "v1.1.1 — 版本说明",
+        ReleaseNotesContent = "v1.1.0 新内容：无限弹药、冻结弹药、瞄准助手穿墙修复、弹药钩子系统。\nv1.1.1: Executor compatibility fix — resolved game freeze on Volt and other executors.\n发现漏洞或想申请功能？请在 GitHub (Rival99900/Roblox-Scripts) 提交 issue 或在 ScriptBlox 发帖。",
         Aimbot              = "自动瞄准",
         AutoBring           = "自动吸引",
         BringRadius         = "吸引半径 (格)",
@@ -309,9 +318,9 @@ local Translations = {
         TabMovement         = "移動",
         TabTools            = "ツール",
         CreditsTitle        = "クレジット",
-        CreditsContent      = "Rival960 と AI の協力で作成\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.1.0 — 戦闘アップデート",
-        ReleaseNotesTitle   = "v1.1.0 — リリースノート",
-        ReleaseNotesContent = "v1.1.0の新機能：無限弾薬、弾薬固定、エイムボット壁貫通修正、弾薬フックシステム。\nバグ発見や機能リクエストはGitHub (Rival99900/Roblox-Scripts) のissueまたはScriptBloxに投稿してください。",
+        CreditsContent      = "Rival960 と AI の協力で作成\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.1.1 — 戦闘アップデート",
+        ReleaseNotesTitle   = "v1.1.1 — リリースノート",
+        ReleaseNotesContent = "v1.1.0の新機能：無限弾薬、弾薬固定、エイムボット壁貫通修正、弾薬フックシステム。\nv1.1.1: Executor compatibility fix — resolved game freeze on Volt and other executors.\nバグ発見や機能リクエストはGitHub (Rival99900/Roblox-Scripts) のissueまたはScriptBloxに投稿してください。",
         Aimbot              = "エイムボット",
         AutoBring           = "自動引き寄せ",
         BringRadius         = "引き寄せ半径 (スタッド)",
@@ -337,9 +346,9 @@ local Translations = {
         TabMovement         = "Hareket",
         TabTools            = "Araçlar",
         CreditsTitle        = "Krediler",
-        CreditsContent      = "Rival960 tarafından AI yardımıyla yapılmıştır\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.1.0 — Savaş Güncellemesi",
-        ReleaseNotesTitle   = "v1.1.0 — Sürüm Notları",
-        ReleaseNotesContent = "v1.1.0'daki yenilikler: Sonsuz Mermi, Mermiyi Dondur, Aimbot duvar nüfuz düzeltmesi, mermi kanca sistemi.\nBir hata buldunuz veya özellik talep etmek mi istiyorsunuz? GitHub'da (Rival99900/Roblox-Scripts) issue açın veya ScriptBlox'ta paylaşın.",
+        CreditsContent      = "Rival960 tarafından AI yardımıyla yapılmıştır\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.1.1 — Savaş Güncellemesi",
+        ReleaseNotesTitle   = "v1.1.1 — Sürüm Notları",
+        ReleaseNotesContent = "v1.1.0'daki yenilikler: Sonsuz Mermi, Mermiyi Dondur, Aimbot duvar nüfuz düzeltmesi, mermi kanca sistemi.\nv1.1.1: Executor compatibility fix — resolved game freeze on Volt and other executors.\nBir hata buldunuz veya özellik talep etmek mi istiyorsunuz? GitHub'da (Rival99900/Roblox-Scripts) issue açın veya ScriptBlox'ta paylaşın.",
         Aimbot              = "Aimbot",
         AutoBring           = "Otomatik Çekme",
         BringRadius         = "Çekme Yarıçapı (studs)",
@@ -365,9 +374,9 @@ local Translations = {
         TabMovement         = "이동",
         TabTools            = "도구",
         CreditsTitle        = "크레딧",
-        CreditsContent      = "Rival960이 AI의 도움으로 제작\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.1.0 — 전투 업데이트",
-        ReleaseNotesTitle   = "v1.1.0 — 릴리즈 노트",
-        ReleaseNotesContent = "v1.1.0 새 기능: 무한 탄약, 탄약 고정, 에임봇 벽 관통 수정, 탄약 훅 시스템.\n버그를 찾거나 기능을 요청하고 싶다면? GitHub (Rival99900/Roblox-Scripts)에 이슈를 열거나 ScriptBlox에 게시하세요.",
+        CreditsContent      = "Rival960이 AI의 도움으로 제작\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.1.1 — 전투 업데이트",
+        ReleaseNotesTitle   = "v1.1.1 — 릴리즈 노트",
+        ReleaseNotesContent = "v1.1.0 새 기능: 무한 탄약, 탄약 고정, 에임봇 벽 관통 수정, 탄약 훅 시스템.\nv1.1.1: Executor compatibility fix — resolved game freeze on Volt and other executors.\n버그를 찾거나 기능을 요청하고 싶다면? GitHub (Rival99900/Roblox-Scripts)에 이슈를 열거나 ScriptBlox에 게시하세요.",
         Aimbot              = "에임봇",
         AutoBring           = "자동 끌어오기",
         BringRadius         = "끌어오기 반경 (스터드)",
@@ -393,9 +402,9 @@ local Translations = {
         TabMovement         = "الحركة",
         TabTools            = "الأدوات",
         CreditsTitle        = "الاعتمادات",
-        CreditsContent      = "تم إنشاؤه بواسطة Rival960 بمساعدة الذكاء الاصطناعي\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.1.0 — تحديث القتال",
-        ReleaseNotesTitle   = "v1.1.0 — ملاحظات الإصدار",
-        ReleaseNotesContent = "جديد في v1.1.0: ذخيرة لا نهائية، تجميد الذخيرة، إصلاح اختراق الجدران للأيمبوت، نظام خطافات الذخيرة.\nوجدت خطأ أو تريد طلب ميزة؟ افتح issue على GitHub (Rival99900/Roblox-Scripts) أو انشر على ScriptBlox.",
+        CreditsContent      = "تم إنشاؤه بواسطة Rival960 بمساعدة الذكاء الاصطناعي\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.1.1 — تحديث القتال",
+        ReleaseNotesTitle   = "v1.1.1 — ملاحظات الإصدار",
+        ReleaseNotesContent = "جديد في v1.1.0: ذخيرة لا نهائية، تجميد الذخيرة، إصلاح اختراق الجدران للأيمبوت، نظام خطافات الذخيرة.\nv1.1.1: Executor compatibility fix — resolved game freeze on Volt and other executors.\nوجدت خطأ أو تريد طلب ميزة؟ افتح issue على GitHub (Rival99900/Roblox-Scripts) أو انشر على ScriptBlox.",
         Aimbot              = "أيمبوت",
         AutoBring           = "جذب تلقائي",
         BringRadius         = "نطاق الجذب (وحدة)",
@@ -421,9 +430,9 @@ local Translations = {
         TabMovement         = "Di Chuyển",
         TabTools            = "Công Cụ",
         CreditsTitle        = "Tín Dụng",
-        CreditsContent      = "Tạo bởi Rival960 với sự trợ giúp của AI\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.1.0 — Cập Nhật Chiến Đấu",
-        ReleaseNotesTitle   = "v1.1.0 — Ghi Chú Phiên Bản",
-        ReleaseNotesContent = "Mới trong v1.1.0: Đạn Vô Hạn, Đóng Băng Đạn, sửa lỗi xuyên tường Aimbot, hệ thống hook đạn.\nTìm thấy lỗi hoặc muốn yêu cầu tính năng? Mở issue trên GitHub (Rival99900/Roblox-Scripts) hoặc đăng trên ScriptBlox.",
+        CreditsContent      = "Tạo bởi Rival960 với sự trợ giúp của AI\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.1.1 — Cập Nhật Chiến Đấu",
+        ReleaseNotesTitle   = "v1.1.1 — Ghi Chú Phiên Bản",
+        ReleaseNotesContent = "Mới trong v1.1.0: Đạn Vô Hạn, Đóng Băng Đạn, sửa lỗi xuyên tường Aimbot, hệ thống hook đạn.\nv1.1.1: Executor compatibility fix — resolved game freeze on Volt and other executors.\nTìm thấy lỗi hoặc muốn yêu cầu tính năng? Mở issue trên GitHub (Rival99900/Roblox-Scripts) hoặc đăng trên ScriptBlox.",
         Aimbot              = "Aimbot",
         AutoBring           = "Tự Động Kéo",
         BringRadius         = "Bán Kính Kéo (studs)",
@@ -449,9 +458,9 @@ local Translations = {
         TabMovement         = "Rörelse",
         TabTools            = "Verktyg",
         CreditsTitle        = "Erkännanden",
-        CreditsContent      = "Skapad av Rival960 med hjälp av AI\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.1.0 — Stridsuppdatering",
-        ReleaseNotesTitle   = "v1.1.0 — Versionsanteckningar",
-        ReleaseNotesContent = "Nytt i v1.1.0: Oändlig Ammunition, Frys Ammunition, Aimbot väggenomträngningsfix, ammunition hook-system.\nHittade du en bugg eller vill begära en funktion? Öppna ett issue på GitHub (Rival99900/Roblox-Scripts) eller posta på ScriptBlox.",
+        CreditsContent      = "Skapad av Rival960 med hjälp av AI\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.1.1 — Stridsuppdatering",
+        ReleaseNotesTitle   = "v1.1.1 — Versionsanteckningar",
+        ReleaseNotesContent = "Nytt i v1.1.0: Oändlig Ammunition, Frys Ammunition, Aimbot väggenomträngningsfix, ammunition hook-system.\nv1.1.1: Executor compatibility fix — resolved game freeze on Volt and other executors.\nHittade du en bugg eller vill begära en funktion? Öppna ett issue på GitHub (Rival99900/Roblox-Scripts) eller posta på ScriptBlox.",
         Aimbot              = "Aimbot",
         AutoBring           = "Auto Hämta",
         BringRadius         = "Hämtningsradie (studs)",
@@ -477,9 +486,9 @@ local Translations = {
         TabMovement         = "Κίνηση",
         TabTools            = "Εργαλεία",
         CreditsTitle        = "Εύσημα",
-        CreditsContent      = "Δημιουργήθηκε από Rival960 με βοήθεια AI\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.1.0 — Ενημέρωση Μάχης",
-        ReleaseNotesTitle   = "v1.1.0 — Σημειώσεις Έκδοσης",
-        ReleaseNotesContent = "Νέο στο v1.1.0: Άπειρα Πυρομαχικά, Πάγωμα Πυρομαχικών, διόρθωση διαπέρασης τοίχων Aimbot, σύστημα hooks πυρομαχικών.\nΒρήκατε σφάλμα ή θέλετε να ζητήσετε λειτουργία; Ανοίξτε ένα issue στο GitHub (Rival99900/Roblox-Scripts) ή δημοσιεύστε στο ScriptBlox.",
+        CreditsContent      = "Δημιουργήθηκε από Rival960 με βοήθεια AI\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.1.1 — Ενημέρωση Μάχης",
+        ReleaseNotesTitle   = "v1.1.1 — Σημειώσεις Έκδοσης",
+        ReleaseNotesContent = "Νέο στο v1.1.0: Άπειρα Πυρομαχικά, Πάγωμα Πυρομαχικών, διόρθωση διαπέρασης τοίχων Aimbot, σύστημα hooks πυρομαχικών.\nv1.1.1: Executor compatibility fix — resolved game freeze on Volt and other executors.\nΒρήκατε σφάλμα ή θέλετε να ζητήσετε λειτουργία; Ανοίξτε ένα issue στο GitHub (Rival99900/Roblox-Scripts) ή δημοσιεύστε στο ScriptBlox.",
         Aimbot              = "Aimbot",
         AutoBring           = "Αυτόματη Έλξη",
         BringRadius         = "Ακτίνα Έλξης (studs)",
@@ -505,9 +514,9 @@ local Translations = {
         TabMovement         = "Mișcare",
         TabTools            = "Instrumente",
         CreditsTitle        = "Credite",
-        CreditsContent      = "Creat de Rival960 cu ajutorul AI\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.1.0 — Actualizare Luptă",
-        ReleaseNotesTitle   = "v1.1.0 — Note de Lansare",
-        ReleaseNotesContent = "Nou în v1.1.0: Muniție Infinită, Îngheță Muniție, corectare penetrare pereți Aimbot, sistem de hooks muniție.\nAți găsit un bug sau doriți să solicitați o funcție? Deschideți un issue pe GitHub (Rival99900/Roblox-Scripts) sau postați pe ScriptBlox.",
+        CreditsContent      = "Creat de Rival960 cu ajutorul AI\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.1.1 — Actualizare Luptă",
+        ReleaseNotesTitle   = "v1.1.1 — Note de Lansare",
+        ReleaseNotesContent = "Nou în v1.1.0: Muniție Infinită, Îngheță Muniție, corectare penetrare pereți Aimbot, sistem de hooks muniție.\nv1.1.1: Executor compatibility fix — resolved game freeze on Volt and other executors.\nAți găsit un bug sau doriți să solicitați o funcție? Deschideți un issue pe GitHub (Rival99900/Roblox-Scripts) sau postați pe ScriptBlox.",
         Aimbot              = "Aimbot",
         AutoBring           = "Auto Atragere",
         BringRadius         = "Raza de Atragere (studs)",
@@ -533,9 +542,9 @@ local Translations = {
         TabMovement         = "Рух",
         TabTools            = "Інструменти",
         CreditsTitle        = "Автори",
-        CreditsContent      = "Створено Rival960 за допомогою AI\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.1.0 — Бойове Оновлення",
-        ReleaseNotesTitle   = "v1.1.0 — Примітки до версії",
-        ReleaseNotesContent = "Нове у v1.1.0: Нескінченні патрони, Заморозити патрони, виправлення проникнення крізь стіни аімбота, система хуків патронів.\nЗнайшли баг або хочете запропонувати функцію? Створіть issue на GitHub (Rival99900/Roblox-Scripts) або напишіть на ScriptBlox.",
+        CreditsContent      = "Створено Rival960 за допомогою AI\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.1.1 — Бойове Оновлення",
+        ReleaseNotesTitle   = "v1.1.1 — Примітки до версії",
+        ReleaseNotesContent = "Нове у v1.1.0: Нескінченні патрони, Заморозити патрони, виправлення проникнення крізь стіни аімбота, система хуків патронів.\nv1.1.1: Executor compatibility fix — resolved game freeze on Volt and other executors.\nЗнайшли баг або хочете запропонувати функцію? Створіть issue на GitHub (Rival99900/Roblox-Scripts) або напишіть на ScriptBlox.",
         Aimbot              = "Аімбот",
         AutoBring           = "Авто Притягання",
         BringRadius         = "Радіус притягання (ст.)",
@@ -561,9 +570,9 @@ local Translations = {
         TabMovement         = "Pohyb",
         TabTools            = "Nástroje",
         CreditsTitle        = "Poděkování",
-        CreditsContent      = "Vytvořeno Rival960 s pomocí AI\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.1.0 — Bojová Aktualizace",
-        ReleaseNotesTitle   = "v1.1.0 — Poznámky k Vydání",
-        ReleaseNotesContent = "Nové ve v1.1.0: Nekonečná Munice, Zmrazit Munici, oprava průniku zdmi Aimbot, systém háčků munice.\nNašli jste chybu nebo chcete požádat o funkci? Otevřete issue na GitHub (Rival99900/Roblox-Scripts) nebo přidejte příspěvek na ScriptBlox.",
+        CreditsContent      = "Vytvořeno Rival960 s pomocí AI\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.1.1 — Bojová Aktualizace",
+        ReleaseNotesTitle   = "v1.1.1 — Poznámky k Vydání",
+        ReleaseNotesContent = "Nové ve v1.1.0: Nekonečná Munice, Zmrazit Munici, oprava průniku zdmi Aimbot, systém háčků munice.\nv1.1.1: Executor compatibility fix — resolved game freeze on Volt and other executors.\nNašli jste chybu nebo chcete požádat o funkci? Otevřete issue na GitHub (Rival99900/Roblox-Scripts) nebo přidejte příspěvek na ScriptBlox.",
         Aimbot              = "Aimbot",
         AutoBring           = "Auto Přitáhnout",
         BringRadius         = "Poloměr přitáhnutí (studs)",
@@ -589,9 +598,9 @@ local Translations = {
         TabMovement         = "Bevægelse",
         TabTools            = "Værktøjer",
         CreditsTitle        = "Anerkendelser",
-        CreditsContent      = "Oprettet af Rival960 med hjælp fra AI\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.1.0 — Kampsopdatering",
-        ReleaseNotesTitle   = "v1.1.0 — Udgivelsesnoter",
-        ReleaseNotesContent = "Nyt i v1.1.0: Uendelig Ammunition, Frys Ammunition, Aimbot væggennemtrængningsfix, ammunition hook-system.\nFandt du en fejl eller vil du anmode om en funktion? Åbn et issue på GitHub (Rival99900/Roblox-Scripts) eller post på ScriptBlox.",
+        CreditsContent      = "Oprettet af Rival960 med hjælp fra AI\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.1.1 — Kampsopdatering",
+        ReleaseNotesTitle   = "v1.1.1 — Udgivelsesnoter",
+        ReleaseNotesContent = "Nyt i v1.1.0: Uendelig Ammunition, Frys Ammunition, Aimbot væggennemtrængningsfix, ammunition hook-system.\nv1.1.1: Executor compatibility fix — resolved game freeze on Volt and other executors.\nFandt du en fejl eller vil du anmode om en funktion? Åbn et issue på GitHub (Rival99900/Roblox-Scripts) eller post på ScriptBlox.",
         Aimbot              = "Aimbot",
         AutoBring           = "Auto Hent",
         BringRadius         = "Hentningsradius (studs)",
@@ -648,6 +657,10 @@ local FIRE_COOLDOWN = 0.08   -- 0.08s safe below the 0.18s minimum FinalFireRate
 
 -- Aimbot lockout detection
 local lastDamageTime = tick()  -- updated on every successful fireAtTarget call
+
+-- Auto Bring connection (stored so it can be disconnected on toggle OFF)
+local bringTimer    = 0
+local autoBringConn = nil
 
 -- ================================================================
 -- Character helpers
@@ -741,12 +754,16 @@ local function softReequip()
 end
 
 -- ================================================================
--- Rayfield load (keyless)
+-- Rayfield load (keyless) — wrapped in pcall to prevent freeze on
+-- slow CDN or unsupported executors.
 -- ================================================================
-local success, Rayfield = pcall(function()
+local ok, Rayfield = pcall(function()
     return loadstring(game:HttpGet("https://sirius.menu/rayfield"))()
 end)
-if not success or not Rayfield then return end
+if not ok or not Rayfield then
+    warn("[Hub] Rayfield failed to load")
+    return
+end
 
 local Window = Rayfield:CreateWindow({
     Name             = T("WindowTitle"),
@@ -816,10 +833,8 @@ local function fireAtTarget(targetPart)
     local normalVec = Vector3.new(0, 1, 0)
 
     -- Clear weapon debounce state before firing
-    pcall(function()
-        tool:SetAttribute("Firing", false)
-        tool:SetAttribute("ContinuousFireActive", false)
-    end)
+    pcall(function() tool:SetAttribute("Firing", false) end)
+    pcall(function() tool:SetAttribute("ContinuousFireActive", false) end)
 
     local fired = false
     pcall(function()
@@ -885,7 +900,59 @@ CombatTab:CreateToggle({
     CurrentValue = false,
     Callback     = function(val)
         Settings.AutoBring = val
-        if not val then
+        if val then
+            bringTimer = 0
+            -- Connect Heartbeat for AutoBring (store so we can disconnect later)
+            if autoBringConn then autoBringConn:Disconnect() end
+            autoBringConn = RunService.Heartbeat:Connect(function(dt)
+                if not Settings.AutoBring then return end
+                bringTimer = bringTimer + dt
+                if bringTimer < Settings.BringInterval then return end
+                bringTimer = 0
+                task.spawn(function()
+                    pcall(function()
+                        local hrp = getHRP()
+                        if not hrp then return end
+                        local zombieFolder = workspace:FindFirstChild("ActiveZombies")
+                        if not zombieFolder then return end
+
+                        local zombies = zombieFolder:GetChildren()
+                        local total   = #zombies
+                        if total == 0 then return end
+
+                        for i, zombie in ipairs(zombies) do
+                            local hum = zombie:FindFirstChildOfClass("Humanoid")
+                            if hum and hum.Health > 0 then
+                                local zhrp = zombie:FindFirstChild("HumanoidRootPart")
+                                if zhrp then
+                                    local angle  = ((i - 1) / total) * (2 * math.pi)
+                                    local offset = Vector3.new(
+                                        math.cos(angle), 0, math.sin(angle)
+                                    ) * Settings.BringRadius
+                                    pcall(function()
+                                        zhrp.CFrame   = CFrame.new(hrp.Position + offset)
+                                        hum.WalkSpeed = 0
+                                    end)
+                                    if Settings.Aimbot then
+                                        local target = zombie:FindFirstChild("HeadHitbox")
+                                                    or zombie:FindFirstChild("Head")
+                                                    or zhrp
+                                        task.spawn(function() fireAtTarget(target) end)
+                                    end
+                                    task.wait(0.01)
+                                end
+                            end
+                        end
+                    end)
+                end)
+            end)
+        else
+            -- Disconnect Heartbeat to avoid leaked connection
+            if autoBringConn then
+                autoBringConn:Disconnect()
+                autoBringConn = nil
+            end
+            bringTimer = 0
             pcall(function()
                 local zombieFolder = workspace:FindFirstChild("ActiveZombies")
                 if not zombieFolder then return end
@@ -968,7 +1035,7 @@ CombatTab:CreateToggle({
 local MovementTab = Window:CreateTab(T("TabMovement"), 4483362458)
 
 -- ================================================================
--- Fly system (confirmed working — do not touch)
+-- Fly system (confirmed working — do not touch logic)
 -- ================================================================
 local FLYING       = false
 local FLY_BTN_UP   = 0
@@ -989,18 +1056,24 @@ local function enableFly()
 
     local CTRL = {F=0, B=0, L=0, R=0, UP=0, DOWN=0}
 
-    local bv = Instance.new("BodyVelocity")
-    bv.Name      = "_SWAT_FLY_BV"
-    bv.MaxForce  = Vector3.new(9e9, 9e9, 9e9)
-    bv.Velocity  = Vector3.zero
-    bv.Parent    = hrp
-
-    local bg = Instance.new("BodyGyro")
-    bg.Name      = "_SWAT_FLY_BG"
-    bg.P         = 9e4
-    bg.MaxTorque = Vector3.new(9e9, 9e9, 9e9)
-    bg.CFrame    = hrp.CFrame
-    bg.Parent    = hrp
+    -- Wrap deprecated Instance.new calls in pcall for executor compatibility
+    local bv, bg
+    pcall(function()
+        bv = Instance.new("BodyVelocity")
+        bv.Name      = "_SWAT_FLY_BV"
+        bv.MaxForce  = Vector3.new(9e9, 9e9, 9e9)
+        bv.Velocity  = Vector3.zero
+        bv.Parent    = hrp
+    end)
+    pcall(function()
+        bg = Instance.new("BodyGyro")
+        bg.Name      = "_SWAT_FLY_BG"
+        bg.P         = 9e4
+        bg.MaxTorque = Vector3.new(9e9, 9e9, 9e9)
+        bg.CFrame    = hrp.CFrame
+        bg.Parent    = hrp
+    end)
+    if not bv or not bg then FLYING = false return end
 
     hum.PlatformStand = true
 
@@ -1343,55 +1416,6 @@ UserInputService.JumpRequest:Connect(function()
     pcall(function()
         local hum = getHum()
         if hum then hum:ChangeState(Enum.HumanoidStateType.Jumping) end
-    end)
-end)
-
--- Auto Bring: teleport zombies into a circle, fire at each if Aimbot also ON.
--- Never calls tool:Activate() — only CFrame manipulation + fireAtTarget.
-local bringTimer = 0
-RunService.Heartbeat:Connect(function(dt)
-    if not Settings.AutoBring then
-        bringTimer = 0
-        return
-    end
-    bringTimer = bringTimer + dt
-    if bringTimer < Settings.BringInterval then return end
-    bringTimer = 0
-    task.spawn(function()
-        pcall(function()
-            local hrp = getHRP()
-            if not hrp then return end
-            local zombieFolder = workspace:FindFirstChild("ActiveZombies")
-            if not zombieFolder then return end
-
-            local zombies = zombieFolder:GetChildren()
-            local total   = #zombies
-            if total == 0 then return end
-
-            for i, zombie in ipairs(zombies) do
-                local hum = zombie:FindFirstChildOfClass("Humanoid")
-                if hum and hum.Health > 0 then
-                    local zhrp = zombie:FindFirstChild("HumanoidRootPart")
-                    if zhrp then
-                        local angle  = ((i - 1) / total) * (2 * math.pi)
-                        local offset = Vector3.new(
-                            math.cos(angle), 0, math.sin(angle)
-                        ) * Settings.BringRadius
-                        pcall(function()
-                            zhrp.CFrame   = CFrame.new(hrp.Position + offset)
-                            hum.WalkSpeed = 0
-                        end)
-                        if Settings.Aimbot then
-                            local target = zombie:FindFirstChild("HeadHitbox")
-                                        or zombie:FindFirstChild("Head")
-                                        or zhrp
-                            task.spawn(function() fireAtTarget(target) end)
-                        end
-                        task.wait(0.01)
-                    end
-                end
-            end
-        end)
     end)
 end)
 
