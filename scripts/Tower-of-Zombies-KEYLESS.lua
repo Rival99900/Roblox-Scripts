@@ -2,8 +2,8 @@
     ================================================================
     Tower of Zombies Hub — Tower of Zombies
     Created by Rival960 with the help of Claude
-    Version: v1.1.1 | Languages: 21 | Rayfield UI
-    Status: tested in-game
+    Version: v1.2.0 | Languages: 21 | Rayfield UI
+    Status: untested in-game
     ================================================================
 ]]
 
@@ -38,9 +38,9 @@ local Translations = {
         TabMovement         = "Movement",
         TabTools            = "Tools & Visuals",
         CreditsTitle        = "Credits",
-        CreditsContent      = "Created by Rival960 with the help of AI\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.1.1 — Combat Update",
-        ReleaseNotesTitle   = "v1.1.1 — Release Notes",
-        ReleaseNotesContent = "v1.1.0: Infinite Ammo, Freeze Ammo, Aimbot improvements.\nv1.1.1: Executor compatibility fix — resolved game freeze on Volt and other executors.\nFound a bug or want to request a feature? Open an issue on GitHub (Rival99900/Roblox-Scripts) or post on ScriptBlox.",
+        CreditsContent      = "Created by Rival960 with the help of AI\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.2.0 — Melee Update",
+        ReleaseNotesTitle   = "v1.2.0 — Release Notes",
+        ReleaseNotesContent = "v1.2.0: Fixed Infinite Ammo and Freeze Ammo (Reserve was in the wrong location), added melee weapon support (Bat and all melee tools) for Aimbot and Auto Bring, improved executor stability for Volt and all executors.\nFound a bug or want to request a feature? Open an issue on GitHub (Rival99900/Roblox-Scripts) or post on ScriptBlox.",
         Aimbot              = "Aimbot",
         AutoBring           = "Auto Bring",
         BringRadius         = "Bring Radius (studs)",
@@ -57,6 +57,7 @@ local Translations = {
         Fullbright          = "Fullbright",
         LanguageSelect      = "Language",
         LangNote            = "Language change requires re-execution",
+        MeleeSupport        = "Melee Support",
     },
     FR = {
         WindowTitle         = "Tower of Zombies Hub",
@@ -66,9 +67,9 @@ local Translations = {
         TabMovement         = "Déplacement",
         TabTools            = "Outils & Visuels",
         CreditsTitle        = "Crédits",
-        CreditsContent      = "Créé par Rival960 avec l'aide de l'IA\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.1.1 — Mise à Jour Combat",
-        ReleaseNotesTitle   = "v1.1.1 — Notes de Version",
-        ReleaseNotesContent = "Nouveau en v1.1.0 : Munitions Infinies, Geler les Munitions, correction de pénétration des murs de l'Aimbot, système de hooks de munitions.\nv1.1.1 : Executor compatibility fix — resolved game freeze on Volt and other executors.\nVous avez trouvé un bug ou souhaitez demander une fonctionnalité ? Ouvrez un ticket sur GitHub (Rival99900/Roblox-Scripts) ou postez sur ScriptBlox.",
+        CreditsContent      = "Créé par Rival960 avec l'aide de l'IA\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.2.0 — Mise à Jour Mêlée",
+        ReleaseNotesTitle   = "v1.2.0 — Notes de Version",
+        ReleaseNotesContent = "v1.2.0 : Correction de Munitions Infinies et Geler les Munitions (la Réserve était au mauvais endroit), support des armes de mêlée (Batte et tous les outils de mêlée) pour l'Aimbot et l'Auto Attirer, stabilité améliorée pour Volt et tous les executors.\nVous avez trouvé un bug ou souhaitez demander une fonctionnalité ? Ouvrez un ticket sur GitHub (Rival99900/Roblox-Scripts) ou postez sur ScriptBlox.",
         Aimbot              = "Aimbot",
         AutoBring           = "Auto Attirer",
         BringRadius         = "Rayon d'attrait (studs)",
@@ -85,6 +86,7 @@ local Translations = {
         Fullbright          = "Luminosité Max",
         LanguageSelect      = "Langue",
         LangNote            = "Le changement de langue nécessite une ré-exécution",
+        MeleeSupport        = "Support Mêlée",
     },
     DE = {
         WindowTitle         = "Tower of Zombies Hub",
@@ -94,9 +96,9 @@ local Translations = {
         TabMovement         = "Bewegung",
         TabTools            = "Tools & Visuals",
         CreditsTitle        = "Credits",
-        CreditsContent      = "Erstellt von Rival960 mit KI-Hilfe\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.1.1 — Kampf-Update",
-        ReleaseNotesTitle   = "v1.1.1 — Versionshinweise",
-        ReleaseNotesContent = "Neu in v1.1.0: Unendlich Munition, Munition Einfrieren, Aimbot Wanddurchdringungsfix, Munitions-Hook-System.\nv1.1.1: Executor compatibility fix — resolved game freeze on Volt and other executors.\nBug gefunden oder Feature-Wunsch? Erstelle ein Issue auf GitHub (Rival99900/Roblox-Scripts) oder schreibe auf ScriptBlox.",
+        CreditsContent      = "Erstellt von Rival960 mit KI-Hilfe\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.2.0 — Nahkampf-Update",
+        ReleaseNotesTitle   = "v1.2.0 — Versionshinweise",
+        ReleaseNotesContent = "v1.2.0: Unendlich Munition und Munition Einfrieren behoben (Reserve war am falschen Ort), Nahkampfwaffen-Support (Schläger und alle Nahkampfwerkzeuge) für Aimbot und Auto Anziehen, verbesserte Executor-Stabilität für Volt und alle Executors.\nBug gefunden oder Feature-Wunsch? Erstelle ein Issue auf GitHub (Rival99900/Roblox-Scripts) oder schreibe auf ScriptBlox.",
         Aimbot              = "Aimbot",
         AutoBring           = "Auto Anziehen",
         BringRadius         = "Anzugsradius (studs)",
@@ -113,6 +115,7 @@ local Translations = {
         Fullbright          = "Vollhelligkeit",
         LanguageSelect      = "Sprache",
         LangNote            = "Sprachänderung erfordert Neuausführung",
+        MeleeSupport        = "Nahkampf-Support",
     },
     ES = {
         WindowTitle         = "Tower of Zombies Hub",
@@ -122,9 +125,9 @@ local Translations = {
         TabMovement         = "Movimiento",
         TabTools            = "Herramientas",
         CreditsTitle        = "Créditos",
-        CreditsContent      = "Creado por Rival960 con ayuda de IA\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.1.1 — Actualización de Combate",
-        ReleaseNotesTitle   = "v1.1.1 — Notas de Versión",
-        ReleaseNotesContent = "Nuevo en v1.1.0: Munición Infinita, Congelar Munición, corrección de penetración de muros del Aimbot, sistema de ganchos de munición.\nv1.1.1: Executor compatibility fix — resolved game freeze on Volt and other executors.\n¿Encontraste un error o quieres pedir una función? Abre un issue en GitHub (Rival99900/Roblox-Scripts) o publica en ScriptBlox.",
+        CreditsContent      = "Creado por Rival960 con ayuda de IA\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.2.0 — Actualización Cuerpo a Cuerpo",
+        ReleaseNotesTitle   = "v1.2.0 — Notas de Versión",
+        ReleaseNotesContent = "v1.2.0: Corrección de Munición Infinita y Congelar Munición (la Reserva estaba en el lugar equivocado), soporte de armas cuerpo a cuerpo (Bate y todas las herramientas de mêlée) para Aimbot y Auto Atraer, estabilidad mejorada para Volt y todos los executors.\n¿Encontraste un error o quieres pedir una función? Abre un issue en GitHub (Rival99900/Roblox-Scripts) o publica en ScriptBlox.",
         Aimbot              = "Aimbot",
         AutoBring           = "Auto Atraer",
         BringRadius         = "Radio de Atracción (studs)",
@@ -141,6 +144,7 @@ local Translations = {
         Fullbright          = "Brillo Total",
         LanguageSelect      = "Idioma",
         LangNote            = "El cambio de idioma requiere re-ejecución",
+        MeleeSupport        = "Soporte Cuerpo a Cuerpo",
     },
     PT = {
         WindowTitle         = "Tower of Zombies Hub",
@@ -150,9 +154,9 @@ local Translations = {
         TabMovement         = "Movimento",
         TabTools            = "Ferramentas",
         CreditsTitle        = "Créditos",
-        CreditsContent      = "Criado por Rival960 com ajuda de IA\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.1.1 — Atualização de Combate",
-        ReleaseNotesTitle   = "v1.1.1 — Notas da Versão",
-        ReleaseNotesContent = "Novo em v1.1.0: Munição Infinita, Congelar Munição, correção de penetração de paredes do Aimbot, sistema de hooks de munição.\nv1.1.1: Executor compatibility fix — resolved game freeze on Volt and other executors.\nEncontrou um bug ou quer sugerir uma função? Abra uma issue no GitHub (Rival99900/Roblox-Scripts) ou publique no ScriptBlox.",
+        CreditsContent      = "Criado por Rival960 com ajuda de IA\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.2.0 — Atualização Corpo a Corpo",
+        ReleaseNotesTitle   = "v1.2.0 — Notas da Versão",
+        ReleaseNotesContent = "v1.2.0: Correção de Munição Infinita e Congelar Munição (a Reserva estava no local errado), suporte a armas corpo a corpo (Bastão e todas as ferramentas de mêlée) para Aimbot e Auto Atrair, estabilidade melhorada para Volt e todos os executors.\nEncontrou um bug ou quer sugerir uma função? Abra uma issue no GitHub (Rival99900/Roblox-Scripts) ou publique no ScriptBlox.",
         Aimbot              = "Aimbot",
         AutoBring           = "Auto Atrair",
         BringRadius         = "Raio de Atração (studs)",
@@ -169,6 +173,7 @@ local Translations = {
         Fullbright          = "Brilho Total",
         LanguageSelect      = "Idioma",
         LangNote            = "Mudança de idioma requer re-execução",
+        MeleeSupport        = "Suporte Corpo a Corpo",
     },
     RU = {
         WindowTitle         = "Tower of Zombies Hub",
@@ -178,9 +183,9 @@ local Translations = {
         TabMovement         = "Движение",
         TabTools            = "Инструменты",
         CreditsTitle        = "Авторы",
-        CreditsContent      = "Создано Rival960 с помощью ИИ\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.1.1 — Боевое Обновление",
-        ReleaseNotesTitle   = "v1.1.1 — Примечания к версии",
-        ReleaseNotesContent = "Новое в v1.1.0: Бесконечные патроны, Заморозить патроны, исправление проникновения сквозь стены аимбота, система хуков патронов.\nv1.1.1: Executor compatibility fix — resolved game freeze on Volt and other executors.\nНашли баг или хотите предложить функцию? Создайте issue на GitHub (Rival99900/Roblox-Scripts) или напишите на ScriptBlox.",
+        CreditsContent      = "Создано Rival960 с помощью ИИ\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.2.0 — Обновление ближнего боя",
+        ReleaseNotesTitle   = "v1.2.0 — Примечания к версии",
+        ReleaseNotesContent = "v1.2.0: Исправлены Бесконечные патроны и Заморозить патроны (Резерв находился не там), поддержка оружия ближнего боя (Бита и все инструменты ближнего боя) для Аимбота и Авто Притяжения, улучшена стабильность для Volt и всех executors.\nНашли баг или хотите предложить функцию? Создайте issue на GitHub (Rival99900/Roblox-Scripts) или напишите на ScriptBlox.",
         Aimbot              = "Аимбот",
         AutoBring           = "Авто Притяжение",
         BringRadius         = "Радиус притяжения (ст.)",
@@ -197,6 +202,7 @@ local Translations = {
         Fullbright          = "Полная яркость",
         LanguageSelect      = "Язык",
         LangNote            = "Смена языка требует повторного запуска",
+        MeleeSupport        = "Поддержка ближнего боя",
     },
     IT = {
         WindowTitle         = "Tower of Zombies Hub",
@@ -206,9 +212,9 @@ local Translations = {
         TabMovement         = "Movimento",
         TabTools            = "Strumenti",
         CreditsTitle        = "Crediti",
-        CreditsContent      = "Creato da Rival960 con l'aiuto dell'IA\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.1.1 — Aggiornamento Combattimento",
-        ReleaseNotesTitle   = "v1.1.1 — Note di Versione",
-        ReleaseNotesContent = "Nuovo in v1.1.0: Munizioni Infinite, Blocca Munizioni, fix penetrazione pareti Aimbot, sistema di hook munizioni.\nv1.1.1: Executor compatibility fix — resolved game freeze on Volt and other executors.\nHai trovato un bug o vuoi richiedere una funzione? Apri un'issue su GitHub (Rival99900/Roblox-Scripts) o scrivi su ScriptBlox.",
+        CreditsContent      = "Creato da Rival960 con l'aiuto dell'IA\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.2.0 — Aggiornamento Mischia",
+        ReleaseNotesTitle   = "v1.2.0 — Note di Versione",
+        ReleaseNotesContent = "v1.2.0: Corretti Munizioni Infinite e Blocca Munizioni (la Riserva era nel posto sbagliato), supporto armi da mischia (Mazza e tutti gli strumenti da mischia) per Aimbot e Auto Attira, stabilità migliorata per Volt e tutti gli executor.\nHai trovato un bug o vuoi richiedere una funzione? Apri un'issue su GitHub (Rival99900/Roblox-Scripts) o scrivi su ScriptBlox.",
         Aimbot              = "Aimbot",
         AutoBring           = "Auto Attira",
         BringRadius         = "Raggio di Attrazione (studs)",
@@ -225,6 +231,7 @@ local Translations = {
         Fullbright          = "Piena Luminosità",
         LanguageSelect      = "Lingua",
         LangNote            = "Il cambio lingua richiede una ri-esecuzione",
+        MeleeSupport        = "Supporto Mischia",
     },
     NL = {
         WindowTitle         = "Tower of Zombies Hub",
@@ -234,9 +241,9 @@ local Translations = {
         TabMovement         = "Beweging",
         TabTools            = "Tools & Visuals",
         CreditsTitle        = "Credits",
-        CreditsContent      = "Gemaakt door Rival960 met AI-hulp\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.1.1 — Gevechtsupdate",
-        ReleaseNotesTitle   = "v1.1.1 — Versienotities",
-        ReleaseNotesContent = "Nieuw in v1.1.0: Oneindige Munitie, Bevriezing Munitie, Aimbot muurpenetratie fix, munitie hook systeem.\nv1.1.1: Executor compatibility fix — resolved game freeze on Volt and other executors.\nBug gevonden of wil je een functie aanvragen? Open een issue op GitHub (Rival99900/Roblox-Scripts) of post op ScriptBlox.",
+        CreditsContent      = "Gemaakt door Rival960 met AI-hulp\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.2.0 — Melee-update",
+        ReleaseNotesTitle   = "v1.2.0 — Versienotities",
+        ReleaseNotesContent = "v1.2.0: Oneindige Munitie en Bevriezing Munitie gecorrigeerd (Reserve was op de verkeerde locatie), melee-wapenondersteuning (Knuppel en alle melee-tools) voor Aimbot en Auto Aantrekken, verbeterde stabiliteit voor Volt en alle executors.\nBug gevonden of wil je een functie aanvragen? Open een issue op GitHub (Rival99900/Roblox-Scripts) of post op ScriptBlox.",
         Aimbot              = "Aimbot",
         AutoBring           = "Auto Aantrekken",
         BringRadius         = "Aantrekkingsradius (studs)",
@@ -253,6 +260,7 @@ local Translations = {
         Fullbright          = "Maximale Helderheid",
         LanguageSelect      = "Taal",
         LangNote            = "Taalwijziging vereist heruitvoering",
+        MeleeSupport        = "Melee-ondersteuning",
     },
     PL = {
         WindowTitle         = "Tower of Zombies Hub",
@@ -262,9 +270,9 @@ local Translations = {
         TabMovement         = "Ruch",
         TabTools            = "Narzędzia",
         CreditsTitle        = "Kredyty",
-        CreditsContent      = "Stworzone przez Rival960 z pomocą AI\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.1.1 — Aktualizacja Walki",
-        ReleaseNotesTitle   = "v1.1.1 — Informacje o Wersji",
-        ReleaseNotesContent = "Nowe w v1.1.0: Nieskończona Amunicja, Zamroź Amunicję, naprawa przenikania przez ściany Aimbot, system haków amunicji.\nv1.1.1: Executor compatibility fix — resolved game freeze on Volt and other executors.\nZnalazłeś błąd lub chcesz zgłosić funkcję? Otwórz issue na GitHub (Rival99900/Roblox-Scripts) lub napisz na ScriptBlox.",
+        CreditsContent      = "Stworzone przez Rival960 z pomocą AI\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.2.0 — Aktualizacja Broni Białej",
+        ReleaseNotesTitle   = "v1.2.0 — Informacje o Wersji",
+        ReleaseNotesContent = "v1.2.0: Poprawiono Nieskończoną Amunicję i Zamroź Amunicję (Rezerwa była w złym miejscu), wsparcie broni białej (Kij i wszystkie narzędzia walki wręcz) dla Aimbot i Auto Przyciąganie, poprawiona stabilność dla Volt i wszystkich executors.\nZnalazłeś błąd lub chcesz zgłosić funkcję? Otwórz issue na GitHub (Rival99900/Roblox-Scripts) lub napisz na ScriptBlox.",
         Aimbot              = "Aimbot",
         AutoBring           = "Auto Przyciąganie",
         BringRadius         = "Promień przyciągania (studs)",
@@ -281,6 +289,7 @@ local Translations = {
         Fullbright          = "Pełna jasność",
         LanguageSelect      = "Język",
         LangNote            = "Zmiana języka wymaga ponownego uruchomienia",
+        MeleeSupport        = "Wsparcie walki wręcz",
     },
     ZH = {
         WindowTitle         = "行尸走肉枢纽",
@@ -290,9 +299,9 @@ local Translations = {
         TabMovement         = "移动",
         TabTools            = "工具与视觉",
         CreditsTitle        = "致谢",
-        CreditsContent      = "由 Rival960 借助 AI 创建\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.1.1 — 战斗更新",
-        ReleaseNotesTitle   = "v1.1.1 — 版本说明",
-        ReleaseNotesContent = "v1.1.0 新内容：无限弹药、冻结弹药、瞄准助手穿墙修复、弹药钩子系统。\nv1.1.1: Executor compatibility fix — resolved game freeze on Volt and other executors.\n发现漏洞或想申请功能？请在 GitHub (Rival99900/Roblox-Scripts) 提交 issue 或在 ScriptBlox 发帖。",
+        CreditsContent      = "由 Rival960 借助 AI 创建\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.2.0 — 近战更新",
+        ReleaseNotesTitle   = "v1.2.0 — 版本说明",
+        ReleaseNotesContent = "v1.2.0：修复了无限弹药和冻结弹药（备用弹药位置错误），为Aimbot和自动吸引添加近战武器支持（球棒及所有近战工具），改善了Volt及所有执行器的稳定性。\n发现漏洞或想申请功能？请在 GitHub (Rival99900/Roblox-Scripts) 提交 issue 或在 ScriptBlox 发帖。",
         Aimbot              = "自动瞄准",
         AutoBring           = "自动吸引",
         BringRadius         = "吸引半径 (格)",
@@ -309,6 +318,7 @@ local Translations = {
         Fullbright          = "全亮",
         LanguageSelect      = "语言",
         LangNote            = "语言更改需要重新执行",
+        MeleeSupport        = "近战支持",
     },
     JA = {
         WindowTitle         = "ゾンビタワーハブ",
@@ -318,9 +328,9 @@ local Translations = {
         TabMovement         = "移動",
         TabTools            = "ツール",
         CreditsTitle        = "クレジット",
-        CreditsContent      = "Rival960 と AI の協力で作成\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.1.1 — 戦闘アップデート",
-        ReleaseNotesTitle   = "v1.1.1 — リリースノート",
-        ReleaseNotesContent = "v1.1.0の新機能：無限弾薬、弾薬固定、エイムボット壁貫通修正、弾薬フックシステム。\nv1.1.1: Executor compatibility fix — resolved game freeze on Volt and other executors.\nバグ発見や機能リクエストはGitHub (Rival99900/Roblox-Scripts) のissueまたはScriptBloxに投稿してください。",
+        CreditsContent      = "Rival960 と AI の協力で作成\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.2.0 — 近接アップデート",
+        ReleaseNotesTitle   = "v1.2.0 — リリースノート",
+        ReleaseNotesContent = "v1.2.0：無限弾薬と弾薬固定を修正（リザーブの場所が間違っていた）、近接武器サポート（バットと全近接ツール）をエイムボットと自動引き寄せに追加、VoltおよびすべてのExecutorの安定性を改善。\nバグ発見や機能リクエストはGitHub (Rival99900/Roblox-Scripts) のissueまたはScriptBloxに投稿してください。",
         Aimbot              = "エイムボット",
         AutoBring           = "自動引き寄せ",
         BringRadius         = "引き寄せ半径 (スタッド)",
@@ -337,6 +347,7 @@ local Translations = {
         Fullbright          = "フルブライト",
         LanguageSelect      = "言語",
         LangNote            = "言語変更は再実行が必要です",
+        MeleeSupport        = "近接サポート",
     },
     TR = {
         WindowTitle         = "Tower of Zombies Hub",
@@ -346,9 +357,9 @@ local Translations = {
         TabMovement         = "Hareket",
         TabTools            = "Araçlar",
         CreditsTitle        = "Krediler",
-        CreditsContent      = "Rival960 tarafından AI yardımıyla yapılmıştır\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.1.1 — Savaş Güncellemesi",
-        ReleaseNotesTitle   = "v1.1.1 — Sürüm Notları",
-        ReleaseNotesContent = "v1.1.0'daki yenilikler: Sonsuz Mermi, Mermiyi Dondur, Aimbot duvar nüfuz düzeltmesi, mermi kanca sistemi.\nv1.1.1: Executor compatibility fix — resolved game freeze on Volt and other executors.\nBir hata buldunuz veya özellik talep etmek mi istiyorsunuz? GitHub'da (Rival99900/Roblox-Scripts) issue açın veya ScriptBlox'ta paylaşın.",
+        CreditsContent      = "Rival960 tarafından AI yardımıyla yapılmıştır\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.2.0 — Yakın Dövüş Güncellemesi",
+        ReleaseNotesTitle   = "v1.2.0 — Sürüm Notları",
+        ReleaseNotesContent = "v1.2.0: Sonsuz Mermi ve Mermiyi Dondur düzeltildi (Rezerv yanlış konumdaydı), Aimbot ve Otomatik Çekme için yakın dövüş silahı desteği (Sopа ve tüm yakın dövüş araçları) eklendi, Volt ve tüm executorlar için stabilite geliştirildi.\nBir hata buldunuz veya özellik talep etmek mi istiyorsunuz? GitHub'da (Rival99900/Roblox-Scripts) issue açın veya ScriptBlox'ta paylaşın.",
         Aimbot              = "Aimbot",
         AutoBring           = "Otomatik Çekme",
         BringRadius         = "Çekme Yarıçapı (studs)",
@@ -365,6 +376,7 @@ local Translations = {
         Fullbright          = "Tam Parlaklık",
         LanguageSelect      = "Dil",
         LangNote            = "Dil değişikliği yeniden başlatma gerektirir",
+        MeleeSupport        = "Yakın Dövüş Desteği",
     },
     KO = {
         WindowTitle         = "좀비 타워 허브",
@@ -374,9 +386,9 @@ local Translations = {
         TabMovement         = "이동",
         TabTools            = "도구",
         CreditsTitle        = "크레딧",
-        CreditsContent      = "Rival960이 AI의 도움으로 제작\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.1.1 — 전투 업데이트",
-        ReleaseNotesTitle   = "v1.1.1 — 릴리즈 노트",
-        ReleaseNotesContent = "v1.1.0 새 기능: 무한 탄약, 탄약 고정, 에임봇 벽 관통 수정, 탄약 훅 시스템.\nv1.1.1: Executor compatibility fix — resolved game freeze on Volt and other executors.\n버그를 찾거나 기능을 요청하고 싶다면? GitHub (Rival99900/Roblox-Scripts)에 이슈를 열거나 ScriptBlox에 게시하세요.",
+        CreditsContent      = "Rival960이 AI의 도움으로 제작\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.2.0 — 근접 무기 업데이트",
+        ReleaseNotesTitle   = "v1.2.0 — 릴리즈 노트",
+        ReleaseNotesContent = "v1.2.0: 무한 탄약 및 탄약 고정 수정 (예비 탄약 위치가 잘못됨), 에임봇 및 자동 끌어오기에 근접 무기 지원 (배트 및 모든 근접 도구) 추가, Volt 및 모든 executor의 안정성 개선.\n버그를 찾거나 기능을 요청하고 싶다면? GitHub (Rival99900/Roblox-Scripts)에 이슈를 열거나 ScriptBlox에 게시하세요.",
         Aimbot              = "에임봇",
         AutoBring           = "자동 끌어오기",
         BringRadius         = "끌어오기 반경 (스터드)",
@@ -393,6 +405,7 @@ local Translations = {
         Fullbright          = "전체 밝기",
         LanguageSelect      = "언어",
         LangNote            = "언어 변경은 재실행이 필요합니다",
+        MeleeSupport        = "근접 무기 지원",
     },
     AR = {
         WindowTitle         = "Tower of Zombies Hub",
@@ -402,9 +415,9 @@ local Translations = {
         TabMovement         = "الحركة",
         TabTools            = "الأدوات",
         CreditsTitle        = "الاعتمادات",
-        CreditsContent      = "تم إنشاؤه بواسطة Rival960 بمساعدة الذكاء الاصطناعي\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.1.1 — تحديث القتال",
-        ReleaseNotesTitle   = "v1.1.1 — ملاحظات الإصدار",
-        ReleaseNotesContent = "جديد في v1.1.0: ذخيرة لا نهائية، تجميد الذخيرة، إصلاح اختراق الجدران للأيمبوت، نظام خطافات الذخيرة.\nv1.1.1: Executor compatibility fix — resolved game freeze on Volt and other executors.\nوجدت خطأ أو تريد طلب ميزة؟ افتح issue على GitHub (Rival99900/Roblox-Scripts) أو انشر على ScriptBlox.",
+        CreditsContent      = "تم إنشاؤه بواسطة Rival960 بمساعدة الذكاء الاصطناعي\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.2.0 — تحديث القتال المتلاحم",
+        ReleaseNotesTitle   = "v1.2.0 — ملاحظات الإصدار",
+        ReleaseNotesContent = "v1.2.0: إصلاح الذخيرة اللانهائية وتجميد الذخيرة (كان الاحتياطي في الموقع الخطأ)، دعم الأسلحة المتلاحمة (الخفاش وجميع أدوات المتلاحم) للأيمبوت والجذب التلقائي، تحسين الاستقرار لـ Volt وجميع executors.\nوجدت خطأ أو تريد طلب ميزة؟ افتح issue على GitHub (Rival99900/Roblox-Scripts) أو انشر على ScriptBlox.",
         Aimbot              = "أيمبوت",
         AutoBring           = "جذب تلقائي",
         BringRadius         = "نطاق الجذب (وحدة)",
@@ -421,6 +434,7 @@ local Translations = {
         Fullbright          = "سطوع كامل",
         LanguageSelect      = "اللغة",
         LangNote            = "تغيير اللغة يتطلب إعادة التشغيل",
+        MeleeSupport        = "دعم القتال المتلاحم",
     },
     VI = {
         WindowTitle         = "Tower of Zombies Hub",
@@ -430,9 +444,9 @@ local Translations = {
         TabMovement         = "Di Chuyển",
         TabTools            = "Công Cụ",
         CreditsTitle        = "Tín Dụng",
-        CreditsContent      = "Tạo bởi Rival960 với sự trợ giúp của AI\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.1.1 — Cập Nhật Chiến Đấu",
-        ReleaseNotesTitle   = "v1.1.1 — Ghi Chú Phiên Bản",
-        ReleaseNotesContent = "Mới trong v1.1.0: Đạn Vô Hạn, Đóng Băng Đạn, sửa lỗi xuyên tường Aimbot, hệ thống hook đạn.\nv1.1.1: Executor compatibility fix — resolved game freeze on Volt and other executors.\nTìm thấy lỗi hoặc muốn yêu cầu tính năng? Mở issue trên GitHub (Rival99900/Roblox-Scripts) hoặc đăng trên ScriptBlox.",
+        CreditsContent      = "Tạo bởi Rival960 với sự trợ giúp của AI\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.2.0 — Cập Nhật Vũ Khí Cận Chiến",
+        ReleaseNotesTitle   = "v1.2.0 — Ghi Chú Phiên Bản",
+        ReleaseNotesContent = "v1.2.0: Sửa Đạn Vô Hạn và Đóng Băng Đạn (Dự Trữ ở vị trí sai), thêm hỗ trợ vũ khí cận chiến (Gậy và tất cả công cụ cận chiến) cho Aimbot và Tự Động Kéo, cải thiện độ ổn định cho Volt và tất cả executor.\nTìm thấy lỗi hoặc muốn yêu cầu tính năng? Mở issue trên GitHub (Rival99900/Roblox-Scripts) hoặc đăng trên ScriptBlox.",
         Aimbot              = "Aimbot",
         AutoBring           = "Tự Động Kéo",
         BringRadius         = "Bán Kính Kéo (studs)",
@@ -449,6 +463,7 @@ local Translations = {
         Fullbright          = "Độ Sáng Tối Đa",
         LanguageSelect      = "Ngôn Ngữ",
         LangNote            = "Thay đổi ngôn ngữ cần khởi động lại",
+        MeleeSupport        = "Hỗ Trợ Cận Chiến",
     },
     SV = {
         WindowTitle         = "Tower of Zombies Hub",
@@ -458,9 +473,9 @@ local Translations = {
         TabMovement         = "Rörelse",
         TabTools            = "Verktyg",
         CreditsTitle        = "Erkännanden",
-        CreditsContent      = "Skapad av Rival960 med hjälp av AI\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.1.1 — Stridsuppdatering",
-        ReleaseNotesTitle   = "v1.1.1 — Versionsanteckningar",
-        ReleaseNotesContent = "Nytt i v1.1.0: Oändlig Ammunition, Frys Ammunition, Aimbot väggenomträngningsfix, ammunition hook-system.\nv1.1.1: Executor compatibility fix — resolved game freeze on Volt and other executors.\nHittade du en bugg eller vill begära en funktion? Öppna ett issue på GitHub (Rival99900/Roblox-Scripts) eller posta på ScriptBlox.",
+        CreditsContent      = "Skapad av Rival960 med hjälp av AI\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.2.0 — Närstriduppdatering",
+        ReleaseNotesTitle   = "v1.2.0 — Versionsanteckningar",
+        ReleaseNotesContent = "v1.2.0: Fixade Oändlig Ammunition och Frys Ammunition (Reserven var på fel plats), lade till stöd för närstridsvapen (Slagträ och alla närstridsverk tyg) för Aimbot och Auto Hämta, förbättrad stabilitet för Volt och alla executors.\nHittade du en bugg eller vill begära en funktion? Öppna ett issue på GitHub (Rival99900/Roblox-Scripts) eller posta på ScriptBlox.",
         Aimbot              = "Aimbot",
         AutoBring           = "Auto Hämta",
         BringRadius         = "Hämtningsradie (studs)",
@@ -477,6 +492,7 @@ local Translations = {
         Fullbright          = "Full Ljusstyrka",
         LanguageSelect      = "Språk",
         LangNote            = "Språkändring kräver omstartning",
+        MeleeSupport        = "Närstridsstöd",
     },
     EL = {
         WindowTitle         = "Tower of Zombies Hub",
@@ -486,9 +502,9 @@ local Translations = {
         TabMovement         = "Κίνηση",
         TabTools            = "Εργαλεία",
         CreditsTitle        = "Εύσημα",
-        CreditsContent      = "Δημιουργήθηκε από Rival960 με βοήθεια AI\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.1.1 — Ενημέρωση Μάχης",
-        ReleaseNotesTitle   = "v1.1.1 — Σημειώσεις Έκδοσης",
-        ReleaseNotesContent = "Νέο στο v1.1.0: Άπειρα Πυρομαχικά, Πάγωμα Πυρομαχικών, διόρθωση διαπέρασης τοίχων Aimbot, σύστημα hooks πυρομαχικών.\nv1.1.1: Executor compatibility fix — resolved game freeze on Volt and other executors.\nΒρήκατε σφάλμα ή θέλετε να ζητήσετε λειτουργία; Ανοίξτε ένα issue στο GitHub (Rival99900/Roblox-Scripts) ή δημοσιεύστε στο ScriptBlox.",
+        CreditsContent      = "Δημιουργήθηκε από Rival960 με βοήθεια AI\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.2.0 — Ενημέρωση Εκ του Σύνεγγυς",
+        ReleaseNotesTitle   = "v1.2.0 — Σημειώσεις Έκδοσης",
+        ReleaseNotesContent = "v1.2.0: Διορθώθηκαν Άπειρα Πυρομαχικά και Πάγωμα Πυρομαχικών (το Αποθεματικό ήταν στη λάθος θέση), προστέθηκε υποστήριξη όπλων εκ του σύνεγγυς (Ρόπαλο και όλα τα εργαλεία) για Aimbot και Αυτόματη Έλξη, βελτιωμένη σταθερότητα για Volt και όλους τους executors.\nΒρήκατε σφάλμα ή θέλετε να ζητήσετε λειτουργία; Ανοίξτε ένα issue στο GitHub (Rival99900/Roblox-Scripts) ή δημοσιεύστε στο ScriptBlox.",
         Aimbot              = "Aimbot",
         AutoBring           = "Αυτόματη Έλξη",
         BringRadius         = "Ακτίνα Έλξης (studs)",
@@ -505,6 +521,7 @@ local Translations = {
         Fullbright          = "Πλήρης Φωτεινότητα",
         LanguageSelect      = "Γλώσσα",
         LangNote            = "Η αλλαγή γλώσσας απαιτεί επανεκτέλεση",
+        MeleeSupport        = "Υποστήριξη Εκ του Σύνεγγυς",
     },
     RO = {
         WindowTitle         = "Tower of Zombies Hub",
@@ -514,9 +531,9 @@ local Translations = {
         TabMovement         = "Mișcare",
         TabTools            = "Instrumente",
         CreditsTitle        = "Credite",
-        CreditsContent      = "Creat de Rival960 cu ajutorul AI\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.1.1 — Actualizare Luptă",
-        ReleaseNotesTitle   = "v1.1.1 — Note de Lansare",
-        ReleaseNotesContent = "Nou în v1.1.0: Muniție Infinită, Îngheță Muniție, corectare penetrare pereți Aimbot, sistem de hooks muniție.\nv1.1.1: Executor compatibility fix — resolved game freeze on Volt and other executors.\nAți găsit un bug sau doriți să solicitați o funcție? Deschideți un issue pe GitHub (Rival99900/Roblox-Scripts) sau postați pe ScriptBlox.",
+        CreditsContent      = "Creat de Rival960 cu ajutorul AI\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.2.0 — Actualizare Corp la Corp",
+        ReleaseNotesTitle   = "v1.2.0 — Note de Lansare",
+        ReleaseNotesContent = "v1.2.0: Corectate Muniție Infinită și Îngheță Muniție (Rezerva era în locul greșit), adăugat suport arme corp la corp (Bâtă și toate uneltele corp la corp) pentru Aimbot și Auto Atragere, stabilitate îmbunătățită pentru Volt și toți executorii.\nAți găsit un bug sau doriți să solicitați o funcție? Deschideți un issue pe GitHub (Rival99900/Roblox-Scripts) sau postați pe ScriptBlox.",
         Aimbot              = "Aimbot",
         AutoBring           = "Auto Atragere",
         BringRadius         = "Raza de Atragere (studs)",
@@ -533,6 +550,7 @@ local Translations = {
         Fullbright          = "Luminozitate Maximă",
         LanguageSelect      = "Limbă",
         LangNote            = "Schimbarea limbii necesită re-executare",
+        MeleeSupport        = "Suport Corp la Corp",
     },
     UK = {
         WindowTitle         = "Tower of Zombies Hub",
@@ -542,9 +560,9 @@ local Translations = {
         TabMovement         = "Рух",
         TabTools            = "Інструменти",
         CreditsTitle        = "Автори",
-        CreditsContent      = "Створено Rival960 за допомогою AI\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.1.1 — Бойове Оновлення",
-        ReleaseNotesTitle   = "v1.1.1 — Примітки до версії",
-        ReleaseNotesContent = "Нове у v1.1.0: Нескінченні патрони, Заморозити патрони, виправлення проникнення крізь стіни аімбота, система хуків патронів.\nv1.1.1: Executor compatibility fix — resolved game freeze on Volt and other executors.\nЗнайшли баг або хочете запропонувати функцію? Створіть issue на GitHub (Rival99900/Roblox-Scripts) або напишіть на ScriptBlox.",
+        CreditsContent      = "Створено Rival960 за допомогою AI\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.2.0 — Оновлення Ближнього Бою",
+        ReleaseNotesTitle   = "v1.2.0 — Примітки до версії",
+        ReleaseNotesContent = "v1.2.0: Виправлено Нескінченні патрони та Заморозити патрони (Резерв був у неправильному місці), додано підтримку зброї ближнього бою (Бита та всі інструменти ближнього бою) для Аімбота та Авто Притягання, покращена стабільність для Volt та всіх executors.\nЗнайшли баг або хочете запропонувати функцію? Створіть issue на GitHub (Rival99900/Roblox-Scripts) або напишіть на ScriptBlox.",
         Aimbot              = "Аімбот",
         AutoBring           = "Авто Притягання",
         BringRadius         = "Радіус притягання (ст.)",
@@ -561,6 +579,7 @@ local Translations = {
         Fullbright          = "Повна яскравість",
         LanguageSelect      = "Мова",
         LangNote            = "Зміна мови потребує перезапуску",
+        MeleeSupport        = "Підтримка ближнього бою",
     },
     CS = {
         WindowTitle         = "Tower of Zombies Hub",
@@ -570,9 +589,9 @@ local Translations = {
         TabMovement         = "Pohyb",
         TabTools            = "Nástroje",
         CreditsTitle        = "Poděkování",
-        CreditsContent      = "Vytvořeno Rival960 s pomocí AI\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.1.1 — Bojová Aktualizace",
-        ReleaseNotesTitle   = "v1.1.1 — Poznámky k Vydání",
-        ReleaseNotesContent = "Nové ve v1.1.0: Nekonečná Munice, Zmrazit Munici, oprava průniku zdmi Aimbot, systém háčků munice.\nv1.1.1: Executor compatibility fix — resolved game freeze on Volt and other executors.\nNašli jste chybu nebo chcete požádat o funkci? Otevřete issue na GitHub (Rival99900/Roblox-Scripts) nebo přidejte příspěvek na ScriptBlox.",
+        CreditsContent      = "Vytvořeno Rival960 s pomocí AI\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.2.0 — Aktualizace Boje Zblízka",
+        ReleaseNotesTitle   = "v1.2.0 — Poznámky k Vydání",
+        ReleaseNotesContent = "v1.2.0: Opravena Nekonečná Munice a Zmrazit Munici (Rezerva byla na špatném místě), přidána podpora zbraní zblízka (Baseballová pálka a všechny nástroje zblízka) pro Aimbot a Auto Přitáhnout, zlepšena stabilita pro Volt a všechny executory.\nNašli jste chybu nebo chcete požádat o funkci? Otevřete issue na GitHub (Rival99900/Roblox-Scripts) nebo přidejte příspěvek na ScriptBlox.",
         Aimbot              = "Aimbot",
         AutoBring           = "Auto Přitáhnout",
         BringRadius         = "Poloměr přitáhnutí (studs)",
@@ -589,6 +608,7 @@ local Translations = {
         Fullbright          = "Plný jas",
         LanguageSelect      = "Jazyk",
         LangNote            = "Změna jazyka vyžaduje restartování",
+        MeleeSupport        = "Podpora boje zblízka",
     },
     DA = {
         WindowTitle         = "Tower of Zombies Hub",
@@ -598,9 +618,9 @@ local Translations = {
         TabMovement         = "Bevægelse",
         TabTools            = "Værktøjer",
         CreditsTitle        = "Anerkendelser",
-        CreditsContent      = "Oprettet af Rival960 med hjælp fra AI\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.1.1 — Kampsopdatering",
-        ReleaseNotesTitle   = "v1.1.1 — Udgivelsesnoter",
-        ReleaseNotesContent = "Nyt i v1.1.0: Uendelig Ammunition, Frys Ammunition, Aimbot væggennemtrængningsfix, ammunition hook-system.\nv1.1.1: Executor compatibility fix — resolved game freeze on Volt and other executors.\nFandt du en fejl eller vil du anmode om en funktion? Åbn et issue på GitHub (Rival99900/Roblox-Scripts) eller post på ScriptBlox.",
+        CreditsContent      = "Oprettet af Rival960 med hjælp fra AI\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.2.0 — Nærkampsopdatering",
+        ReleaseNotesTitle   = "v1.2.0 — Udgivelsesnoter",
+        ReleaseNotesContent = "v1.2.0: Rettet Uendelig Ammunition og Frys Ammunition (Reserve var på det forkerte sted), tilføjet støtte til nærkampsvåben (Slagtrå og alle nærkampsredskaber) for Aimbot og Auto Hent, forbedret stabilitet for Volt og alle executors.\nFandt du en fejl eller vil du anmode om en funktion? Åbn et issue på GitHub (Rival99900/Roblox-Scripts) eller post på ScriptBlox.",
         Aimbot              = "Aimbot",
         AutoBring           = "Auto Hent",
         BringRadius         = "Hentningsradius (studs)",
@@ -617,6 +637,7 @@ local Translations = {
         Fullbright          = "Fuld Lysstyrke",
         LanguageSelect      = "Sprog",
         LangNote            = "Sprogændring kræver genstart",
+        MeleeSupport        = "Nærkampsstøtte",
     },
 }
 
@@ -647,20 +668,29 @@ local Settings = {
 }
 
 -- Ammo state
-local _frozenClip    = nil   -- cached clip value at FreezeAmmo toggle-ON time
-local _frozenReserve = nil   -- cached reserve value at FreezeAmmo toggle-ON time
-local CLIP_THRESHOLD = 99    -- write when value drops below this (weapon ClipSize)
+local _frozenClip    = nil
+local _frozenReserve = nil
 
 -- Fire rate limiting
 local lastFireTime  = 0
-local FIRE_COOLDOWN = 0.08   -- 0.08s safe below the 0.18s minimum FinalFireRate
+local FIRE_COOLDOWN = 0.08
 
 -- Aimbot lockout detection
-local lastDamageTime = tick()  -- updated on every successful fireAtTarget call
+local lastDamageTime = tick()
 
 -- Auto Bring connection (stored so it can be disconnected on toggle OFF)
 local bringTimer    = 0
 local autoBringConn = nil
+
+-- ================================================================
+-- Melee support
+-- ================================================================
+local MeleeRemote = ReplicatedStorage.Events.Actions.MeleeRequest
+
+local function isMelee(tool)
+    if not tool then return false end
+    return tool:FindFirstChild("Exit") == nil or tool:FindFirstChild("Info") == nil
+end
 
 -- ================================================================
 -- Character helpers
@@ -679,27 +709,28 @@ end
 -- Ammo helpers
 -- ================================================================
 
--- Immediately write ammo values to the equipped tool's Info children
+-- Immediately write ammo values:
+--   Clip  → Character[tool].Info.Clip (upvalue [19] confirmed)
+--   Reserve → LocalPlayer.Reserve     (upvalue [33] confirmed)
 local function applyAmmoNow(clipVal, reserveVal)
     pcall(function()
         local char = LocalPlayer.Character
         if not char then return end
         local tool = char:FindFirstChildOfClass("Tool")
-        if not tool then return end
-        local info = tool:FindFirstChild("Info")
-        if not info then return end
-        local clip    = info:FindFirstChild("Clip")
-        local reserve = info:FindFirstChild("Reserve")
-        if clip    then clip.Value    = clipVal    end
+        if tool then
+            local info = tool:FindFirstChild("Info")
+            if info then
+                local clip = info:FindFirstChild("Clip")
+                if clip then clip.Value = clipVal end
+            end
+        end
+        local reserve = LocalPlayer:FindFirstChild("Reserve")
         if reserve then reserve.Value = reserveVal end
     end)
 end
 
 -- ================================================================
--- forceHandlerAmmo — directly patch the Handler's internal upvalue
--- The Handler stores clip count internally (upvalue ~[40] in FireGun closure).
--- When this internal counter hits 0 it calls BeginReload, blocking all shots.
--- Writing Info.Clip.Value alone does NOT update that counter.
+-- forceHandlerAmmo — patch Handler's internal clip upvalue
 -- ================================================================
 local function forceHandlerAmmo(tool, targetValue)
     if not tool then return end
@@ -728,22 +759,22 @@ local function forceHandlerAmmo(tool, targetValue)
 end
 
 -- ================================================================
--- softReequip — reset Handler state by moving tool through backpack
--- Called automatically when aimbot lockout (>3s without a successful shot) is detected.
--- After re-equip, immediately re-applies the active ammo mode.
+-- softReequip — reset Handler state via backpack re-parent
 -- ================================================================
 local function softReequip()
     pcall(function()
-        local char    = LocalPlayer.Character
+        local char = LocalPlayer.Character
         if not char then return end
-        local tool    = char:FindFirstChildOfClass("Tool")
+        local tool = char:FindFirstChildOfClass("Tool")
         if not tool then return end
         local backpack = LocalPlayer:FindFirstChild("Backpack")
         if not backpack then return end
         tool.Parent = backpack
-        task.wait(0.1)
-        tool.Parent = char
-        -- Re-apply ammo immediately after re-equip
+        task.wait(0.15)
+        if LocalPlayer.Character then
+            tool.Parent = LocalPlayer.Character
+        end
+        -- Re-apply active ammo mode
         task.wait(0.05)
         if Settings.InfiniteAmmo then
             applyAmmoNow(99999, 99999)
@@ -754,8 +785,7 @@ local function softReequip()
 end
 
 -- ================================================================
--- Rayfield load (keyless) — wrapped in pcall to prevent freeze on
--- slow CDN or unsupported executors.
+-- Rayfield load (keyless)
 -- ================================================================
 local ok, Rayfield = pcall(function()
     return loadstring(game:HttpGet("https://sirius.menu/rayfield"))()
@@ -775,7 +805,7 @@ local Window = Rayfield:CreateWindow({
 })
 
 -- ================================================================
--- Shared combat helpers
+-- Combat helpers
 -- ================================================================
 
 local function getClosestZombieTarget(maxDist)
@@ -802,8 +832,7 @@ local function getClosestZombieTarget(maxDist)
     return bestPart
 end
 
--- Fire both remotes with epsilon rayOrigin + 0.08s rate limiter.
--- Returns true when at least one fire call succeeded (used for lockout tracking).
+-- fireAtTarget — handles both ranged and melee weapons
 local function fireAtTarget(targetPart)
     local now = tick()
     if (now - lastFireTime) < FIRE_COOLDOWN then return false end
@@ -813,46 +842,63 @@ local function fireAtTarget(targetPart)
     if not char then return false end
     local tool = char:FindFirstChildOfClass("Tool")
     if not tool then return false end
-    local weaponName = tool.Name
-    local exitPart   = tool:FindFirstChild("Exit")
-    if not exitPart then return false end
 
-    -- Ensure ammo is non-zero before firing
-    pcall(function()
-        local info = tool:FindFirstChild("Info")
-        if info then
-            local clip    = info:FindFirstChild("Clip")
-            local reserve = info:FindFirstChild("Reserve")
-            if clip    and clip.Value    < 1 then clip.Value    = 99999 end
-            if reserve and reserve.Value < 1 then reserve.Value = 99999 end
-        end
-    end)
+    -- Force ammo (ranged only — melee has no clip)
+    local info = tool:FindFirstChild("Info")
+    if info then
+        local clip = info:FindFirstChild("Clip")
+        if clip and clip.Value < 1 then clip.Value = 99999 end
+    end
+    local reserve = LocalPlayer:FindFirstChild("Reserve")
+    if reserve and reserve.Value < 1 then reserve.Value = 99999 end
 
-    local hitPos    = targetPart.Position
-    local rayOrigin = hitPos + Vector3.new(0, 0.01, 0)
-    local normalVec = Vector3.new(0, 1, 0)
-
-    -- Clear weapon debounce state before firing
     pcall(function() tool:SetAttribute("Firing", false) end)
     pcall(function() tool:SetAttribute("ContinuousFireActive", false) end)
 
     local fired = false
-    pcall(function()
-        ReplicatedStorage.Events.Actions.Fire:FireServer(
-            weaponName,
-            {{ targetPart, hitPos, normalVec }},
-            {{ weaponName, rayOrigin, hitPos, hitPos, true, targetPart, false, false, "Default", exitPart }}
-        )
-        fired = true
-    end)
-    pcall(function()
-        ReplicatedStorage.Events.Actions.Fire_2:FireServer(
-            weaponName,
-            {{ targetPart, hitPos, normalVec }},
-            {{ weaponName, rayOrigin, hitPos, hitPos, true, targetPart, false, false, "Default", exitPart }}
-        )
-        fired = true
-    end)
+
+    if isMelee(tool) then
+        -- Melee: bring zombie to within 3 studs, then fire MeleeRequest
+        local hrp = char:FindFirstChild("HumanoidRootPart")
+        if hrp and targetPart then
+            local zombieHRP = targetPart.Parent
+                          and targetPart.Parent:FindFirstChild("HumanoidRootPart")
+            if zombieHRP then
+                pcall(function()
+                    zombieHRP.CFrame = CFrame.new(hrp.Position + Vector3.new(0, 0, -3))
+                end)
+            end
+        end
+        pcall(function()
+            MeleeRemote:FireServer()
+            fired = true
+        end)
+        pcall(function() tool:SetAttribute("Firing", false) end)
+    else
+        -- Ranged: use Fire + Fire_2 remotes
+        local weaponName = tool.Name
+        local exitPart   = tool:FindFirstChild("Exit")
+        if not exitPart then return false end
+        local hitPos    = targetPart.Position
+        local rayOrigin = hitPos + Vector3.new(0, 0.01, 0)
+        local normalVec = Vector3.new(0, 1, 0)
+        pcall(function()
+            ReplicatedStorage.Events.Actions.Fire:FireServer(
+                weaponName,
+                {{ targetPart, hitPos, normalVec }},
+                {{ weaponName, rayOrigin, hitPos, hitPos, true, targetPart, false, false, "Default", exitPart }}
+            )
+            fired = true
+        end)
+        pcall(function()
+            ReplicatedStorage.Events.Actions.Fire_2:FireServer(
+                weaponName,
+                {{ targetPart, hitPos, normalVec }},
+                {{ weaponName, rayOrigin, hitPos, hitPos, true, targetPart, false, false, "Default", exitPart }}
+            )
+            fired = true
+        end)
+    end
 
     if fired then
         lastDamageTime = tick()
@@ -882,7 +928,7 @@ CombatTab:CreateToggle({
     Callback     = function(val)
         Settings.Aimbot = val
         if val then
-            lastDamageTime = tick()  -- reset lockout timer on enable
+            lastDamageTime = tick()
         end
     end,
 })
@@ -902,9 +948,9 @@ CombatTab:CreateToggle({
         Settings.AutoBring = val
         if val then
             bringTimer = 0
-            -- Connect Heartbeat for AutoBring (store so we can disconnect later)
             if autoBringConn then autoBringConn:Disconnect() end
             autoBringConn = RunService.Heartbeat:Connect(function(dt)
+                task.wait()  -- yield first to prevent scheduler freeze
                 if not Settings.AutoBring then return end
                 bringTimer = bringTimer + dt
                 if bringTimer < Settings.BringInterval then return end
@@ -915,20 +961,24 @@ CombatTab:CreateToggle({
                         if not hrp then return end
                         local zombieFolder = workspace:FindFirstChild("ActiveZombies")
                         if not zombieFolder then return end
-
                         local zombies = zombieFolder:GetChildren()
                         local total   = #zombies
                         if total == 0 then return end
+
+                        local char = LocalPlayer.Character
+                        local tool = char and char:FindFirstChildOfClass("Tool")
+                        local meleeMode = isMelee(tool)
 
                         for i, zombie in ipairs(zombies) do
                             local hum = zombie:FindFirstChildOfClass("Humanoid")
                             if hum and hum.Health > 0 then
                                 local zhrp = zombie:FindFirstChild("HumanoidRootPart")
                                 if zhrp then
+                                    local radius = meleeMode and 3 or Settings.BringRadius
                                     local angle  = ((i - 1) / total) * (2 * math.pi)
                                     local offset = Vector3.new(
                                         math.cos(angle), 0, math.sin(angle)
-                                    ) * Settings.BringRadius
+                                    ) * radius
                                     pcall(function()
                                         zhrp.CFrame   = CFrame.new(hrp.Position + offset)
                                         hum.WalkSpeed = 0
@@ -937,9 +987,15 @@ CombatTab:CreateToggle({
                                         local target = zombie:FindFirstChild("HeadHitbox")
                                                     or zombie:FindFirstChild("Head")
                                                     or zhrp
-                                        task.spawn(function() fireAtTarget(target) end)
+                                        if meleeMode then
+                                            pcall(function() MeleeRemote:FireServer() end)
+                                        else
+                                            task.spawn(function() fireAtTarget(target) end)
+                                        end
+                                        task.wait(0.05)
+                                    else
+                                        task.wait(0.01)
                                     end
-                                    task.wait(0.01)
                                 end
                             end
                         end
@@ -947,7 +1003,6 @@ CombatTab:CreateToggle({
                 end)
             end)
         else
-            -- Disconnect Heartbeat to avoid leaked connection
             if autoBringConn then
                 autoBringConn:Disconnect()
                 autoBringConn = nil
@@ -990,7 +1045,6 @@ CombatTab:CreateToggle({
             Settings.FreezeAmmo = false
             _frozenClip    = nil
             _frozenReserve = nil
-            -- Apply immediately, before the next loop tick
             applyAmmoNow(99999, 99999)
         end
     end,
@@ -1003,24 +1057,22 @@ CombatTab:CreateToggle({
         Settings.FreezeAmmo = val
         if val then
             Settings.InfiniteAmmo = false
-            -- Cache current values immediately at toggle-ON time
             pcall(function()
                 local char = LocalPlayer.Character
                 local tool = char and char:FindFirstChildOfClass("Tool")
+                local cv, rv = 12, 99999
                 if tool then
                     local info = tool:FindFirstChild("Info")
                     if info then
-                        local clip    = info:FindFirstChild("Clip")
-                        local reserve = info:FindFirstChild("Reserve")
-                        -- If clip is already 0, freeze at ClipSize (12) instead
-                        local cv = clip    and clip.Value    or 12
-                        local rv = reserve and reserve.Value or 99999
-                        _frozenClip    = (cv > 0) and cv or 12
-                        _frozenReserve = (rv > 0) and rv or 99999
+                        local clip = info:FindFirstChild("Clip")
+                        if clip and clip.Value > 0 then cv = clip.Value end
                     end
                 end
+                local reserve = LocalPlayer:FindFirstChild("Reserve")
+                if reserve and reserve.Value > 0 then rv = reserve.Value end
+                _frozenClip    = cv
+                _frozenReserve = rv
             end)
-            -- Apply immediately
             if _frozenClip then
                 applyAmmoNow(_frozenClip, _frozenReserve or 99999)
             end
@@ -1031,11 +1083,11 @@ CombatTab:CreateToggle({
     end,
 })
 
--- ───── Tab 3: Movement ─────
+-- ───── Movement Tab ─────
 local MovementTab = Window:CreateTab(T("TabMovement"), 4483362458)
 
 -- ================================================================
--- Fly system (confirmed working — do not touch logic)
+-- Fly system (do not touch logic — only pcall wraps on Instance.new)
 -- ================================================================
 local FLYING       = false
 local FLY_BTN_UP   = 0
@@ -1056,7 +1108,6 @@ local function enableFly()
 
     local CTRL = {F=0, B=0, L=0, R=0, UP=0, DOWN=0}
 
-    -- Wrap deprecated Instance.new calls in pcall for executor compatibility
     local bv, bg
     pcall(function()
         bv = Instance.new("BodyVelocity")
@@ -1234,6 +1285,7 @@ MovementTab:CreateToggle({
         if val then
             if not noClipConn then
                 noClipConn = RunService.Stepped:Connect(function()
+                    task.wait()
                     if not Settings.NoClip then
                         noClipConn:Disconnect()
                         noClipConn = nil
@@ -1306,13 +1358,13 @@ ToolsTab:CreateToggle({
             if not afkThread then
                 afkThread = task.spawn(function()
                     while Settings.AntiAFK do
+                        task.wait(60)
                         pcall(function()
                             local hrp = getHRP()
                             if hrp then
                                 hrp.CFrame = hrp.CFrame * CFrame.Angles(0, math.rad(0.01), 0)
                             end
                         end)
-                        task.wait(60)
                     end
                     afkThread = nil
                 end)
@@ -1333,55 +1385,62 @@ ToolsTab:CreateDropdown({
 ToolsTab:CreateLabel(T("LangNote"))
 
 -- ================================================================
--- Ammo maintenance loop — 0.05s interval
--- Threshold-based: only writes when value < CLIP_THRESHOLD (99).
--- InfiniteAmmo takes priority over FreezeAmmo when both are ON.
--- After writing Info values, also patches Handler's internal upvalue.
+-- Ammo maintenance loop — 0.3s interval
+-- Clip  → tool.Info.Clip
+-- Reserve → LocalPlayer.Reserve (confirmed upvalue [33])
 -- ================================================================
 task.spawn(function()
     while true do
-        task.wait(0.05)
+        task.wait(0.3)
         pcall(function()
-            local char = LocalPlayer.Character
+            local char    = LocalPlayer.Character
             if not char then return end
-            local tool = char:FindFirstChildOfClass("Tool")
-            if not tool then return end
-            local info = tool:FindFirstChild("Info")
-            if not info then return end
-            local clip    = info:FindFirstChild("Clip")
-            local reserve = info:FindFirstChild("Reserve")
+            local tool    = char:FindFirstChildOfClass("Tool")
+            local reserve = LocalPlayer:FindFirstChild("Reserve")
 
             if Settings.InfiniteAmmo then
-                local wrote = false
-                if clip    and clip.Value    < CLIP_THRESHOLD then clip.Value    = 99999; wrote = true end
-                if reserve and reserve.Value < CLIP_THRESHOLD then reserve.Value = 99999; wrote = true end
-                if wrote then forceHandlerAmmo(tool, 99999) end
+                if tool then
+                    local info = tool:FindFirstChild("Info")
+                    if info then
+                        local clip = info:FindFirstChild("Clip")
+                        if clip and clip.Value < 5 then
+                            clip.Value = 99999
+                            forceHandlerAmmo(tool, 99999)
+                        end
+                    end
+                end
+                if reserve and reserve.Value < 5 then reserve.Value = 99999 end
 
             elseif Settings.FreezeAmmo and _frozenClip then
-                local cv = _frozenClip
-                local rv = _frozenReserve or 99999
-                local wrote = false
-                if clip    and clip.Value    ~= cv then clip.Value    = cv; wrote = true end
-                if reserve and reserve.Value ~= rv then reserve.Value = rv; wrote = true end
-                if wrote and cv > 0 then forceHandlerAmmo(tool, cv) end
+                if tool then
+                    local info = tool:FindFirstChild("Info")
+                    if info then
+                        local clip = info:FindFirstChild("Clip")
+                        if clip and clip.Value ~= _frozenClip then
+                            clip.Value = _frozenClip
+                            forceHandlerAmmo(tool, _frozenClip)
+                        end
+                    end
+                end
+                if reserve and _frozenReserve and reserve.Value ~= _frozenReserve then
+                    reserve.Value = _frozenReserve
+                end
             end
         end)
     end
 end)
 
 -- ================================================================
--- Lockout watchdog — checks every 0.5s whether aimbot has gone
--- 3s without a successful shot, and triggers a soft re-equip if so.
+-- Lockout watchdog — 0.5s interval
 -- ================================================================
 task.spawn(function()
     while true do
         task.wait(0.5)
         if Settings.Aimbot and (tick() - lastDamageTime) > 3 then
-            -- Only attempt re-equip if we actually have a target (not just idle)
             local target = getClosestZombieTarget(Settings.MaxZombieDist)
             if target then
                 softReequip()
-                lastDamageTime = tick()  -- reset after re-equip attempt
+                lastDamageTime = tick()
             end
         end
     end
@@ -1401,6 +1460,17 @@ local function connectAimbot()
             local targetPart = getClosestZombieTarget(Settings.MaxZombieDist)
             if targetPart then
                 cam.CFrame = CFrame.lookAt(cam.CFrame.Position, targetPart.Position)
+            end
+        end)
+        -- Fire melee automatically when in aimbot mode with melee weapon
+        pcall(function()
+            local char = LocalPlayer.Character
+            local tool = char and char:FindFirstChildOfClass("Tool")
+            if tool and isMelee(tool) then
+                local target = getClosestZombieTarget(Settings.MaxZombieDist)
+                if target then
+                    fireAtTarget(target)
+                end
             end
         end)
     end)
