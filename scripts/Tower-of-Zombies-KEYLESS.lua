@@ -2,7 +2,7 @@
     ================================================================
     Tower of Zombies Hub — Tower of Zombies
     Created by Rival960 with the help of Claude
-    Version: v1.2.0 | Languages: 21 | Rayfield UI
+    Version: v1.2.1 | Languages: 21 | Rayfield UI
     Status: untested in-game
     ================================================================
 ]]
@@ -38,9 +38,9 @@ local Translations = {
         TabMovement         = "Movement",
         TabTools            = "Tools & Visuals",
         CreditsTitle        = "Credits",
-        CreditsContent      = "Created by Rival960 with the help of AI\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.2.0 — Melee Update",
-        ReleaseNotesTitle   = "v1.2.0 — Release Notes",
-        ReleaseNotesContent = "v1.2.0: Fixed Infinite Ammo and Freeze Ammo (Reserve was in the wrong location), added melee weapon support (Bat and all melee tools) for Aimbot and Auto Bring, improved executor stability for Volt and all executors.\nFound a bug or want to request a feature? Open an issue on GitHub (Rival99900/Roblox-Scripts) or post on ScriptBlox.",
+        CreditsContent      = "Created by Rival960 with the help of AI\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.2.1 — Executor Stability Fix",
+        ReleaseNotesTitle   = "v1.2.1 — Release Notes",
+        ReleaseNotesContent = "v1.2.0: Fixed ammo reserve location, added melee weapon support, improved executor stability.\nv1.2.1: Fixed game freeze on Volt and other executors caused by task.wait() inside Heartbeat handler; Rayfield now loads asynchronously to prevent main thread blocking.\n\nFound a bug or want to request a feature? Open an issue on GitHub (Rival99900/Roblox-Scripts) or post on ScriptBlox.",
         Aimbot              = "Aimbot",
         AutoBring           = "Auto Bring",
         BringRadius         = "Bring Radius (studs)",
@@ -67,9 +67,9 @@ local Translations = {
         TabMovement         = "Déplacement",
         TabTools            = "Outils & Visuels",
         CreditsTitle        = "Crédits",
-        CreditsContent      = "Créé par Rival960 avec l'aide de l'IA\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.2.0 — Mise à Jour Mêlée",
-        ReleaseNotesTitle   = "v1.2.0 — Notes de Version",
-        ReleaseNotesContent = "v1.2.0 : Correction de Munitions Infinies et Geler les Munitions (la Réserve était au mauvais endroit), support des armes de mêlée (Batte et tous les outils de mêlée) pour l'Aimbot et l'Auto Attirer, stabilité améliorée pour Volt et tous les executors.\nVous avez trouvé un bug ou souhaitez demander une fonctionnalité ? Ouvrez un ticket sur GitHub (Rival99900/Roblox-Scripts) ou postez sur ScriptBlox.",
+        CreditsContent      = "Créé par Rival960 avec l'aide de l'IA\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.2.1 — Correctif Stabilité Executor",
+        ReleaseNotesTitle   = "v1.2.1 — Notes de Version",
+        ReleaseNotesContent = "v1.2.0 : Correction de l'emplacement de la réserve de munitions, support des armes de mêlée, stabilité executor améliorée.\nv1.2.1 : Correction du gel du jeu sur Volt et autres executors causé par task.wait() dans le handler Heartbeat ; Rayfield se charge maintenant de manière asynchrone.\n\nVous avez trouvé un bug ou souhaitez demander une fonctionnalité ? Ouvrez un ticket sur GitHub (Rival99900/Roblox-Scripts) ou postez sur ScriptBlox.",
         Aimbot              = "Aimbot",
         AutoBring           = "Auto Attirer",
         BringRadius         = "Rayon d'attrait (studs)",
@@ -96,9 +96,9 @@ local Translations = {
         TabMovement         = "Bewegung",
         TabTools            = "Tools & Visuals",
         CreditsTitle        = "Credits",
-        CreditsContent      = "Erstellt von Rival960 mit KI-Hilfe\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.2.0 — Nahkampf-Update",
-        ReleaseNotesTitle   = "v1.2.0 — Versionshinweise",
-        ReleaseNotesContent = "v1.2.0: Unendlich Munition und Munition Einfrieren behoben (Reserve war am falschen Ort), Nahkampfwaffen-Support (Schläger und alle Nahkampfwerkzeuge) für Aimbot und Auto Anziehen, verbesserte Executor-Stabilität für Volt und alle Executors.\nBug gefunden oder Feature-Wunsch? Erstelle ein Issue auf GitHub (Rival99900/Roblox-Scripts) oder schreibe auf ScriptBlox.",
+        CreditsContent      = "Erstellt von Rival960 mit KI-Hilfe\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.2.1 — Executor-Stabilitätsfix",
+        ReleaseNotesTitle   = "v1.2.1 — Versionshinweise",
+        ReleaseNotesContent = "v1.2.0: Munitionsreserve-Speicherort behoben, Nahkampfwaffen-Support hinzugefügt, Executor-Stabilität verbessert.\nv1.2.1: Spieleinfrierung auf Volt und anderen Executors durch task.wait() im Heartbeat-Handler behoben; Rayfield lädt jetzt asynchron.\n\nBug gefunden oder Feature-Wunsch? Erstelle ein Issue auf GitHub (Rival99900/Roblox-Scripts) oder schreibe auf ScriptBlox.",
         Aimbot              = "Aimbot",
         AutoBring           = "Auto Anziehen",
         BringRadius         = "Anzugsradius (studs)",
@@ -125,9 +125,9 @@ local Translations = {
         TabMovement         = "Movimiento",
         TabTools            = "Herramientas",
         CreditsTitle        = "Créditos",
-        CreditsContent      = "Creado por Rival960 con ayuda de IA\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.2.0 — Actualización Cuerpo a Cuerpo",
-        ReleaseNotesTitle   = "v1.2.0 — Notas de Versión",
-        ReleaseNotesContent = "v1.2.0: Corrección de Munición Infinita y Congelar Munición (la Reserva estaba en el lugar equivocado), soporte de armas cuerpo a cuerpo (Bate y todas las herramientas de mêlée) para Aimbot y Auto Atraer, estabilidad mejorada para Volt y todos los executors.\n¿Encontraste un error o quieres pedir una función? Abre un issue en GitHub (Rival99900/Roblox-Scripts) o publica en ScriptBlox.",
+        CreditsContent      = "Creado por Rival960 con ayuda de IA\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.2.1 — Corrección Estabilidad Executor",
+        ReleaseNotesTitle   = "v1.2.1 — Notas de Versión",
+        ReleaseNotesContent = "v1.2.0: Corrección de la ubicación de la reserva de munición, soporte de armas cuerpo a cuerpo, estabilidad mejorada.\nv1.2.1: Corrección del congelamiento en Volt y otros executors causado por task.wait() dentro del handler Heartbeat; Rayfield ahora carga de forma asíncrona.\n\n¿Encontraste un error o quieres pedir una función? Abre un issue en GitHub (Rival99900/Roblox-Scripts) o publica en ScriptBlox.",
         Aimbot              = "Aimbot",
         AutoBring           = "Auto Atraer",
         BringRadius         = "Radio de Atracción (studs)",
@@ -154,9 +154,9 @@ local Translations = {
         TabMovement         = "Movimento",
         TabTools            = "Ferramentas",
         CreditsTitle        = "Créditos",
-        CreditsContent      = "Criado por Rival960 com ajuda de IA\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.2.0 — Atualização Corpo a Corpo",
-        ReleaseNotesTitle   = "v1.2.0 — Notas da Versão",
-        ReleaseNotesContent = "v1.2.0: Correção de Munição Infinita e Congelar Munição (a Reserva estava no local errado), suporte a armas corpo a corpo (Bastão e todas as ferramentas de mêlée) para Aimbot e Auto Atrair, estabilidade melhorada para Volt e todos os executors.\nEncontrou um bug ou quer sugerir uma função? Abra uma issue no GitHub (Rival99900/Roblox-Scripts) ou publique no ScriptBlox.",
+        CreditsContent      = "Criado por Rival960 com ajuda de IA\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.2.1 — Correção Estabilidade Executor",
+        ReleaseNotesTitle   = "v1.2.1 — Notas da Versão",
+        ReleaseNotesContent = "v1.2.0: Correção da localização da reserva de munição, suporte a armas corpo a corpo, estabilidade melhorada.\nv1.2.1: Correção do congelamento no Volt e outros executors causado por task.wait() dentro do handler Heartbeat; Rayfield agora carrega de forma assíncrona.\n\nEncontrou um bug ou quer sugerir uma função? Abra uma issue no GitHub (Rival99900/Roblox-Scripts) ou publique no ScriptBlox.",
         Aimbot              = "Aimbot",
         AutoBring           = "Auto Atrair",
         BringRadius         = "Raio de Atração (studs)",
@@ -183,9 +183,9 @@ local Translations = {
         TabMovement         = "Движение",
         TabTools            = "Инструменты",
         CreditsTitle        = "Авторы",
-        CreditsContent      = "Создано Rival960 с помощью ИИ\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.2.0 — Обновление ближнего боя",
-        ReleaseNotesTitle   = "v1.2.0 — Примечания к версии",
-        ReleaseNotesContent = "v1.2.0: Исправлены Бесконечные патроны и Заморозить патроны (Резерв находился не там), поддержка оружия ближнего боя (Бита и все инструменты ближнего боя) для Аимбота и Авто Притяжения, улучшена стабильность для Volt и всех executors.\nНашли баг или хотите предложить функцию? Создайте issue на GitHub (Rival99900/Roblox-Scripts) или напишите на ScriptBlox.",
+        CreditsContent      = "Создано Rival960 с помощью ИИ\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.2.1 — Исправление стабильности executor",
+        ReleaseNotesTitle   = "v1.2.1 — Примечания к версии",
+        ReleaseNotesContent = "v1.2.0: Исправлено расположение резерва патронов, добавлена поддержка оружия ближнего боя, улучшена стабильность.\nv1.2.1: Исправлено зависание на Volt и других executors из-за task.wait() внутри обработчика Heartbeat; Rayfield теперь загружается асинхронно.\n\nНашли баг или хотите предложить функцию? Создайте issue на GitHub (Rival99900/Roblox-Scripts) или напишите на ScriptBlox.",
         Aimbot              = "Аимбот",
         AutoBring           = "Авто Притяжение",
         BringRadius         = "Радиус притяжения (ст.)",
@@ -212,9 +212,9 @@ local Translations = {
         TabMovement         = "Movimento",
         TabTools            = "Strumenti",
         CreditsTitle        = "Crediti",
-        CreditsContent      = "Creato da Rival960 con l'aiuto dell'IA\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.2.0 — Aggiornamento Mischia",
-        ReleaseNotesTitle   = "v1.2.0 — Note di Versione",
-        ReleaseNotesContent = "v1.2.0: Corretti Munizioni Infinite e Blocca Munizioni (la Riserva era nel posto sbagliato), supporto armi da mischia (Mazza e tutti gli strumenti da mischia) per Aimbot e Auto Attira, stabilità migliorata per Volt e tutti gli executor.\nHai trovato un bug o vuoi richiedere una funzione? Apri un'issue su GitHub (Rival99900/Roblox-Scripts) o scrivi su ScriptBlox.",
+        CreditsContent      = "Creato da Rival960 con l'aiuto dell'IA\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.2.1 — Correzione Stabilità Executor",
+        ReleaseNotesTitle   = "v1.2.1 — Note di Versione",
+        ReleaseNotesContent = "v1.2.0: Corretta posizione della riserva munizioni, aggiunto supporto armi da mischia, stabilità migliorata.\nv1.2.1: Corretto il congelamento su Volt e altri executor causato da task.wait() nell'handler Heartbeat; Rayfield ora si carica in modo asincrono.\n\nHai trovato un bug o vuoi richiedere una funzione? Apri un'issue su GitHub (Rival99900/Roblox-Scripts) o scrivi su ScriptBlox.",
         Aimbot              = "Aimbot",
         AutoBring           = "Auto Attira",
         BringRadius         = "Raggio di Attrazione (studs)",
@@ -241,9 +241,9 @@ local Translations = {
         TabMovement         = "Beweging",
         TabTools            = "Tools & Visuals",
         CreditsTitle        = "Credits",
-        CreditsContent      = "Gemaakt door Rival960 met AI-hulp\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.2.0 — Melee-update",
-        ReleaseNotesTitle   = "v1.2.0 — Versienotities",
-        ReleaseNotesContent = "v1.2.0: Oneindige Munitie en Bevriezing Munitie gecorrigeerd (Reserve was op de verkeerde locatie), melee-wapenondersteuning (Knuppel en alle melee-tools) voor Aimbot en Auto Aantrekken, verbeterde stabiliteit voor Volt en alle executors.\nBug gevonden of wil je een functie aanvragen? Open een issue op GitHub (Rival99900/Roblox-Scripts) of post op ScriptBlox.",
+        CreditsContent      = "Gemaakt door Rival960 met AI-hulp\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.2.1 — Executor Stabiliteitsfix",
+        ReleaseNotesTitle   = "v1.2.1 — Versienotities",
+        ReleaseNotesContent = "v1.2.0: Locatie munitiereserve gecorrigeerd, melee-wapenondersteuning toegevoegd, stabiliteit verbeterd.\nv1.2.1: Bevriezing op Volt en andere executors verholpen veroorzaakt door task.wait() in de Heartbeat-handler; Rayfield laadt nu asynchroon.\n\nBug gevonden of wil je een functie aanvragen? Open een issue op GitHub (Rival99900/Roblox-Scripts) of post op ScriptBlox.",
         Aimbot              = "Aimbot",
         AutoBring           = "Auto Aantrekken",
         BringRadius         = "Aantrekkingsradius (studs)",
@@ -270,9 +270,9 @@ local Translations = {
         TabMovement         = "Ruch",
         TabTools            = "Narzędzia",
         CreditsTitle        = "Kredyty",
-        CreditsContent      = "Stworzone przez Rival960 z pomocą AI\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.2.0 — Aktualizacja Broni Białej",
-        ReleaseNotesTitle   = "v1.2.0 — Informacje o Wersji",
-        ReleaseNotesContent = "v1.2.0: Poprawiono Nieskończoną Amunicję i Zamroź Amunicję (Rezerwa była w złym miejscu), wsparcie broni białej (Kij i wszystkie narzędzia walki wręcz) dla Aimbot i Auto Przyciąganie, poprawiona stabilność dla Volt i wszystkich executors.\nZnalazłeś błąd lub chcesz zgłosić funkcję? Otwórz issue na GitHub (Rival99900/Roblox-Scripts) lub napisz na ScriptBlox.",
+        CreditsContent      = "Stworzone przez Rival960 z pomocą AI\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.2.1 — Poprawka Stabilności Executora",
+        ReleaseNotesTitle   = "v1.2.1 — Informacje o Wersji",
+        ReleaseNotesContent = "v1.2.0: Poprawiono lokalizację rezerwy amunicji, dodano wsparcie broni białej, poprawiono stabilność.\nv1.2.1: Naprawiono zamrożenie gry na Volt i innych executorach spowodowane task.wait() wewnątrz handlera Heartbeat; Rayfield ładuje się teraz asynchronicznie.\n\nZnalazłeś błąd lub chcesz zgłosić funkcję? Otwórz issue na GitHub (Rival99900/Roblox-Scripts) lub napisz na ScriptBlox.",
         Aimbot              = "Aimbot",
         AutoBring           = "Auto Przyciąganie",
         BringRadius         = "Promień przyciągania (studs)",
@@ -299,9 +299,9 @@ local Translations = {
         TabMovement         = "移动",
         TabTools            = "工具与视觉",
         CreditsTitle        = "致谢",
-        CreditsContent      = "由 Rival960 借助 AI 创建\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.2.0 — 近战更新",
-        ReleaseNotesTitle   = "v1.2.0 — 版本说明",
-        ReleaseNotesContent = "v1.2.0：修复了无限弹药和冻结弹药（备用弹药位置错误），为Aimbot和自动吸引添加近战武器支持（球棒及所有近战工具），改善了Volt及所有执行器的稳定性。\n发现漏洞或想申请功能？请在 GitHub (Rival99900/Roblox-Scripts) 提交 issue 或在 ScriptBlox 发帖。",
+        CreditsContent      = "由 Rival960 借助 AI 创建\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.2.1 — Executor 稳定性修复",
+        ReleaseNotesTitle   = "v1.2.1 — 版本说明",
+        ReleaseNotesContent = "v1.2.0：修复了备用弹药位置，添加近战武器支持，改善executor稳定性。\nv1.2.1：修复了Volt及其他executor因Heartbeat处理器中的task.wait()导致的游戏冻结；Rayfield现在异步加载。\n\n发现漏洞或想申请功能？请在 GitHub (Rival99900/Roblox-Scripts) 提交 issue 或在 ScriptBlox 发帖。",
         Aimbot              = "自动瞄准",
         AutoBring           = "自动吸引",
         BringRadius         = "吸引半径 (格)",
@@ -328,9 +328,9 @@ local Translations = {
         TabMovement         = "移動",
         TabTools            = "ツール",
         CreditsTitle        = "クレジット",
-        CreditsContent      = "Rival960 と AI の協力で作成\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.2.0 — 近接アップデート",
-        ReleaseNotesTitle   = "v1.2.0 — リリースノート",
-        ReleaseNotesContent = "v1.2.0：無限弾薬と弾薬固定を修正（リザーブの場所が間違っていた）、近接武器サポート（バットと全近接ツール）をエイムボットと自動引き寄せに追加、VoltおよびすべてのExecutorの安定性を改善。\nバグ発見や機能リクエストはGitHub (Rival99900/Roblox-Scripts) のissueまたはScriptBloxに投稿してください。",
+        CreditsContent      = "Rival960 と AI の協力で作成\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.2.1 — Executor 安定性修正",
+        ReleaseNotesTitle   = "v1.2.1 — リリースノート",
+        ReleaseNotesContent = "v1.2.0：予備弾薬の場所を修正、近接武器サポートを追加、安定性を改善。\nv1.2.1：HeartbeatハンドラーのtaskタスクwaitによるVoltおよび他のExecutorでのフリーズを修正；Rayfieldが非同期で読み込まれるように変更。\n\nバグ発見や機能リクエストはGitHub (Rival99900/Roblox-Scripts) のissueまたはScriptBloxに投稿してください。",
         Aimbot              = "エイムボット",
         AutoBring           = "自動引き寄せ",
         BringRadius         = "引き寄せ半径 (スタッド)",
@@ -357,9 +357,9 @@ local Translations = {
         TabMovement         = "Hareket",
         TabTools            = "Araçlar",
         CreditsTitle        = "Krediler",
-        CreditsContent      = "Rival960 tarafından AI yardımıyla yapılmıştır\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.2.0 — Yakın Dövüş Güncellemesi",
-        ReleaseNotesTitle   = "v1.2.0 — Sürüm Notları",
-        ReleaseNotesContent = "v1.2.0: Sonsuz Mermi ve Mermiyi Dondur düzeltildi (Rezerv yanlış konumdaydı), Aimbot ve Otomatik Çekme için yakın dövüş silahı desteği (Sopа ve tüm yakın dövüş araçları) eklendi, Volt ve tüm executorlar için stabilite geliştirildi.\nBir hata buldunuz veya özellik talep etmek mi istiyorsunuz? GitHub'da (Rival99900/Roblox-Scripts) issue açın veya ScriptBlox'ta paylaşın.",
+        CreditsContent      = "Rival960 tarafından AI yardımıyla yapılmıştır\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.2.1 — Executor Kararlılık Düzeltmesi",
+        ReleaseNotesTitle   = "v1.2.1 — Sürüm Notları",
+        ReleaseNotesContent = "v1.2.0: Mermi rezerv konumu düzeltildi, yakın dövüş silahı desteği eklendi, kararlılık geliştirildi.\nv1.2.1: Heartbeat handler içindeki task.wait() nedeniyle Volt ve diğer executörlerde yaşanan oyun donması düzeltildi; Rayfield artık eşzamansız yükleniyor.\n\nBir hata buldunuz veya özellik talep etmek mi istiyorsunuz? GitHub'da (Rival99900/Roblox-Scripts) issue açın veya ScriptBlox'ta paylaşın.",
         Aimbot              = "Aimbot",
         AutoBring           = "Otomatik Çekme",
         BringRadius         = "Çekme Yarıçapı (studs)",
@@ -386,9 +386,9 @@ local Translations = {
         TabMovement         = "이동",
         TabTools            = "도구",
         CreditsTitle        = "크레딧",
-        CreditsContent      = "Rival960이 AI의 도움으로 제작\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.2.0 — 근접 무기 업데이트",
-        ReleaseNotesTitle   = "v1.2.0 — 릴리즈 노트",
-        ReleaseNotesContent = "v1.2.0: 무한 탄약 및 탄약 고정 수정 (예비 탄약 위치가 잘못됨), 에임봇 및 자동 끌어오기에 근접 무기 지원 (배트 및 모든 근접 도구) 추가, Volt 및 모든 executor의 안정성 개선.\n버그를 찾거나 기능을 요청하고 싶다면? GitHub (Rival99900/Roblox-Scripts)에 이슈를 열거나 ScriptBlox에 게시하세요.",
+        CreditsContent      = "Rival960이 AI의 도움으로 제작\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.2.1 — Executor 안정성 수정",
+        ReleaseNotesTitle   = "v1.2.1 — 릴리즈 노트",
+        ReleaseNotesContent = "v1.2.0: 예비 탄약 위치 수정, 근접 무기 지원 추가, 안정성 개선.\nv1.2.1: Heartbeat 핸들러 내 task.wait()로 인한 Volt 및 다른 executor의 게임 프리즈 수정; Rayfield가 이제 비동기적으로 로드됩니다.\n\n버그를 찾거나 기능을 요청하고 싶다면? GitHub (Rival99900/Roblox-Scripts)에 이슈를 열거나 ScriptBlox에 게시하세요.",
         Aimbot              = "에임봇",
         AutoBring           = "자동 끌어오기",
         BringRadius         = "끌어오기 반경 (스터드)",
@@ -415,9 +415,9 @@ local Translations = {
         TabMovement         = "الحركة",
         TabTools            = "الأدوات",
         CreditsTitle        = "الاعتمادات",
-        CreditsContent      = "تم إنشاؤه بواسطة Rival960 بمساعدة الذكاء الاصطناعي\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.2.0 — تحديث القتال المتلاحم",
-        ReleaseNotesTitle   = "v1.2.0 — ملاحظات الإصدار",
-        ReleaseNotesContent = "v1.2.0: إصلاح الذخيرة اللانهائية وتجميد الذخيرة (كان الاحتياطي في الموقع الخطأ)، دعم الأسلحة المتلاحمة (الخفاش وجميع أدوات المتلاحم) للأيمبوت والجذب التلقائي، تحسين الاستقرار لـ Volt وجميع executors.\nوجدت خطأ أو تريد طلب ميزة؟ افتح issue على GitHub (Rival99900/Roblox-Scripts) أو انشر على ScriptBlox.",
+        CreditsContent      = "تم إنشاؤه بواسطة Rival960 بمساعدة الذكاء الاصطناعي\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.2.1 — إصلاح استقرار المنفذ",
+        ReleaseNotesTitle   = "v1.2.1 — ملاحظات الإصدار",
+        ReleaseNotesContent = "v1.2.0: إصلاح موقع احتياطي الذخيرة، دعم الأسلحة المتلاحمة، تحسين الاستقرار.\nv1.2.1: إصلاح تجميد اللعبة على Volt والمنفذين الآخرين بسبب task.wait() داخل معالج Heartbeat؛ يتم الآن تحميل Rayfield بشكل غير متزامن.\n\nوجدت خطأ أو تريد طلب ميزة؟ افتح issue على GitHub (Rival99900/Roblox-Scripts) أو انشر على ScriptBlox.",
         Aimbot              = "أيمبوت",
         AutoBring           = "جذب تلقائي",
         BringRadius         = "نطاق الجذب (وحدة)",
@@ -444,9 +444,9 @@ local Translations = {
         TabMovement         = "Di Chuyển",
         TabTools            = "Công Cụ",
         CreditsTitle        = "Tín Dụng",
-        CreditsContent      = "Tạo bởi Rival960 với sự trợ giúp của AI\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.2.0 — Cập Nhật Vũ Khí Cận Chiến",
-        ReleaseNotesTitle   = "v1.2.0 — Ghi Chú Phiên Bản",
-        ReleaseNotesContent = "v1.2.0: Sửa Đạn Vô Hạn và Đóng Băng Đạn (Dự Trữ ở vị trí sai), thêm hỗ trợ vũ khí cận chiến (Gậy và tất cả công cụ cận chiến) cho Aimbot và Tự Động Kéo, cải thiện độ ổn định cho Volt và tất cả executor.\nTìm thấy lỗi hoặc muốn yêu cầu tính năng? Mở issue trên GitHub (Rival99900/Roblox-Scripts) hoặc đăng trên ScriptBlox.",
+        CreditsContent      = "Tạo bởi Rival960 với sự trợ giúp của AI\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.2.1 — Sửa Lỗi Ổn Định Executor",
+        ReleaseNotesTitle   = "v1.2.1 — Ghi Chú Phiên Bản",
+        ReleaseNotesContent = "v1.2.0: Sửa vị trí dự trữ đạn, thêm hỗ trợ vũ khí cận chiến, cải thiện độ ổn định.\nv1.2.1: Sửa lỗi đóng băng trên Volt và các executor khác do task.wait() bên trong handler Heartbeat; Rayfield giờ tải không đồng bộ.\n\nTìm thấy lỗi hoặc muốn yêu cầu tính năng? Mở issue trên GitHub (Rival99900/Roblox-Scripts) hoặc đăng trên ScriptBlox.",
         Aimbot              = "Aimbot",
         AutoBring           = "Tự Động Kéo",
         BringRadius         = "Bán Kính Kéo (studs)",
@@ -473,9 +473,9 @@ local Translations = {
         TabMovement         = "Rörelse",
         TabTools            = "Verktyg",
         CreditsTitle        = "Erkännanden",
-        CreditsContent      = "Skapad av Rival960 med hjälp av AI\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.2.0 — Närstriduppdatering",
-        ReleaseNotesTitle   = "v1.2.0 — Versionsanteckningar",
-        ReleaseNotesContent = "v1.2.0: Fixade Oändlig Ammunition och Frys Ammunition (Reserven var på fel plats), lade till stöd för närstridsvapen (Slagträ och alla närstridsverk tyg) för Aimbot och Auto Hämta, förbättrad stabilitet för Volt och alla executors.\nHittade du en bugg eller vill begära en funktion? Öppna ett issue på GitHub (Rival99900/Roblox-Scripts) eller posta på ScriptBlox.",
+        CreditsContent      = "Skapad av Rival960 med hjälp av AI\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.2.1 — Executor Stabilitetsfix",
+        ReleaseNotesTitle   = "v1.2.1 — Versionsanteckningar",
+        ReleaseNotesContent = "v1.2.0: Korrigerade plats för ammunitionsreserv, lade till stöd för närstridsvapen, förbättrad stabilitet.\nv1.2.1: Åtgärdade spelfrysning på Volt och andra executors orsakad av task.wait() i Heartbeat-handler; Rayfield laddas nu asynkront.\n\nHittade du en bugg eller vill begära en funktion? Öppna ett issue på GitHub (Rival99900/Roblox-Scripts) eller posta på ScriptBlox.",
         Aimbot              = "Aimbot",
         AutoBring           = "Auto Hämta",
         BringRadius         = "Hämtningsradie (studs)",
@@ -502,9 +502,9 @@ local Translations = {
         TabMovement         = "Κίνηση",
         TabTools            = "Εργαλεία",
         CreditsTitle        = "Εύσημα",
-        CreditsContent      = "Δημιουργήθηκε από Rival960 με βοήθεια AI\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.2.0 — Ενημέρωση Εκ του Σύνεγγυς",
-        ReleaseNotesTitle   = "v1.2.0 — Σημειώσεις Έκδοσης",
-        ReleaseNotesContent = "v1.2.0: Διορθώθηκαν Άπειρα Πυρομαχικά και Πάγωμα Πυρομαχικών (το Αποθεματικό ήταν στη λάθος θέση), προστέθηκε υποστήριξη όπλων εκ του σύνεγγυς (Ρόπαλο και όλα τα εργαλεία) για Aimbot και Αυτόματη Έλξη, βελτιωμένη σταθερότητα για Volt και όλους τους executors.\nΒρήκατε σφάλμα ή θέλετε να ζητήσετε λειτουργία; Ανοίξτε ένα issue στο GitHub (Rival99900/Roblox-Scripts) ή δημοσιεύστε στο ScriptBlox.",
+        CreditsContent      = "Δημιουργήθηκε από Rival960 με βοήθεια AI\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.2.1 — Διόρθωση Σταθερότητας Executor",
+        ReleaseNotesTitle   = "v1.2.1 — Σημειώσεις Έκδοσης",
+        ReleaseNotesContent = "v1.2.0: Διορθώθηκε η θέση του αποθεματικού πυρομαχικών, προστέθηκε υποστήριξη όπλων εκ του σύνεγγυς, βελτιωμένη σταθερότητα.\nv1.2.1: Διορθώθηκε το πάγωμα στο Volt και άλλους executor λόγω task.wait() εντός του handler Heartbeat· το Rayfield φορτώνεται πλέον ασύγχρονα.\n\nΒρήκατε σφάλμα ή θέλετε να ζητήσετε λειτουργία; Ανοίξτε ένα issue στο GitHub (Rival99900/Roblox-Scripts) ή δημοσιεύστε στο ScriptBlox.",
         Aimbot              = "Aimbot",
         AutoBring           = "Αυτόματη Έλξη",
         BringRadius         = "Ακτίνα Έλξης (studs)",
@@ -531,9 +531,9 @@ local Translations = {
         TabMovement         = "Mișcare",
         TabTools            = "Instrumente",
         CreditsTitle        = "Credite",
-        CreditsContent      = "Creat de Rival960 cu ajutorul AI\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.2.0 — Actualizare Corp la Corp",
-        ReleaseNotesTitle   = "v1.2.0 — Note de Lansare",
-        ReleaseNotesContent = "v1.2.0: Corectate Muniție Infinită și Îngheță Muniție (Rezerva era în locul greșit), adăugat suport arme corp la corp (Bâtă și toate uneltele corp la corp) pentru Aimbot și Auto Atragere, stabilitate îmbunătățită pentru Volt și toți executorii.\nAți găsit un bug sau doriți să solicitați o funcție? Deschideți un issue pe GitHub (Rival99900/Roblox-Scripts) sau postați pe ScriptBlox.",
+        CreditsContent      = "Creat de Rival960 cu ajutorul AI\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.2.1 — Remediere Stabilitate Executor",
+        ReleaseNotesTitle   = "v1.2.1 — Note de Lansare",
+        ReleaseNotesContent = "v1.2.0: Corectată locația rezervei de muniție, adăugat suport arme corp la corp, stabilitate îmbunătățită.\nv1.2.1: Remediată înghețarea jocului pe Volt și alți executori cauzată de task.wait() în handlerul Heartbeat; Rayfield se încarcă acum asincron.\n\nAți găsit un bug sau doriți să solicitați o funcție? Deschideți un issue pe GitHub (Rival99900/Roblox-Scripts) sau postați pe ScriptBlox.",
         Aimbot              = "Aimbot",
         AutoBring           = "Auto Atragere",
         BringRadius         = "Raza de Atragere (studs)",
@@ -560,9 +560,9 @@ local Translations = {
         TabMovement         = "Рух",
         TabTools            = "Інструменти",
         CreditsTitle        = "Автори",
-        CreditsContent      = "Створено Rival960 за допомогою AI\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.2.0 — Оновлення Ближнього Бою",
-        ReleaseNotesTitle   = "v1.2.0 — Примітки до версії",
-        ReleaseNotesContent = "v1.2.0: Виправлено Нескінченні патрони та Заморозити патрони (Резерв був у неправильному місці), додано підтримку зброї ближнього бою (Бита та всі інструменти ближнього бою) для Аімбота та Авто Притягання, покращена стабільність для Volt та всіх executors.\nЗнайшли баг або хочете запропонувати функцію? Створіть issue на GitHub (Rival99900/Roblox-Scripts) або напишіть на ScriptBlox.",
+        CreditsContent      = "Створено Rival960 за допомогою AI\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.2.1 — Виправлення Стабільності Executor",
+        ReleaseNotesTitle   = "v1.2.1 — Примітки до версії",
+        ReleaseNotesContent = "v1.2.0: Виправлено розташування резерву патронів, додано підтримку зброї ближнього бою, покращена стабільність.\nv1.2.1: Виправлено зависання на Volt та інших executor через task.wait() всередині обробника Heartbeat; Rayfield тепер завантажується асинхронно.\n\nЗнайшли баг або хочете запропонувати функцію? Створіть issue на GitHub (Rival99900/Roblox-Scripts) або напишіть на ScriptBlox.",
         Aimbot              = "Аімбот",
         AutoBring           = "Авто Притягання",
         BringRadius         = "Радіус притягання (ст.)",
@@ -589,9 +589,9 @@ local Translations = {
         TabMovement         = "Pohyb",
         TabTools            = "Nástroje",
         CreditsTitle        = "Poděkování",
-        CreditsContent      = "Vytvořeno Rival960 s pomocí AI\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.2.0 — Aktualizace Boje Zblízka",
-        ReleaseNotesTitle   = "v1.2.0 — Poznámky k Vydání",
-        ReleaseNotesContent = "v1.2.0: Opravena Nekonečná Munice a Zmrazit Munici (Rezerva byla na špatném místě), přidána podpora zbraní zblízka (Baseballová pálka a všechny nástroje zblízka) pro Aimbot a Auto Přitáhnout, zlepšena stabilita pro Volt a všechny executory.\nNašli jste chybu nebo chcete požádat o funkci? Otevřete issue na GitHub (Rival99900/Roblox-Scripts) nebo přidejte příspěvek na ScriptBlox.",
+        CreditsContent      = "Vytvořeno Rival960 s pomocí AI\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.2.1 — Oprava Stability Executoru",
+        ReleaseNotesTitle   = "v1.2.1 — Poznámky k Vydání",
+        ReleaseNotesContent = "v1.2.0: Opravena poloha zásoby munice, přidána podpora zbraní zblízka, zlepšena stabilita.\nv1.2.1: Opraveno zamrznutí hry na Volt a dalších executorech způsobené task.wait() uvnitř handleru Heartbeat; Rayfield se nyní načítá asynchronně.\n\nNašli jste chybu nebo chcete požádat o funkci? Otevřete issue na GitHub (Rival99900/Roblox-Scripts) nebo přidejte příspěvek na ScriptBlox.",
         Aimbot              = "Aimbot",
         AutoBring           = "Auto Přitáhnout",
         BringRadius         = "Poloměr přitáhnutí (studs)",
@@ -618,9 +618,9 @@ local Translations = {
         TabMovement         = "Bevægelse",
         TabTools            = "Værktøjer",
         CreditsTitle        = "Anerkendelser",
-        CreditsContent      = "Oprettet af Rival960 med hjælp fra AI\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.2.0 — Nærkampsopdatering",
-        ReleaseNotesTitle   = "v1.2.0 — Udgivelsesnoter",
-        ReleaseNotesContent = "v1.2.0: Rettet Uendelig Ammunition og Frys Ammunition (Reserve var på det forkerte sted), tilføjet støtte til nærkampsvåben (Slagtrå og alle nærkampsredskaber) for Aimbot og Auto Hent, forbedret stabilitet for Volt og alle executors.\nFandt du en fejl eller vil du anmode om en funktion? Åbn et issue på GitHub (Rival99900/Roblox-Scripts) eller post på ScriptBlox.",
+        CreditsContent      = "Oprettet af Rival960 med hjælp fra AI\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.2.1 — Executor Stabilitetsfix",
+        ReleaseNotesTitle   = "v1.2.1 — Udgivelsesnoter",
+        ReleaseNotesContent = "v1.2.0: Rettet placering af ammunitionsreserve, tilføjet støtte til nærkampsvåben, forbedret stabilitet.\nv1.2.1: Rettet spilfrysning på Volt og andre executors forårsaget af task.wait() inde i Heartbeat-handler; Rayfield indlæses nu asynkront.\n\nFandt du en fejl eller vil du anmode om en funktion? Åbn et issue på GitHub (Rival99900/Roblox-Scripts) eller post på ScriptBlox.",
         Aimbot              = "Aimbot",
         AutoBring           = "Auto Hent",
         BringRadius         = "Hentningsradius (studs)",
@@ -785,15 +785,35 @@ local function softReequip()
 end
 
 -- ================================================================
--- Rayfield load (keyless)
+-- Rayfield load (keyless) — async to avoid blocking main thread
+-- Bug fix v1.2.1: synchronous load could block Volt's scheduler
 -- ================================================================
-local ok, Rayfield = pcall(function()
-    return loadstring(game:HttpGet("https://sirius.menu/rayfield"))()
+local Rayfield     = nil
+local rayfieldReady = false
+
+task.spawn(function()
+    local ok, result = pcall(function()
+        return loadstring(game:HttpGet("https://sirius.menu/rayfield"))()
+    end)
+    if ok and result then
+        Rayfield = result
+    else
+        warn("[Hub] Rayfield load failed: " .. tostring(result))
+    end
+    rayfieldReady = true
 end)
-if not ok or not Rayfield then
-    warn("[Hub] Rayfield failed to load")
-    return
+
+local _rfWaited = 0
+while not rayfieldReady do
+    task.wait(0.1)
+    _rfWaited = _rfWaited + 0.1
+    if _rfWaited >= 20 then
+        warn("[Hub] Rayfield timed out after 20s")
+        return
+    end
 end
+
+if not Rayfield then return end
 
 local Window = Rayfield:CreateWindow({
     Name             = T("WindowTitle"),
@@ -949,8 +969,11 @@ CombatTab:CreateToggle({
         if val then
             bringTimer = 0
             if autoBringConn then autoBringConn:Disconnect() end
+            -- Bug fix v1.2.1: removed task.wait() that was directly inside the
+            -- Heartbeat handler — yielding inside a Heartbeat callback freezes
+            -- the thread scheduler on Volt and other strict executors.
+            -- The bringTimer + dt accumulator already controls the interval.
             autoBringConn = RunService.Heartbeat:Connect(function(dt)
-                task.wait()  -- yield first to prevent scheduler freeze
                 if not Settings.AutoBring then return end
                 bringTimer = bringTimer + dt
                 if bringTimer < Settings.BringInterval then return end
@@ -1284,8 +1307,9 @@ MovementTab:CreateToggle({
         Settings.NoClip = val
         if val then
             if not noClipConn then
+                -- Bug fix v1.2.1: removed task.wait() that was directly inside
+                -- the Stepped handler — same freeze issue as in Heartbeat.
                 noClipConn = RunService.Stepped:Connect(function()
-                    task.wait()
                     if not Settings.NoClip then
                         noClipConn:Disconnect()
                         noClipConn = nil
