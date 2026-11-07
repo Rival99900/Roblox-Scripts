@@ -2,7 +2,7 @@
     ================================================================
     Tactical SWAT Hub — Tactical: Swat Simulator
     Created by Rival960 with the help of Claude
-    Version: 1.1.0 | Languages: 21 | Rayfield UI | PC + Mobile
+    Version: 1.1.1 | Languages: 21 | Rayfield UI | PC + Mobile
     Status: untested in-game
     ================================================================
 --]]
@@ -46,8 +46,6 @@ local Translations = {
         TabAuto          = "Auto",
         TabTools         = "Tools",
         -- Combat
-        GodMode          = "God Mode",
-        GodModeDesc      = "Continuously restore HP — near-invincible",
         ESPEnabled       = "ESP (Criminals/Civilians)",
         ESPDesc          = "Criminals = orange+hitbox | Civilians = blue, no hitbox",
         ObjectiveESP     = "Objective ESP",
@@ -96,7 +94,7 @@ local Translations = {
         LangSelect       = "Language",
         -- Credits
         CreditsTitle     = "Tactical SWAT Hub",
-        CreditsContent   = "Created by Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.0 — Weapons tab | GodMode | RapidFire | Wallbang | WallCheck | Volt fix",
+        CreditsContent   = "Created by Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.1 — fix the Weapons tab | RapidFire | Wallbang | WallCheck",
         Loaded           = "Hub loaded! Tactical advantage enabled.",
     },
     FR = {
@@ -107,8 +105,6 @@ local Translations = {
         TabMovement      = "Mouvement",
         TabAuto          = "Auto",
         TabTools         = "Outils",
-        GodMode          = "Mode Dieu",
-        GodModeDesc      = "Restaure les PV en continu — quasi invincible",
         ESPEnabled       = "ESP Suspects",
         ESPDesc          = "Surligner les suspects + HP à travers les murs",
         HitboxToggle     = "Agrandir les Hitboxes",
@@ -152,7 +148,7 @@ local Translations = {
         AntiAFKDesc      = "Empêche le kick pour inactivité",
         LangSelect       = "Langue",
         CreditsTitle     = "Tactical SWAT Hub",
-        CreditsContent   = "Créé par Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.0 — Onglet Armes | GodMode | Tir rapide | Wallbang | Vérif. murs | Correctif Volt",
+        CreditsContent   = "Créé par Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.1 — Correction onglet Armes | Tir rapide | Wallbang | Vérif. murs",
         Loaded           = "Hub chargé ! Avantage tactique activé.",
     },
     DE = {
@@ -163,8 +159,6 @@ local Translations = {
         TabMovement      = "Bewegung",
         TabAuto          = "Auto",
         TabTools         = "Werkzeuge",
-        GodMode          = "Gottmodus",
-        GodModeDesc      = "HP kontinuierlich wiederherstellen",
         ESPEnabled       = "ESP Verdächtige",
         ESPDesc          = "Verdächtige hervorheben + HP durch Wände",
         HitboxToggle     = "Hitboxen vergrößern",
@@ -208,7 +202,7 @@ local Translations = {
         AntiAFKDesc      = "Verhindert den Rauswurf wegen Inaktivität",
         LangSelect       = "Sprache",
         CreditsTitle     = "Tactical SWAT Hub",
-        CreditsContent   = "Erstellt von Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.0 — Waffen-Tab | GodMode | Schnellfeuer | Wallbang | Wandprüfung | Volt-Fix",
+        CreditsContent   = "Erstellt von Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.1 — Waffen-Tab fix | Schnellfeuer | Wallbang | Wandprüfung",
         Loaded           = "Hub geladen! Taktischer Vorteil aktiviert.",
     },
     ES = {
@@ -219,8 +213,6 @@ local Translations = {
         TabMovement      = "Movimiento",
         TabAuto          = "Auto",
         TabTools         = "Herramientas",
-        GodMode          = "Modo Dios",
-        GodModeDesc      = "Restaurar HP continuamente — casi invencible",
         ESPEnabled       = "ESP Sospechosos",
         ESPDesc          = "Resaltar sospechosos + HP a través de paredes",
         HitboxToggle     = "Ampliar Hitboxes",
@@ -264,7 +256,7 @@ local Translations = {
         AntiAFKDesc      = "Evitar expulsión por inactividad",
         LangSelect       = "Idioma",
         CreditsTitle     = "Tactical SWAT Hub",
-        CreditsContent   = "Creado por Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.0 — Pestaña Armas | GodMode | Fuego rápido | Wallbang | Verif. paredes | Corrección Volt",
+        CreditsContent   = "Creado por Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.1 — Corrección pestaña Armas | Fuego rápido | Wallbang | Verif. paredes",
         Loaded           = "¡Hub cargado! Ventaja táctica activada.",
     },
     PT = {
@@ -275,8 +267,6 @@ local Translations = {
         TabMovement      = "Movimento",
         TabAuto          = "Auto",
         TabTools         = "Ferramentas",
-        GodMode          = "Modo Deus",
-        GodModeDesc      = "Restaurar HP continuamente — quase invencível",
         ESPEnabled       = "ESP Suspeitos",
         ESPDesc          = "Destacar suspeitos + HP através das paredes",
         HitboxToggle     = "Expandir Hitboxes",
@@ -320,7 +310,7 @@ local Translations = {
         AntiAFKDesc      = "Evitar expulsão por inatividade",
         LangSelect       = "Idioma",
         CreditsTitle     = "Tactical SWAT Hub",
-        CreditsContent   = "Criado por Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.0 — Aba Armas | GodMode | Fogo rápido | Wallbang | Verif. parede | Correção Volt",
+        CreditsContent   = "Criado por Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.1 — Correção aba Armas | Fogo rápido | Wallbang | Verif. parede",
         Loaded           = "Hub carregado! Vantagem tática ativada.",
     },
     RU = {
@@ -331,8 +321,6 @@ local Translations = {
         TabMovement      = "Движение",
         TabAuto          = "Авто",
         TabTools         = "Инструменты",
-        GodMode          = "Режим Бога",
-        GodModeDesc      = "Непрерывное восстановление HP — почти неуязвим",
         ESPEnabled       = "ESP подозреваемых",
         ESPDesc          = "Подсветка подозреваемых + HP сквозь стены",
         HitboxToggle     = "Расширить хитбоксы",
@@ -376,7 +364,7 @@ local Translations = {
         AntiAFKDesc      = "Предотвратить кик за бездействие",
         LangSelect       = "Язык",
         CreditsTitle     = "Tactical SWAT Hub",
-        CreditsContent   = "Создано Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.0 — Вкладка Оружие | GodMode | Быстрый огонь | Wallbang | Провер. стен | Исправление Volt",
+        CreditsContent   = "Создано Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.1 — Исправление вкладки Оружие | Быстрый огонь | Wallbang | Провер. стен",
         Loaded           = "Hub загружен! Тактическое преимущество активировано.",
     },
     IT = {
@@ -387,8 +375,6 @@ local Translations = {
         TabMovement      = "Movimento",
         TabAuto          = "Auto",
         TabTools         = "Strumenti",
-        GodMode          = "Modalità Dio",
-        GodModeDesc      = "Ripristino HP continuo — quasi invincibile",
         ESPEnabled       = "ESP Sospettati",
         ESPDesc          = "Evidenziare sospettati + HP attraverso i muri",
         HitboxToggle     = "Espandi Hitbox",
@@ -432,7 +418,7 @@ local Translations = {
         AntiAFKDesc      = "Previeni il kick per inattività",
         LangSelect       = "Lingua",
         CreditsTitle     = "Tactical SWAT Hub",
-        CreditsContent   = "Creato da Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.0 — Scheda Armi | GodMode | Fuoco rapido | Wallbang | Controllo muri | Fix Volt",
+        CreditsContent   = "Creato da Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.1 — Fix scheda Armi | Fuoco rapido | Wallbang | Controllo muri",
         Loaded           = "Hub caricato! Vantaggio tattico attivato.",
     },
     NL = {
@@ -443,8 +429,6 @@ local Translations = {
         TabMovement      = "Beweging",
         TabAuto          = "Auto",
         TabTools         = "Hulpmiddelen",
-        GodMode          = "Godmodus",
-        GodModeDesc      = "HP continu herstellen — bijna onoverwinnelijk",
         ESPEnabled       = "ESP Verdachten",
         ESPDesc          = "Verdachten markeren + HP door muren",
         HitboxToggle     = "Hitboxen vergroten",
@@ -488,7 +472,7 @@ local Translations = {
         AntiAFKDesc      = "Kick door inactiviteit voorkomen",
         LangSelect       = "Taal",
         CreditsTitle     = "Tactical SWAT Hub",
-        CreditsContent   = "Gemaakt door Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.0 — Wapens tab | GodMode | Snel vuren | Wallbang | Muurcontrole | Volt-fix",
+        CreditsContent   = "Gemaakt door Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.1 — Fix Wapens tab | Snel vuren | Wallbang | Muurcontrole",
         Loaded           = "Hub geladen! Tactisch voordeel geactiveerd.",
     },
     PL = {
@@ -499,8 +483,6 @@ local Translations = {
         TabMovement      = "Ruch",
         TabAuto          = "Auto",
         TabTools         = "Narzędzia",
-        GodMode          = "Tryb Boga",
-        GodModeDesc      = "Ciągłe przywracanie HP — prawie niezniszczalny",
         ESPEnabled       = "ESP Podejrzani",
         ESPDesc          = "Podświetl podejrzanych + HP przez ściany",
         HitboxToggle     = "Rozszerz Hitboxy",
@@ -544,7 +526,7 @@ local Translations = {
         AntiAFKDesc      = "Zapobiegaj wyrzuceniu za bezczynność",
         LangSelect       = "Język",
         CreditsTitle     = "Tactical SWAT Hub",
-        CreditsContent   = "Stworzone przez Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.0 — Zakładka Bronie | GodMode | Szybki ogień | Wallbang | Kontr. ściany | Poprawka Volt",
+        CreditsContent   = "Stworzone przez Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.1 — Poprawka zakładki Bronie | Szybki ogień | Wallbang | Kontr. ściany",
         Loaded           = "Hub załadowany! Taktyczna przewaga aktywowana.",
     },
     ZH = {
@@ -555,8 +537,6 @@ local Translations = {
         TabMovement      = "移动",
         TabAuto          = "自动",
         TabTools         = "工具",
-        GodMode          = "无敌模式",
-        GodModeDesc      = "持续恢复HP — 几乎无敌",
         ESPEnabled       = "ESP嫌疑人",
         ESPDesc          = "高亮嫌疑人 + 透视HP",
         HitboxToggle     = "扩大判定框",
@@ -600,7 +580,7 @@ local Translations = {
         AntiAFKDesc      = "防止因挂机被踢出",
         LangSelect       = "语言",
         CreditsTitle     = "战术特警Hub",
-        CreditsContent   = "由 Rival960 创建\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.0 — 武器选项卡 | GodMode | 快速射击 | 穿墙 | 穿墙检测 | Volt 修复",
+        CreditsContent   = "由 Rival960 创建\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.1 — 修复武器选项卡 | 快速射击 | 穿墙 | 穿墙检测",
         Loaded           = "Hub已加载！战术优势已激活。",
     },
     JA = {
@@ -611,8 +591,6 @@ local Translations = {
         TabMovement      = "移動",
         TabAuto          = "オート",
         TabTools         = "ツール",
-        GodMode          = "神モード",
-        GodModeDesc      = "HPを継続回復 — ほぼ無敵",
         ESPEnabled       = "ESP容疑者",
         ESPDesc          = "容疑者を強調+壁越しHP表示",
         HitboxToggle     = "ヒットボックス拡張",
@@ -656,7 +634,7 @@ local Translations = {
         AntiAFKDesc      = "放置キックを防止",
         LangSelect       = "言語",
         CreditsTitle     = "タクティカルSWATHub",
-        CreditsContent   = "Rival960 作\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.0 — 武器タブ | GodMode | ラピッドファイア | ウォールバン | 壁チェック | Volt 修正",
+        CreditsContent   = "Rival960 作\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.1 — 武器タブ修正 | ラピッドファイア | ウォールバン | 壁チェック",
         Loaded           = "Hub読み込み完了！タクティカル優位性が有効化されました。",
     },
     TR = {
@@ -667,8 +645,6 @@ local Translations = {
         TabMovement      = "Hareket",
         TabAuto          = "Otomatik",
         TabTools         = "Araçlar",
-        GodMode          = "Tanrı Modu",
-        GodModeDesc      = "HP'yi sürekli yenile — neredeyse yenilmez",
         ESPEnabled       = "ESP Şüpheliler",
         ESPDesc          = "Şüphelileri vurgula + duvar arkasında HP göster",
         HitboxToggle     = "Hitbox Genişlet",
@@ -712,7 +688,7 @@ local Translations = {
         AntiAFKDesc      = "Hareketsizlik kickini önle",
         LangSelect       = "Dil",
         CreditsTitle     = "Tactical SWAT Hub",
-        CreditsContent   = "Rival960 tarafından\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.0 — Silah sekmesi | GodMode | Hızlı Ateş | Duvar Delme | Duvar Kontrolü | Volt düzeltmesi",
+        CreditsContent   = "Rival960 tarafından\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.1 — Silah sekmesi düzeltmesi | Hızlı Ateş | Duvar Delme | Duvar Kontrolü",
         Loaded           = "Hub yüklendi! Taktik avantaj aktif.",
     },
     KO = {
@@ -723,8 +699,6 @@ local Translations = {
         TabMovement      = "이동",
         TabAuto          = "자동",
         TabTools         = "도구",
-        GodMode          = "갓 모드",
-        GodModeDesc      = "HP 지속 회복 — 거의 불사",
         ESPEnabled       = "ESP 용의자",
         ESPDesc          = "용의자 강조 + 벽 너머 HP 표시",
         HitboxToggle     = "히트박스 확장",
@@ -768,7 +742,7 @@ local Translations = {
         AntiAFKDesc      = "비활동으로 인한 킥 방지",
         LangSelect       = "언어",
         CreditsTitle     = "택티컬 스왓 허브",
-        CreditsContent   = "Rival960 제작\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.0 — 무기 탭 | GodMode | 빠른 사격 | 월뱅 | 벽 확인 | Volt 수정",
+        CreditsContent   = "Rival960 제작\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.1 — 무기 탭 수정 | 빠른 사격 | 월뱅 | 벽 확인",
         Loaded           = "허브 로드 완료! 전술적 이점 활성화.",
     },
     AR = {
@@ -779,8 +753,6 @@ local Translations = {
         TabMovement      = "الحركة",
         TabAuto          = "أوتوماتيك",
         TabTools         = "الأدوات",
-        GodMode          = "وضع الإله",
-        GodModeDesc      = "استعادة HP بشكل مستمر — شبه لا يُهزم",
         ESPEnabled       = "ESP المشتبه بهم",
         ESPDesc          = "تمييز المشتبه بهم + HP عبر الجدران",
         HitboxToggle     = "توسيع Hitbox",
@@ -824,7 +796,7 @@ local Translations = {
         AntiAFKDesc      = "منع الطرد بسبب عدم النشاط",
         LangSelect       = "اللغة",
         CreditsTitle     = "تاكتيكال سوات هاب",
-        CreditsContent   = "أنشأه Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.0 — تبويب الأسلحة | GodMode | إطلاق نار سريع | اختراق الجدران | فحص الجدران | إصلاح Volt",
+        CreditsContent   = "أنشأه Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.1 — إصلاح تبويب الأسلحة | إطلاق نار سريع | اختراق الجدران | فحص الجدران",
         Loaded           = "تم تحميل الهاب! تم تفعيل الميزة التكتيكية.",
     },
     VI = {
@@ -835,8 +807,6 @@ local Translations = {
         TabMovement      = "Di chuyển",
         TabAuto          = "Tự động",
         TabTools         = "Công cụ",
-        GodMode          = "Chế độ Thần",
-        GodModeDesc      = "Liên tục hồi HP — gần như bất tử",
         ESPEnabled       = "ESP Nghi phạm",
         ESPDesc          = "Làm nổi bật nghi phạm + HP qua tường",
         HitboxToggle     = "Mở rộng Hitbox",
@@ -880,7 +850,7 @@ local Translations = {
         AntiAFKDesc      = "Ngăn bị đuổi vì không hoạt động",
         LangSelect       = "Ngôn ngữ",
         CreditsTitle     = "Tactical SWAT Hub",
-        CreditsContent   = "Tạo bởi Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.0 — Tab Vũ khí | GodMode | Bắn nhanh | Xuyên tường | Kiểm tra tường | Sửa lỗi Volt",
+        CreditsContent   = "Tạo bởi Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.1 — Sửa lỗi tab Vũ khí | Bắn nhanh | Xuyên tường | Kiểm tra tường",
         Loaded           = "Hub đã tải! Lợi thế chiến thuật được kích hoạt.",
     },
     SV = {
@@ -891,8 +861,6 @@ local Translations = {
         TabMovement      = "Rörelse",
         TabAuto          = "Auto",
         TabTools         = "Verktyg",
-        GodMode          = "Gudläge",
-        GodModeDesc      = "Återställ HP kontinuerligt — nästan osårbar",
         ESPEnabled       = "ESP Misstänkta",
         ESPDesc          = "Markera misstänkta + HP genom väggar",
         HitboxToggle     = "Utöka Hitboxes",
@@ -936,7 +904,7 @@ local Translations = {
         AntiAFKDesc      = "Förhindra kick på grund av inaktivitet",
         LangSelect       = "Språk",
         CreditsTitle     = "Tactical SWAT Hub",
-        CreditsContent   = "Skapad av Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.0 — Vapenfliken | GodMode | Snabbskjutning | Wallbang | Väggkontroll | Volt-fix",
+        CreditsContent   = "Skapad av Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.1 — Fix vapenfliken | Snabbskjutning | Wallbang | Väggkontroll",
         Loaded           = "Hub laddad! Taktisk fördel aktiverad.",
     },
     EL = {
@@ -947,8 +915,6 @@ local Translations = {
         TabMovement      = "Κίνηση",
         TabAuto          = "Αυτόματο",
         TabTools         = "Εργαλεία",
-        GodMode          = "Λειτουργία Θεού",
-        GodModeDesc      = "Συνεχής αναπλήρωση HP — σχεδόν άτρωτος",
         ESPEnabled       = "ESP Ύποπτοι",
         ESPDesc          = "Επισήμανση υπόπτων + HP μέσα από τοίχους",
         HitboxToggle     = "Επέκταση Hitbox",
@@ -992,7 +958,7 @@ local Translations = {
         AntiAFKDesc      = "Αποτροπή αποβολής λόγω αδράνειας",
         LangSelect       = "Γλώσσα",
         CreditsTitle     = "Tactical SWAT Hub",
-        CreditsContent   = "Δημιουργήθηκε από τον Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.0 — Καρτέλα Όπλα | GodMode | Γρήγορη βολή | Διάτρηση τοίχου | Έλεγχος τοίχου | Διόρθωση Volt",
+        CreditsContent   = "Δημιουργήθηκε από τον Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.1 — Διόρθωση καρτέλας Όπλα | Γρήγορη βολή | Διάτρηση τοίχου | Έλεγχος τοίχου",
         Loaded           = "Hub φορτώθηκε! Τακτικό πλεονέκτημα ενεργοποιήθηκε.",
     },
     RO = {
@@ -1003,8 +969,6 @@ local Translations = {
         TabMovement      = "Mișcare",
         TabAuto          = "Auto",
         TabTools         = "Instrumente",
-        GodMode          = "Modul Dumnezeu",
-        GodModeDesc      = "Restaurare HP continuu — aproape invincibil",
         ESPEnabled       = "ESP Suspecți",
         ESPDesc          = "Evidențierea suspecților + HP prin pereți",
         HitboxToggle     = "Extinde Hitbox",
@@ -1048,7 +1012,7 @@ local Translations = {
         AntiAFKDesc      = "Previne kickul din cauza inactivității",
         LangSelect       = "Limbă",
         CreditsTitle     = "Tactical SWAT Hub",
-        CreditsContent   = "Creat de Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.0 — Tab Arme | GodMode | Foc rapid | Wallbang | Verificare pereți | Remediere Volt",
+        CreditsContent   = "Creat de Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.1 — Remediere tab Arme | Foc rapid | Wallbang | Verificare pereți",
         Loaded           = "Hub încărcat! Avantaj tactic activat.",
     },
     UK = {
@@ -1059,8 +1023,6 @@ local Translations = {
         TabMovement      = "Рух",
         TabAuto          = "Авто",
         TabTools         = "Інструменти",
-        GodMode          = "Режим Бога",
-        GodModeDesc      = "Безперервне відновлення HP — майже невразливий",
         ESPEnabled       = "ESP підозрюваних",
         ESPDesc          = "Підсвічення підозрюваних + HP крізь стіни",
         HitboxToggle     = "Розширити хітбокси",
@@ -1104,7 +1066,7 @@ local Translations = {
         AntiAFKDesc      = "Запобігти кіку за бездіяльність",
         LangSelect       = "Мова",
         CreditsTitle     = "Tactical SWAT Hub",
-        CreditsContent   = "Створено Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.0 — Вкладка Зброя | GodMode | Швидкий вогонь | Пробиття стін | Перевірка стін | Виправлення Volt",
+        CreditsContent   = "Створено Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.1 — Виправлення вкладки Зброя | Швидкий вогонь | Пробиття стін | Перевірка стін",
         Loaded           = "Hub завантажено! Тактичну перевагу активовано.",
     },
     CS = {
@@ -1115,8 +1077,6 @@ local Translations = {
         TabMovement      = "Pohyb",
         TabAuto          = "Auto",
         TabTools         = "Nástroje",
-        GodMode          = "Bůh mód",
-        GodModeDesc      = "Průběžná obnova HP — téměř nezničitelný",
         ESPEnabled       = "ESP Podezřelí",
         ESPDesc          = "Zvýraznit podezřelé + HP skrz zdi",
         HitboxToggle     = "Rozšířit Hitboxy",
@@ -1160,7 +1120,7 @@ local Translations = {
         AntiAFKDesc      = "Zabránit kicku za nečinnost",
         LangSelect       = "Jazyk",
         CreditsTitle     = "Tactical SWAT Hub",
-        CreditsContent   = "Vytvořil Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.0 — Záložka Zbraně | GodMode | Rychlá střelba | Průstřel zdí | Kontrola zdí | Oprava Volt",
+        CreditsContent   = "Vytvořil Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.1 — Oprava záložky Zbraně | Rychlá střelba | Průstřel zdí | Kontrola zdí",
         Loaded           = "Hub načten! Taktická výhoda aktivována.",
     },
     DA = {
@@ -1171,8 +1131,6 @@ local Translations = {
         TabMovement      = "Bevægelse",
         TabAuto          = "Auto",
         TabTools         = "Værktøjer",
-        GodMode          = "Gudstilstand",
-        GodModeDesc      = "Genopret HP kontinuerligt — næsten usårlig",
         ESPEnabled       = "ESP Mistænkte",
         ESPDesc          = "Fremhæv mistænkte + HP gennem vægge",
         HitboxToggle     = "Udvid Hitboxes",
@@ -1216,7 +1174,7 @@ local Translations = {
         AntiAFKDesc      = "Forhindre kick pga. inaktivitet",
         LangSelect       = "Sprog",
         CreditsTitle     = "Tactical SWAT Hub",
-        CreditsContent   = "Oprettet af Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.0 — Våben-fanen | GodMode | Hurtig skydning | Wallbang | Vægkontrol | Volt-rettelse",
+        CreditsContent   = "Oprettet af Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.1 — Våben-fane-fix | Hurtig skydning | Wallbang | Vægkontrol",
         Loaded           = "Hub indlæst! Taktisk fordel aktiveret.",
     },
 }
@@ -1232,7 +1190,6 @@ end
 -- ───────────────────────────────────────────────────────────────
 local Settings = {
     -- Combat
-    GodMode         = false,
     ESP             = false,
     ObjectiveESP    = false,
     Hitbox          = false,
@@ -1285,48 +1242,93 @@ local Window = Rayfield:CreateWindow({
 
 -- ───────────────────────────────────────────────────────────────
 -- ACS UPVALUE INFRASTRUCTURE
--- Accesses the ACS Engine weapon config stored as a Lua upvalue
--- inside LocalPlayer.Character.ACS_Client.ACS_Framework.
--- Requires getscriptclosures + debug API (executor exploit APIs).
--- Degrades gracefully when unavailable.
+-- Uses getconnections(event) to find the fire closure — works on
+-- Volt, Delta, Real and most modern executors (not Synapse X-only).
+-- Falls back gracefully when debug API is unavailable.
 -- ───────────────────────────────────────────────────────────────
-local _acsCache = {func=nil, idx=nil, tbl=nil}
+local _acsCache = {func=nil, idx=nil, tbl=nil, nlTbl=nil}
 
-local function getACSConfig()
-    if _acsCache.tbl then return _acsCache.func, _acsCache.idx, _acsCache.tbl end
-    if not (debug and debug.getupvalue) then return nil end
-    local char = LocalPlayer.Character; if not char then return nil end
-    local ok1, acs = pcall(function() return char:WaitForChild("ACS_Client",3) end)
-    if not ok1 or not acs then return nil end
-    local ok2, fw  = pcall(function() return acs:WaitForChild("ACS_Framework",3) end)
-    if not ok2 or not fw  then return nil end
-    local ok3, cls = pcall(function()
-        return (getscriptclosures and getscriptclosures(fw)) or {}
-    end)
-    if not ok3 then return nil end
-    for _, f in ipairs(cls or {}) do
+local function _scanEvent(event)
+    if not (event and getconnections) then return end
+    local ok, conns = pcall(getconnections, event)
+    if not ok or not conns then return end
+    for _, conn in ipairs(conns) do
+        local f
+        pcall(function() f = conn.Function end)
         if type(f) == "function" then
-            for i = 1, 25 do
-                local ok4, uv = pcall(debug.getupvalue, f, i)
-                if ok4 and type(uv) == "table" and uv.ShootRate ~= nil then
-                    _acsCache = {func=f, idx=i, tbl=uv}; return f, i, uv
+            for i = 1, 30 do
+                local ok2, uv = pcall(debug.getupvalue, f, i)
+                if ok2 and type(uv) == "table"
+                    and rawget(uv, "ShootRate") ~= nil then
+                    _acsCache = {func=f, idx=i, tbl=uv, nlTbl=nil}
+                    -- Also cache the non-lethal tool list (upvalue [9])
+                    local ok9, nl = pcall(debug.getupvalue, f, 9)
+                    if ok9 and type(nl) == "table" then
+                        _acsCache.nlTbl = nl
+                    end
+                    return
                 end
             end
         end
+    end
+end
+
+local function getACSConfig()
+    if _acsCache.tbl then
+        return _acsCache.func, _acsCache.idx, _acsCache.tbl
+    end
+    if not (debug and debug.getupvalue) then return nil end
+
+    local char = LocalPlayer.Character
+    local tool = char and char:FindFirstChildOfClass("Tool")
+
+    -- Pass 1: equipped tool Activated
+    if tool then _scanEvent(tool.Activated) end
+    if _acsCache.tbl then
+        return _acsCache.func, _acsCache.idx, _acsCache.tbl
+    end
+
+    -- Pass 2: mouse Button1Down
+    local ok3, mouse = pcall(function() return LocalPlayer:GetMouse() end)
+    if ok3 and mouse then _scanEvent(mouse.Button1Down) end
+    if _acsCache.tbl then
+        return _acsCache.func, _acsCache.idx, _acsCache.tbl
+    end
+
+    -- Pass 3: UserInputService.InputBegan
+    _scanEvent(UserInputService.InputBegan)
+    if _acsCache.tbl then
+        return _acsCache.func, _acsCache.idx, _acsCache.tbl
     end
     return nil
 end
 
 local function setACSValue(key, value)
-    local f, i, cfg = getACSConfig(); if not f then return false end
+    local f, i, cfg = getACSConfig()
+    if not f then return false end
     return pcall(function()
         cfg[key] = value
-        if debug and debug.setupvalue then debug.setupvalue(f, i, cfg) end
+        if debug and debug.setupvalue then
+            debug.setupvalue(f, i, cfg)
+        end
     end)
 end
 
--- Non-lethal weapons: skip damage override for Wallbang
-local NON_LETHAL = {["Candy Zapper"]=true, ["Taser"]=true, ["Beanbag Shotgun"]=true}
+-- Non-lethal check: returns true if the equipped tool should not receive
+-- damage/fire-rate overrides (Candy Zapper, Taser, Beanbag Shotgun).
+-- Checks upvalue [9] cached alongside the config; falls back to name table.
+local NL_FALLBACK = {["Candy Zapper"]=true, ["Taser"]=true, ["Beanbag Shotgun"]=true}
+
+local function isNonLethal()
+    local char = LocalPlayer.Character
+    local tool = char and char:FindFirstChildOfClass("Tool")
+    if not tool then return false end
+    local nonLethal
+    pcall(function()
+        if _acsCache.nlTbl then nonLethal = _acsCache.nlTbl end
+    end)
+    return (nonLethal and nonLethal[tool.Name]) or NL_FALLBACK[tool.Name] or false
+end
 
 local function getCurrentToolName()
     local char = LocalPlayer.Character; if not char then return nil end
@@ -1764,29 +1766,6 @@ TabHome:CreateParagraph({
 -- ── TAB COMBAT ──────────────────────────────────────────────────
 local TabCombat = Window:CreateTab(T("TabCombat"), 4483362458)
 
--- GodMode at top of TabCombat
-TabCombat:CreateToggle({
-    Name         = T("GodMode"),
-    CurrentValue = Settings.GodMode,
-    Flag         = "GodMode",
-    Callback     = function(v)
-        Settings.GodMode = v
-        if v then
-            task.spawn(function()
-                while Settings.GodMode do
-                    local hum = getHum()
-                    if hum and hum.Health > 0 then
-                        hum.Health = hum.MaxHealth
-                    end
-                    task.wait(0.3)
-                end
-            end)
-        end
-    end,
-})
-
-TabCombat:CreateDivider()
-
 TabCombat:CreateToggle({
     Name         = T("ESPEnabled"),
     CurrentValue = Settings.ESP,
@@ -1853,13 +1832,17 @@ TabWeapons:CreateToggle({
         if v then
             task.spawn(function()
                 while Settings.InfiniteAmmo do
-                    local _, _, cfg = getACSConfig()
-                    if cfg then
-                        setACSValue("Ammo", 99999)
-                        setACSValue("AmmoInGun", 99999)
-                        setACSValue("StoredAmmo", math.huge)
-                    else
-                        warn("[Hub] InfiniteAmmo: ACS API unavailable")
+                    if not isNonLethal() then
+                        local _, _, cfg = getACSConfig()
+                        if cfg then
+                            setACSValue("Ammo", 99999)
+                            setACSValue("AmmoInGun", 99999)
+                            setACSValue("StoredAmmo", math.huge)
+                        else
+                            Rayfield:Notify({Title="Weapons", Content="Fire your weapon once to activate", Duration=4})
+                            Settings.InfiniteAmmo = false
+                            break
+                        end
                     end
                     task.wait(0.3)
                 end
@@ -1887,8 +1870,10 @@ TabWeapons:CreateToggle({
             end
             task.spawn(function()
                 while Settings.FreezeAmmo do
-                    setACSValue("Ammo",     Settings._frozenAmmo)
-                    setACSValue("AmmoInGun",Settings._frozenAmmoInGun)
+                    if not isNonLethal() then
+                        setACSValue("Ammo",     Settings._frozenAmmo)
+                        setACSValue("AmmoInGun",Settings._frozenAmmoInGun)
+                    end
                     task.wait(0.3)
                 end
             end)
@@ -1905,10 +1890,27 @@ TabWeapons:CreateButton({
         local ok1 = setACSValue("Ammo", 999)
         local ok2 = setACSValue("AmmoInGun", 999)
         setACSValue("StoredAmmo", math.huge)
+        -- Secondary path: fire the ACS reload remote if upvalue [7] is available
+        pcall(function()
+            local evFolder
+            if _acsCache.func then
+                local okE, ev = pcall(debug.getupvalue, _acsCache.func, 7)
+                if okE and ev then evFolder = ev end
+            end
+            if not evFolder then
+                evFolder = game:GetService("ReplicatedStorage")
+                    :FindFirstChild("ACS_Engine")
+                evFolder = evFolder and evFolder:FindFirstChild("Events")
+            end
+            if evFolder then
+                local reload = evFolder:FindFirstChild("Reload")
+                if reload then reload:FireServer() end
+            end
+        end)
         if ok1 or ok2 then
             Rayfield:Notify({Title = T("FastReload"), Content = "✓ Reloaded!", Duration = 2})
         else
-            Rayfield:Notify({Title = T("FastReload"), Content = "ACS API unavailable", Duration = 3})
+            Rayfield:Notify({Title = T("FastReload"), Content = "Fire your weapon once to activate", Duration = 3})
         end
     end,
 })
@@ -1923,13 +1925,33 @@ TabWeapons:CreateToggle({
     Callback     = function(v)
         Settings.RapidFire = v
         if v then
+            -- Cache original shoot rate on first activation
             local _, _, cfg = getACSConfig()
             if cfg and Settings._origShootRate == nil then
                 Settings._origShootRate = cfg.ShootRate or 750
             elseif Settings._origShootRate == nil then
                 Settings._origShootRate = 750
             end
-            setACSValue("ShootRate", 10)
+            task.spawn(function()
+                while Settings.RapidFire do
+                    if not isNonLethal() then
+                        if _acsCache.tbl then
+                            setACSValue("ShootRate", 10)
+                        else
+                            Rayfield:Notify({Title="Weapons", Content="Fire your weapon once to activate", Duration=4})
+                            Settings.RapidFire = false
+                            break
+                        end
+                    end
+                    task.wait(0.3)
+                end
+                -- Restore original shoot rate when loop exits
+                pcall(function()
+                    if Settings._origShootRate ~= nil then
+                        setACSValue("ShootRate", Settings._origShootRate)
+                    end
+                end)
+            end)
         else
             if Settings._origShootRate ~= nil then
                 setACSValue("ShootRate", Settings._origShootRate)
@@ -1946,34 +1968,51 @@ TabWeapons:CreateToggle({
     Callback     = function(v)
         Settings.Wallbang = v
         if v then
-            local _, _, cfg = getACSConfig()
-            if cfg then
-                -- Cache originals (deep-copy damage tables)
-                if Settings._origPenetration == nil then
+            task.spawn(function()
+                -- Cache originals on first activation
+                local _, _, cfg = getACSConfig()
+                if cfg and Settings._origPenetration == nil then
                     Settings._origPenetration = cfg.BulletPenetration or 70
                     Settings._origIgnoreProt  = cfg.IgnoreProtection  or false
                     Settings._origTorsoDmg    = cfg.TorsoDamage and {cfg.TorsoDamage[1], cfg.TorsoDamage[2]} or {57,62}
                     Settings._origLimbDmg     = cfg.LimbDamage  and {cfg.LimbDamage[1],  cfg.LimbDamage[2]}  or {30,35}
-                end
-            else
-                -- Fallback defaults if ACS unavailable yet
-                if Settings._origPenetration == nil then
+                elseif not cfg and Settings._origPenetration == nil then
                     Settings._origPenetration = 70
                     Settings._origIgnoreProt  = false
                     Settings._origTorsoDmg    = {57,62}
                     Settings._origLimbDmg     = {30,35}
                 end
-            end
-            -- Apply (skip non-lethal weapons)
-            local toolName = getCurrentToolName()
-            if not (toolName and NON_LETHAL[toolName]) then
-                setACSValue("BulletPenetration", 100)
-                setACSValue("IgnoreProtection",  true)
-                setACSValue("TorsoDamage", {9999,9999})
-                setACSValue("LimbDamage",  {9999,9999})
-            end
+                while Settings.Wallbang do
+                    if not isNonLethal() then
+                        if _acsCache.tbl then
+                            setACSValue("BulletPenetration", 100)
+                            setACSValue("IgnoreProtection",  true)
+                            setACSValue("TorsoDamage", {9999,9999})
+                            setACSValue("LimbDamage",  {9999,9999})
+                        else
+                            Rayfield:Notify({Title="Weapons", Content="Fire your weapon once to activate", Duration=4})
+                            Settings.Wallbang = false
+                            break
+                        end
+                    end
+                    task.wait(0.3)
+                end
+                -- Restore originals when loop exits
+                pcall(function()
+                    if Settings._origPenetration ~= nil then
+                        setACSValue("BulletPenetration", Settings._origPenetration)
+                        setACSValue("IgnoreProtection",  Settings._origIgnoreProt)
+                        setACSValue("TorsoDamage",       Settings._origTorsoDmg)
+                        setACSValue("LimbDamage",        Settings._origLimbDmg)
+                        Settings._origPenetration = nil
+                        Settings._origIgnoreProt  = nil
+                        Settings._origTorsoDmg    = nil
+                        Settings._origLimbDmg     = nil
+                    end
+                end)
+            end)
         else
-            -- Restore originals
+            -- Restore originals immediately when toggled off
             if Settings._origPenetration ~= nil then
                 setACSValue("BulletPenetration", Settings._origPenetration)
                 setACSValue("IgnoreProtection",  Settings._origIgnoreProt)
@@ -2015,7 +2054,7 @@ TabWeapons:CreateButton({
                 end
             end
             local summary = #lines > 0 and table.concat(lines, "\n") or "No suspects found"
-            Rayfield:Notify({Title = T("WallCheck"), Content = summary, Duration = 6})
+            Rayfield:Notify({Title = T("WallCheck"), Content = summary, Duration = 8})
         end)
     end,
 })
@@ -2816,7 +2855,14 @@ end)
 LocalPlayer.CharacterAdded:Connect(function(char)
     task.wait(0.5)
     -- Clear ACS cache so it re-resolves for the new character
-    _acsCache = {func=nil, idx=nil, tbl=nil}
+    _acsCache = {func=nil, idx=nil, tbl=nil, nlTbl=nil}
+    -- Invalidate cache when player equips or unequips a tool
+    char.ChildAdded:Connect(function(c)
+        if c:IsA("Tool") then _acsCache = {func=nil, idx=nil, tbl=nil, nlTbl=nil} end
+    end)
+    char.ChildRemoved:Connect(function(c)
+        if c:IsA("Tool") then _acsCache = {func=nil, idx=nil, tbl=nil, nlTbl=nil} end
+    end)
     createOverlayUI()  -- rebuild overlay buttons after respawn
     if Settings.Fly then
         disableFly()
