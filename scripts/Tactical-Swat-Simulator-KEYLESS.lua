@@ -2,7 +2,7 @@
     ================================================================
     Tactical SWAT Hub — Tactical: Swat Simulator
     Created by Rival960 with the help of Claude
-    Version: 1.1.1 | Languages: 21 | Rayfield UI | PC + Mobile
+    Version: 1.1.2 | Languages: 21 | Rayfield UI | PC + Mobile
     Status: untested in-game
     ================================================================
 --]]
@@ -73,6 +73,9 @@ local Translations = {
         NoClip           = "NoClip",
         NoClipDesc       = "Pass through walls and obstacles",
         WalkSpeed        = "Walk Speed",
+        Jump             = "Enable Jump",
+        JumpDesc         = "Force jump re-enabled — game disables it by default",
+        JumpPower        = "Jump Power",
         InfJump          = "Infinite Jump",
         InfJumpDesc      = "Continuously jump by holding the jump button/key",
         -- Auto
@@ -94,7 +97,7 @@ local Translations = {
         LangSelect       = "Language",
         -- Credits
         CreditsTitle     = "Tactical SWAT Hub",
-        CreditsContent   = "Created by Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.1 — fix the Weapons tab | RapidFire | Wallbang | WallCheck",
+        CreditsContent   = "Created by Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.2 — Weapons tab | Jump re-enable | Infinite Jump | getgc fix",
         Loaded           = "Hub loaded! Tactical advantage enabled.",
     },
     FR = {
@@ -148,7 +151,7 @@ local Translations = {
         AntiAFKDesc      = "Empêche le kick pour inactivité",
         LangSelect       = "Langue",
         CreditsTitle     = "Tactical SWAT Hub",
-        CreditsContent   = "Créé par Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.1 — Correction onglet Armes | Tir rapide | Wallbang | Vérif. murs",
+        CreditsContent   = "Créé par Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.2 — Onglet Armes | Saut réactivé | Saut infini | Correctif getgc",
         Loaded           = "Hub chargé ! Avantage tactique activé.",
     },
     DE = {
@@ -202,7 +205,7 @@ local Translations = {
         AntiAFKDesc      = "Verhindert den Rauswurf wegen Inaktivität",
         LangSelect       = "Sprache",
         CreditsTitle     = "Tactical SWAT Hub",
-        CreditsContent   = "Erstellt von Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.1 — Waffen-Tab fix | Schnellfeuer | Wallbang | Wandprüfung",
+        CreditsContent   = "Erstellt von Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.2 — Waffen-Tab | Sprung reaktiviert | Unendl. Sprung | getgc-Fix",
         Loaded           = "Hub geladen! Taktischer Vorteil aktiviert.",
     },
     ES = {
@@ -256,7 +259,7 @@ local Translations = {
         AntiAFKDesc      = "Evitar expulsión por inactividad",
         LangSelect       = "Idioma",
         CreditsTitle     = "Tactical SWAT Hub",
-        CreditsContent   = "Creado por Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.1 — Corrección pestaña Armas | Fuego rápido | Wallbang | Verif. paredes",
+        CreditsContent   = "Creado por Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.2 — Pestaña Armas | Salto reactivado | Salto infinito | Fix getgc",
         Loaded           = "¡Hub cargado! Ventaja táctica activada.",
     },
     PT = {
@@ -310,7 +313,7 @@ local Translations = {
         AntiAFKDesc      = "Evitar expulsão por inatividade",
         LangSelect       = "Idioma",
         CreditsTitle     = "Tactical SWAT Hub",
-        CreditsContent   = "Criado por Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.1 — Correção aba Armas | Fogo rápido | Wallbang | Verif. parede",
+        CreditsContent   = "Criado por Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.2 — Aba Armas | Salto reativado | Salto infinito | Correção getgc",
         Loaded           = "Hub carregado! Vantagem tática ativada.",
     },
     RU = {
@@ -364,7 +367,7 @@ local Translations = {
         AntiAFKDesc      = "Предотвратить кик за бездействие",
         LangSelect       = "Язык",
         CreditsTitle     = "Tactical SWAT Hub",
-        CreditsContent   = "Создано Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.1 — Исправление вкладки Оружие | Быстрый огонь | Wallbang | Провер. стен",
+        CreditsContent   = "Создано Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.2 — Вкладка Оружие | Прыжок восстановлен | Бесконечный прыжок | Исправление getgc",
         Loaded           = "Hub загружен! Тактическое преимущество активировано.",
     },
     IT = {
@@ -418,7 +421,7 @@ local Translations = {
         AntiAFKDesc      = "Previeni il kick per inattività",
         LangSelect       = "Lingua",
         CreditsTitle     = "Tactical SWAT Hub",
-        CreditsContent   = "Creato da Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.1 — Fix scheda Armi | Fuoco rapido | Wallbang | Controllo muri",
+        CreditsContent   = "Creato da Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.2 — Scheda Armi | Salto riattivato | Salto infinito | Fix getgc",
         Loaded           = "Hub caricato! Vantaggio tattico attivato.",
     },
     NL = {
@@ -472,7 +475,7 @@ local Translations = {
         AntiAFKDesc      = "Kick door inactiviteit voorkomen",
         LangSelect       = "Taal",
         CreditsTitle     = "Tactical SWAT Hub",
-        CreditsContent   = "Gemaakt door Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.1 — Fix Wapens tab | Snel vuren | Wallbang | Muurcontrole",
+        CreditsContent   = "Gemaakt door Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.2 — Wapens tab | Sprong heractiveerd | Oneindig springen | getgc-fix",
         Loaded           = "Hub geladen! Tactisch voordeel geactiveerd.",
     },
     PL = {
@@ -526,7 +529,7 @@ local Translations = {
         AntiAFKDesc      = "Zapobiegaj wyrzuceniu za bezczynność",
         LangSelect       = "Język",
         CreditsTitle     = "Tactical SWAT Hub",
-        CreditsContent   = "Stworzone przez Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.1 — Poprawka zakładki Bronie | Szybki ogień | Wallbang | Kontr. ściany",
+        CreditsContent   = "Stworzone przez Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.2 — Zakładka Bronie | Skok przywrócony | Nieskończone skoki | Poprawka getgc",
         Loaded           = "Hub załadowany! Taktyczna przewaga aktywowana.",
     },
     ZH = {
@@ -580,7 +583,7 @@ local Translations = {
         AntiAFKDesc      = "防止因挂机被踢出",
         LangSelect       = "语言",
         CreditsTitle     = "战术特警Hub",
-        CreditsContent   = "由 Rival960 创建\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.1 — 修复武器选项卡 | 快速射击 | 穿墙 | 穿墙检测",
+        CreditsContent   = "由 Rival960 创建\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.2 — 武器选项卡 | 跳跃重新启用 | 无限跳跃 | getgc 修复",
         Loaded           = "Hub已加载！战术优势已激活。",
     },
     JA = {
@@ -634,7 +637,7 @@ local Translations = {
         AntiAFKDesc      = "放置キックを防止",
         LangSelect       = "言語",
         CreditsTitle     = "タクティカルSWATHub",
-        CreditsContent   = "Rival960 作\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.1 — 武器タブ修正 | ラピッドファイア | ウォールバン | 壁チェック",
+        CreditsContent   = "Rival960 作\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.2 — 武器タブ | ジャンプ再有効化 | 無限ジャンプ | getgc 修正",
         Loaded           = "Hub読み込み完了！タクティカル優位性が有効化されました。",
     },
     TR = {
@@ -688,7 +691,7 @@ local Translations = {
         AntiAFKDesc      = "Hareketsizlik kickini önle",
         LangSelect       = "Dil",
         CreditsTitle     = "Tactical SWAT Hub",
-        CreditsContent   = "Rival960 tarafından\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.1 — Silah sekmesi düzeltmesi | Hızlı Ateş | Duvar Delme | Duvar Kontrolü",
+        CreditsContent   = "Rival960 tarafından\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.2 — Silah sekmesi | Zıplama yeniden etkin | Sonsuz zıplama | getgc düzeltmesi",
         Loaded           = "Hub yüklendi! Taktik avantaj aktif.",
     },
     KO = {
@@ -742,7 +745,7 @@ local Translations = {
         AntiAFKDesc      = "비활동으로 인한 킥 방지",
         LangSelect       = "언어",
         CreditsTitle     = "택티컬 스왓 허브",
-        CreditsContent   = "Rival960 제작\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.1 — 무기 탭 수정 | 빠른 사격 | 월뱅 | 벽 확인",
+        CreditsContent   = "Rival960 제작\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.2 — 무기 탭 | 점프 재활성화 | 무한 점프 | getgc 수정",
         Loaded           = "허브 로드 완료! 전술적 이점 활성화.",
     },
     AR = {
@@ -796,7 +799,7 @@ local Translations = {
         AntiAFKDesc      = "منع الطرد بسبب عدم النشاط",
         LangSelect       = "اللغة",
         CreditsTitle     = "تاكتيكال سوات هاب",
-        CreditsContent   = "أنشأه Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.1 — إصلاح تبويب الأسلحة | إطلاق نار سريع | اختراق الجدران | فحص الجدران",
+        CreditsContent   = "أنشأه Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.2 — تبويب الأسلحة | إعادة تفعيل القفز | قفز لا نهائي | إصلاح getgc",
         Loaded           = "تم تحميل الهاب! تم تفعيل الميزة التكتيكية.",
     },
     VI = {
@@ -850,7 +853,7 @@ local Translations = {
         AntiAFKDesc      = "Ngăn bị đuổi vì không hoạt động",
         LangSelect       = "Ngôn ngữ",
         CreditsTitle     = "Tactical SWAT Hub",
-        CreditsContent   = "Tạo bởi Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.1 — Sửa lỗi tab Vũ khí | Bắn nhanh | Xuyên tường | Kiểm tra tường",
+        CreditsContent   = "Tạo bởi Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.2 — Tab Vũ khí | Bật lại nhảy | Nhảy vô hạn | Sửa lỗi getgc",
         Loaded           = "Hub đã tải! Lợi thế chiến thuật được kích hoạt.",
     },
     SV = {
@@ -904,7 +907,7 @@ local Translations = {
         AntiAFKDesc      = "Förhindra kick på grund av inaktivitet",
         LangSelect       = "Språk",
         CreditsTitle     = "Tactical SWAT Hub",
-        CreditsContent   = "Skapad av Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.1 — Fix vapenfliken | Snabbskjutning | Wallbang | Väggkontroll",
+        CreditsContent   = "Skapad av Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.2 — Vapenfliken | Hopp återaktiverat | Oändliga hop | getgc-fix",
         Loaded           = "Hub laddad! Taktisk fördel aktiverad.",
     },
     EL = {
@@ -958,7 +961,7 @@ local Translations = {
         AntiAFKDesc      = "Αποτροπή αποβολής λόγω αδράνειας",
         LangSelect       = "Γλώσσα",
         CreditsTitle     = "Tactical SWAT Hub",
-        CreditsContent   = "Δημιουργήθηκε από τον Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.1 — Διόρθωση καρτέλας Όπλα | Γρήγορη βολή | Διάτρηση τοίχου | Έλεγχος τοίχου",
+        CreditsContent   = "Δημιουργήθηκε από τον Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.2 — Καρτέλα Όπλα | Επανεκκίνηση άλματος | Άπειρο άλμα | Διόρθωση getgc",
         Loaded           = "Hub φορτώθηκε! Τακτικό πλεονέκτημα ενεργοποιήθηκε.",
     },
     RO = {
@@ -1012,7 +1015,7 @@ local Translations = {
         AntiAFKDesc      = "Previne kickul din cauza inactivității",
         LangSelect       = "Limbă",
         CreditsTitle     = "Tactical SWAT Hub",
-        CreditsContent   = "Creat de Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.1 — Remediere tab Arme | Foc rapid | Wallbang | Verificare pereți",
+        CreditsContent   = "Creat de Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.2 — Tab Arme | Săritură reactivată | Săritură infinită | Remediere getgc",
         Loaded           = "Hub încărcat! Avantaj tactic activat.",
     },
     UK = {
@@ -1066,7 +1069,7 @@ local Translations = {
         AntiAFKDesc      = "Запобігти кіку за бездіяльність",
         LangSelect       = "Мова",
         CreditsTitle     = "Tactical SWAT Hub",
-        CreditsContent   = "Створено Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.1 — Виправлення вкладки Зброя | Швидкий вогонь | Пробиття стін | Перевірка стін",
+        CreditsContent   = "Створено Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.2 — Вкладка Зброя | Стрибок відновлено | Нескінченний стрибок | Виправлення getgc",
         Loaded           = "Hub завантажено! Тактичну перевагу активовано.",
     },
     CS = {
@@ -1120,7 +1123,7 @@ local Translations = {
         AntiAFKDesc      = "Zabránit kicku za nečinnost",
         LangSelect       = "Jazyk",
         CreditsTitle     = "Tactical SWAT Hub",
-        CreditsContent   = "Vytvořil Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.1 — Oprava záložky Zbraně | Rychlá střelba | Průstřel zdí | Kontrola zdí",
+        CreditsContent   = "Vytvořil Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.2 — Záložka Zbraně | Skok obnoven | Nekonečný skok | Oprava getgc",
         Loaded           = "Hub načten! Taktická výhoda aktivována.",
     },
     DA = {
@@ -1174,7 +1177,7 @@ local Translations = {
         AntiAFKDesc      = "Forhindre kick pga. inaktivitet",
         LangSelect       = "Sprog",
         CreditsTitle     = "Tactical SWAT Hub",
-        CreditsContent   = "Oprettet af Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.1 — Våben-fane-fix | Hurtig skydning | Wallbang | Vægkontrol",
+        CreditsContent   = "Oprettet af Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.2 — Våben-fanen | Hop genaktiveret | Uendelige hop | getgc-rettelse",
         Loaded           = "Hub indlæst! Taktisk fordel aktiveret.",
     },
 }
@@ -1208,6 +1211,9 @@ local Settings = {
     _frozenAmmoInGun= nil,
     -- Movement
     Fly             = false,
+    JumpEnabled     = false,
+    JumpPower       = 50,
+    InfJump         = false,
     FlySpeed        = 60,
     NoClip          = false,
     WalkSpeed       = 16,
@@ -1242,64 +1248,108 @@ local Window = Rayfield:CreateWindow({
 
 -- ───────────────────────────────────────────────────────────────
 -- ACS UPVALUE INFRASTRUCTURE
--- Uses getconnections(event) to find the fire closure — works on
--- Volt, Delta, Real and most modern executors (not Synapse X-only).
+-- Triple-method discovery: getgc() → getscriptclosures → getconnections
+-- getgc() is primary (Volt/Delta/Real/Fluxus); most reliable.
 -- Falls back gracefully when debug API is unavailable.
 -- ───────────────────────────────────────────────────────────────
-local _acsCache = {func=nil, idx=nil, tbl=nil, nlTbl=nil}
+local _acsCache    = {func=nil, idx=nil, tbl=nil}
+local _nonLethalUV = nil
 
-local function _scanEvent(event)
-    if not (event and getconnections) then return end
-    local ok, conns = pcall(getconnections, event)
-    if not ok or not conns then return end
-    for _, conn in ipairs(conns) do
-        local f
-        pcall(function() f = conn.Function end)
-        if type(f) == "function" then
-            for i = 1, 30 do
-                local ok2, uv = pcall(debug.getupvalue, f, i)
-                if ok2 and type(uv) == "table"
-                    and rawget(uv, "ShootRate") ~= nil then
-                    _acsCache = {func=f, idx=i, tbl=uv, nlTbl=nil}
-                    -- Also cache the non-lethal tool list (upvalue [9])
-                    local ok9, nl = pcall(debug.getupvalue, f, 9)
-                    if ok9 and type(nl) == "table" then
-                        _acsCache.nlTbl = nl
+-- Scan upvalues of f (and one level of function upvalues) for ACS config.
+local function _matchACS(f)
+    if type(f) ~= "function" then return false end
+    -- Direct upvalue scan
+    for i = 1, 35 do
+        local ok, uv = pcall(debug.getupvalue, f, i)
+        if ok and type(uv) == "table"
+            and rawget(uv, "ShootRate") ~= nil
+            and rawget(uv, "BulletPenetration") ~= nil then
+            _acsCache = {func=f, idx=i, tbl=uv}
+            local ok9, uv9 = pcall(debug.getupvalue, f, 9)
+            if ok9 and type(uv9) == "table" then _nonLethalUV = uv9 end
+            return true
+        end
+    end
+    -- One level of recursion: scan function-type upvalues
+    for i = 1, 35 do
+        local ok, uv = pcall(debug.getupvalue, f, i)
+        if ok and type(uv) == "function" then
+            local ok2, _ = pcall(debug.getupvalue, uv, 1)
+            if ok2 then
+                for j = 1, 35 do
+                    local ok3, uv3 = pcall(debug.getupvalue, uv, j)
+                    if ok3 and type(uv3) == "table"
+                        and rawget(uv3, "ShootRate") ~= nil
+                        and rawget(uv3, "BulletPenetration") ~= nil then
+                        _acsCache = {func=uv, idx=j, tbl=uv3}
+                        local ok9, uv9 = pcall(debug.getupvalue, uv, 9)
+                        if ok9 and type(uv9) == "table" then _nonLethalUV = uv9 end
+                        return true
                     end
-                    return
                 end
             end
         end
     end
+    return false
 end
 
 local function getACSConfig()
-    if _acsCache.tbl then
-        return _acsCache.func, _acsCache.idx, _acsCache.tbl
-    end
+    if _acsCache.tbl then return _acsCache.func, _acsCache.idx, _acsCache.tbl end
     if not (debug and debug.getupvalue) then return nil end
 
+    -- METHOD A: getgc() — scan all live Lua closures (Volt/Delta/Real/Fluxus)
+    if getgc then
+        local ok, objs = pcall(getgc, true)
+        if ok and objs then
+            for _, obj in ipairs(objs) do
+                if type(obj) == "function" then
+                    if _matchACS(obj) then
+                        return _acsCache.func, _acsCache.idx, _acsCache.tbl
+                    end
+                end
+            end
+        end
+    end
+
+    -- METHOD B: getscriptclosures (Synapse X / some Delta)
     local char = LocalPlayer.Character
-    local tool = char and char:FindFirstChildOfClass("Tool")
-
-    -- Pass 1: equipped tool Activated
-    if tool then _scanEvent(tool.Activated) end
-    if _acsCache.tbl then
-        return _acsCache.func, _acsCache.idx, _acsCache.tbl
+    if char and getscriptclosures then
+        local acs = char:FindFirstChild("ACS_Client")
+        local fw  = acs and acs:FindFirstChild("ACS_Framework")
+        if fw then
+            local ok, cls = pcall(getscriptclosures, fw)
+            if ok and cls then
+                for _, f in ipairs(cls) do
+                    if _matchACS(f) then
+                        return _acsCache.func, _acsCache.idx, _acsCache.tbl
+                    end
+                end
+            end
+        end
     end
 
-    -- Pass 2: mouse Button1Down
-    local ok3, mouse = pcall(function() return LocalPlayer:GetMouse() end)
-    if ok3 and mouse then _scanEvent(mouse.Button1Down) end
-    if _acsCache.tbl then
-        return _acsCache.func, _acsCache.idx, _acsCache.tbl
+    -- METHOD C: getconnections on known events (fallback)
+    if getconnections then
+        local char2 = LocalPlayer.Character
+        local tool  = char2 and char2:FindFirstChildOfClass("Tool")
+        local evs   = {}
+        if tool then evs[#evs+1] = tool.Activated end
+        local ok2, mouse = pcall(function() return LocalPlayer:GetMouse() end)
+        if ok2 and mouse then evs[#evs+1] = mouse.Button1Down end
+        evs[#evs+1] = UserInputService.InputBegan
+        for _, ev in ipairs(evs) do
+            local ok3, conns = pcall(getconnections, ev)
+            if ok3 and conns then
+                for _, conn in ipairs(conns) do
+                    local f; pcall(function() f = conn.Function end)
+                    if _matchACS(f) then
+                        return _acsCache.func, _acsCache.idx, _acsCache.tbl
+                    end
+                end
+            end
+        end
     end
 
-    -- Pass 3: UserInputService.InputBegan
-    _scanEvent(UserInputService.InputBegan)
-    if _acsCache.tbl then
-        return _acsCache.func, _acsCache.idx, _acsCache.tbl
-    end
     return nil
 end
 
@@ -1308,26 +1358,22 @@ local function setACSValue(key, value)
     if not f then return false end
     return pcall(function()
         cfg[key] = value
-        if debug and debug.setupvalue then
-            debug.setupvalue(f, i, cfg)
-        end
+        if debug and debug.setupvalue then debug.setupvalue(f, i, cfg) end
     end)
 end
 
 -- Non-lethal check: returns true if the equipped tool should not receive
 -- damage/fire-rate overrides (Candy Zapper, Taser, Beanbag Shotgun).
--- Checks upvalue [9] cached alongside the config; falls back to name table.
-local NL_FALLBACK = {["Candy Zapper"]=true, ["Taser"]=true, ["Beanbag Shotgun"]=true}
-
+-- Uses _nonLethalUV (upvalue [9]) cached alongside the config.
 local function isNonLethal()
     local char = LocalPlayer.Character
     local tool = char and char:FindFirstChildOfClass("Tool")
     if not tool then return false end
-    local nonLethal
-    pcall(function()
-        if _acsCache.nlTbl then nonLethal = _acsCache.nlTbl end
-    end)
-    return (nonLethal and nonLethal[tool.Name]) or NL_FALLBACK[tool.Name] or false
+    local name = tool.Name
+    local NL = {["Candy Zapper"]=true, ["Taser"]=true, ["Beanbag Shotgun"]=true}
+    if NL[name] then return true end
+    if _nonLethalUV and _nonLethalUV[name] then return true end
+    return false
 end
 
 local function getCurrentToolName()
@@ -1495,6 +1541,28 @@ local FLYING       = false
 local FLY_BTN_UP   = 0  -- set to  1 while on-screen ▲ button is held
 local FLY_BTN_DOWN = 0  -- set to -1 while on-screen ▼ button is held
 local flyKeyDown, flyKeyUp
+
+-- ── INFINITE JUMP ─────────────────────────────────────────────────────────
+local _infJumpConn
+local function setupInfJump(char)
+    if _infJumpConn then _infJumpConn:Disconnect() end
+    _infJumpConn = nil
+    local hum = char:FindFirstChildOfClass("Humanoid")
+    if not hum then return end
+    _infJumpConn = hum.StateChanged:Connect(function(_, new)
+        if Settings.InfJump
+            and new == Enum.HumanoidStateType.Freefall then
+            task.wait(0.08)
+            if Settings.InfJump then
+                local h = getHum()
+                if h then
+                    h.JumpPower = Settings.JumpPower
+                    h:ChangeState(Enum.HumanoidStateType.Jumping)
+                end
+            end
+        end
+    end)
+end
 
 -- Forward references to on-screen overlay buttons (created after Rayfield loads)
 local _flyUpBtn, _flyDownBtn
@@ -2099,6 +2167,33 @@ TabMovement:CreateSlider({
         local h = getHum()
         if h then h.WalkSpeed = v end
     end,
+})
+
+TabMovement:CreateDivider()
+TabMovement:CreateToggle({
+    Name         = T("Jump"),
+    CurrentValue = Settings.JumpEnabled,
+    Flag         = "JumpEnabled",
+    Callback     = function(v) Settings.JumpEnabled = v end,
+})
+TabMovement:CreateSlider({
+    Name         = T("JumpPower"),
+    Range        = {10, 300},
+    Increment    = 5,
+    CurrentValue = Settings.JumpPower,
+    Flag         = "JumpPower",
+    Callback     = function(v)
+        Settings.JumpPower = v
+        local h = getHum()
+        if h and Settings.JumpEnabled then h.JumpPower = v end
+    end,
+})
+TabMovement:CreateDivider()
+TabMovement:CreateToggle({
+    Name         = T("InfJump"),
+    CurrentValue = Settings.InfJump,
+    Flag         = "InfJump",
+    Callback     = function(v) Settings.InfJump = v end,
 })
 
 -- ── TAB AUTO ────────────────────────────────────────────────────
@@ -2772,6 +2867,16 @@ RunService.RenderStepped:Connect(function()
     if hum and hum.WalkSpeed ~= Settings.WalkSpeed and not Settings.Fly then
         hum.WalkSpeed = Settings.WalkSpeed
     end
+
+    -- ── JUMP re-apply (game forces JumpPower=0 each frame) ─────
+    if Settings.JumpEnabled and hum then
+        if hum.JumpPower ~= Settings.JumpPower then
+            hum.JumpPower = Settings.JumpPower
+        end
+        if hum.JumpHeight ~= nil and hum.JumpHeight == 0 then
+            pcall(function() hum.JumpHeight = Settings.JumpPower / 5 end)
+        end
+    end
 end) -- end RenderStepped
 
 -- ───────────────────────────────────────────────────────────────
@@ -2855,13 +2960,14 @@ end)
 LocalPlayer.CharacterAdded:Connect(function(char)
     task.wait(0.5)
     -- Clear ACS cache so it re-resolves for the new character
-    _acsCache = {func=nil, idx=nil, tbl=nil, nlTbl=nil}
+    _acsCache    = {func=nil, idx=nil, tbl=nil}
+    _nonLethalUV = nil
     -- Invalidate cache when player equips or unequips a tool
     char.ChildAdded:Connect(function(c)
-        if c:IsA("Tool") then _acsCache = {func=nil, idx=nil, tbl=nil, nlTbl=nil} end
+        if c:IsA("Tool") then _acsCache = {func=nil, idx=nil, tbl=nil}; _nonLethalUV = nil end
     end)
     char.ChildRemoved:Connect(function(c)
-        if c:IsA("Tool") then _acsCache = {func=nil, idx=nil, tbl=nil, nlTbl=nil} end
+        if c:IsA("Tool") then _acsCache = {func=nil, idx=nil, tbl=nil}; _nonLethalUV = nil end
     end)
     createOverlayUI()  -- rebuild overlay buttons after respawn
     if Settings.Fly then
@@ -2869,8 +2975,12 @@ LocalPlayer.CharacterAdded:Connect(function(char)
         task.wait(0.1)
         enableFly()
     end
+    setupInfJump(char)
     local h = char:FindFirstChildOfClass("Humanoid")
-    if h then h.WalkSpeed = Settings.WalkSpeed end
+    if h then
+        h.WalkSpeed = Settings.WalkSpeed
+        if Settings.JumpEnabled then h.JumpPower = Settings.JumpPower end
+    end
 end)
 
 -- ───────────────────────────────────────────────────────────────
