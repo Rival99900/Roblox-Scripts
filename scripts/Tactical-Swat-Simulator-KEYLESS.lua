@@ -2,7 +2,7 @@
     ================================================================
     Tactical SWAT Hub — Tactical: Swat Simulator
     Created by Rival960 with the help of Claude
-    Version: 1.1.2 | Languages: 21 | Rayfield UI | PC + Mobile
+    Version: 1.1.4 | Languages: 21 | Rayfield UI | PC + Mobile
     Status: untested in-game
     ================================================================
 --]]
@@ -64,6 +64,8 @@ local Translations = {
         RapidFireDesc    = "Set fire rate to maximum (ACS API required)",
         Wallbang         = "Wallbang + One Shot",
         WallbangDesc     = "Bullets penetrate walls and deal max damage (ACS API required)",
+        NoRecoil         = "No Recoil",
+        NoRecoilDesc     = "Remove all weapon recoil (ACS API required)",
         WallCheck        = "Wall Check",
         WallCheckDesc    = "Raycast check — which suspects are behind cover",
         -- Movement
@@ -97,7 +99,7 @@ local Translations = {
         LangSelect       = "Language",
         -- Credits
         CreditsTitle     = "Tactical SWAT Hub",
-        CreditsContent   = "Created by Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.2 — Weapons tab | Jump re-enable | Infinite Jump | getgc fix",
+        CreditsContent   = "Created by Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.4 — NoRecoil feature | ammo/jump fixes | in-place ACS mutation",
         Loaded           = "Hub loaded! Tactical advantage enabled.",
     },
     FR = {
@@ -123,6 +125,8 @@ local Translations = {
         RapidFireDesc    = "Cadence de tir maximale (API ACS requise)",
         Wallbang         = "Wallbang + Un coup",
         WallbangDesc     = "Balles traversent les murs, dégâts max (API ACS requise)",
+        NoRecoil         = "Sans recul",
+        NoRecoilDesc     = "Supprimer le recul des armes (API ACS requise)",
         WallCheck        = "Vérification des murs",
         WallCheckDesc    = "Rayon de détection — quels suspects sont derrière un couvert",
         Fly              = "Vol",
@@ -151,7 +155,7 @@ local Translations = {
         AntiAFKDesc      = "Empêche le kick pour inactivité",
         LangSelect       = "Langue",
         CreditsTitle     = "Tactical SWAT Hub",
-        CreditsContent   = "Créé par Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.2 — Onglet Armes | Saut réactivé | Saut infini | Correctif getgc",
+        CreditsContent   = "Créé par Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.4 — fonctionnalité SansRecul | correctifs munitions/saut | mutation ACS en place",
         Loaded           = "Hub chargé ! Avantage tactique activé.",
     },
     DE = {
@@ -177,6 +181,8 @@ local Translations = {
         RapidFireDesc    = "Feuerrate auf Maximum setzen (ACS API erforderlich)",
         Wallbang         = "Wallbang + Ein Schuss",
         WallbangDesc     = "Kugeln durchdringen Wände, maximaler Schaden (ACS API erforderlich)",
+        NoRecoil         = "Kein Rückstoß",
+        NoRecoilDesc     = "Waffenrückstoß entfernen (ACS API erforderlich)",
         WallCheck        = "Wandprüfung",
         WallCheckDesc    = "Raycast-Prüfung — welche Verdächtigen hinter Deckung sind",
         Fly              = "Fliegen",
@@ -205,7 +211,7 @@ local Translations = {
         AntiAFKDesc      = "Verhindert den Rauswurf wegen Inaktivität",
         LangSelect       = "Sprache",
         CreditsTitle     = "Tactical SWAT Hub",
-        CreditsContent   = "Erstellt von Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.2 — Waffen-Tab | Sprung reaktiviert | Unendl. Sprung | getgc-Fix",
+        CreditsContent   = "Erstellt von Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.4 — KeinRückstoß-Feature | Munitions-/Sprung-Fixes | In-Place-ACS-Mutation",
         Loaded           = "Hub geladen! Taktischer Vorteil aktiviert.",
     },
     ES = {
@@ -231,6 +237,8 @@ local Translations = {
         RapidFireDesc    = "Cadencia de fuego máxima (requiere ACS API)",
         Wallbang         = "Wallbang + Un disparo",
         WallbangDesc     = "Las balas atraviesan paredes, daño máximo (requiere ACS API)",
+        NoRecoil         = "Sin retroceso",
+        NoRecoilDesc     = "Eliminar el retroceso del arma (requiere ACS API)",
         WallCheck        = "Verificación de paredes",
         WallCheckDesc    = "Comprobación de rayo — qué sospechosos están detrás de cobertura",
         Fly              = "Volar",
@@ -259,7 +267,7 @@ local Translations = {
         AntiAFKDesc      = "Evitar expulsión por inactividad",
         LangSelect       = "Idioma",
         CreditsTitle     = "Tactical SWAT Hub",
-        CreditsContent   = "Creado por Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.2 — Pestaña Armas | Salto reactivado | Salto infinito | Fix getgc",
+        CreditsContent   = "Creado por Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.4 — función SinRetroceso | correcciones munición/salto | mutación ACS en lugar",
         Loaded           = "¡Hub cargado! Ventaja táctica activada.",
     },
     PT = {
@@ -285,6 +293,8 @@ local Translations = {
         RapidFireDesc    = "Taxa de fogo máxima (requer ACS API)",
         Wallbang         = "Wallbang + Um tiro",
         WallbangDesc     = "Balas atravessam paredes, dano máximo (requer ACS API)",
+        NoRecoil         = "Sem recuo",
+        NoRecoilDesc     = "Remover recuo da arma (requer ACS API)",
         WallCheck        = "Verificação de parede",
         WallCheckDesc    = "Verificação de raio — quais suspeitos estão atrás de cobertura",
         Fly              = "Voar",
@@ -313,7 +323,7 @@ local Translations = {
         AntiAFKDesc      = "Evitar expulsão por inatividade",
         LangSelect       = "Idioma",
         CreditsTitle     = "Tactical SWAT Hub",
-        CreditsContent   = "Criado por Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.2 — Aba Armas | Salto reativado | Salto infinito | Correção getgc",
+        CreditsContent   = "Criado por Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.4 — recurso SemRecuo | correções munição/salto | mutação ACS no lugar",
         Loaded           = "Hub carregado! Vantagem tática ativada.",
     },
     RU = {
@@ -339,6 +349,8 @@ local Translations = {
         RapidFireDesc    = "Максимальная скорострельность (требуется ACS API)",
         Wallbang         = "Пробитие стен + Один выстрел",
         WallbangDesc     = "Пули пробивают стены, максимальный урон (требуется ACS API)",
+        NoRecoil         = "Без отдачи",
+        NoRecoilDesc     = "Убрать отдачу оружия (требуется ACS API)",
         WallCheck        = "Проверка стен",
         WallCheckDesc    = "Трассировка луча — кто из подозреваемых за укрытием",
         Fly              = "Полёт",
@@ -367,7 +379,7 @@ local Translations = {
         AntiAFKDesc      = "Предотвратить кик за бездействие",
         LangSelect       = "Язык",
         CreditsTitle     = "Tactical SWAT Hub",
-        CreditsContent   = "Создано Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.2 — Вкладка Оружие | Прыжок восстановлен | Бесконечный прыжок | Исправление getgc",
+        CreditsContent   = "Создано Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.4 — функция БезОтдачи | правки патронов/прыжка | мутация ACS на месте",
         Loaded           = "Hub загружен! Тактическое преимущество активировано.",
     },
     IT = {
@@ -393,6 +405,8 @@ local Translations = {
         RapidFireDesc    = "Cadenza di fuoco massima (richiede ACS API)",
         Wallbang         = "Wallbang + Un colpo",
         WallbangDesc     = "I proiettili attraversano i muri, danno massimo (richiede ACS API)",
+        NoRecoil         = "Nessun rinculo",
+        NoRecoilDesc     = "Rimuovere il rinculo dell'arma (richiede ACS API)",
         WallCheck        = "Controllo muri",
         WallCheckDesc    = "Controllo raycast — quali sospetti sono dietro copertura",
         Fly              = "Volare",
@@ -421,7 +435,7 @@ local Translations = {
         AntiAFKDesc      = "Previeni il kick per inattività",
         LangSelect       = "Lingua",
         CreditsTitle     = "Tactical SWAT Hub",
-        CreditsContent   = "Creato da Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.2 — Scheda Armi | Salto riattivato | Salto infinito | Fix getgc",
+        CreditsContent   = "Creato da Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.4 — funzione NessunRinculo | fix munizioni/salto | mutazione ACS in-place",
         Loaded           = "Hub caricato! Vantaggio tattico attivato.",
     },
     NL = {
@@ -447,6 +461,8 @@ local Translations = {
         RapidFireDesc    = "Vuursnelheid op maximum instellen (ACS API vereist)",
         Wallbang         = "Wallbang + Één schot",
         WallbangDesc     = "Kogels doorboren muren, maximale schade (ACS API vereist)",
+        NoRecoil         = "Geen terugslag",
+        NoRecoilDesc     = "Wapenrugslag verwijderen (ACS API vereist)",
         WallCheck        = "Muurcontrole",
         WallCheckDesc    = "Raycast-controle — welke verdachten achter dekking zitten",
         Fly              = "Vliegen",
@@ -475,7 +491,7 @@ local Translations = {
         AntiAFKDesc      = "Kick door inactiviteit voorkomen",
         LangSelect       = "Taal",
         CreditsTitle     = "Tactical SWAT Hub",
-        CreditsContent   = "Gemaakt door Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.2 — Wapens tab | Sprong heractiveerd | Oneindig springen | getgc-fix",
+        CreditsContent   = "Gemaakt door Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.4 — GeenTerugslag-functie | munitie/sprong-fixes | in-place ACS-mutatie",
         Loaded           = "Hub geladen! Tactisch voordeel geactiveerd.",
     },
     PL = {
@@ -501,6 +517,8 @@ local Translations = {
         RapidFireDesc    = "Maksymalna szybkostrzelność (wymaga ACS API)",
         Wallbang         = "Wallbang + Jeden strzał",
         WallbangDesc     = "Kule przenikają przez ściany, maksymalne obrażenia (wymaga ACS API)",
+        NoRecoil         = "Brak odrzutu",
+        NoRecoilDesc     = "Usuń odrzut broni (wymaga ACS API)",
         WallCheck        = "Sprawdzenie ściany",
         WallCheckDesc    = "Sprawdzenie raycasta — którzy podejrzani są za osłoną",
         Fly              = "Latanie",
@@ -529,7 +547,7 @@ local Translations = {
         AntiAFKDesc      = "Zapobiegaj wyrzuceniu za bezczynność",
         LangSelect       = "Język",
         CreditsTitle     = "Tactical SWAT Hub",
-        CreditsContent   = "Stworzone przez Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.2 — Zakładka Bronie | Skok przywrócony | Nieskończone skoki | Poprawka getgc",
+        CreditsContent   = "Stworzone przez Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.4 — funkcja BezOdrzutu | poprawki amunicji/skoku | mutacja ACS w miejscu",
         Loaded           = "Hub załadowany! Taktyczna przewaga aktywowana.",
     },
     ZH = {
@@ -555,6 +573,8 @@ local Translations = {
         RapidFireDesc    = "将射速设为最大（需要 ACS API）",
         Wallbang         = "穿墙+一击必杀",
         WallbangDesc     = "子弹穿透墙壁，造成最大伤害（需要 ACS API）",
+        NoRecoil         = "无后坐力",
+        NoRecoilDesc     = "消除所有武器后坐力（需要 ACS API）",
         WallCheck        = "穿墙检测",
         WallCheckDesc    = "射线检测 — 哪些嫌疑人在掩体后面",
         Fly              = "飞行",
@@ -583,7 +603,7 @@ local Translations = {
         AntiAFKDesc      = "防止因挂机被踢出",
         LangSelect       = "语言",
         CreditsTitle     = "战术特警Hub",
-        CreditsContent   = "由 Rival960 创建\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.2 — 武器选项卡 | 跳跃重新启用 | 无限跳跃 | getgc 修复",
+        CreditsContent   = "由 Rival960 创建\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.4 — 无后坐力功能 | 弹药/跳跃修复 | ACS 原地修改",
         Loaded           = "Hub已加载！战术优势已激活。",
     },
     JA = {
@@ -609,6 +629,8 @@ local Translations = {
         RapidFireDesc    = "発射レートを最大に設定（ACS API が必要）",
         Wallbang         = "ウォールバン＋ワンショット",
         WallbangDesc     = "弾丸が壁を貫通し、最大ダメージを与える（ACS API が必要）",
+        NoRecoil         = "リコイルなし",
+        NoRecoilDesc     = "武器のリコイルをすべて除去（ACS API が必要）",
         WallCheck        = "壁チェック",
         WallCheckDesc    = "レイキャスト確認 — 掩体に隠れている容疑者を表示",
         Fly              = "飛行",
@@ -637,7 +659,7 @@ local Translations = {
         AntiAFKDesc      = "放置キックを防止",
         LangSelect       = "言語",
         CreditsTitle     = "タクティカルSWATHub",
-        CreditsContent   = "Rival960 作\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.2 — 武器タブ | ジャンプ再有効化 | 無限ジャンプ | getgc 修正",
+        CreditsContent   = "Rival960 作\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.4 — リコイルなし機能 | 弾薬/ジャンプ修正 | ACS インプレース変換",
         Loaded           = "Hub読み込み完了！タクティカル優位性が有効化されました。",
     },
     TR = {
@@ -663,6 +685,8 @@ local Translations = {
         RapidFireDesc    = "Atış hızını maksimuma ayarla (ACS API gerekli)",
         Wallbang         = "Duvar Delme + Tek Atış",
         WallbangDesc     = "Mermiler duvarları deler, maksimum hasar (ACS API gerekli)",
+        NoRecoil         = "Geri tepme yok",
+        NoRecoilDesc     = "Silah geri tepmesini kaldır (ACS API gerekli)",
         WallCheck        = "Duvar Kontrolü",
         WallCheckDesc    = "Işın kontrolü — hangi şüpheliler siperde",
         Fly              = "Uçuş",
@@ -691,7 +715,7 @@ local Translations = {
         AntiAFKDesc      = "Hareketsizlik kickini önle",
         LangSelect       = "Dil",
         CreditsTitle     = "Tactical SWAT Hub",
-        CreditsContent   = "Rival960 tarafından\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.2 — Silah sekmesi | Zıplama yeniden etkin | Sonsuz zıplama | getgc düzeltmesi",
+        CreditsContent   = "Rival960 tarafından\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.4 — GeriTepmeYok özelliği | mermi/zıplama düzeltmeleri | yerinde ACS mutasyonu",
         Loaded           = "Hub yüklendi! Taktik avantaj aktif.",
     },
     KO = {
@@ -717,6 +741,8 @@ local Translations = {
         RapidFireDesc    = "발사 속도를 최대로 설정 (ACS API 필요)",
         Wallbang         = "월뱅 + 원샷",
         WallbangDesc     = "총알이 벽을 관통하고 최대 피해 (ACS API 필요)",
+        NoRecoil         = "무반동",
+        NoRecoilDesc     = "모든 무기 반동 제거 (ACS API 필요)",
         WallCheck        = "벽 확인",
         WallCheckDesc    = "레이캐스트 확인 — 어떤 용의자가 엄폐물 뒤에 있는지",
         Fly              = "비행",
@@ -745,7 +771,7 @@ local Translations = {
         AntiAFKDesc      = "비활동으로 인한 킥 방지",
         LangSelect       = "언어",
         CreditsTitle     = "택티컬 스왓 허브",
-        CreditsContent   = "Rival960 제작\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.2 — 무기 탭 | 점프 재활성화 | 무한 점프 | getgc 수정",
+        CreditsContent   = "Rival960 제작\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.4 — 무반동 기능 | 탄약/점프 수정 | ACS 인플레이스 변조",
         Loaded           = "허브 로드 완료! 전술적 이점 활성화.",
     },
     AR = {
@@ -771,6 +797,8 @@ local Translations = {
         RapidFireDesc    = "ضبط معدل إطلاق النار على الحد الأقصى (يتطلب ACS API)",
         Wallbang         = "اختراق الجدران + طلقة واحدة",
         WallbangDesc     = "الرصاصات تخترق الجدران وتسبب أقصى ضرر (يتطلب ACS API)",
+        NoRecoil         = "بدون ارتداد",
+        NoRecoilDesc     = "إزالة ارتداد السلاح (يتطلب ACS API)",
         WallCheck        = "فحص الجدران",
         WallCheckDesc    = "فحص الأشعة — أي المشتبه بهم خلف الغطاء",
         Fly              = "الطيران",
@@ -799,7 +827,7 @@ local Translations = {
         AntiAFKDesc      = "منع الطرد بسبب عدم النشاط",
         LangSelect       = "اللغة",
         CreditsTitle     = "تاكتيكال سوات هاب",
-        CreditsContent   = "أنشأه Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.2 — تبويب الأسلحة | إعادة تفعيل القفز | قفز لا نهائي | إصلاح getgc",
+        CreditsContent   = "أنشأه Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.4 — ميزة بدون ارتداد | إصلاحات ذخيرة/قفز | تحوير ACS في المكان",
         Loaded           = "تم تحميل الهاب! تم تفعيل الميزة التكتيكية.",
     },
     VI = {
@@ -825,6 +853,8 @@ local Translations = {
         RapidFireDesc    = "Đặt tốc độ bắn tối đa (yêu cầu ACS API)",
         Wallbang         = "Xuyên tường + Một phát",
         WallbangDesc     = "Đạn xuyên tường, sát thương tối đa (yêu cầu ACS API)",
+        NoRecoil         = "Không giật",
+        NoRecoilDesc     = "Loại bỏ độ giật súng (yêu cầu ACS API)",
         WallCheck        = "Kiểm tra tường",
         WallCheckDesc    = "Kiểm tra raycast — nghi phạm nào đang ẩn sau chướng ngại vật",
         Fly              = "Bay",
@@ -853,7 +883,7 @@ local Translations = {
         AntiAFKDesc      = "Ngăn bị đuổi vì không hoạt động",
         LangSelect       = "Ngôn ngữ",
         CreditsTitle     = "Tactical SWAT Hub",
-        CreditsContent   = "Tạo bởi Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.2 — Tab Vũ khí | Bật lại nhảy | Nhảy vô hạn | Sửa lỗi getgc",
+        CreditsContent   = "Tạo bởi Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.4 — tính năng KhôngGiật | sửa đạn/nhảy | biến đổi ACS tại chỗ",
         Loaded           = "Hub đã tải! Lợi thế chiến thuật được kích hoạt.",
     },
     SV = {
@@ -879,6 +909,8 @@ local Translations = {
         RapidFireDesc    = "Ställ in eldhastighet på max (ACS API krävs)",
         Wallbang         = "Wallbang + Enkelt skott",
         WallbangDesc     = "Kulor penetrerar väggar, maximal skada (ACS API krävs)",
+        NoRecoil         = "Inget rekyl",
+        NoRecoilDesc     = "Ta bort vapenrekyl (ACS API krävs)",
         WallCheck        = "Väggkontroll",
         WallCheckDesc    = "Raycast-kontroll — vilka misstänkta befinner sig bakom skydd",
         Fly              = "Flyg",
@@ -907,7 +939,7 @@ local Translations = {
         AntiAFKDesc      = "Förhindra kick på grund av inaktivitet",
         LangSelect       = "Språk",
         CreditsTitle     = "Tactical SWAT Hub",
-        CreditsContent   = "Skapad av Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.2 — Vapenfliken | Hopp återaktiverat | Oändliga hop | getgc-fix",
+        CreditsContent   = "Skapad av Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.4 — IngaRekyl-funktion | ammo/hopp-fixar | in-place ACS-mutation",
         Loaded           = "Hub laddad! Taktisk fördel aktiverad.",
     },
     EL = {
@@ -933,6 +965,8 @@ local Translations = {
         RapidFireDesc    = "Ρύθμιση ρυθμού πυροδότησης στο μέγιστο (απαιτείται ACS API)",
         Wallbang         = "Διάτρηση τοίχου + Ένα πλήγμα",
         WallbangDesc     = "Οι σφαίρες διαπερνούν τοίχους, μέγιστη ζημιά (απαιτείται ACS API)",
+        NoRecoil         = "Χωρίς αντίδραση",
+        NoRecoilDesc     = "Αφαίρεση αντίδρασης όπλου (απαιτείται ACS API)",
         WallCheck        = "Έλεγχος τοίχου",
         WallCheckDesc    = "Έλεγχος ακτίνας — ποιοι ύποπτοι κρύβονται πίσω από κάλυψη",
         Fly              = "Πτήση",
@@ -961,7 +995,7 @@ local Translations = {
         AntiAFKDesc      = "Αποτροπή αποβολής λόγω αδράνειας",
         LangSelect       = "Γλώσσα",
         CreditsTitle     = "Tactical SWAT Hub",
-        CreditsContent   = "Δημιουργήθηκε από τον Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.2 — Καρτέλα Όπλα | Επανεκκίνηση άλματος | Άπειρο άλμα | Διόρθωση getgc",
+        CreditsContent   = "Δημιουργήθηκε από τον Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.4 — λειτουργία ΧωρίςΑντίδραση | διορθώσεις πυρομαχικών/άλματος | μετάλλαξη ACS επί τόπου",
         Loaded           = "Hub φορτώθηκε! Τακτικό πλεονέκτημα ενεργοποιήθηκε.",
     },
     RO = {
@@ -987,6 +1021,8 @@ local Translations = {
         RapidFireDesc    = "Setează rata de foc la maximum (necesită ACS API)",
         Wallbang         = "Wallbang + Un foc",
         WallbangDesc     = "Gloanțele penetrează pereții, daune maxime (necesită ACS API)",
+        NoRecoil         = "Fără recul",
+        NoRecoilDesc     = "Elimina reculul armei (necesită ACS API)",
         WallCheck        = "Verificare pereți",
         WallCheckDesc    = "Verificare raycast — ce suspecți se află în spatele acoperirii",
         Fly              = "Zbor",
@@ -1015,7 +1051,7 @@ local Translations = {
         AntiAFKDesc      = "Previne kickul din cauza inactivității",
         LangSelect       = "Limbă",
         CreditsTitle     = "Tactical SWAT Hub",
-        CreditsContent   = "Creat de Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.2 — Tab Arme | Săritură reactivată | Săritură infinită | Remediere getgc",
+        CreditsContent   = "Creat de Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.4 — funcționalitate FărăRecul | remedieri muniție/săritură | mutație ACS la loc",
         Loaded           = "Hub încărcat! Avantaj tactic activat.",
     },
     UK = {
@@ -1041,6 +1077,8 @@ local Translations = {
         RapidFireDesc    = "Максимальна швидкість стрільби (потрібен ACS API)",
         Wallbang         = "Пробиття стін + Один постріл",
         WallbangDesc     = "Кулі пробивають стіни, максимальний урон (потрібен ACS API)",
+        NoRecoil         = "Без віддачі",
+        NoRecoilDesc     = "Прибрати віддачу зброї (потрібен ACS API)",
         WallCheck        = "Перевірка стін",
         WallCheckDesc    = "Трасування промення — які підозрювані за укриттям",
         Fly              = "Політ",
@@ -1069,7 +1107,7 @@ local Translations = {
         AntiAFKDesc      = "Запобігти кіку за бездіяльність",
         LangSelect       = "Мова",
         CreditsTitle     = "Tactical SWAT Hub",
-        CreditsContent   = "Створено Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.2 — Вкладка Зброя | Стрибок відновлено | Нескінченний стрибок | Виправлення getgc",
+        CreditsContent   = "Створено Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.4 — функція БезВіддачі | виправлення патронів/стрибка | мутація ACS на місці",
         Loaded           = "Hub завантажено! Тактичну перевагу активовано.",
     },
     CS = {
@@ -1095,6 +1133,8 @@ local Translations = {
         RapidFireDesc    = "Nastavit kadenci na maximum (vyžaduje ACS API)",
         Wallbang         = "Průstřel zdí + Jeden výstřel",
         WallbangDesc     = "Náboje prostřelují zdi, maximální poškození (vyžaduje ACS API)",
+        NoRecoil         = "Bez zpětného rázu",
+        NoRecoilDesc     = "Odstraň zpětný ráz zbraně (vyžaduje ACS API)",
         WallCheck        = "Kontrola zdí",
         WallCheckDesc    = "Raycast kontrola — kteří podezřelí jsou za krytem",
         Fly              = "Létání",
@@ -1123,7 +1163,7 @@ local Translations = {
         AntiAFKDesc      = "Zabránit kicku za nečinnost",
         LangSelect       = "Jazyk",
         CreditsTitle     = "Tactical SWAT Hub",
-        CreditsContent   = "Vytvořil Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.2 — Záložka Zbraně | Skok obnoven | Nekonečný skok | Oprava getgc",
+        CreditsContent   = "Vytvořil Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.4 — funkce BezZpětnéhoRázu | opravy munice/skoku | in-place mutace ACS",
         Loaded           = "Hub načten! Taktická výhoda aktivována.",
     },
     DA = {
@@ -1149,6 +1189,8 @@ local Translations = {
         RapidFireDesc    = "Sæt skudfrekvens til maksimum (kræver ACS API)",
         Wallbang         = "Wallbang + Et skud",
         WallbangDesc     = "Kugler gennemtrænger vægge, maksimal skade (kræver ACS API)",
+        NoRecoil         = "Ingen rekyl",
+        NoRecoilDesc     = "Fjern våbenrekyl (kræver ACS API)",
         WallCheck        = "Vægkontrol",
         WallCheckDesc    = "Raycast-kontrol — hvilke mistænkte er bag dækning",
         Fly              = "Fly",
@@ -1177,7 +1219,7 @@ local Translations = {
         AntiAFKDesc      = "Forhindre kick pga. inaktivitet",
         LangSelect       = "Sprog",
         CreditsTitle     = "Tactical SWAT Hub",
-        CreditsContent   = "Oprettet af Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.2 — Våben-fanen | Hop genaktiveret | Uendelige hop | getgc-rettelse",
+        CreditsContent   = "Oprettet af Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.4 — IngenRekyl-funktion | ammo/hop-rettelser | in-place ACS-mutation",
         Loaded           = "Hub indlæst! Taktisk fordel aktiveret.",
     },
 }
@@ -1202,6 +1244,8 @@ local Settings = {
     FreezeAmmo      = false,
     RapidFire       = false,
     Wallbang        = false,
+    NoRecoil        = false,
+    _origRecoil     = nil,
     _origShootRate  = nil,
     _origPenetration= nil,
     _origIgnoreProt = nil,
@@ -1542,27 +1586,6 @@ local FLY_BTN_UP   = 0  -- set to  1 while on-screen ▲ button is held
 local FLY_BTN_DOWN = 0  -- set to -1 while on-screen ▼ button is held
 local flyKeyDown, flyKeyUp
 
--- ── INFINITE JUMP ─────────────────────────────────────────────────────────
-local _infJumpConn
-local function setupInfJump(char)
-    if _infJumpConn then _infJumpConn:Disconnect() end
-    _infJumpConn = nil
-    local hum = char:FindFirstChildOfClass("Humanoid")
-    if not hum then return end
-    _infJumpConn = hum.StateChanged:Connect(function(_, new)
-        if Settings.InfJump
-            and new == Enum.HumanoidStateType.Freefall then
-            task.wait(0.08)
-            if Settings.InfJump then
-                local h = getHum()
-                if h then
-                    h.JumpPower = Settings.JumpPower
-                    h:ChangeState(Enum.HumanoidStateType.Jumping)
-                end
-            end
-        end
-    end)
-end
 
 -- Forward references to on-screen overlay buttons (created after Rayfield loads)
 local _flyUpBtn, _flyDownBtn
@@ -1900,17 +1923,22 @@ TabWeapons:CreateToggle({
         if v then
             task.spawn(function()
                 while Settings.InfiniteAmmo do
-                    if not isNonLethal() then
-                        local _, _, cfg = getACSConfig()
-                        if cfg then
-                            setACSValue("Ammo", 99999)
-                            setACSValue("AmmoInGun", 99999)
-                            setACSValue("StoredAmmo", math.huge)
-                        else
-                            Rayfield:Notify({Title="Weapons", Content="Fire your weapon once to activate", Duration=4})
-                            Settings.InfiniteAmmo = false
-                            break
+                    local f, i, cfg = getACSConfig()
+                    if cfg then
+                        cfg.Ammo      = 99999
+                        cfg.AmmoInGun = 99999
+                        cfg.StoredAmmo = math.huge
+                        if type(cfg.__MagBase) == "table" then
+                            cfg.__MagBase.Ammo      = 999
+                            cfg.__MagBase.AmmoInGun = 999
                         end
+                        if f and debug and debug.setupvalue then
+                            pcall(debug.setupvalue, f, i, cfg)
+                        end
+                    else
+                        Rayfield:Notify({Title="Weapons", Content="Fire your weapon once to activate", Duration=4})
+                        Settings.InfiniteAmmo = false
+                        break
                     end
                     task.wait(0.3)
                 end
@@ -1932,15 +1960,27 @@ TabWeapons:CreateToggle({
             if cfg then
                 Settings._frozenAmmo     = cfg.Ammo     or 25
                 Settings._frozenAmmoInGun= cfg.AmmoInGun or 25
+                Settings._frozenMagAmmo     = (type(cfg.__MagBase)=="table" and cfg.__MagBase.Ammo)     or 25
+                Settings._frozenMagAmmoInGun= (type(cfg.__MagBase)=="table" and cfg.__MagBase.AmmoInGun) or 25
             else
                 Settings._frozenAmmo     = 25
                 Settings._frozenAmmoInGun= 25
+                Settings._frozenMagAmmo     = 25
+                Settings._frozenMagAmmoInGun= 25
             end
             task.spawn(function()
                 while Settings.FreezeAmmo do
-                    if not isNonLethal() then
-                        setACSValue("Ammo",     Settings._frozenAmmo)
-                        setACSValue("AmmoInGun",Settings._frozenAmmoInGun)
+                    local f2, i2, cfg2 = getACSConfig()
+                    if cfg2 then
+                        cfg2.Ammo      = Settings._frozenAmmo
+                        cfg2.AmmoInGun = Settings._frozenAmmoInGun
+                        if type(cfg2.__MagBase) == "table" then
+                            cfg2.__MagBase.Ammo      = Settings._frozenMagAmmo
+                            cfg2.__MagBase.AmmoInGun = Settings._frozenMagAmmoInGun
+                        end
+                        if f2 and debug and debug.setupvalue then
+                            pcall(debug.setupvalue, f2, i2, cfg2)
+                        end
                     end
                     task.wait(0.3)
                 end
@@ -1955,9 +1995,22 @@ TabWeapons:CreateDivider()
 TabWeapons:CreateButton({
     Name     = T("FastReload"),
     Callback = function()
-        local ok1 = setACSValue("Ammo", 999)
-        local ok2 = setACSValue("AmmoInGun", 999)
-        setACSValue("StoredAmmo", math.huge)
+        local f3, i3, cfg3 = getACSConfig()
+        local ok1, ok2
+        if cfg3 then
+            cfg3.Ammo      = 25
+            cfg3.AmmoInGun = 25
+            cfg3.Jammed    = false
+            cfg3.StoredAmmo = math.huge
+            if type(cfg3.__MagBase) == "table" then
+                cfg3.__MagBase.Ammo      = 25
+                cfg3.__MagBase.AmmoInGun = 25
+            end
+            if f3 and debug and debug.setupvalue then
+                ok1 = pcall(debug.setupvalue, f3, i3, cfg3)
+                ok2 = ok1
+            end
+        end
         -- Secondary path: fire the ACS reload remote if upvalue [7] is available
         pcall(function()
             local evFolder
@@ -2052,11 +2105,19 @@ TabWeapons:CreateToggle({
                 end
                 while Settings.Wallbang do
                     if not isNonLethal() then
-                        if _acsCache.tbl then
-                            setACSValue("BulletPenetration", 100)
-                            setACSValue("IgnoreProtection",  true)
-                            setACSValue("TorsoDamage", {9999,9999})
-                            setACSValue("LimbDamage",  {9999,9999})
+                        local fw, iw, cfw = getACSConfig()
+                        if cfw then
+                            cfw.BulletPenetration = 100
+                            cfw.IgnoreProtection  = true
+                            if type(cfw.TorsoDamage) == "table" then
+                                cfw.TorsoDamage[1] = 9999; cfw.TorsoDamage[2] = 9999
+                            end
+                            if type(cfw.LimbDamage) == "table" then
+                                cfw.LimbDamage[1] = 9999; cfw.LimbDamage[2] = 9999
+                            end
+                            if fw and debug and debug.setupvalue then
+                                pcall(debug.setupvalue, fw, iw, cfw)
+                            end
                         else
                             Rayfield:Notify({Title="Weapons", Content="Fire your weapon once to activate", Duration=4})
                             Settings.Wallbang = false
@@ -2068,10 +2129,22 @@ TabWeapons:CreateToggle({
                 -- Restore originals when loop exits
                 pcall(function()
                     if Settings._origPenetration ~= nil then
-                        setACSValue("BulletPenetration", Settings._origPenetration)
-                        setACSValue("IgnoreProtection",  Settings._origIgnoreProt)
-                        setACSValue("TorsoDamage",       Settings._origTorsoDmg)
-                        setACSValue("LimbDamage",        Settings._origLimbDmg)
+                        local frx, irx, crx = getACSConfig()
+                        if crx then
+                            crx.BulletPenetration = Settings._origPenetration
+                            crx.IgnoreProtection  = Settings._origIgnoreProt
+                            if type(crx.TorsoDamage)=="table" and Settings._origTorsoDmg then
+                                crx.TorsoDamage[1]=Settings._origTorsoDmg[1]
+                                crx.TorsoDamage[2]=Settings._origTorsoDmg[2]
+                            end
+                            if type(crx.LimbDamage)=="table" and Settings._origLimbDmg then
+                                crx.LimbDamage[1]=Settings._origLimbDmg[1]
+                                crx.LimbDamage[2]=Settings._origLimbDmg[2]
+                            end
+                            if frx and debug and debug.setupvalue then
+                                pcall(debug.setupvalue, frx, irx, crx)
+                            end
+                        end
                         Settings._origPenetration = nil
                         Settings._origIgnoreProt  = nil
                         Settings._origTorsoDmg    = nil
@@ -2082,10 +2155,22 @@ TabWeapons:CreateToggle({
         else
             -- Restore originals immediately when toggled off
             if Settings._origPenetration ~= nil then
-                setACSValue("BulletPenetration", Settings._origPenetration)
-                setACSValue("IgnoreProtection",  Settings._origIgnoreProt)
-                setACSValue("TorsoDamage",       Settings._origTorsoDmg)
-                setACSValue("LimbDamage",        Settings._origLimbDmg)
+                local fro, iro, cro = getACSConfig()
+                if cro then
+                    cro.BulletPenetration = Settings._origPenetration
+                    cro.IgnoreProtection  = Settings._origIgnoreProt
+                    if type(cro.TorsoDamage)=="table" and Settings._origTorsoDmg then
+                        cro.TorsoDamage[1]=Settings._origTorsoDmg[1]
+                        cro.TorsoDamage[2]=Settings._origTorsoDmg[2]
+                    end
+                    if type(cro.LimbDamage)=="table" and Settings._origLimbDmg then
+                        cro.LimbDamage[1]=Settings._origLimbDmg[1]
+                        cro.LimbDamage[2]=Settings._origLimbDmg[2]
+                    end
+                    if fro and debug and debug.setupvalue then
+                        pcall(debug.setupvalue, fro, iro, cro)
+                    end
+                end
                 Settings._origPenetration = nil
                 Settings._origIgnoreProt  = nil
                 Settings._origTorsoDmg    = nil
@@ -2095,7 +2180,82 @@ TabWeapons:CreateToggle({
     end,
 })
 
--- f) Wall Check (one-shot raycast button)
+-- f) NoRecoil toggle
+TabWeapons:CreateToggle({
+    Name         = T("NoRecoil"),
+    Description  = T("NoRecoilDesc"),
+    CurrentValue = Settings.NoRecoil,
+    Flag         = "NoRecoil",
+    Callback     = function(v)
+        Settings.NoRecoil = v
+        if v then
+            task.spawn(function()
+                while Settings.NoRecoil do
+                    local fn, idx, cfg = getACSConfig()
+                    if cfg then
+                        -- Save originals once
+                        if Settings._origRecoil == nil then
+                            Settings._origRecoil = {
+                                Recoil           = cfg.Recoil,
+                                MinRecoil        = cfg.MinRecoil,
+                                MaxRecoil        = cfg.MaxRecoil,
+                                RecoilSpring     = cfg.RecoilSpring,
+                                CamShake         = cfg.CamShake,
+                                CameraRecoil     = cfg.CameraRecoil,
+                                RecoilAmount     = cfg.RecoilAmount,
+                                RecoilKick       = cfg.RecoilKick,
+                                ViewmodelRecoil  = cfg.ViewmodelRecoil,
+                            }
+                        end
+                        -- Zero all recoil-related keys
+                        cfg.Recoil          = 0
+                        cfg.MinRecoil       = 0
+                        cfg.MaxRecoil       = 0
+                        cfg.RecoilSpring    = 0
+                        cfg.CamShake        = 0
+                        cfg.CameraRecoil    = 0
+                        cfg.RecoilAmount    = 0
+                        cfg.RecoilKick      = 0
+                        cfg.ViewmodelRecoil = 0
+                        if fn and debug and debug.setupvalue then
+                            pcall(debug.setupvalue, fn, idx, cfg)
+                        end
+                    end
+                    task.wait(0.3)
+                end
+                -- Restore originals on toggle off
+                if Settings._origRecoil then
+                    local fn2, idx2, cfg2 = getACSConfig()
+                    if cfg2 then
+                        for k, val in pairs(Settings._origRecoil) do
+                            if val ~= nil then cfg2[k] = val end
+                        end
+                        if fn2 and debug and debug.setupvalue then
+                            pcall(debug.setupvalue, fn2, idx2, cfg2)
+                        end
+                    end
+                    Settings._origRecoil = nil
+                end
+            end)
+        else
+            -- Immediate restore if already cached
+            if Settings._origRecoil then
+                local fn3, idx3, cfg3 = getACSConfig()
+                if cfg3 then
+                    for k, val in pairs(Settings._origRecoil) do
+                        if val ~= nil then cfg3[k] = val end
+                    end
+                    if fn3 and debug and debug.setupvalue then
+                        pcall(debug.setupvalue, fn3, idx3, cfg3)
+                    end
+                end
+                Settings._origRecoil = nil
+            end
+        end
+    end,
+})
+
+-- g) Wall Check (one-shot raycast button)
 TabWeapons:CreateButton({
     Name     = T("WallCheck"),
     Callback = function()
@@ -2870,12 +3030,10 @@ RunService.RenderStepped:Connect(function()
 
     -- ── JUMP re-apply (game forces JumpPower=0 each frame) ─────
     if Settings.JumpEnabled and hum then
-        if hum.JumpPower ~= Settings.JumpPower then
-            hum.JumpPower = Settings.JumpPower
-        end
-        if hum.JumpHeight ~= nil and hum.JumpHeight == 0 then
-            pcall(function() hum.JumpHeight = Settings.JumpPower / 5 end)
-        end
+        pcall(function()
+            hum.JumpPower  = Settings.JumpPower
+            hum.JumpHeight = Settings.JumpPower * 0.14
+        end)
     end
 end) -- end RenderStepped
 
@@ -2952,6 +3110,37 @@ RunService.Heartbeat:Connect(function()
             end)
         end
     end
+
+    -- ── INFINITE JUMP sustain — re-jump while Space is held mid-air ──
+    if Settings.InfJump then
+        local hInfJ = getHum()
+        if hInfJ then
+            local _, held = pcall(function()
+                return UserInputService:IsKeyDown(Enum.KeyCode.Space)
+            end)
+            if held then
+                pcall(function() hInfJ.JumpPower  = Settings.JumpPower end)
+                pcall(function() hInfJ.JumpHeight = Settings.JumpPower * 0.14 end)
+                local st = hInfJ:GetState()
+                if st == Enum.HumanoidStateType.Freefall
+                    or st == Enum.HumanoidStateType.Jumping then
+                    hInfJ:ChangeState(Enum.HumanoidStateType.Jumping)
+                end
+            end
+        end
+    end
+end)
+
+-- ───────────────────────────────────────────────────────────────
+-- INFINITE JUMP — global JumpRequest connection
+-- ───────────────────────────────────────────────────────────────
+UserInputService.JumpRequest:Connect(function()
+    if not Settings.InfJump then return end
+    local h = getHum()
+    if not h then return end
+    pcall(function() h.JumpPower  = Settings.JumpPower end)
+    pcall(function() h.JumpHeight = Settings.JumpPower * 0.14 end)
+    h:ChangeState(Enum.HumanoidStateType.Jumping)
 end)
 
 -- ───────────────────────────────────────────────────────────────
@@ -2975,7 +3164,6 @@ LocalPlayer.CharacterAdded:Connect(function(char)
         task.wait(0.1)
         enableFly()
     end
-    setupInfJump(char)
     local h = char:FindFirstChildOfClass("Humanoid")
     if h then
         h.WalkSpeed = Settings.WalkSpeed
