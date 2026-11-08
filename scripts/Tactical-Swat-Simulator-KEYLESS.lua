@@ -2,7 +2,7 @@
     ================================================================
     Tactical SWAT Hub — Tactical: Swat Simulator
     Created by Rival960 with the help of Claude
-    Version: 1.1.4 | Languages: 21 | Rayfield UI | PC + Mobile
+    Version: 1.1.5 | Languages: 21 | Rayfield UI | PC + Mobile
     Status: untested in-game
     ================================================================
 --]]
@@ -99,7 +99,7 @@ local Translations = {
         LangSelect       = "Language",
         -- Credits
         CreditsTitle     = "Tactical SWAT Hub",
-        CreditsContent   = "Created by Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.4 — NoRecoil feature | ammo/jump fixes | in-place ACS mutation",
+        CreditsContent   = "Created by Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.5 — FreezeAmmo fix | Wallbang direct-kill | RapidFire RPM fix | NoRecoil reload fix",
         Loaded           = "Hub loaded! Tactical advantage enabled.",
     },
     FR = {
@@ -155,7 +155,7 @@ local Translations = {
         AntiAFKDesc      = "Empêche le kick pour inactivité",
         LangSelect       = "Langue",
         CreditsTitle     = "Tactical SWAT Hub",
-        CreditsContent   = "Créé par Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.4 — fonctionnalité SansRecul | correctifs munitions/saut | mutation ACS en place",
+        CreditsContent   = "Créé par Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.5 — correctif BloquerMunitions | kill direct Wallbang | correctif RPM TirRapide | correctif rechargement SansRecul",
         Loaded           = "Hub chargé ! Avantage tactique activé.",
     },
     DE = {
@@ -211,7 +211,7 @@ local Translations = {
         AntiAFKDesc      = "Verhindert den Rauswurf wegen Inaktivität",
         LangSelect       = "Sprache",
         CreditsTitle     = "Tactical SWAT Hub",
-        CreditsContent   = "Erstellt von Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.4 — KeinRückstoß-Feature | Munitions-/Sprung-Fixes | In-Place-ACS-Mutation",
+        CreditsContent   = "Erstellt von Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.5 — MunitionEinfrieren-Fix | Wallbang-Direktkill | RapidFire-RPM-Fix | KeinRückstoß-Nachladen-Fix",
         Loaded           = "Hub geladen! Taktischer Vorteil aktiviert.",
     },
     ES = {
@@ -267,7 +267,7 @@ local Translations = {
         AntiAFKDesc      = "Evitar expulsión por inactividad",
         LangSelect       = "Idioma",
         CreditsTitle     = "Tactical SWAT Hub",
-        CreditsContent   = "Creado por Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.4 — función SinRetroceso | correcciones munición/salto | mutación ACS en lugar",
+        CreditsContent   = "Creado por Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.5 — corrección CongelarMunición | kill directo Wallbang | corrección RPM TiroRápido | corrección recarga SinRetroceso",
         Loaded           = "¡Hub cargado! Ventaja táctica activada.",
     },
     PT = {
@@ -323,7 +323,7 @@ local Translations = {
         AntiAFKDesc      = "Evitar expulsão por inatividade",
         LangSelect       = "Idioma",
         CreditsTitle     = "Tactical SWAT Hub",
-        CreditsContent   = "Criado por Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.4 — recurso SemRecuo | correções munição/salto | mutação ACS no lugar",
+        CreditsContent   = "Criado por Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.5 — correção CongelarMunição | kill direto Wallbang | correção RPM TiroRápido | correção recarga SemRecuo",
         Loaded           = "Hub carregado! Vantagem tática ativada.",
     },
     RU = {
@@ -379,7 +379,7 @@ local Translations = {
         AntiAFKDesc      = "Предотвратить кик за бездействие",
         LangSelect       = "Язык",
         CreditsTitle     = "Tactical SWAT Hub",
-        CreditsContent   = "Создано Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.4 — функция БезОтдачи | правки патронов/прыжка | мутация ACS на месте",
+        CreditsContent   = "Создано Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.5 — исправление ЗаморозкиПатронов | прямое убийство Wallbang | исправление RPM БыстрогоОгня | исправление перезарядки БезОтдачи",
         Loaded           = "Hub загружен! Тактическое преимущество активировано.",
     },
     IT = {
@@ -435,7 +435,7 @@ local Translations = {
         AntiAFKDesc      = "Previeni il kick per inattività",
         LangSelect       = "Lingua",
         CreditsTitle     = "Tactical SWAT Hub",
-        CreditsContent   = "Creato da Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.4 — funzione NessunRinculo | fix munizioni/salto | mutazione ACS in-place",
+        CreditsContent   = "Creato da Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.5 — fix CongelatoMunizioni | kill diretto Wallbang | fix RPM FuocoRapido | fix ricarica NessunRinculo",
         Loaded           = "Hub caricato! Vantaggio tattico attivato.",
     },
     NL = {
@@ -491,7 +491,7 @@ local Translations = {
         AntiAFKDesc      = "Kick door inactiviteit voorkomen",
         LangSelect       = "Taal",
         CreditsTitle     = "Tactical SWAT Hub",
-        CreditsContent   = "Gemaakt door Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.4 — GeenTerugslag-functie | munitie/sprong-fixes | in-place ACS-mutatie",
+        CreditsContent   = "Gemaakt door Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.5 — MunitieBevriezen-fix | directe kill Wallbang | RPM-fix SnelVuur | herlaad-fix GeenTerugslag",
         Loaded           = "Hub geladen! Tactisch voordeel geactiveerd.",
     },
     PL = {
@@ -547,7 +547,7 @@ local Translations = {
         AntiAFKDesc      = "Zapobiegaj wyrzuceniu za bezczynność",
         LangSelect       = "Język",
         CreditsTitle     = "Tactical SWAT Hub",
-        CreditsContent   = "Stworzone przez Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.4 — funkcja BezOdrzutu | poprawki amunicji/skoku | mutacja ACS w miejscu",
+        CreditsContent   = "Stworzone przez Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.5 — poprawka ZamroźAmunicję | bezpośredni kill Wallbang | poprawka RPM SzybkiOgień | poprawka przeładowania BezOdrzutu",
         Loaded           = "Hub załadowany! Taktyczna przewaga aktywowana.",
     },
     ZH = {
@@ -603,7 +603,7 @@ local Translations = {
         AntiAFKDesc      = "防止因挂机被踢出",
         LangSelect       = "语言",
         CreditsTitle     = "战术特警Hub",
-        CreditsContent   = "由 Rival960 创建\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.4 — 无后坐力功能 | 弹药/跳跃修复 | ACS 原地修改",
+        CreditsContent   = "由 Rival960 创建\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.5 — 冻结弹药修复 | Wallbang 直接击杀 | 速射 RPM 修复 | 无后坐力换弹修复",
         Loaded           = "Hub已加载！战术优势已激活。",
     },
     JA = {
@@ -659,7 +659,7 @@ local Translations = {
         AntiAFKDesc      = "放置キックを防止",
         LangSelect       = "言語",
         CreditsTitle     = "タクティカルSWATHub",
-        CreditsContent   = "Rival960 作\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.4 — リコイルなし機能 | 弾薬/ジャンプ修正 | ACS インプレース変換",
+        CreditsContent   = "Rival960 作\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.5 — 弾薬固定修正 | Wallbang 直接キル | 速射 RPM 修正 | リコイルなしリロード修正",
         Loaded           = "Hub読み込み完了！タクティカル優位性が有効化されました。",
     },
     TR = {
@@ -715,7 +715,7 @@ local Translations = {
         AntiAFKDesc      = "Hareketsizlik kickini önle",
         LangSelect       = "Dil",
         CreditsTitle     = "Tactical SWAT Hub",
-        CreditsContent   = "Rival960 tarafından\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.4 — GeriTepmeYok özelliği | mermi/zıplama düzeltmeleri | yerinde ACS mutasyonu",
+        CreditsContent   = "Rival960 tarafından\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.5 — MermiDondur düzeltmesi | Wallbang doğrudan öldürme | HızlıAteş RPM düzeltmesi | GeriTepmeYok yeniden doldurma düzeltmesi",
         Loaded           = "Hub yüklendi! Taktik avantaj aktif.",
     },
     KO = {
@@ -771,7 +771,7 @@ local Translations = {
         AntiAFKDesc      = "비활동으로 인한 킥 방지",
         LangSelect       = "언어",
         CreditsTitle     = "택티컬 스왓 허브",
-        CreditsContent   = "Rival960 제작\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.4 — 무반동 기능 | 탄약/점프 수정 | ACS 인플레이스 변조",
+        CreditsContent   = "Rival960 제작\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.5 — 탄약고정 수정 | Wallbang 직접 킬 | 연사 RPM 수정 | 무반동 재장전 수정",
         Loaded           = "허브 로드 완료! 전술적 이점 활성화.",
     },
     AR = {
@@ -827,7 +827,7 @@ local Translations = {
         AntiAFKDesc      = "منع الطرد بسبب عدم النشاط",
         LangSelect       = "اللغة",
         CreditsTitle     = "تاكتيكال سوات هاب",
-        CreditsContent   = "أنشأه Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.4 — ميزة بدون ارتداد | إصلاحات ذخيرة/قفز | تحوير ACS في المكان",
+        CreditsContent   = "أنشأه Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.5 — إصلاح تجميد الذخيرة | قتل مباشر Wallbang | إصلاح RPM إطلاق سريع | إصلاح إعادة تحميل بدون ارتداد",
         Loaded           = "تم تحميل الهاب! تم تفعيل الميزة التكتيكية.",
     },
     VI = {
@@ -883,7 +883,7 @@ local Translations = {
         AntiAFKDesc      = "Ngăn bị đuổi vì không hoạt động",
         LangSelect       = "Ngôn ngữ",
         CreditsTitle     = "Tactical SWAT Hub",
-        CreditsContent   = "Tạo bởi Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.4 — tính năng KhôngGiật | sửa đạn/nhảy | biến đổi ACS tại chỗ",
+        CreditsContent   = "Tạo bởi Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.5 — sửa ĐóngBăngĐạn | kill trực tiếp Wallbang | sửa RPM BắnNhanh | sửa nạp đạn KhôngGiật",
         Loaded           = "Hub đã tải! Lợi thế chiến thuật được kích hoạt.",
     },
     SV = {
@@ -939,7 +939,7 @@ local Translations = {
         AntiAFKDesc      = "Förhindra kick på grund av inaktivitet",
         LangSelect       = "Språk",
         CreditsTitle     = "Tactical SWAT Hub",
-        CreditsContent   = "Skapad av Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.4 — IngaRekyl-funktion | ammo/hopp-fixar | in-place ACS-mutation",
+        CreditsContent   = "Skapad av Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.5 — frysAmmo-fix | Wallbang direktkill | snabbeld RPM-fix | IngaRekyl-omladdning-fix",
         Loaded           = "Hub laddad! Taktisk fördel aktiverad.",
     },
     EL = {
@@ -995,7 +995,7 @@ local Translations = {
         AntiAFKDesc      = "Αποτροπή αποβολής λόγω αδράνειας",
         LangSelect       = "Γλώσσα",
         CreditsTitle     = "Tactical SWAT Hub",
-        CreditsContent   = "Δημιουργήθηκε από τον Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.4 — λειτουργία ΧωρίςΑντίδραση | διορθώσεις πυρομαχικών/άλματος | μετάλλαξη ACS επί τόπου",
+        CreditsContent   = "Δημιουργήθηκε από τον Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.5 — διόρθωση ΠάγωμαΠυρομαχικών | άμεση εξόντωση Wallbang | διόρθωση RPM ΓρήγοροΠυρ | διόρθωση επαναφόρτωσης ΧωρίςΑντίδραση",
         Loaded           = "Hub φορτώθηκε! Τακτικό πλεονέκτημα ενεργοποιήθηκε.",
     },
     RO = {
@@ -1051,7 +1051,7 @@ local Translations = {
         AntiAFKDesc      = "Previne kickul din cauza inactivității",
         LangSelect       = "Limbă",
         CreditsTitle     = "Tactical SWAT Hub",
-        CreditsContent   = "Creat de Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.4 — funcționalitate FărăRecul | remedieri muniție/săritură | mutație ACS la loc",
+        CreditsContent   = "Creat de Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.5 — remediere înghețareMunițe | ucidere directă Wallbang | remediere RPM FocRapid | remediere reîncărcare FărăRecul",
         Loaded           = "Hub încărcat! Avantaj tactic activat.",
     },
     UK = {
@@ -1107,7 +1107,7 @@ local Translations = {
         AntiAFKDesc      = "Запобігти кіку за бездіяльність",
         LangSelect       = "Мова",
         CreditsTitle     = "Tactical SWAT Hub",
-        CreditsContent   = "Створено Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.4 — функція БезВіддачі | виправлення патронів/стрибка | мутація ACS на місці",
+        CreditsContent   = "Створено Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.5 — виправлення ЗаморозкиПатронів | пряме вбивство Wallbang | виправлення RPM ШвидкогоВогню | виправлення перезарядки БезВіддачі",
         Loaded           = "Hub завантажено! Тактичну перевагу активовано.",
     },
     CS = {
@@ -1163,7 +1163,7 @@ local Translations = {
         AntiAFKDesc      = "Zabránit kicku za nečinnost",
         LangSelect       = "Jazyk",
         CreditsTitle     = "Tactical SWAT Hub",
-        CreditsContent   = "Vytvořil Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.4 — funkce BezZpětnéhoRázu | opravy munice/skoku | in-place mutace ACS",
+        CreditsContent   = "Vytvořil Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.5 — oprava ZamrznutíMunice | přímé zabití Wallbang | oprava RPM RychlaPalba | oprava přebíjení BezZpětnéhoRázu",
         Loaded           = "Hub načten! Taktická výhoda aktivována.",
     },
     DA = {
@@ -1219,7 +1219,7 @@ local Translations = {
         AntiAFKDesc      = "Forhindre kick pga. inaktivitet",
         LangSelect       = "Sprog",
         CreditsTitle     = "Tactical SWAT Hub",
-        CreditsContent   = "Oprettet af Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.4 — IngenRekyl-funktion | ammo/hop-rettelser | in-place ACS-mutation",
+        CreditsContent   = "Oprettet af Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.5 — fryseAmmo-rettelse | Wallbang direkte drab | hurtigskyd RPM-rettelse | IngenRekyl-genopladning-rettelse",
         Loaded           = "Hub indlæst! Taktisk fordel aktiveret.",
     },
 }
@@ -1978,11 +1978,12 @@ TabWeapons:CreateToggle({
                             cfg2.__MagBase.Ammo      = Settings._frozenMagAmmo
                             cfg2.__MagBase.AmmoInGun = Settings._frozenMagAmmoInGun
                         end
+                        cfg2.StoredAmmo = math.huge
                         if f2 and debug and debug.setupvalue then
                             pcall(debug.setupvalue, f2, i2, cfg2)
                         end
                     end
-                    task.wait(0.3)
+                    task.wait(0.1)
                 end
             end)
         end
@@ -2057,7 +2058,7 @@ TabWeapons:CreateToggle({
                 while Settings.RapidFire do
                     if not isNonLethal() then
                         if _acsCache.tbl then
-                            setACSValue("ShootRate", 10)
+                            setACSValue("ShootRate", 1200)
                         else
                             Rayfield:Notify({Title="Weapons", Content="Fire your weapon once to activate", Duration=4})
                             Settings.RapidFire = false
@@ -2122,6 +2123,15 @@ TabWeapons:CreateToggle({
                             Rayfield:Notify({Title="Weapons", Content="Fire your weapon once to activate", Duration=4})
                             Settings.Wallbang = false
                             break
+                        end
+                    end
+                    -- Direct NPC kill (NPC Humanoid unprotected, health replicates server-side)
+                    for _, obj in ipairs(Workspace:GetChildren()) do
+                        if isSuspect(obj) then
+                            local hum = obj:FindFirstChildOfClass("Humanoid")
+                            if hum and hum.Health > 0 then
+                                pcall(function() hum.Health = 0 end)
+                            end
                         end
                     end
                     task.wait(0.3)
@@ -2199,24 +2209,18 @@ TabWeapons:CreateToggle({
                                 Recoil           = cfg.Recoil,
                                 MinRecoil        = cfg.MinRecoil,
                                 MaxRecoil        = cfg.MaxRecoil,
-                                RecoilSpring     = cfg.RecoilSpring,
                                 CamShake         = cfg.CamShake,
                                 CameraRecoil     = cfg.CameraRecoil,
                                 RecoilAmount     = cfg.RecoilAmount,
-                                RecoilKick       = cfg.RecoilKick,
-                                ViewmodelRecoil  = cfg.ViewmodelRecoil,
                             }
                         end
-                        -- Zero all recoil-related keys
-                        cfg.Recoil          = 0
-                        cfg.MinRecoil       = 0
-                        cfg.MaxRecoil       = 0
-                        cfg.RecoilSpring    = 0
-                        cfg.CamShake        = 0
-                        cfg.CameraRecoil    = 0
-                        cfg.RecoilAmount    = 0
-                        cfg.RecoilKick      = 0
-                        cfg.ViewmodelRecoil = 0
+                        -- Zero ballistic/camera recoil only (preserve animation drivers)
+                        cfg.Recoil       = 0
+                        cfg.MinRecoil    = 0
+                        cfg.MaxRecoil    = 0
+                        cfg.CamShake     = 0
+                        cfg.CameraRecoil = 0
+                        cfg.RecoilAmount = 0
                         if fn and debug and debug.setupvalue then
                             pcall(debug.setupvalue, fn, idx, cfg)
                         end
