@@ -2,7 +2,7 @@
     ================================================================
     Tactical SWAT Hub — Tactical: Swat Simulator
     Created by Rival960 with the help of Claude
-    Version: 1.1.5 | Languages: 21 | Rayfield UI | PC + Mobile
+    Version: 1.1.6 | Languages: 21 | Rayfield UI | PC + Mobile
     Status: untested in-game
     ================================================================
 --]]
@@ -38,6 +38,8 @@ local CurrentLang = "EN"
 
 local Translations = {
     EN = {
+        RapidFireRate    = "Rapid Fire — Fire Rate (RPM)",
+        RapidFireRateDesc= "ShootRate sent to ACS. Values above the game's own fire-rate cap may be ignored.",
         WindowTitle      = "Tactical SWAT Hub",
         TabHome          = "Home",
         TabCombat        = "Combat",
@@ -99,10 +101,12 @@ local Translations = {
         LangSelect       = "Language",
         -- Credits
         CreditsTitle     = "Tactical SWAT Hub",
-        CreditsContent   = "Created by Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.5 — FreezeAmmo fix | Wallbang direct-kill | RapidFire RPM fix | NoRecoil reload fix",
+        CreditsContent   = "Created by Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.6 — live-ammo freeze | real recoil fields | instant reload | wallbang raycast",
         Loaded           = "Hub loaded! Tactical advantage enabled.",
     },
     FR = {
+        RapidFireRate    = "Tir rapide — Cadence (tr/min)",
+        RapidFireRateDesc= "ShootRate envoyé à ACS. Les valeurs au-dessus du plafond du jeu peuvent être ignorées.",
         WindowTitle      = "Tactical SWAT Hub",
         TabHome          = "Accueil",
         TabCombat        = "Combat",
@@ -155,10 +159,12 @@ local Translations = {
         AntiAFKDesc      = "Empêche le kick pour inactivité",
         LangSelect       = "Langue",
         CreditsTitle     = "Tactical SWAT Hub",
-        CreditsContent   = "Créé par Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.5 — correctif BloquerMunitions | kill direct Wallbang | correctif RPM TirRapide | correctif rechargement SansRecul",
+        CreditsContent   = "Créé par Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.6 — gel des munitions réelles | vrais champs de recul | rechargement instantané | rayon wallbang",
         Loaded           = "Hub chargé ! Avantage tactique activé.",
     },
     DE = {
+        RapidFireRate    = "Schnellfeuer — Feuerrate (RPM)",
+        RapidFireRateDesc= "An ACS gesendete ShootRate. Werte über der Obergrenze des Spiels werden evtl. ignoriert.",
         WindowTitle      = "Tactical SWAT Hub",
         TabHome          = "Start",
         TabCombat        = "Kampf",
@@ -211,10 +217,12 @@ local Translations = {
         AntiAFKDesc      = "Verhindert den Rauswurf wegen Inaktivität",
         LangSelect       = "Sprache",
         CreditsTitle     = "Tactical SWAT Hub",
-        CreditsContent   = "Erstellt von Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.5 — MunitionEinfrieren-Fix | Wallbang-Direktkill | RapidFire-RPM-Fix | KeinRückstoß-Nachladen-Fix",
+        CreditsContent   = "Erstellt von Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.6 — echtes Munitions-Einfrieren | echte Rückstoßfelder | Sofort-Nachladen | Wallbang-Raycast",
         Loaded           = "Hub geladen! Taktischer Vorteil aktiviert.",
     },
     ES = {
+        RapidFireRate    = "Tiro rápido — Cadencia (RPM)",
+        RapidFireRateDesc= "ShootRate enviado a ACS. Los valores por encima del límite del juego pueden ignorarse.",
         WindowTitle      = "Tactical SWAT Hub",
         TabHome          = "Inicio",
         TabCombat        = "Combate",
@@ -267,10 +275,12 @@ local Translations = {
         AntiAFKDesc      = "Evitar expulsión por inactividad",
         LangSelect       = "Idioma",
         CreditsTitle     = "Tactical SWAT Hub",
-        CreditsContent   = "Creado por Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.5 — corrección CongelarMunición | kill directo Wallbang | corrección RPM TiroRápido | corrección recarga SinRetroceso",
+        CreditsContent   = "Creado por Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.6 — congelar munición real | campos de retroceso reales | recarga instantánea | raycast wallbang",
         Loaded           = "¡Hub cargado! Ventaja táctica activada.",
     },
     PT = {
+        RapidFireRate    = "Tiro rápido — Cadência (RPM)",
+        RapidFireRateDesc= "ShootRate enviado ao ACS. Valores acima do limite do jogo podem ser ignorados.",
         WindowTitle      = "Tactical SWAT Hub",
         TabHome          = "Início",
         TabCombat        = "Combate",
@@ -323,10 +333,12 @@ local Translations = {
         AntiAFKDesc      = "Evitar expulsão por inatividade",
         LangSelect       = "Idioma",
         CreditsTitle     = "Tactical SWAT Hub",
-        CreditsContent   = "Criado por Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.5 — correção CongelarMunição | kill direto Wallbang | correção RPM TiroRápido | correção recarga SemRecuo",
+        CreditsContent   = "Criado por Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.6 — congelar munição real | campos de recuo reais | recarga instantânea | raycast wallbang",
         Loaded           = "Hub carregado! Vantagem tática ativada.",
     },
     RU = {
+        RapidFireRate    = "Быстрый огонь — Скорострельность (выстр/мин)",
+        RapidFireRateDesc= "ShootRate передаётся в ACS. Значения выше игрового лимита могут игнорироваться.",
         WindowTitle      = "Tactical SWAT Hub",
         TabHome          = "Главная",
         TabCombat        = "Бой",
@@ -379,10 +391,12 @@ local Translations = {
         AntiAFKDesc      = "Предотвратить кик за бездействие",
         LangSelect       = "Язык",
         CreditsTitle     = "Tactical SWAT Hub",
-        CreditsContent   = "Создано Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.5 — исправление ЗаморозкиПатронов | прямое убийство Wallbang | исправление RPM БыстрогоОгня | исправление перезарядки БезОтдачи",
+        CreditsContent   = "Создано Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.6 — заморозка реальных патронов | реальные поля отдачи | мгновенная перезарядка | wallbang-рейкаст",
         Loaded           = "Hub загружен! Тактическое преимущество активировано.",
     },
     IT = {
+        RapidFireRate    = "Fuoco rapido — Cadenza (RPM)",
+        RapidFireRateDesc= "ShootRate inviato ad ACS. I valori oltre il limite del gioco possono essere ignorati.",
         WindowTitle      = "Tactical SWAT Hub",
         TabHome          = "Home",
         TabCombat        = "Combattimento",
@@ -435,10 +449,12 @@ local Translations = {
         AntiAFKDesc      = "Previeni il kick per inattività",
         LangSelect       = "Lingua",
         CreditsTitle     = "Tactical SWAT Hub",
-        CreditsContent   = "Creato da Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.5 — fix CongelatoMunizioni | kill diretto Wallbang | fix RPM FuocoRapido | fix ricarica NessunRinculo",
+        CreditsContent   = "Creato da Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.6 — blocco munizioni reali | campi rinculo reali | ricarica istantanea | raycast wallbang",
         Loaded           = "Hub caricato! Vantaggio tattico attivato.",
     },
     NL = {
+        RapidFireRate    = "Snelvuur — Vuursnelheid (RPM)",
+        RapidFireRateDesc= "ShootRate naar ACS. Waarden boven de limiet van het spel worden mogelijk genegeerd.",
         WindowTitle      = "Tactical SWAT Hub",
         TabHome          = "Start",
         TabCombat        = "Gevecht",
@@ -491,10 +507,12 @@ local Translations = {
         AntiAFKDesc      = "Kick door inactiviteit voorkomen",
         LangSelect       = "Taal",
         CreditsTitle     = "Tactical SWAT Hub",
-        CreditsContent   = "Gemaakt door Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.5 — MunitieBevriezen-fix | directe kill Wallbang | RPM-fix SnelVuur | herlaad-fix GeenTerugslag",
+        CreditsContent   = "Gemaakt door Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.6 — echte munitie bevriezen | echte terugslagvelden | direct herladen | wallbang-raycast",
         Loaded           = "Hub geladen! Tactisch voordeel geactiveerd.",
     },
     PL = {
+        RapidFireRate    = "Szybki ogień — Szybkostrzelność (RPM)",
+        RapidFireRateDesc= "ShootRate wysyłane do ACS. Wartości powyżej limitu gry mogą być ignorowane.",
         WindowTitle      = "Tactical SWAT Hub",
         TabHome          = "Główna",
         TabCombat        = "Walka",
@@ -547,10 +565,12 @@ local Translations = {
         AntiAFKDesc      = "Zapobiegaj wyrzuceniu za bezczynność",
         LangSelect       = "Język",
         CreditsTitle     = "Tactical SWAT Hub",
-        CreditsContent   = "Stworzone przez Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.5 — poprawka ZamroźAmunicję | bezpośredni kill Wallbang | poprawka RPM SzybkiOgień | poprawka przeładowania BezOdrzutu",
+        CreditsContent   = "Stworzone przez Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.6 — blokada realnej amunicji | prawdziwe pola odrzutu | natychmiastowe przeładowanie | raycast wallbang",
         Loaded           = "Hub załadowany! Taktyczna przewaga aktywowana.",
     },
     ZH = {
+        RapidFireRate    = "速射 — 射速 (发/分)",
+        RapidFireRateDesc= "ShootRate 会发送给 ACS。高于游戏自身上限的数值可能被忽略。",
         WindowTitle      = "战术特警Hub",
         TabHome          = "主页",
         TabCombat        = "战斗",
@@ -603,10 +623,12 @@ local Translations = {
         AntiAFKDesc      = "防止因挂机被踢出",
         LangSelect       = "语言",
         CreditsTitle     = "战术特警Hub",
-        CreditsContent   = "由 Rival960 创建\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.5 — 冻结弹药修复 | Wallbang 直接击杀 | 速射 RPM 修复 | 无后坐力换弹修复",
+        CreditsContent   = "由 Rival960 创建\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.6 — 真实弹药冻结 | 真实后坐力字段 | 瞬间换弹 | Wallbang 射线",
         Loaded           = "Hub已加载！战术优势已激活。",
     },
     JA = {
+        RapidFireRate    = "速射 — 発射速度 (RPM)",
+        RapidFireRateDesc= "ShootRate を ACS に送信します。ゲーム側の上限を超える値は無視される場合があります。",
         WindowTitle      = "タクティカルSWATHub",
         TabHome          = "ホーム",
         TabCombat        = "戦闘",
@@ -659,10 +681,12 @@ local Translations = {
         AntiAFKDesc      = "放置キックを防止",
         LangSelect       = "言語",
         CreditsTitle     = "タクティカルSWATHub",
-        CreditsContent   = "Rival960 作\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.5 — 弾薬固定修正 | Wallbang 直接キル | 速射 RPM 修正 | リコイルなしリロード修正",
+        CreditsContent   = "Rival960 作\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.6 — 実弾薬の固定 | 実際のリコイル項目 | 即時リロード | Wallbang レイキャスト",
         Loaded           = "Hub読み込み完了！タクティカル優位性が有効化されました。",
     },
     TR = {
+        RapidFireRate    = "Hızlı Ateş — Ateş Hızı (RPM)",
+        RapidFireRateDesc= "ACS'ye gönderilen ShootRate. Oyunun kendi sınırının üzerindeki değerler yok sayılabilir.",
         WindowTitle      = "Tactical SWAT Hub",
         TabHome          = "Ana Sayfa",
         TabCombat        = "Savaş",
@@ -715,10 +739,12 @@ local Translations = {
         AntiAFKDesc      = "Hareketsizlik kickini önle",
         LangSelect       = "Dil",
         CreditsTitle     = "Tactical SWAT Hub",
-        CreditsContent   = "Rival960 tarafından\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.5 — MermiDondur düzeltmesi | Wallbang doğrudan öldürme | HızlıAteş RPM düzeltmesi | GeriTepmeYok yeniden doldurma düzeltmesi",
+        CreditsContent   = "Rival960 tarafından\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.6 — gerçek mermi dondurma | gerçek geri tepme alanları | anında şarjör | wallbang raycast",
         Loaded           = "Hub yüklendi! Taktik avantaj aktif.",
     },
     KO = {
+        RapidFireRate    = "연사 — 발사 속도 (RPM)",
+        RapidFireRateDesc= "ShootRate가 ACS로 전송됩니다. 게임 자체 한도를 넘는 값은 무시될 수 있습니다.",
         WindowTitle      = "택티컬 스왓 허브",
         TabHome          = "홈",
         TabCombat        = "전투",
@@ -771,10 +797,12 @@ local Translations = {
         AntiAFKDesc      = "비활동으로 인한 킥 방지",
         LangSelect       = "언어",
         CreditsTitle     = "택티컬 스왓 허브",
-        CreditsContent   = "Rival960 제작\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.5 — 탄약고정 수정 | Wallbang 직접 킬 | 연사 RPM 수정 | 무반동 재장전 수정",
+        CreditsContent   = "Rival960 제작\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.6 — 실제 탄약 고정 | 실제 반동 필드 | 즉시 재장전 | Wallbang 레이캐스트",
         Loaded           = "허브 로드 완료! 전술적 이점 활성화.",
     },
     AR = {
+        RapidFireRate    = "إطلاق سريع — معدل الإطلاق (RPM)",
+        RapidFireRateDesc= "يُرسل ShootRate إلى ACS. قد يتم تجاهل القيم التي تتجاوز حد اللعبة.",
         WindowTitle      = "تاكتيكال سوات هاب",
         TabHome          = "الرئيسية",
         TabCombat        = "القتال",
@@ -827,10 +855,12 @@ local Translations = {
         AntiAFKDesc      = "منع الطرد بسبب عدم النشاط",
         LangSelect       = "اللغة",
         CreditsTitle     = "تاكتيكال سوات هاب",
-        CreditsContent   = "أنشأه Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.5 — إصلاح تجميد الذخيرة | قتل مباشر Wallbang | إصلاح RPM إطلاق سريع | إصلاح إعادة تحميل بدون ارتداد",
+        CreditsContent   = "أنشأه Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.6 — تجميد الذخيرة الفعلية | حقول الارتداد الحقيقية | إعادة تحميل فورية | Wallbang raycast",
         Loaded           = "تم تحميل الهاب! تم تفعيل الميزة التكتيكية.",
     },
     VI = {
+        RapidFireRate    = "Bắn nhanh — Tốc độ bắn (RPM)",
+        RapidFireRateDesc= "ShootRate được gửi tới ACS. Giá trị vượt giới hạn của game có thể bị bỏ qua.",
         WindowTitle      = "Tactical SWAT Hub",
         TabHome          = "Trang chủ",
         TabCombat        = "Chiến đấu",
@@ -883,10 +913,12 @@ local Translations = {
         AntiAFKDesc      = "Ngăn bị đuổi vì không hoạt động",
         LangSelect       = "Ngôn ngữ",
         CreditsTitle     = "Tactical SWAT Hub",
-        CreditsContent   = "Tạo bởi Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.5 — sửa ĐóngBăngĐạn | kill trực tiếp Wallbang | sửa RPM BắnNhanh | sửa nạp đạn KhôngGiật",
+        CreditsContent   = "Tạo bởi Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.6 — đóng băng đạn thật | trường giật thật | nạp đạn tức thì | wallbang raycast",
         Loaded           = "Hub đã tải! Lợi thế chiến thuật được kích hoạt.",
     },
     SV = {
+        RapidFireRate    = "Snabbeld — Eldhastighet (RPM)",
+        RapidFireRateDesc= "ShootRate skickas till ACS. Värden över spelets egen gräns kan ignoreras.",
         WindowTitle      = "Tactical SWAT Hub",
         TabHome          = "Hem",
         TabCombat        = "Strid",
@@ -939,10 +971,12 @@ local Translations = {
         AntiAFKDesc      = "Förhindra kick på grund av inaktivitet",
         LangSelect       = "Språk",
         CreditsTitle     = "Tactical SWAT Hub",
-        CreditsContent   = "Skapad av Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.5 — frysAmmo-fix | Wallbang direktkill | snabbeld RPM-fix | IngaRekyl-omladdning-fix",
+        CreditsContent   = "Skapad av Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.6 — frys riktig ammunition | riktiga rekylfält | omedelbar omladdning | wallbang-raycast",
         Loaded           = "Hub laddad! Taktisk fördel aktiverad.",
     },
     EL = {
+        RapidFireRate    = "Γρήγορο πυρ — Ρυθμός βολής (RPM)",
+        RapidFireRateDesc= "Το ShootRate στέλνεται στο ACS. Τιμές πάνω από το όριο του παιχνιδιού μπορεί να αγνοηθούν.",
         WindowTitle      = "Tactical SWAT Hub",
         TabHome          = "Αρχική",
         TabCombat        = "Μάχη",
@@ -995,10 +1029,12 @@ local Translations = {
         AntiAFKDesc      = "Αποτροπή αποβολής λόγω αδράνειας",
         LangSelect       = "Γλώσσα",
         CreditsTitle     = "Tactical SWAT Hub",
-        CreditsContent   = "Δημιουργήθηκε από τον Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.5 — διόρθωση ΠάγωμαΠυρομαχικών | άμεση εξόντωση Wallbang | διόρθωση RPM ΓρήγοροΠυρ | διόρθωση επαναφόρτωσης ΧωρίςΑντίδραση",
+        CreditsContent   = "Δημιουργήθηκε από τον Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.6 — πάγωμα πραγματικών πυρομαχικών | πραγματικά πεδία ανάκρουσης | άμεση επαναφόρτωση | wallbang raycast",
         Loaded           = "Hub φορτώθηκε! Τακτικό πλεονέκτημα ενεργοποιήθηκε.",
     },
     RO = {
+        RapidFireRate    = "Foc rapid — Cadență (RPM)",
+        RapidFireRateDesc= "ShootRate este trimis către ACS. Valorile peste limita jocului pot fi ignorate.",
         WindowTitle      = "Tactical SWAT Hub",
         TabHome          = "Acasă",
         TabCombat        = "Luptă",
@@ -1051,10 +1087,12 @@ local Translations = {
         AntiAFKDesc      = "Previne kickul din cauza inactivității",
         LangSelect       = "Limbă",
         CreditsTitle     = "Tactical SWAT Hub",
-        CreditsContent   = "Creat de Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.5 — remediere înghețareMunițe | ucidere directă Wallbang | remediere RPM FocRapid | remediere reîncărcare FărăRecul",
+        CreditsContent   = "Creat de Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.6 — înghețare muniție reală | câmpuri reale de recul | reîncărcare instantanée | wallbang raycast",
         Loaded           = "Hub încărcat! Avantaj tactic activat.",
     },
     UK = {
+        RapidFireRate    = "Швидкий вогонь — Швидкострільність (постр/хв)",
+        RapidFireRateDesc= "ShootRate передається в ACS. Значення вище ігрового ліміту можуть ігноруватися.",
         WindowTitle      = "Tactical SWAT Hub",
         TabHome          = "Головна",
         TabCombat        = "Бій",
@@ -1107,10 +1145,12 @@ local Translations = {
         AntiAFKDesc      = "Запобігти кіку за бездіяльність",
         LangSelect       = "Мова",
         CreditsTitle     = "Tactical SWAT Hub",
-        CreditsContent   = "Створено Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.5 — виправлення ЗаморозкиПатронів | пряме вбивство Wallbang | виправлення RPM ШвидкогоВогню | виправлення перезарядки БезВіддачі",
+        CreditsContent   = "Створено Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.6 — заморозка реальних патронів | реальні поля віддачі | миттєва перезарядка | wallbang-рейкаст",
         Loaded           = "Hub завантажено! Тактичну перевагу активовано.",
     },
     CS = {
+        RapidFireRate    = "Rychlá palba — Kadence (RPM)",
+        RapidFireRateDesc= "ShootRate se odesílá do ACS. Hodnoty nad limitem hry mohou být ignorovány.",
         WindowTitle      = "Tactical SWAT Hub",
         TabHome          = "Domů",
         TabCombat        = "Boj",
@@ -1163,10 +1203,12 @@ local Translations = {
         AntiAFKDesc      = "Zabránit kicku za nečinnost",
         LangSelect       = "Jazyk",
         CreditsTitle     = "Tactical SWAT Hub",
-        CreditsContent   = "Vytvořil Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.5 — oprava ZamrznutíMunice | přímé zabití Wallbang | oprava RPM RychlaPalba | oprava přebíjení BezZpětnéhoRázu",
+        CreditsContent   = "Vytvořil Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.6 — zmrazení skutečné munice | skutečná pole zpětného rázu | okamžité přebití | wallbang raycast",
         Loaded           = "Hub načten! Taktická výhoda aktivována.",
     },
     DA = {
+        RapidFireRate    = "Hurtigskyd — Skudhastighed (RPM)",
+        RapidFireRateDesc= "ShootRate sendes til ACS. Værdier over spillets egen grænse kan blive ignoreret.",
         WindowTitle      = "Tactical SWAT Hub",
         TabHome          = "Hjem",
         TabCombat        = "Kamp",
@@ -1219,7 +1261,7 @@ local Translations = {
         AntiAFKDesc      = "Forhindre kick pga. inaktivitet",
         LangSelect       = "Sprog",
         CreditsTitle     = "Tactical SWAT Hub",
-        CreditsContent   = "Oprettet af Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.5 — fryseAmmo-rettelse | Wallbang direkte drab | hurtigskyd RPM-rettelse | IngenRekyl-genopladning-rettelse",
+        CreditsContent   = "Oprettet af Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.6 — frys rigtig ammunition | rigtige rekylfelter | øjeblikkelig genladning | wallbang-raycast",
         Loaded           = "Hub indlæst! Taktisk fordel aktiveret.",
     },
 }
@@ -1243,8 +1285,10 @@ local Settings = {
     InfiniteAmmo    = false,
     FreezeAmmo      = false,
     RapidFire       = false,
+    RapidFireRate   = 1200,
     Wallbang        = false,
     NoRecoil        = false,
+    _freezeTargets  = nil,
     _origRecoil     = nil,
     _origShootRate  = nil,
     _origPenetration= nil,
@@ -1291,45 +1335,182 @@ local Window = Rayfield:CreateWindow({
 })
 
 -- ───────────────────────────────────────────────────────────────
--- ACS UPVALUE INFRASTRUCTURE
+-- ACS INFRASTRUCTURE
 -- Triple-method discovery: getgc() → getscriptclosures → getconnections
 -- getgc() is primary (Volt/Delta/Real/Fluxus); most reliable.
--- Falls back gracefully when debug API is unavailable.
+--
+-- The weapon settings table (ShootRate/BulletPenetration) is only ONE
+-- of the places ACS keeps state. Live ammo lives in ValueBase objects
+-- inside the tool (Ammo/StoredAmmo/Chambered) or in a live props table,
+-- recoil is defined by fields named *Recoil*/*Punch*/*Shake*, and the
+-- Events folder is NOT always upvalue [7]. Everything below resolves
+-- those targets dynamically instead of trusting a fixed slot index.
 -- ───────────────────────────────────────────────────────────────
-local _acsCache    = {func=nil, idx=nil, tbl=nil}
-local _nonLethalUV = nil
+local _acsCache     = {func=nil, idx=nil, tbl=nil, toolKey=nil}
+local _nonLethalUV  = nil
+local _acsEvents    = nil   -- Events/Eventos folder (Reload remote)
+local _acsProps     = nil   -- live props table: Ammo/StoredAmmo/RecoilPower
+local _acsState     = nil   -- live state table: Jammed/Reloading/Shooting
+local _acsModTable  = nil   -- recoil multiplier table (camRecoilMod/...)
+local _acsWeaponData= nil   -- per-weapon table read at fire time
+
+-- Saved originals for every value we touch, so toggling OFF restores
+-- the exact ACS values regardless of how many weapons were used.
+local _acsSaved = {
+    shootRate = {},   -- [table] = original number
+    recoil    = {},   -- [table] = {[key] = number | {min,max}}
+    damage    = {},   -- [table] = {[key] = number | boolean | {min,max}}
+}
+
+local _freezeConn = nil
+local _freezeTool = nil
+local _wbBypass   = false   -- set while the hub itself raycasts
+
+local function _isNum(v)
+    return type(v) == "number" and v == v and v ~= math.huge and v ~= -math.huge
+end
+
+local function _isNumPair(v)
+    return type(v) == "table" and _isNum(v[1]) and _isNum(v[2])
+end
+
+local function getEquippedTool()
+    local char = LocalPlayer.Character
+    return char and char:FindFirstChildOfClass("Tool") or nil
+end
+
+local function _toolKey()
+    local tool = getEquippedTool()
+    return tool and tool.Name or ""
+end
+
+-- Per-weapon ModuleScripts (ACS 1.7 keeps Settings/Animations here).
+-- require() returns the SAME table the ACS client already cached, so
+-- mutating it changes the values read on the next shot.
+local _toolSettingsFor = nil
+local _toolSettingsTbl = nil
+local function getToolSettingsTables()
+    local tool = getEquippedTool()
+    if not tool then return {} end
+    if _toolSettingsFor == tool and _toolSettingsTbl then return _toolSettingsTbl end
+    local out = {}
+    local okDesc, desc = pcall(function() return tool:GetDescendants() end)
+    if okDesc and desc then
+        for _, d in ipairs(desc) do
+            if d:IsA("ModuleScript")
+                and (d.Name == "Settings" or d.Name == "Config"
+                     or d.Name == "GunSettings" or d.Name == "WeaponSettings") then
+                local okReq, mod = pcall(require, d)
+                if okReq and type(mod) == "table" then out[#out+1] = mod end
+            end
+        end
+    end
+    _toolSettingsFor = tool
+    _toolSettingsTbl = out
+    return out
+end
+
+local function _isEventsFolder(v)
+    if typeof(v) ~= "Instance" then return false end
+    if v:IsA("RemoteEvent") or v:IsA("RemoteFunction") then return false end
+    local ok, reload = pcall(function() return v:FindFirstChild("Reload") end)
+    return ok and reload ~= nil
+end
+
+local function _isPropsTable(v)
+    if type(v) ~= "table" then return false end
+    if not (_isNum(rawget(v, "Ammo")) and _isNum(rawget(v, "StoredAmmo"))) then return false end
+    return rawget(v, "WeaponData") ~= nil
+        or rawget(v, "WeaponTool") ~= nil
+        or rawget(v, "RecoilPower") ~= nil
+end
+
+local function _isStateTable(v)
+    return type(v) == "table"
+        and type(rawget(v, "Jammed")) == "boolean"
+        and type(rawget(v, "Reloading")) == "boolean"
+end
+
+local function _isModTable(v)
+    if type(v) ~= "table" then return false end
+    return type(rawget(v, "camRecoilMod")) == "table"
+        or type(rawget(v, "gunRecoilMod")) == "table"
+end
+
+-- Inspect a single upvalue for the side tables ACS keeps next to the
+-- weapon settings table.
+local function _scanSideValue(uv)
+    if typeof(uv) == "Instance" then
+        if not _acsEvents and _isEventsFolder(uv) then _acsEvents = uv end
+        return
+    end
+    if type(uv) ~= "table" then return end
+
+    if not _acsProps and _isPropsTable(uv) then _acsProps = uv end
+    if not _acsState and _isStateTable(uv) then _acsState = uv end
+    if not _acsModTable and _isModTable(uv) then _acsModTable = uv end
+
+    local wd = rawget(uv, "WeaponData")
+    if not _acsWeaponData and type(wd) == "table" and rawget(wd, "ShootRate") ~= nil then
+        _acsWeaponData = wd
+    end
+
+    if not _acsEvents then
+        local ev = rawget(uv, "Events") or rawget(uv, "Eventos") or rawget(uv, "Evt")
+        if _isEventsFolder(ev) then _acsEvents = ev end
+    end
+end
+
+local function _scanClosure(f)
+    local uvs = {}
+    if not (debug and debug.getupvalue) then return uvs end
+    for i = 1, 60 do
+        local ok, name, uv = pcall(debug.getupvalue, f, i)
+        if not ok or name == nil then break end
+        uvs[#uvs+1] = uv
+    end
+    return uvs
+end
+
+local function _logACSResolved()
+    print(string.format("[Hub] ACS config resolved (tool=%s, liveProps=%s, events=%s)",
+        tostring(_toolKey()), tostring(_acsProps ~= nil), tostring(_acsEvents ~= nil)))
+end
 
 -- Scan upvalues of f (and one level of function upvalues) for ACS config.
 local function _matchACS(f)
     if type(f) ~= "function" then return false end
+    local uvs = _scanClosure(f)
+    for i = 1, #uvs do _scanSideValue(uvs[i]) end
+
     -- Direct upvalue scan
-    for i = 1, 35 do
-        local ok, uv = pcall(debug.getupvalue, f, i)
-        if ok and type(uv) == "table"
+    for i = 1, #uvs do
+        local uv = uvs[i]
+        if type(uv) == "table"
             and rawget(uv, "ShootRate") ~= nil
             and rawget(uv, "BulletPenetration") ~= nil then
-            _acsCache = {func=f, idx=i, tbl=uv}
-            local ok9, uv9 = pcall(debug.getupvalue, f, 9)
+            _acsCache = {func=f, idx=i, tbl=uv, toolKey=_toolKey()}
+            local ok9, _, uv9 = pcall(debug.getupvalue, f, 9)
             if ok9 and type(uv9) == "table" then _nonLethalUV = uv9 end
+            _logACSResolved()
             return true
         end
     end
+
     -- One level of recursion: scan function-type upvalues
-    for i = 1, 35 do
-        local ok, uv = pcall(debug.getupvalue, f, i)
-        if ok and type(uv) == "function" then
-            local ok2, _ = pcall(debug.getupvalue, uv, 1)
-            if ok2 then
-                for j = 1, 35 do
-                    local ok3, uv3 = pcall(debug.getupvalue, uv, j)
-                    if ok3 and type(uv3) == "table"
-                        and rawget(uv3, "ShootRate") ~= nil
-                        and rawget(uv3, "BulletPenetration") ~= nil then
-                        _acsCache = {func=uv, idx=j, tbl=uv3}
-                        local ok9, uv9 = pcall(debug.getupvalue, uv, 9)
-                        if ok9 and type(uv9) == "table" then _nonLethalUV = uv9 end
-                        return true
-                    end
+    for i = 1, #uvs do
+        local uv = uvs[i]
+        if type(uv) == "function" then
+            local inner = _scanClosure(uv)
+            for j = 1, #inner do
+                local v = inner[j]
+                if type(v) == "table"
+                    and rawget(v, "ShootRate") ~= nil
+                    and rawget(v, "BulletPenetration") ~= nil then
+                    _acsCache = {func=uv, idx=j, tbl=v, toolKey=_toolKey()}
+                    for k = 1, #inner do _scanSideValue(inner[k]) end
+                    _logACSResolved()
+                    return true
                 end
             end
         end
@@ -1338,6 +1519,15 @@ local function _matchACS(f)
 end
 
 local function getACSConfig()
+    -- A different tool means a different ACS settings table. Without this
+    -- check every feature kept writing to the previous weapon's table.
+    -- While unarmed (after unequipping), keep the cached table: ACS still
+    -- holds the same weapon data until the next weapon is equipped.
+    local tk = _toolKey()
+    if _acsCache.tbl and tk ~= "" and _acsCache.toolKey ~= tk then
+        _acsCache = {func=nil, idx=nil, tbl=nil, toolKey=nil}
+        _acsProps, _acsWeaponData = nil, nil
+    end
     if _acsCache.tbl then return _acsCache.func, _acsCache.idx, _acsCache.tbl end
     if not (debug and debug.getupvalue) then return nil end
 
@@ -1394,24 +1584,64 @@ local function getACSConfig()
         end
     end
 
+    -- METHOD D: the equipped tool's own Settings ModuleScript
+    for _, t in ipairs(getToolSettingsTables()) do
+        if rawget(t, "ShootRate") ~= nil and rawget(t, "BulletPenetration") ~= nil then
+            _acsCache = {func=nil, idx=nil, tbl=t, toolKey=tk}
+            _logACSResolved()
+            return nil, nil, t
+        end
+    end
+
     return nil
 end
 
 local function setACSValue(key, value)
     local f, i, cfg = getACSConfig()
-    if not f then return false end
+    if not f or not cfg then return false end
     return pcall(function()
-        cfg[key] = value
-        if debug and debug.setupvalue then debug.setupvalue(f, i, cfg) end
+        if cfg[key] ~= value then cfg[key] = value end
+        if debug and debug.setupvalue and i then debug.setupvalue(f, i, cfg) end
     end)
+end
+
+local function getLiveProps()
+    if _acsProps then return _acsProps end
+    getACSConfig()
+    return _acsProps
+end
+
+-- The Events folder is resolved by name/child, never by a fixed upvalue
+-- index: the index changes when ACS rebuilds its closures (respawn/equip).
+local function _findEventsFolder()
+    local found
+    pcall(function()
+        local n = 0
+        for _, d in ipairs(ReplicatedStorage:GetDescendants()) do
+            n = n + 1
+            if n > 800 then break end
+            if (d.Name == "Events" or d.Name == "Eventos") and d:FindFirstChild("Reload") then
+                found = d
+                break
+            end
+        end
+    end)
+    return found
+end
+
+local function getEventsFolder()
+    if _acsEvents and _acsEvents.Parent then return _acsEvents end
+    _acsEvents = nil
+    getACSConfig()
+    if not _acsEvents then _acsEvents = _findEventsFolder() end
+    return _acsEvents
 end
 
 -- Non-lethal check: returns true if the equipped tool should not receive
 -- damage/fire-rate overrides (Candy Zapper, Taser, Beanbag Shotgun).
 -- Uses _nonLethalUV (upvalue [9]) cached alongside the config.
 local function isNonLethal()
-    local char = LocalPlayer.Character
-    local tool = char and char:FindFirstChildOfClass("Tool")
+    local tool = getEquippedTool()
     if not tool then return false end
     local name = tool.Name
     local NL = {["Candy Zapper"]=true, ["Taser"]=true, ["Beanbag Shotgun"]=true}
@@ -1421,12 +1651,778 @@ local function isNonLethal()
 end
 
 local function getCurrentToolName()
-    local char = LocalPlayer.Character; if not char then return nil end
-    local tool = char:FindFirstChildOfClass("Tool")
+    local tool = getEquippedTool()
     return tool and tool.Name or nil
 end
 
+-- ACS also caches recoil inputs in script locals at equip time:
+-- ACS 1.7 randomises VRecoil/HRecoil and stores MinRecoilPower in a
+-- RecoilPower local, so zeroing the settings table after equipping has
+-- no effect. These locals are the real source; save and zero them too.
+local _savedRecoilLocals  = {}
+local _recoilLocalScanDone = false
+local _recoilLocalTool     = nil
+
+local function _isRecoilLocalName(name)
+    if type(name) ~= "string" then return false end
+    local l = name:lower()
+    if l:find("reduction", 1, true) or l:find("mult", 1, true) then return false end
+    return l:find("recoil", 1, true) ~= nil
+        or l:find("punchbase", 1, true) ~= nil
+        or l == "bspread"
+end
+
+local function _scanRecoilLocals()
+    if not (debug and debug.getupvalue and debug.setupvalue) then return 0 end
+    local found, seen = 0, {}
+
+    local function scanFunc(f)
+        if type(f) ~= "function" then return end
+        for i = 1, 80 do
+            local ok, name, v = pcall(debug.getupvalue, f, i)
+            if not ok or name == nil then break end
+            if _isNum(v) and _isRecoilLocalName(name) then
+                local id = tostring(f) .. "|" .. i
+                if not seen[id] then
+                    seen[id] = true
+                    _savedRecoilLocals[#_savedRecoilLocals+1] =
+                        {func=f, idx=i, name=name, orig=v}
+                    pcall(debug.setupvalue, f, i, 0)
+                    found = found + 1
+                end
+            end
+        end
+    end
+
+    local targetSrc
+    if debug.info and _acsCache.func then
+        local okI, src = pcall(debug.info, _acsCache.func, "s")
+        if okI then targetSrc = src end
+    end
+    local restrict = (type(targetSrc) == "string" and targetSrc ~= "")
+
+    if getgc then
+        local function runScan(onlySameSource)
+            local ok, objs = pcall(getgc, true)
+            if not ok or not objs then return end
+            for _, obj in ipairs(objs) do
+                if type(obj) == "function" then
+                    local sameSrc = true
+                    if onlySameSource and debug.info then
+                        local okI, src = pcall(debug.info, obj, "s")
+                        sameSrc = (okI and src == targetSrc)
+                    end
+                    if sameSrc then scanFunc(obj) end
+                end
+            end
+        end
+
+        if restrict then
+            runScan(true)
+            if found == 0 then runScan(false) end
+        else
+            runScan(false)
+        end
+    end
+    return found
+end
+
+local function _ensureRecoilLocals()
+    local tool = getEquippedTool()
+    if _recoilLocalScanDone and _recoilLocalTool == tool then return end
+    _recoilLocalScanDone = true
+    if _recoilLocalTool ~= tool then
+        -- New weapon: ACS re-initialised the locals, drop the old entries
+        _savedRecoilLocals = {}
+    end
+    _recoilLocalTool = tool
+    _scanRecoilLocals()
+end
+
+local function _zeroRecoilLocals()
+    for _, s in ipairs(_savedRecoilLocals) do
+        pcall(debug.setupvalue, s.func, s.idx, 0)
+    end
+end
+
+local function restoreRecoilLocals()
+    for _, s in ipairs(_savedRecoilLocals) do
+        pcall(debug.setupvalue, s.func, s.idx, s.orig)
+    end
+    _savedRecoilLocals  = {}
+    _recoilLocalScanDone = false
+    _recoilLocalTool     = nil
+end
+
 -- ───────────────────────────────────────────────────────────────
+-- LIVE AMMO RESOLUTION
+-- ACS keeps live ammo in ValueBase objects (Ammo/StoredAmmo/...) or in a
+-- live props table — never in cfg.Ammo (that field is the magazine size).
+-- ───────────────────────────────────────────────────────────────
+local _AMMO_NAMES = {
+    Ammo=true, AmmoInGun=true, AmmoInMag=true, CurrentAmmo=true,
+    Magazine=true, Clip=true, StoredAmmo=true, ReserveAmmo=true, AmmoReserve=true,
+}
+local _RESERVE_NAMES = {StoredAmmo=true, ReserveAmmo=true, AmmoReserve=true}
+local _JAM_NAMES    = {Jammed=true, Emperrado=true, IsJammed=true}
+local _CAP_NAMES    = {MaxAmmo=true, MagSize=true, MagazineSize=true}
+
+local function _getToolValueObjects(names)
+    local out, seen = {}, {}
+    -- Only the EQUIPPED tool: scanning the character would also walk the
+    -- Backpack and freeze/reload every stowed weapon's ammo counter.
+    local tool = getEquippedTool()
+    if not tool then return out end
+    local ok, desc = pcall(function() return tool:GetDescendants() end)
+    if ok and desc then
+        for _, d in ipairs(desc) do
+            if not seen[d] and d:IsA("ValueBase") and names[d.Name] then
+                seen[d] = true
+                out[#out+1] = d
+            end
+        end
+    end
+    return out
+end
+
+local function getMagCapacity(cfg, props)
+    local candidates = {}
+    if type(props) == "table" then
+        local wd = rawget(props, "WeaponData")
+        if type(wd) == "table" then
+            candidates[#candidates+1] = wd.Ammo
+            candidates[#candidates+1] = wd.MagSize
+        end
+        candidates[#candidates+1] = props.MaxAmmo
+    end
+    if cfg then
+        candidates[#candidates+1] = cfg.Ammo
+        candidates[#candidates+1] = cfg.MagSize
+    end
+    local tool = getEquippedTool()
+    if tool then
+        local okAttr, attr = pcall(function() return tool:GetAttribute("Ammo") end)
+        if okAttr then candidates[#candidates+1] = attr end
+        for name in pairs(_CAP_NAMES) do
+            local v = tool:FindFirstChild(name, true)
+            if v and v:IsA("ValueBase") then candidates[#candidates+1] = v.Value end
+        end
+    end
+    for _, v in ipairs(candidates) do
+        if _isNum(v) and v > 0 and v < 100000 then return math.floor(v) end
+    end
+    return 25
+end
+
+local function resolveAmmoHolders()
+    local holders, seen = {}, {}
+    local function addField(tbl, key)
+        local id = tostring(tbl) .. "|" .. key
+        if seen[id] then return end
+        seen[id] = true
+        holders[#holders+1] = {kind="field", tbl=tbl, key=key, name=key}
+    end
+
+    for _, v in ipairs(_getToolValueObjects(_AMMO_NAMES)) do
+        holders[#holders+1] = {kind="value", obj=v, name=v.Name}
+    end
+
+    local props = getLiveProps()
+    if type(props) == "table" then
+        for k, v in pairs(props) do
+            if type(k) == "string" and _AMMO_NAMES[k] and _isNum(v) then
+                addField(props, k)
+            end
+        end
+    end
+    local _, _, cfg = getACSConfig()
+    if cfg then
+        if _isNum(cfg.AmmoInGun) then addField(cfg, "AmmoInGun") end
+        -- Some ACS forks keep the live magazine in __MagBase
+        local mag = rawget(cfg, "__MagBase")
+        if type(mag) == "table" then
+            for k, v in pairs(mag) do
+                if type(k) == "string" and _AMMO_NAMES[k] and _isNum(v) then
+                    addField(mag, k)
+                end
+            end
+        end
+    end
+    if _acsWeaponData and _acsWeaponData ~= cfg
+        and _isNum(_acsWeaponData.AmmoInGun) then
+        addField(_acsWeaponData, "AmmoInGun")
+    end
+    return holders
+end
+
+local function holderGet(h)
+    if h.kind == "value" then return h.obj.Value end
+    return h.tbl[h.key]
+end
+
+local function holderSet(h, v)
+    if h.kind == "value" then
+        if h.obj.Parent and h.obj.Value ~= v then h.obj.Value = v end
+    else
+        h.tbl[h.key] = v
+    end
+end
+
+-- ───────────────────────────────────────────────────────────────
+-- STAT TARGETS (recoil / damage), collected by field name
+-- ───────────────────────────────────────────────────────────────
+local function getWeaponTables()
+    local list, seen = {}, {}
+    local function add(t)
+        if type(t) == "table" and not seen[t] then
+            seen[t] = true
+            list[#list+1] = t
+        end
+    end
+    local _, _, cfg = getACSConfig()
+    add(cfg)
+    local props = getLiveProps()
+    if type(props) == "table" then
+        add(props)
+        add(rawget(props, "WeaponData"))
+        add(rawget(props, "ModTable"))
+    end
+    add(_acsWeaponData)
+    add(_acsModTable)
+    for _, t in ipairs(getToolSettingsTables()) do add(t) end
+    return list
+end
+
+local _RECOIL_HINTS = {"recoil", "shake", "punch"}
+
+local function _nameMatches(lname, hints)
+    for _, h in ipairs(hints) do
+        if lname:find(h, 1, true) then return true end
+    end
+    return false
+end
+
+local _RECOIL_SKIP = {"reduction", "multiplier", "mult"}
+
+local function _scanRecoilTable(tbl, out, seen, depth)
+    if type(tbl) ~= "table" or seen[tbl] or depth > 2 then return end
+    seen[tbl] = true
+    for k, v in pairs(tbl) do
+        if type(k) == "string" then
+            local lk = k:lower()
+            local skip = false
+            for _, s in ipairs(_RECOIL_SKIP) do
+                if lk:find(s, 1, true) then skip = true; break end
+            end
+            if not skip and _nameMatches(lk, _RECOIL_HINTS) then
+                if _isNum(v) then
+                    out[#out+1] = {tbl=tbl, key=k, kind="num"}
+                elseif _isNumPair(v) then
+                    out[#out+1] = {tbl=tbl, key=k, kind="pair"}
+                elseif type(v) == "table" then
+                    _scanRecoilTable(v, out, seen, depth + 1)
+                end
+            elseif not skip and type(v) == "table" and lk:find("spread", 1, true) then
+                _scanRecoilTable(v, out, seen, depth + 1)
+            end
+        end
+    end
+end
+
+local function applyNoRecoil()
+    local entries, seen = {}, {}
+    for _, t in ipairs(getWeaponTables()) do
+        _scanRecoilTable(t, entries, seen, 0)
+    end
+    for _, e in ipairs(entries) do
+        local saved = _acsSaved.recoil[e.tbl]
+        if not saved then saved = {}; _acsSaved.recoil[e.tbl] = saved end
+        if saved[e.key] == nil then
+            local cur = e.tbl[e.key]
+            saved[e.key] = (e.kind == "pair") and {cur[1], cur[2]} or cur
+        end
+        if e.kind == "pair" then
+            local cur = e.tbl[e.key]
+            if type(cur) == "table" then cur[1] = 0; cur[2] = 0 end
+        else
+            e.tbl[e.key] = 0
+        end
+    end
+
+    -- Cached recoil locals (VRecoil/HRecoil/RecoilPower/...)
+    _ensureRecoilLocals()
+    _zeroRecoilLocals()
+
+    return #entries + #_savedRecoilLocals
+end
+
+local function restoreNoRecoil()
+    for tbl, saved in pairs(_acsSaved.recoil) do
+        for key, orig in pairs(saved) do
+            if type(orig) == "table" then
+                local cur = rawget(tbl, key)
+                if type(cur) == "table" then
+                    cur[1] = orig[1]; cur[2] = orig[2]
+                else
+                    tbl[key] = {orig[1], orig[2]}
+                end
+            else
+                tbl[key] = orig
+            end
+        end
+    end
+    _acsSaved.recoil = {}
+    Settings._origRecoil = nil
+    restoreRecoilLocals()
+end
+
+local _DAMAGE_KEYS = {
+    TorsoDamage=true, LimbsDamage=true, LimbDamage=true, HeadDamage=true,
+    BodyDamage=true, Damage=true, MinDamage=true, MaxDamage=true,
+}
+local _PEN_NUM_KEYS = {
+    BulletPenetration=true, ArmorPenetration=true,
+    Penetration=true, WallPenetration=true,
+}
+local _PEN_BOOL_KEYS = {
+    IgnoreProtection=true, IgnoreArmor=true, IgnoreVest=true, IgnoreHelmet=true,
+    CanPierce=true, Pierce=true, WallPenetration=true,
+}
+
+local function _scanDamageTable(tbl, out, depth, seen)
+    if type(tbl) ~= "table" or depth > 2 then return end
+    seen = seen or {}
+    if seen[tbl] then return end
+    seen[tbl] = true
+    for k, v in pairs(tbl) do
+        if type(k) == "string" then
+            if _DAMAGE_KEYS[k] and (_isNum(v) or _isNumPair(v)) then
+                out[#out+1] = {tbl=tbl, key=k, kind=(_isNumPair(v) and "pair" or "num")}
+            elseif (_PEN_NUM_KEYS[k] and _isNum(v))
+                or (_PEN_BOOL_KEYS[k] and type(v) == "boolean") then
+                out[#out+1] = {tbl=tbl, key=k, kind="max"}
+            elseif type(v) == "table"
+                and (k == "Damage" or k == "DamageSettings" or k == "DamageData") then
+                _scanDamageTable(v, out, depth + 1, seen)
+            end
+        end
+    end
+end
+
+local function applyWallbangStats()
+    local entries = {}
+    for _, t in ipairs(getWeaponTables()) do
+        _scanDamageTable(t, entries, 0, {})
+    end
+    for _, e in ipairs(entries) do
+        local saved = _acsSaved.damage[e.tbl]
+        if not saved then saved = {}; _acsSaved.damage[e.tbl] = saved end
+        if saved[e.key] == nil then
+            local cur = e.tbl[e.key]
+            saved[e.key] = (type(cur) == "table") and {cur[1], cur[2]} or cur
+        end
+        if e.kind == "pair" then
+            e.tbl[e.key] = {9999, 9999}
+        elseif e.kind == "max" then
+            local cur = e.tbl[e.key]
+            if type(cur) == "boolean" then
+                e.tbl[e.key] = true
+            else
+                e.tbl[e.key] = math.max(cur, 100)
+            end
+        else
+            e.tbl[e.key] = 9999
+        end
+    end
+    return #entries
+end
+
+local function restoreWallbangStats()
+    for tbl, saved in pairs(_acsSaved.damage) do
+        for key, orig in pairs(saved) do
+            if type(orig) == "table" then
+                local cur = rawget(tbl, key)
+                if type(cur) == "table" then
+                    cur[1] = orig[1]; cur[2] = orig[2]
+                else
+                    tbl[key] = {orig[1], orig[2]}
+                end
+            else
+                tbl[key] = orig
+            end
+        end
+    end
+    _acsSaved.damage = {}
+    Settings._origPenetration = nil
+    Settings._origIgnoreProt  = nil
+    Settings._origTorsoDmg    = nil
+    Settings._origLimbDmg     = nil
+end
+
+-- ───────────────────────────────────────────────────────────────
+-- RAPID FIRE — per-weapon ShootRate with restore
+-- ───────────────────────────────────────────────────────────────
+local function applyShootRate(rate)
+    local _, _, cfg = getACSConfig()
+    if not cfg then return false end
+    if not _isNum(rate) then rate = 1200 end
+    rate = math.clamp(rate, 1, 20000)
+
+    local applied = 0
+    for _, t in ipairs(getWeaponTables()) do
+        if rawget(t, "ShootRate") ~= nil then
+            if _acsSaved.shootRate[t] == nil then
+                _acsSaved.shootRate[t] = t.ShootRate
+            end
+            t.ShootRate = rate
+            applied = applied + 1
+        end
+    end
+    if applied == 0 then
+        if _acsSaved.shootRate[cfg] == nil then
+            _acsSaved.shootRate[cfg] = cfg.ShootRate
+        end
+        cfg.ShootRate = rate
+        applied = 1
+    end
+
+    Settings._origShootRate = _acsSaved.shootRate[cfg]
+    -- Keep using the shared helper so the cached upvalue stays in sync.
+    setACSValue("ShootRate", rate)
+    return applied > 0
+end
+
+local function restoreShootRate()
+    local restored = 0
+    for tbl, orig in pairs(_acsSaved.shootRate) do
+        if orig ~= nil then
+            tbl.ShootRate = orig
+            restored = restored + 1
+        end
+    end
+    _acsSaved.shootRate = {}
+    Settings._origShootRate = nil
+    if restored > 0 then
+        print(string.format("[Hub] Rapid Fire: original ShootRate restored on %d table(s)", restored))
+    end
+end
+
+-- ───────────────────────────────────────────────────────────────
+-- FREEZE AMMO — lock the LIVE counters, not the magazine size
+-- ───────────────────────────────────────────────────────────────
+local function buildFreezeTargets()
+    if not Settings.FreezeAmmo then return 0 end
+    local _, _, cfg = getACSConfig()
+    local cap = getMagCapacity(cfg, getLiveProps())
+    local targets = {}
+
+    for _, h in ipairs(resolveAmmoHolders()) do
+        local cur = holderGet(h)
+        if not _isNum(cur) then cur = cap end
+        if _RESERVE_NAMES[h.name] then
+            -- Keep reserve finite: math.huge breaks IntValue/NumberValue math.
+            if cur < cap * 2 then cur = cap * 2 end
+        elseif cur <= 0 then
+            cur = cap
+        end
+        targets[#targets+1] = {holder=h, value=math.floor(cur)}
+    end
+
+    Settings._freezeTargets      = targets
+    Settings._frozenAmmo         = (targets[1] and targets[1].value) or cap
+    Settings._frozenAmmoInGun    = Settings._frozenAmmo
+    Settings._frozenMagAmmo      = Settings._frozenAmmo
+    Settings._frozenMagAmmoInGun = Settings._frozenAmmo
+    _freezeTool = getEquippedTool()
+    return #targets
+end
+
+local _freezeRetry = 0
+local _freezeRebuild = false
+
+-- Rebuilding can trigger a getgc() scan; never do that inside Heartbeat.
+local function _requestFreezeRebuild()
+    if _freezeRebuild then return end
+    _freezeRebuild = true
+    task.defer(function()
+        pcall(buildFreezeTargets)
+        _freezeRebuild = false
+    end)
+end
+
+local function freezeTick()
+    if not Settings.FreezeAmmo then return end
+
+    local tool = getEquippedTool()
+    if tool ~= _freezeTool then
+        _requestFreezeRebuild()
+    end
+
+    local targets = Settings._freezeTargets or {}
+    if #targets == 0 and tick() - _freezeRetry > 1 then
+        _freezeRetry = tick()
+        _requestFreezeRebuild()
+        targets = Settings._freezeTargets or {}
+    end
+
+    for _, t in ipairs(targets) do
+        if holderGet(t.holder) ~= t.value then
+            pcall(holderSet, t.holder, t.value)
+        end
+    end
+end
+
+-- ───────────────────────────────────────────────────────────────
+-- FAST RELOAD — live ammo + capacity + jam state + optional remote
+-- ───────────────────────────────────────────────────────────────
+local function fastReload()
+    local _, _, cfg = getACSConfig()
+    local cap = getMagCapacity(cfg, getLiveProps())
+
+    local changed = 0
+    for _, h in ipairs(resolveAmmoHolders()) do
+        if not _RESERVE_NAMES[h.name] then
+            pcall(holderSet, h, cap)
+            changed = changed + 1
+        end
+    end
+
+    -- Jam flags can live in Value objects (Emperrado/Jammed) or in the
+    -- live state table (FirearmState.Jammed/Reloading).
+    for _, v in ipairs(_getToolValueObjects(_JAM_NAMES)) do
+        if v:IsA("BoolValue") and v.Value then v.Value = false end
+    end
+    -- A reload always leaves a round chambered.
+    for _, v in ipairs(_getToolValueObjects({Chambered=true, Chamber=true})) do
+        if v:IsA("BoolValue") and not v.Value then v.Value = true end
+    end
+    if _acsState then
+        if _acsState.Jammed   then _acsState.Jammed   = false end
+        if _acsState.Reloading then _acsState.Reloading = false end
+        if _acsState.Shooting then _acsState.Shooting = false end
+    end
+
+    local tool = getEquippedTool()
+    local ev = getEventsFolder()
+    local reloadRemote = ev and ev:FindFirstChild("Reload")
+    local remoteState = "none"
+    if reloadRemote then
+        if reloadRemote:IsA("RemoteEvent") then
+            if pcall(function() reloadRemote:FireServer(tool) end) then
+                remoteState = "events.Reload(tool)"
+            elseif pcall(function() reloadRemote:FireServer() end) then
+                remoteState = "events.Reload()"
+            else
+                remoteState = "error"
+            end
+        elseif reloadRemote:IsA("RemoteFunction") then
+            task.spawn(function()
+                pcall(function() reloadRemote:InvokeServer(tool) end)
+            end)
+            remoteState = "events.Reload:Invoke"
+        end
+    end
+    return changed, cap, remoteState
+end
+
+-- ───────────────────────────────────────────────────────────────
+-- WALLBANG — pierce the client-side bullet ray through solid cover
+-- ACS registers bullet hits with workspace raycasts and stops on the
+-- first solid part. While the toggle is ON we re-cast past solid,
+-- non-character parts so the bullet reaches whatever is behind them.
+-- ───────────────────────────────────────────────────────────────
+local _wbOriginalNamecall = nil
+local _WB_MIN_RAY = 5   -- ignore short probes (bipod/laser checks)
+
+local function _partHasHumanoid(part)
+    if not part or not part:IsA("BasePart") then return false end
+    local node = part.Parent
+    while node and node ~= Workspace do
+        if node:IsA("Model") then
+            local hum = node:FindFirstChildOfClass("Humanoid")
+            if hum and hum.Health > 0 then return true end
+        end
+        node = node.Parent
+    end
+    return false
+end
+
+local function _isPierceable(part)
+    if not part or not part:IsA("BasePart") then return false end
+    if part == Workspace.Terrain then return false end
+    if _partHasHumanoid(part) then return false end
+    if part.Transparency >= 1 then return false end
+    if part.CanCollide == false then return false end
+    return true
+end
+
+local function _copyArray(t)
+    local out = {}
+    if type(t) == "table" then
+        for i = 1, #t do out[i] = t[i] end
+    end
+    return out
+end
+
+local function _wbRaycast(origin, direction, params)
+    local result = _wbOriginalNamecall(Workspace, origin, direction, params)
+    local layers = 0
+    while result and layers < 8 and _isPierceable(result.Instance) do
+        local filter = {}
+        local okF, existing = pcall(function() return params.FilterDescendantsInstances end)
+        if okF and type(existing) == "table" then
+            for _, v in ipairs(existing) do filter[#filter+1] = v end
+        end
+
+        local p2 = RaycastParams.new()
+        p2.FilterType = params.FilterType
+        p2.IgnoreWater = params.IgnoreWater
+        p2.CollisionGroup = params.CollisionGroup
+        pcall(function() p2.RespectCanCollide = params.RespectCanCollide end)
+
+        local whitelist = (p2.FilterType == Enum.RaycastFilterType.Whitelist)
+        if Enum.RaycastFilterType.Include then
+            whitelist = whitelist or (p2.FilterType == Enum.RaycastFilterType.Include)
+        end
+
+        if whitelist then
+            for _, v in ipairs(filter) do
+                if v ~= result.Instance then p2:AddToFilter(v) end
+            end
+        else
+            for _, v in ipairs(filter) do p2:AddToFilter(v) end
+            p2:AddToFilter(result.Instance)
+        end
+
+        result = _wbOriginalNamecall(Workspace, origin, direction, p2)
+        layers = layers + 1
+    end
+    return result
+end
+
+local function _wbRay(ray, ignore, ignoreWater, respectCanCollide)
+    local part, pos, norm, mat = _wbOriginalNamecall(
+        Workspace, ray, ignore, ignoreWater, respectCanCollide)
+    local list = _copyArray(ignore)
+    local layers = 0
+    while part and layers < 8 and _isPierceable(part) do
+        list[#list+1] = part
+        part, pos, norm, mat = _wbOriginalNamecall(
+            Workspace, ray, list, ignoreWater, respectCanCollide)
+        layers = layers + 1
+    end
+    return part, pos, norm, mat
+end
+
+local function _namecallHook(self, ...)
+    if not _wbOriginalNamecall then return end
+
+    -- Fast pass-through: do NOT rebuild the vararg list for every namecall
+    -- in the game, only for workspace raycasts while Wallbang is ON.
+    if _wbBypass or self ~= Workspace or not Settings.Wallbang then
+        return _wbOriginalNamecall(self, ...)
+    end
+    local method = getnamecallmethod and getnamecallmethod() or nil
+    if method ~= "Raycast" and method ~= "FindPartOnRayWithIgnoreList"
+        and method ~= "FindPartOnRay" then
+        return _wbOriginalNamecall(self, ...)
+    end
+    if checkcaller and checkcaller() then
+        return _wbOriginalNamecall(self, ...)
+    end
+
+    local a, b, c, d = ...
+    local ok, r1, r2, r3, r4 = pcall(function()
+        if method == "Raycast" then
+            if typeof(a) == "Vector3" and typeof(b) == "Vector3"
+                and b.Magnitude >= _WB_MIN_RAY and typeof(c) == "RaycastParams" then
+                return _wbRaycast(a, b, c)
+            end
+        elseif method == "FindPartOnRayWithIgnoreList" then
+            if typeof(a) == "Ray" and a.Direction.Magnitude >= _WB_MIN_RAY then
+                return _wbRay(a, b, c, d)
+            end
+        elseif method == "FindPartOnRay" then
+            if typeof(a) == "Ray" and a.Direction.Magnitude >= _WB_MIN_RAY then
+                return _wbRay(a, {}, b, true)
+            end
+        end
+        return _wbOriginalNamecall(self, a, b, c, d)
+    end)
+
+    if not ok then
+        return _wbOriginalNamecall(self, a, b, c, d)
+    end
+    return r1, r2, r3, r4
+end
+
+local function enableWallbangHook()
+    if _wbOriginalNamecall then return true end
+    if type(hookmetamethod) ~= "function" then return false end
+    local wrapped = _namecallHook
+    if type(newcclosure) == "function" then
+        local okWrap, c = pcall(newcclosure, _namecallHook)
+        if okWrap and c then wrapped = c end
+    end
+    local ok, orig = pcall(function()
+        return hookmetamethod(game, "__namecall", wrapped)
+    end)
+    if ok and orig then
+        _wbOriginalNamecall = orig
+        return true
+    end
+    return false
+end
+
+local function disableWallbangHook()
+    if not _wbOriginalNamecall then return end
+    local orig = _wbOriginalNamecall
+    -- Only drop our reference if the restore actually succeeded; a failed
+    -- restore must leave the hook functional instead of returning nil
+    -- for every namecall in the game.
+    local ok = pcall(function() hookmetamethod(game, "__namecall", orig) end)
+    if ok then _wbOriginalNamecall = nil end
+end
+
+-- ───────────────────────────────────────────────────────────────
+-- RESTORE EVERY ACS VALUE (toggle OFF / respawn / script unload)
+-- ───────────────────────────────────────────────────────────────
+local function invalidateACSState()
+    _acsCache      = {func=nil, idx=nil, tbl=nil, toolKey=nil}
+    _nonLethalUV   = nil
+    _acsProps      = nil
+    _acsState      = nil
+    _acsModTable   = nil
+    _acsWeaponData = nil
+    _acsEvents     = nil
+    _toolSettingsFor = nil
+    _toolSettingsTbl = nil
+    Settings._freezeTargets = nil
+    _freezeTool = nil
+    -- Old closures/locals are gone after a respawn: re-scan on next use
+    _savedRecoilLocals   = {}
+    _recoilLocalScanDone = false
+    _recoilLocalTool     = nil
+end
+
+local function restoreAllACS()
+    Settings.FreezeAmmo = false
+    Settings.RapidFire  = false
+    Settings.NoRecoil   = false
+    Settings.Wallbang   = false
+
+    if _freezeConn then
+        _freezeConn:Disconnect()
+        _freezeConn = nil
+    end
+    Settings._freezeTargets = nil
+
+    restoreShootRate()
+    restoreNoRecoil()
+    restoreWallbangStats()
+    disableWallbangHook()
+end
+
 -- HELPERS
 -- ───────────────────────────────────────────────────────────────
 local function getChar()  return LocalPlayer.Character end
@@ -1947,45 +2943,33 @@ TabWeapons:CreateToggle({
     end,
 })
 
--- b) Freeze Ammo
+-- b) Freeze Ammo — locks the live counters resolved from ACS
 TabWeapons:CreateToggle({
     Name         = T("FreezeAmmo"),
+    Description  = T("FreezeAmmoDesc"),
     CurrentValue = Settings.FreezeAmmo,
     Flag         = "FreezeAmmo",
     Callback     = function(v)
         Settings.FreezeAmmo = v
         if v then
-            -- Cache current ammo values
-            local _, _, cfg = getACSConfig()
-            if cfg then
-                Settings._frozenAmmo     = cfg.Ammo     or 25
-                Settings._frozenAmmoInGun= cfg.AmmoInGun or 25
-                Settings._frozenMagAmmo     = (type(cfg.__MagBase)=="table" and cfg.__MagBase.Ammo)     or 25
-                Settings._frozenMagAmmoInGun= (type(cfg.__MagBase)=="table" and cfg.__MagBase.AmmoInGun) or 25
-            else
-                Settings._frozenAmmo     = 25
-                Settings._frozenAmmoInGun= 25
-                Settings._frozenMagAmmo     = 25
-                Settings._frozenMagAmmoInGun= 25
+            local n = buildFreezeTargets()
+            if _freezeConn then
+                _freezeConn:Disconnect()
+                _freezeConn = nil
             end
-            task.spawn(function()
-                while Settings.FreezeAmmo do
-                    local f2, i2, cfg2 = getACSConfig()
-                    if cfg2 then
-                        cfg2.Ammo      = Settings._frozenAmmo
-                        cfg2.AmmoInGun = Settings._frozenAmmoInGun
-                        if type(cfg2.__MagBase) == "table" then
-                            cfg2.__MagBase.Ammo      = Settings._frozenMagAmmo
-                            cfg2.__MagBase.AmmoInGun = Settings._frozenMagAmmoInGun
-                        end
-                        cfg2.StoredAmmo = math.huge
-                        if f2 and debug and debug.setupvalue then
-                            pcall(debug.setupvalue, f2, i2, cfg2)
-                        end
-                    end
-                    task.wait(0.1)
-                end
-            end)
+            -- Heartbeat, not a 0.1s loop: ACS decrements ammo every shot.
+            _freezeConn = RunService.Heartbeat:Connect(freezeTick)
+            print(string.format("[Hub] Freeze Ammo: locking %d live ammo holder(s)", n))
+            if n == 0 then
+                warn("[Hub] Freeze Ammo: no live ammo holder resolved — equip a weapon and fire once")
+                Rayfield:Notify({Title=T("FreezeAmmo"), Content="Fire your weapon once to activate", Duration=3})
+            end
+        else
+            if _freezeConn then
+                _freezeConn:Disconnect()
+                _freezeConn = nil
+            end
+            Settings._freezeTargets = nil
         end
     end,
 })
@@ -1996,42 +2980,13 @@ TabWeapons:CreateDivider()
 TabWeapons:CreateButton({
     Name     = T("FastReload"),
     Callback = function()
-        local f3, i3, cfg3 = getACSConfig()
-        local ok1, ok2
-        if cfg3 then
-            cfg3.Ammo      = 25
-            cfg3.AmmoInGun = 25
-            cfg3.Jammed    = false
-            cfg3.StoredAmmo = math.huge
-            if type(cfg3.__MagBase) == "table" then
-                cfg3.__MagBase.Ammo      = 25
-                cfg3.__MagBase.AmmoInGun = 25
-            end
-            if f3 and debug and debug.setupvalue then
-                ok1 = pcall(debug.setupvalue, f3, i3, cfg3)
-                ok2 = ok1
-            end
-        end
-        -- Secondary path: fire the ACS reload remote if upvalue [7] is available
-        pcall(function()
-            local evFolder
-            if _acsCache.func then
-                local okE, ev = pcall(debug.getupvalue, _acsCache.func, 7)
-                if okE and ev then evFolder = ev end
-            end
-            if not evFolder then
-                evFolder = game:GetService("ReplicatedStorage")
-                    :FindFirstChild("ACS_Engine")
-                evFolder = evFolder and evFolder:FindFirstChild("Events")
-            end
-            if evFolder then
-                local reload = evFolder:FindFirstChild("Reload")
-                if reload then reload:FireServer() end
-            end
-        end)
-        if ok1 or ok2 then
+        local changed, cap, remoteState = fastReload()
+        print(string.format("[Hub] Fast Reload: %d holder(s) set to %d, remote=%s",
+            changed, cap, remoteState))
+        if changed > 0 or remoteState ~= "none" then
             Rayfield:Notify({Title = T("FastReload"), Content = "✓ Reloaded!", Duration = 2})
         else
+            warn("[Hub] Fast Reload: no live ammo holder and no Events.Reload remote")
             Rayfield:Notify({Title = T("FastReload"), Content = "Fire your weapon once to activate", Duration = 3})
         end
     end,
@@ -2039,153 +2994,110 @@ TabWeapons:CreateButton({
 
 TabWeapons:CreateDivider()
 
--- d) Rapid Fire toggle
+-- d) Rapid Fire toggle — rate is user-editable (slider below)
 TabWeapons:CreateToggle({
     Name         = T("RapidFire"),
+    Description  = T("RapidFireDesc"),
     CurrentValue = Settings.RapidFire,
     Flag         = "RapidFire",
     Callback     = function(v)
         Settings.RapidFire = v
         if v then
-            -- Cache original shoot rate on first activation
-            local _, _, cfg = getACSConfig()
-            if cfg and Settings._origShootRate == nil then
-                Settings._origShootRate = cfg.ShootRate or 750
-            elseif Settings._origShootRate == nil then
-                Settings._origShootRate = 750
-            end
             task.spawn(function()
+                local warned = false
                 while Settings.RapidFire do
                     if not isNonLethal() then
-                        if _acsCache.tbl then
-                            setACSValue("ShootRate", 1200)
-                        else
-                            Rayfield:Notify({Title="Weapons", Content="Fire your weapon once to activate", Duration=4})
+                        local applied = applyShootRate(Settings.RapidFireRate)
+                        if not applied then
+                            if not warned then
+                                warned = true
+                                warn("[Hub] Rapid Fire: ACS config not resolved — equip a weapon and fire once")
+                                Rayfield:Notify({Title="Weapons", Content="Fire your weapon once to activate", Duration=4})
+                            end
                             Settings.RapidFire = false
                             break
                         end
                     end
                     task.wait(0.3)
                 end
-                -- Restore original shoot rate when loop exits
-                pcall(function()
-                    if Settings._origShootRate ~= nil then
-                        setACSValue("ShootRate", Settings._origShootRate)
-                    end
-                end)
+                -- Restore the original rate when the loop exits
+                restoreShootRate()
             end)
         else
-            if Settings._origShootRate ~= nil then
-                setACSValue("ShootRate", Settings._origShootRate)
-            end
+            restoreShootRate()
         end
     end,
 })
 
--- e) Wallbang + One Shot toggle
+TabWeapons:CreateSlider({
+    Name         = T("RapidFireRate"),
+    Description  = T("RapidFireRateDesc"),
+    Range        = {100, 3000},
+    Increment    = 50,
+    CurrentValue = Settings.RapidFireRate,
+    Flag         = "RapidFireRate",
+    Callback     = function(v)
+        Settings.RapidFireRate = v
+        -- Instant apply while Rapid Fire is ON
+        if Settings.RapidFire and not isNonLethal() then
+            applyShootRate(v)
+        end
+    end,
+})
+TabWeapons:CreateParagraph({
+    Title   = T("RapidFireRate"),
+    Content = T("RapidFireRateDesc"),
+})
+
+-- e) Wallbang + One Shot
 TabWeapons:CreateToggle({
     Name         = T("Wallbang"),
+    Description  = T("WallbangDesc"),
     CurrentValue = Settings.Wallbang,
     Flag         = "Wallbang",
     Callback     = function(v)
         Settings.Wallbang = v
         if v then
+            local hooked = enableWallbangHook()
+            if not hooked then
+                warn("[Hub] Wallbang: __namecall hook unavailable — cover penetration disabled, damage boost only")
+            end
             task.spawn(function()
-                -- Cache originals on first activation
-                local _, _, cfg = getACSConfig()
-                if cfg and Settings._origPenetration == nil then
-                    Settings._origPenetration = cfg.BulletPenetration or 70
-                    Settings._origIgnoreProt  = cfg.IgnoreProtection  or false
-                    Settings._origTorsoDmg    = cfg.TorsoDamage and {cfg.TorsoDamage[1], cfg.TorsoDamage[2]} or {57,62}
-                    Settings._origLimbDmg     = cfg.LimbDamage  and {cfg.LimbDamage[1],  cfg.LimbDamage[2]}  or {30,35}
-                elseif not cfg and Settings._origPenetration == nil then
-                    Settings._origPenetration = 70
-                    Settings._origIgnoreProt  = false
-                    Settings._origTorsoDmg    = {57,62}
-                    Settings._origLimbDmg     = {30,35}
-                end
+                local warned = false
+                local lastCount = -1
                 while Settings.Wallbang do
                     if not isNonLethal() then
-                        local fw, iw, cfw = getACSConfig()
-                        if cfw then
-                            cfw.BulletPenetration = 100
-                            cfw.IgnoreProtection  = true
-                            if type(cfw.TorsoDamage) == "table" then
-                                cfw.TorsoDamage[1] = 9999; cfw.TorsoDamage[2] = 9999
-                            end
-                            if type(cfw.LimbDamage) == "table" then
-                                cfw.LimbDamage[1] = 9999; cfw.LimbDamage[2] = 9999
-                            end
-                            if fw and debug and debug.setupvalue then
-                                pcall(debug.setupvalue, fw, iw, cfw)
-                            end
-                        else
-                            Rayfield:Notify({Title="Weapons", Content="Fire your weapon once to activate", Duration=4})
-                            Settings.Wallbang = false
-                            break
+                        local entries = applyWallbangStats()
+                        if entries ~= lastCount then
+                            lastCount = entries
+                            print(string.format("[Hub] Wallbang: %d damage/penetration field(s) boosted, hook=%s",
+                                entries, tostring(hooked)))
                         end
-                    end
-                    -- Direct NPC kill (NPC Humanoid unprotected, health replicates server-side)
-                    for _, obj in ipairs(Workspace:GetChildren()) do
-                        if isSuspect(obj) then
-                            local hum = obj:FindFirstChildOfClass("Humanoid")
-                            if hum and hum.Health > 0 then
-                                pcall(function() hum.Health = 0 end)
+                        if entries == 0 and not warned then
+                            warned = true
+                            warn("[Hub] Wallbang: no damage fields found in the ACS weapon table")
+                            Rayfield:Notify({Title="Weapons", Content="Fire your weapon once to activate", Duration=4})
+                        end
+
+                        -- Direct NPC kill pass (client-side only: server-owned
+                        -- NPCs may ignore it, the raycast hook is the real fix)
+                        for _, obj in ipairs(Workspace:GetChildren()) do
+                            if isSuspect(obj) then
+                                local hum = obj:FindFirstChildOfClass("Humanoid")
+                                if hum and hum.Health > 0 then
+                                    pcall(function() hum.Health = 0 end)
+                                end
                             end
                         end
                     end
                     task.wait(0.3)
                 end
-                -- Restore originals when loop exits
-                pcall(function()
-                    if Settings._origPenetration ~= nil then
-                        local frx, irx, crx = getACSConfig()
-                        if crx then
-                            crx.BulletPenetration = Settings._origPenetration
-                            crx.IgnoreProtection  = Settings._origIgnoreProt
-                            if type(crx.TorsoDamage)=="table" and Settings._origTorsoDmg then
-                                crx.TorsoDamage[1]=Settings._origTorsoDmg[1]
-                                crx.TorsoDamage[2]=Settings._origTorsoDmg[2]
-                            end
-                            if type(crx.LimbDamage)=="table" and Settings._origLimbDmg then
-                                crx.LimbDamage[1]=Settings._origLimbDmg[1]
-                                crx.LimbDamage[2]=Settings._origLimbDmg[2]
-                            end
-                            if frx and debug and debug.setupvalue then
-                                pcall(debug.setupvalue, frx, irx, crx)
-                            end
-                        end
-                        Settings._origPenetration = nil
-                        Settings._origIgnoreProt  = nil
-                        Settings._origTorsoDmg    = nil
-                        Settings._origLimbDmg     = nil
-                    end
-                end)
+                restoreWallbangStats()
+                disableWallbangHook()
             end)
         else
-            -- Restore originals immediately when toggled off
-            if Settings._origPenetration ~= nil then
-                local fro, iro, cro = getACSConfig()
-                if cro then
-                    cro.BulletPenetration = Settings._origPenetration
-                    cro.IgnoreProtection  = Settings._origIgnoreProt
-                    if type(cro.TorsoDamage)=="table" and Settings._origTorsoDmg then
-                        cro.TorsoDamage[1]=Settings._origTorsoDmg[1]
-                        cro.TorsoDamage[2]=Settings._origTorsoDmg[2]
-                    end
-                    if type(cro.LimbDamage)=="table" and Settings._origLimbDmg then
-                        cro.LimbDamage[1]=Settings._origLimbDmg[1]
-                        cro.LimbDamage[2]=Settings._origLimbDmg[2]
-                    end
-                    if fro and debug and debug.setupvalue then
-                        pcall(debug.setupvalue, fro, iro, cro)
-                    end
-                end
-                Settings._origPenetration = nil
-                Settings._origIgnoreProt  = nil
-                Settings._origTorsoDmg    = nil
-                Settings._origLimbDmg     = nil
-            end
+            restoreWallbangStats()
+            disableWallbangHook()
         end
     end,
 })
@@ -2200,61 +3112,22 @@ TabWeapons:CreateToggle({
         Settings.NoRecoil = v
         if v then
             task.spawn(function()
+                local lastCount = -1
                 while Settings.NoRecoil do
-                    local fn, idx, cfg = getACSConfig()
-                    if cfg then
-                        -- Save originals once
-                        if Settings._origRecoil == nil then
-                            Settings._origRecoil = {
-                                Recoil           = cfg.Recoil,
-                                MinRecoil        = cfg.MinRecoil,
-                                MaxRecoil        = cfg.MaxRecoil,
-                                CamShake         = cfg.CamShake,
-                                CameraRecoil     = cfg.CameraRecoil,
-                                RecoilAmount     = cfg.RecoilAmount,
-                            }
-                        end
-                        -- Zero ballistic/camera recoil only (preserve animation drivers)
-                        cfg.Recoil       = 0
-                        cfg.MinRecoil    = 0
-                        cfg.MaxRecoil    = 0
-                        cfg.CamShake     = 0
-                        cfg.CameraRecoil = 0
-                        cfg.RecoilAmount = 0
-                        if fn and debug and debug.setupvalue then
-                            pcall(debug.setupvalue, fn, idx, cfg)
+                    local entries = applyNoRecoil()
+                    if entries ~= lastCount then
+                        lastCount = entries
+                        print(string.format("[Hub] No Recoil: neutralising %d recoil field(s)", entries))
+                        if entries == 0 then
+                            warn("[Hub] No Recoil: no recoil fields found in the ACS tables")
                         end
                     end
-                    task.wait(0.3)
+                    task.wait(0.2)
                 end
-                -- Restore originals on toggle off
-                if Settings._origRecoil then
-                    local fn2, idx2, cfg2 = getACSConfig()
-                    if cfg2 then
-                        for k, val in pairs(Settings._origRecoil) do
-                            if val ~= nil then cfg2[k] = val end
-                        end
-                        if fn2 and debug and debug.setupvalue then
-                            pcall(debug.setupvalue, fn2, idx2, cfg2)
-                        end
-                    end
-                    Settings._origRecoil = nil
-                end
+                restoreNoRecoil()
             end)
         else
-            -- Immediate restore if already cached
-            if Settings._origRecoil then
-                local fn3, idx3, cfg3 = getACSConfig()
-                if cfg3 then
-                    for k, val in pairs(Settings._origRecoil) do
-                        if val ~= nil then cfg3[k] = val end
-                    end
-                    if fn3 and debug and debug.setupvalue then
-                        pcall(debug.setupvalue, fn3, idx3, cfg3)
-                    end
-                end
-                Settings._origRecoil = nil
-            end
+            restoreNoRecoil()
         end
     end,
 })
@@ -2279,7 +3152,14 @@ TabWeapons:CreateButton({
                     local sHRP = obj:FindFirstChild("HumanoidRootPart")
                     if sHRP then
                         local dir    = (sHRP.Position - myHRP.Position)
-                        local result = Workspace:Raycast(myHRP.Position, dir, params)
+                        -- Bypass the Wallbang hook: this check must report
+                        -- real cover even while Wallbang is enabled.
+                        _wbBypass = true
+                        local okR, result = pcall(function()
+                            return Workspace:Raycast(myHRP.Position, dir, params)
+                        end)
+                        _wbBypass = false
+                        if not okR then result = nil end
                         local behindWall = result and not result.Instance:IsDescendantOf(obj)
                         lines[#lines+1] = obj.Name .. (behindWall and " 🔴 WALL" or " 🟢 CLEAR")
                     end
@@ -3148,20 +4028,25 @@ UserInputService.JumpRequest:Connect(function()
 end)
 
 -- ───────────────────────────────────────────────────────────────
--- ON RESPAWN
+-- ON RESPAWN / TOOL CHANGE
+-- ACS rebuilds its closures on respawn and uses a different settings
+-- table per weapon, so every cache must be dropped on both events.
 -- ───────────────────────────────────────────────────────────────
-LocalPlayer.CharacterAdded:Connect(function(char)
-    task.wait(0.5)
-    -- Clear ACS cache so it re-resolves for the new character
-    _acsCache    = {func=nil, idx=nil, tbl=nil}
-    _nonLethalUV = nil
-    -- Invalidate cache when player equips or unequips a tool
+local function watchCharacter(char)
     char.ChildAdded:Connect(function(c)
-        if c:IsA("Tool") then _acsCache = {func=nil, idx=nil, tbl=nil}; _nonLethalUV = nil end
+        if c:IsA("Tool") then invalidateACSState() end
     end)
     char.ChildRemoved:Connect(function(c)
-        if c:IsA("Tool") then _acsCache = {func=nil, idx=nil, tbl=nil}; _nonLethalUV = nil end
+        if c:IsA("Tool") then invalidateACSState() end
     end)
+end
+
+if LocalPlayer.Character then watchCharacter(LocalPlayer.Character) end
+
+LocalPlayer.CharacterAdded:Connect(function(char)
+    task.wait(0.5)
+    invalidateACSState()
+    watchCharacter(char)
     createOverlayUI()  -- rebuild overlay buttons after respawn
     if Settings.Fly then
         disableFly()
@@ -3183,3 +4068,18 @@ Rayfield:Notify({
     Content  = T("Loaded"),
     Duration = 4,
 })
+
+-- ───────────────────────────────────────────────────────────────
+-- UNLOAD SAFETY — restore every modified ACS value
+-- (toggling OFF already restores; this covers teleports/closing and
+--  exposes a manual cleanup for executor unload hooks)
+-- ───────────────────────────────────────────────────────────────
+pcall(function()
+    LocalPlayer.OnTeleport:Connect(function() restoreAllACS() end)
+end)
+pcall(function()
+    game:BindToClose(function() restoreAllACS() end)
+end)
+if getgenv then
+    pcall(function() getgenv().TacticalSwatHub_Restore = restoreAllACS end)
+end
