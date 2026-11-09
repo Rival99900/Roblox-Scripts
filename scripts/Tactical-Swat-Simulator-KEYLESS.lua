@@ -2952,7 +2952,8 @@ TabWeapons:CreateToggle({
     Callback     = function(v)
         Settings.FreezeAmmo = v
         if v then
-            local n = buildFreezeTargets()
+            local okF, n = pcall(buildFreezeTargets)
+            if not okF then n = 0 end
             if _freezeConn then
                 _freezeConn:Disconnect()
                 _freezeConn = nil
@@ -2980,7 +2981,13 @@ TabWeapons:CreateDivider()
 TabWeapons:CreateButton({
     Name     = T("FastReload"),
     Callback = function()
-        local changed, cap, remoteState = fastReload()
+        local okF, r1, r2, r3 = pcall(fastReload)
+        local changed, cap, remoteState = 0, 0, "none"
+        if okF then
+            changed, cap, remoteState = r1 or 0, r2 or 0, r3 or "none"
+        else
+            warn("[Hub] Fast Reload failed: " .. tostring(r1))
+        end
         print(string.format("[Hub] Fast Reload: %d holder(s) set to %d, remote=%s",
             changed, cap, remoteState))
         if changed > 0 or remoteState ~= "none" then
@@ -3007,7 +3014,8 @@ TabWeapons:CreateToggle({
                 local warned = false
                 while Settings.RapidFire do
                     if not isNonLethal() then
-                        local applied = applyShootRate(Settings.RapidFireRate)
+                        local okA, applied = pcall(applyShootRate, Settings.RapidFireRate)
+                        if not okA then applied = false end
                         if not applied then
                             if not warned then
                                 warned = true
@@ -3067,7 +3075,8 @@ TabWeapons:CreateToggle({
                 local lastCount = -1
                 while Settings.Wallbang do
                     if not isNonLethal() then
-                        local entries = applyWallbangStats()
+                        local okW, entries = pcall(applyWallbangStats)
+                        if not okW then entries = 0 end
                         if entries ~= lastCount then
                             lastCount = entries
                             print(string.format("[Hub] Wallbang: %d damage/penetration field(s) boosted, hook=%s",
@@ -3114,7 +3123,8 @@ TabWeapons:CreateToggle({
             task.spawn(function()
                 local lastCount = -1
                 while Settings.NoRecoil do
-                    local entries = applyNoRecoil()
+                    local okN, entries = pcall(applyNoRecoil)
+                    if not okN then entries = 0 end
                     if entries ~= lastCount then
                         lastCount = entries
                         print(string.format("[Hub] No Recoil: neutralising %d recoil field(s)", entries))
