@@ -2,7 +2,7 @@
     ================================================================
     Tactical SWAT Hub — Tactical: Swat Simulator
     Created by Rival960 with the help of Claude
-    Version: 1.1.6 | Languages: 21 | Rayfield UI | PC + Mobile
+    Version: 1.1.7 | Languages: 21 | Rayfield UI | PC + Mobile
     Status: untested in-game
     ================================================================
 --]]
@@ -56,10 +56,6 @@ local Translations = {
         -- Weapons
         InfiniteAmmo     = "Infinite Ammo",
         InfiniteAmmoDesc = "Keep all ammo values at 999",
-        FreezeAmmo       = "Freeze Ammo",
-        FreezeAmmoDesc   = "Prevent ammo from decreasing",
-        FastReload       = "Fast Reload",
-        FastReloadDesc   = "Instantly reload equipped weapon",
         RapidFire        = "Rapid Fire",
         RapidFireDesc    = "Set fire rate to maximum (ACS API required)",
         RapidFireSpeed   = "Fire Rate (RPM)",
@@ -101,7 +97,7 @@ local Translations = {
         LangSelect       = "Language",
         -- Credits
         CreditsTitle     = "Tactical SWAT Hub",
-        CreditsContent   = "Created by Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.6 — FreezeAmmo rewrite | NoRecoil dynamic scan | FastReload loop | Wallbang triple-kill | RPM slider",
+        CreditsContent   = "Created by Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.7 — Wallbang mouse-intercept | Camera NoRecoil | RapidFire RPM cap | AutoArrest proximity fix",
         Loaded           = "Hub loaded! Tactical advantage enabled.",
     },
     FR = {
@@ -119,10 +115,6 @@ local Translations = {
         HitboxSize       = "Taille Hitbox",
         InfiniteAmmo     = "Munitions infinies",
         InfiniteAmmoDesc = "Maintient les munitions à 999",
-        FreezeAmmo       = "Bloquer les munitions",
-        FreezeAmmoDesc   = "Empêche les munitions de diminuer",
-        FastReload       = "Rechargement rapide",
-        FastReloadDesc   = "Recharge instantanément l'arme équipée",
         RapidFire        = "Tir rapide",
         RapidFireDesc    = "Cadence de tir maximale (API ACS requise)",
         RapidFireSpeed   = "Cadence de tir (RPM)",
@@ -159,7 +151,7 @@ local Translations = {
         AntiAFKDesc      = "Empêche le kick pour inactivité",
         LangSelect       = "Langue",
         CreditsTitle     = "Tactical SWAT Hub",
-        CreditsContent   = "Créé par Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.6 — réécriture BloquerMunitions | scan dynamique SansRecul | boucle RechargementRapide | triple-kill Wallbang | curseur RPM",
+        CreditsContent   = "Créé par Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.7 — interception souris Wallbang | SansRecul caméra | plafond RPM TirRapide | correctif proximité AutoArrestation",
         Loaded           = "Hub chargé ! Avantage tactique activé.",
     },
     DE = {
@@ -177,10 +169,6 @@ local Translations = {
         HitboxSize       = "Hitbox-Größe",
         InfiniteAmmo     = "Unbegrenzte Munition",
         InfiniteAmmoDesc = "Munitionswerte auf 999 halten",
-        FreezeAmmo       = "Munition einfrieren",
-        FreezeAmmoDesc   = "Verhindert, dass Munition abnimmt",
-        FastReload       = "Schnellnachladen",
-        FastReloadDesc   = "Ausgerüstete Waffe sofort nachladen",
         RapidFire        = "Schnellfeuer",
         RapidFireDesc    = "Feuerrate auf Maximum setzen (ACS API erforderlich)",
         RapidFireSpeed   = "Feuerrate (RPM)",
@@ -217,7 +205,7 @@ local Translations = {
         AntiAFKDesc      = "Verhindert den Rauswurf wegen Inaktivität",
         LangSelect       = "Sprache",
         CreditsTitle     = "Tactical SWAT Hub",
-        CreditsContent   = "Erstellt von Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.6 — MunitionEinfrieren-Neuentwurf | KeinRückstoß-Dynamikscan | SchnellNachladen-Schleife | Wallbang-Dreifach-Kill | RPM-Regler",
+        CreditsContent   = "Erstellt von Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.7 — Wallbang Mausabfang | Kamera Kein Rückstoß | Schnellfeuer RPM-Limit | Auto-Verhaftung Nähe-Fix",
         Loaded           = "Hub geladen! Taktischer Vorteil aktiviert.",
     },
     ES = {
@@ -235,10 +223,6 @@ local Translations = {
         HitboxSize       = "Tamaño Hitbox",
         InfiniteAmmo     = "Munición infinita",
         InfiniteAmmoDesc = "Mantener munición en 999",
-        FreezeAmmo       = "Congelar munición",
-        FreezeAmmoDesc   = "Impedir que disminuya la munición",
-        FastReload       = "Recarga rápida",
-        FastReloadDesc   = "Recargar arma equipada al instante",
         RapidFire        = "Fuego rápido",
         RapidFireDesc    = "Cadencia de fuego máxima (requiere ACS API)",
         RapidFireSpeed   = "Cadencia de fuego (RPM)",
@@ -275,7 +259,7 @@ local Translations = {
         AntiAFKDesc      = "Evitar expulsión por inactividad",
         LangSelect       = "Idioma",
         CreditsTitle     = "Tactical SWAT Hub",
-        CreditsContent   = "Creado por Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.6 — reescritura CongelarMunición | exploración dinámica SinRetroceso | bucle RecargaRápida | triple-kill Wallbang | control RPM",
+        CreditsContent   = "Creado por Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.7 — interceptor ratón Wallbang | SinRetroceso cámara | límite RPM Disparo rápido | fix proximidad Auto Arresto",
         Loaded           = "¡Hub cargado! Ventaja táctica activada.",
     },
     PT = {
@@ -293,10 +277,6 @@ local Translations = {
         HitboxSize       = "Tamanho Hitbox",
         InfiniteAmmo     = "Munição infinita",
         InfiniteAmmoDesc = "Manter munição em 999",
-        FreezeAmmo       = "Congelar munição",
-        FreezeAmmoDesc   = "Impedir diminuição de munição",
-        FastReload       = "Recarga rápida",
-        FastReloadDesc   = "Recarregar arma equipada instantaneamente",
         RapidFire        = "Fogo rápido",
         RapidFireDesc    = "Taxa de fogo máxima (requer ACS API)",
         RapidFireSpeed   = "Cadência de tiro (RPM)",
@@ -333,7 +313,7 @@ local Translations = {
         AntiAFKDesc      = "Evitar expulsão por inatividade",
         LangSelect       = "Idioma",
         CreditsTitle     = "Tactical SWAT Hub",
-        CreditsContent   = "Criado por Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.6 — reescrita CongelarMunição | varredura dinâmica SemRecuo | loop RecargaRápida | triple-kill Wallbang | controle RPM",
+        CreditsContent   = "Criado por Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.7 — interceptador Wallbang | Sem Recuo câmera | limite RPM Tiro Rápido | correção proximidade Auto Prisão",
         Loaded           = "Hub carregado! Vantagem tática ativada.",
     },
     RU = {
@@ -351,10 +331,6 @@ local Translations = {
         HitboxSize       = "Размер хитбокса",
         InfiniteAmmo     = "Бесконечные патроны",
         InfiniteAmmoDesc = "Держать патроны на уровне 999",
-        FreezeAmmo       = "Заморозить патроны",
-        FreezeAmmoDesc   = "Предотвратить расход патронов",
-        FastReload       = "Быстрая перезарядка",
-        FastReloadDesc   = "Мгновенная перезарядка оружия",
         RapidFire        = "Быстрый огонь",
         RapidFireDesc    = "Максимальная скорострельность (требуется ACS API)",
         RapidFireSpeed   = "Скорострельность (RPM)",
@@ -391,7 +367,7 @@ local Translations = {
         AntiAFKDesc      = "Предотвратить кик за бездействие",
         LangSelect       = "Язык",
         CreditsTitle     = "Tactical SWAT Hub",
-        CreditsContent   = "Создано Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.6 — переработка ЗаморозкиПатронов | динамическое сканирование БезОтдачи | цикл БыстройПерезарядки | тройное убийство Wallbang | регулятор RPM",
+        CreditsContent   = "Создано Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.7 — перехват мыши Wallbang | камера Без отдачи | ограничение RPM Быстрый огонь | исправление близости Авто Арест",
         Loaded           = "Hub загружен! Тактическое преимущество активировано.",
     },
     IT = {
@@ -409,10 +385,6 @@ local Translations = {
         HitboxSize       = "Dimensione Hitbox",
         InfiniteAmmo     = "Munizioni infinite",
         InfiniteAmmoDesc = "Mantenere le munizioni a 999",
-        FreezeAmmo       = "Congela munizioni",
-        FreezeAmmoDesc   = "Impedisce la diminuzione delle munizioni",
-        FastReload       = "Ricarica veloce",
-        FastReloadDesc   = "Ricaricare immediatamente l'arma equipaggiata",
         RapidFire        = "Fuoco rapido",
         RapidFireDesc    = "Cadenza di fuoco massima (richiede ACS API)",
         RapidFireSpeed   = "Cadenza di fuoco (RPM)",
@@ -449,7 +421,7 @@ local Translations = {
         AntiAFKDesc      = "Previeni il kick per inattività",
         LangSelect       = "Lingua",
         CreditsTitle     = "Tactical SWAT Hub",
-        CreditsContent   = "Creato da Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.6 — riscrittura CongelatoMunizioni | scansione dinamica NessunRinculo | ciclo RicaricaVeloce | triple-kill Wallbang | cursore RPM",
+        CreditsContent   = "Creato da Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.7 — intercettazione Wallbang | Nessun Rinculo camera | limite RPM Fuoco Rapido | fix prossimità Auto Arresto",
         Loaded           = "Hub caricato! Vantaggio tattico attivato.",
     },
     NL = {
@@ -467,10 +439,6 @@ local Translations = {
         HitboxSize       = "Hitbox grootte",
         InfiniteAmmo     = "Oneindige munitie",
         InfiniteAmmoDesc = "Munitiewaarden op 999 houden",
-        FreezeAmmo       = "Munitie bevriezen",
-        FreezeAmmoDesc   = "Voorkom dat munitie afneemt",
-        FastReload       = "Snel herladen",
-        FastReloadDesc   = "Uitgerust wapen direct herladen",
         RapidFire        = "Snel vuren",
         RapidFireDesc    = "Vuursnelheid op maximum instellen (ACS API vereist)",
         RapidFireSpeed   = "Vuursnelheid (RPM)",
@@ -507,7 +475,7 @@ local Translations = {
         AntiAFKDesc      = "Kick door inactiviteit voorkomen",
         LangSelect       = "Taal",
         CreditsTitle     = "Tactical SWAT Hub",
-        CreditsContent   = "Gemaakt door Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.6 — MunitieBevriezen-herschrijving | dynamische scan GeenTerugslag | SnelHerladen-lus | Wallbang-triple-kill | RPM-schuifregelaar",
+        CreditsContent   = "Gemaakt door Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.7 — Wallbang muisonderschepping | Camera Geen Terugslag | RapidFire RPM-limiet | AutoArrest proximiteitsfix",
         Loaded           = "Hub geladen! Tactisch voordeel geactiveerd.",
     },
     PL = {
@@ -525,10 +493,6 @@ local Translations = {
         HitboxSize       = "Rozmiar Hitboxa",
         InfiniteAmmo     = "Nieskończona amunicja",
         InfiniteAmmoDesc = "Utrzymuj amunicję na poziomie 999",
-        FreezeAmmo       = "Zamroz amunicję",
-        FreezeAmmoDesc   = "Zapobiegaj zmniejszaniu się amunicji",
-        FastReload       = "Szybkie przeładowanie",
-        FastReloadDesc   = "Natychmiastowe przeładowanie wyposażonej broni",
         RapidFire        = "Szybki ogień",
         RapidFireDesc    = "Maksymalna szybkostrzelność (wymaga ACS API)",
         RapidFireSpeed   = "Szybkostrzelność (RPM)",
@@ -565,7 +529,7 @@ local Translations = {
         AntiAFKDesc      = "Zapobiegaj wyrzuceniu za bezczynność",
         LangSelect       = "Język",
         CreditsTitle     = "Tactical SWAT Hub",
-        CreditsContent   = "Stworzone przez Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.6 — przepisanie ZamroźAmunicję | dynamiczne skanowanie BezOdrzutu | pętla SzybkiegoPrzeładowania | potrójny kill Wallbang | suwak RPM",
+        CreditsContent   = "Stworzone przez Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.7 — przechwycenie myszy Wallbang | kamera Bez Odrzutu | limit RPM Szybki Ogień | naprawa bliskości Auto Areszt",
         Loaded           = "Hub załadowany! Taktyczna przewaga aktywowana.",
     },
     ZH = {
@@ -583,10 +547,6 @@ local Translations = {
         HitboxSize       = "判定框大小",
         InfiniteAmmo     = "无限弹药",
         InfiniteAmmoDesc = "保持弹药值为999",
-        FreezeAmmo       = "冻结弹药",
-        FreezeAmmoDesc   = "防止弹药减少",
-        FastReload       = "快速装弹",
-        FastReloadDesc   = "立即重新装弹",
         RapidFire        = "快速射击",
         RapidFireDesc    = "将射速设为最大（需要 ACS API）",
         RapidFireSpeed   = "射速 (RPM)",
@@ -623,7 +583,7 @@ local Translations = {
         AntiAFKDesc      = "防止因挂机被踢出",
         LangSelect       = "语言",
         CreditsTitle     = "战术特警Hub",
-        CreditsContent   = "由 Rival960 创建\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.6 — 冻结弹药重写 | 无后坐力动态扫描 | 快速换弹循环 | Wallbang 三重击杀 | RPM 滑块",
+        CreditsContent   = "由 Rival960 创建\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.7 — Wallbang鼠标拦截 | 相机无后坐力 | 快速射击RPM上限 | 自动逮捕近距离修复",
         Loaded           = "Hub已加载！战术优势已激活。",
     },
     JA = {
@@ -641,10 +601,6 @@ local Translations = {
         HitboxSize       = "ヒットボックスサイズ",
         InfiniteAmmo     = "無限弾薬",
         InfiniteAmmoDesc = "弾薬を999に維持",
-        FreezeAmmo       = "弾薬固定",
-        FreezeAmmoDesc   = "弾薬の減少を防ぐ",
-        FastReload       = "高速リロード",
-        FastReloadDesc   = "装備中の武器を即座にリロード",
         RapidFire        = "ラピッドファイア",
         RapidFireDesc    = "発射レートを最大に設定（ACS API が必要）",
         RapidFireSpeed   = "発射レート (RPM)",
@@ -681,7 +637,7 @@ local Translations = {
         AntiAFKDesc      = "放置キックを防止",
         LangSelect       = "言語",
         CreditsTitle     = "タクティカルSWATHub",
-        CreditsContent   = "Rival960 作\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.6 — 弾薬固定書き直し | リコイルなし動的スキャン | 高速リロードループ | Wallbang 三重キル | RPM スライダー",
+        CreditsContent   = "Rival960 作\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.7 — Wallbangマウス割り込み | カメラ無反動 | RapidFire RPM上限 | AutoArrest近接修正",
         Loaded           = "Hub読み込み完了！タクティカル優位性が有効化されました。",
     },
     TR = {
@@ -699,10 +655,6 @@ local Translations = {
         HitboxSize       = "Hitbox Boyutu",
         InfiniteAmmo     = "Sonsuz Mermi",
         InfiniteAmmoDesc = "Mermi değerlerini 999'da tut",
-        FreezeAmmo       = "Mermiyi Dondur",
-        FreezeAmmoDesc   = "Merminin azalmasını engelle",
-        FastReload       = "Hızlı Şarj",
-        FastReloadDesc   = "Donanımlı silahı anında şarj et",
         RapidFire        = "Hızlı Ateş",
         RapidFireDesc    = "Atış hızını maksimuma ayarla (ACS API gerekli)",
         RapidFireSpeed   = "Atış Hızı (RPM)",
@@ -739,7 +691,7 @@ local Translations = {
         AntiAFKDesc      = "Hareketsizlik kickini önle",
         LangSelect       = "Dil",
         CreditsTitle     = "Tactical SWAT Hub",
-        CreditsContent   = "Rival960 tarafından\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.6 — MermiDondur yeniden yazımı | GeriTepmeYok dinamik tarama | HızlıYenidendoldurma döngüsü | Wallbang üçlü öldürme | RPM kaydırıcısı",
+        CreditsContent   = "Rival960 tarafından\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.7 — Wallbang fare engeli | Kamera Geri Tepme Yok | RapidFire RPM sınırı | AutoArrest yakınlık düzeltmesi",
         Loaded           = "Hub yüklendi! Taktik avantaj aktif.",
     },
     KO = {
@@ -757,10 +709,6 @@ local Translations = {
         HitboxSize       = "히트박스 크기",
         InfiniteAmmo     = "무한 탄약",
         InfiniteAmmoDesc = "탄약 값을 999로 유지",
-        FreezeAmmo       = "탄약 고정",
-        FreezeAmmoDesc   = "탄약 감소 방지",
-        FastReload       = "빠른 장전",
-        FastReloadDesc   = "장착 무기 즉시 장전",
         RapidFire        = "빠른 사격",
         RapidFireDesc    = "발사 속도를 최대로 설정 (ACS API 필요)",
         RapidFireSpeed   = "발사 속도 (RPM)",
@@ -797,7 +745,7 @@ local Translations = {
         AntiAFKDesc      = "비활동으로 인한 킥 방지",
         LangSelect       = "언어",
         CreditsTitle     = "택티컬 스왓 허브",
-        CreditsContent   = "Rival960 제작\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.6 — 탄약고정 재작성 | 무반동 동적 스캔 | 빠른재장전 루프 | Wallbang 트리플 킬 | RPM 슬라이더",
+        CreditsContent   = "Rival960 제작\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.7 — Wallbang 마우스 가로채기 | 카메라 무반동 | RapidFire RPM 제한 | AutoArrest 근접 수정",
         Loaded           = "허브 로드 완료! 전술적 이점 활성화.",
     },
     AR = {
@@ -815,10 +763,6 @@ local Translations = {
         HitboxSize       = "حجم Hitbox",
         InfiniteAmmo     = "ذخيرة لا نهائية",
         InfiniteAmmoDesc = "الإبقاء على الذخيرة عند 999",
-        FreezeAmmo       = "تجميد الذخيرة",
-        FreezeAmmoDesc   = "منع نقص الذخيرة",
-        FastReload       = "إعادة تحميل سريعة",
-        FastReloadDesc   = "إعادة تحميل السلاح المجهز فوراً",
         RapidFire        = "إطلاق نار سريع",
         RapidFireDesc    = "ضبط معدل إطلاق النار على الحد الأقصى (يتطلب ACS API)",
         RapidFireSpeed   = "معدل إطلاق النار (RPM)",
@@ -855,7 +799,7 @@ local Translations = {
         AntiAFKDesc      = "منع الطرد بسبب عدم النشاط",
         LangSelect       = "اللغة",
         CreditsTitle     = "تاكتيكال سوات هاب",
-        CreditsContent   = "أنشأه Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.6 — إعادة كتابة تجميد الذخيرة | مسح ديناميكي بدون ارتداد | حلقة إعادة التحميل السريع | قتل ثلاثي Wallbang | شريط تمرير RPM",
+        CreditsContent   = "أنشأه Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.7 — اعتراض الفأرة Wallbang | الكاميرا بلا ارتداد | حد RPM RapidFire | إصلاح قرب AutoArrest",
         Loaded           = "تم تحميل الهاب! تم تفعيل الميزة التكتيكية.",
     },
     VI = {
@@ -873,10 +817,6 @@ local Translations = {
         HitboxSize       = "Kích thước Hitbox",
         InfiniteAmmo     = "Đạn vô hạn",
         InfiniteAmmoDesc = "Giữ tất cả giá trị đạn ở mức 999",
-        FreezeAmmo       = "Đóng băng đạn",
-        FreezeAmmoDesc   = "Ngăn đạn giảm",
-        FastReload       = "Nạp đạn nhanh",
-        FastReloadDesc   = "Nạp đạn ngay lập tức",
         RapidFire        = "Bắn nhanh",
         RapidFireDesc    = "Đặt tốc độ bắn tối đa (yêu cầu ACS API)",
         RapidFireSpeed   = "Tốc độ bắn (RPM)",
@@ -913,7 +853,7 @@ local Translations = {
         AntiAFKDesc      = "Ngăn bị đuổi vì không hoạt động",
         LangSelect       = "Ngôn ngữ",
         CreditsTitle     = "Tactical SWAT Hub",
-        CreditsContent   = "Tạo bởi Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.6 — viết lại ĐóngBăngĐạn | quét động KhôngGiật | vòng lặp NạpĐạnNhanh | triple-kill Wallbang | thanh trượt RPM",
+        CreditsContent   = "Tạo bởi Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.7 — Wallbang chặn chuột | Camera không giật | giới hạn RPM RapidFire | sửa lỗi khoảng cách AutoArrest",
         Loaded           = "Hub đã tải! Lợi thế chiến thuật được kích hoạt.",
     },
     SV = {
@@ -931,10 +871,6 @@ local Translations = {
         HitboxSize       = "Hitbox-storlek",
         InfiniteAmmo     = "Oändlig ammunition",
         InfiniteAmmoDesc = "Håll ammunition på 999",
-        FreezeAmmo       = "Frys ammunition",
-        FreezeAmmoDesc   = "Förhindra att ammunition minskar",
-        FastReload       = "Snabb omladdning",
-        FastReloadDesc   = "Omedelbar omladdning av utrustat vapen",
         RapidFire        = "Snabbskjutning",
         RapidFireDesc    = "Ställ in eldhastighet på max (ACS API krävs)",
         RapidFireSpeed   = "Eldhastighet (RPM)",
@@ -971,7 +907,7 @@ local Translations = {
         AntiAFKDesc      = "Förhindra kick på grund av inaktivitet",
         LangSelect       = "Språk",
         CreditsTitle     = "Tactical SWAT Hub",
-        CreditsContent   = "Skapad av Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.6 — frysAmmo-omskrivning | IngaRekyl-dynamisk-skanning | snabbladdnings-loop | Wallbang-triple-kill | RPM-reglage",
+        CreditsContent   = "Skapad av Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.7 — Wallbang musavlyssning | Kamera Inget Rekyl | RapidFire RPM-gräns | AutoArrest närhetsfixning",
         Loaded           = "Hub laddad! Taktisk fördel aktiverad.",
     },
     EL = {
@@ -989,10 +925,6 @@ local Translations = {
         HitboxSize       = "Μέγεθος Hitbox",
         InfiniteAmmo     = "Άπειρα πυρομαχικά",
         InfiniteAmmoDesc = "Διατήρηση πυρομαχικών στο 999",
-        FreezeAmmo       = "Πάγωμα πυρομαχικών",
-        FreezeAmmoDesc   = "Αποτροπή μείωσης πυρομαχικών",
-        FastReload       = "Γρήγορη επαναφόρτιση",
-        FastReloadDesc   = "Άμεση επαναφόρτιση εξοπλισμένου όπλου",
         RapidFire        = "Γρήγορη βολή",
         RapidFireDesc    = "Ρύθμιση ρυθμού πυροδότησης στο μέγιστο (απαιτείται ACS API)",
         RapidFireSpeed   = "Ρυθμός πυρός (RPM)",
@@ -1029,7 +961,7 @@ local Translations = {
         AntiAFKDesc      = "Αποτροπή αποβολής λόγω αδράνειας",
         LangSelect       = "Γλώσσα",
         CreditsTitle     = "Tactical SWAT Hub",
-        CreditsContent   = "Δημιουργήθηκε από τον Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.6 — επαναγραφή ΠάγωμαΠυρομαχικών | δυναμική σάρωση ΧωρίςΑντίδραση | βρόχος ΓρήγορηΕπαναφόρτωση | τριπλή εξόντωση Wallbang | ρυθμιστής RPM",
+        CreditsContent   = "Δημιουργήθηκε από τον Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.7 — Wallbang αναχαίτιση ποντικιού | κάμερα Χωρίς Recoil | όριο RPM RapidFire | διόρθωση εγγύτητας AutoArrest",
         Loaded           = "Hub φορτώθηκε! Τακτικό πλεονέκτημα ενεργοποιήθηκε.",
     },
     RO = {
@@ -1047,10 +979,6 @@ local Translations = {
         HitboxSize       = "Dimensiune Hitbox",
         InfiniteAmmo     = "Muniție infinită",
         InfiniteAmmoDesc = "Menținerea muniției la 999",
-        FreezeAmmo       = "Îngheață muniția",
-        FreezeAmmoDesc   = "Previne scăderea muniției",
-        FastReload       = "Reîncărcare rapidă",
-        FastReloadDesc   = "Reîncarcă imediat arma echipată",
         RapidFire        = "Foc rapid",
         RapidFireDesc    = "Setează rata de foc la maximum (necesită ACS API)",
         RapidFireSpeed   = "Viteză de foc (RPM)",
@@ -1087,7 +1015,7 @@ local Translations = {
         AntiAFKDesc      = "Previne kickul din cauza inactivității",
         LangSelect       = "Limbă",
         CreditsTitle     = "Tactical SWAT Hub",
-        CreditsContent   = "Creat de Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.6 — rescriere înghețareMunițe | scanare dinamică FărăRecul | buclă ReîncărcarRapidă | ucidere triplă Wallbang | cursor RPM",
+        CreditsContent   = "Creat de Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.7 — Wallbang interceptare mouse | Camera fără recul | limită RPM RapidFire | remediere proximitate AutoArrest",
         Loaded           = "Hub încărcat! Avantaj tactic activat.",
     },
     UK = {
@@ -1105,10 +1033,6 @@ local Translations = {
         HitboxSize       = "Розмір хітбоксу",
         InfiniteAmmo     = "Безкінечні патрони",
         InfiniteAmmoDesc = "Тримати патрони на рівні 999",
-        FreezeAmmo       = "Заморозити патрони",
-        FreezeAmmoDesc   = "Запобігти витраті патронів",
-        FastReload       = "Швидке перезаряджання",
-        FastReloadDesc   = "Миттєве перезаряджання зброї",
         RapidFire        = "Швидкий вогонь",
         RapidFireDesc    = "Максимальна швидкість стрільби (потрібен ACS API)",
         RapidFireSpeed   = "Швидкість стрільби (RPM)",
@@ -1145,7 +1069,7 @@ local Translations = {
         AntiAFKDesc      = "Запобігти кіку за бездіяльність",
         LangSelect       = "Мова",
         CreditsTitle     = "Tactical SWAT Hub",
-        CreditsContent   = "Створено Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.6 — переробка ЗаморозкиПатронів | динамічне сканування БезВіддачі | цикл ШвидкоїПерезарядки | потрійне вбивство Wallbang | регулятор RPM",
+        CreditsContent   = "Створено Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.7 — перехоплення миші Wallbang | камера Без віддачі | обмеження RPM RapidFire | виправлення близькості AutoArrest",
         Loaded           = "Hub завантажено! Тактичну перевагу активовано.",
     },
     CS = {
@@ -1163,10 +1087,6 @@ local Translations = {
         HitboxSize       = "Velikost Hitboxu",
         InfiniteAmmo     = "Nekonečná munice",
         InfiniteAmmoDesc = "Udržovat munici na 999",
-        FreezeAmmo       = "Zmrazit munici",
-        FreezeAmmoDesc   = "Zabránit snižování munice",
-        FastReload       = "Rychlé přebíjení",
-        FastReloadDesc   = "Okamžité přebití vybavené zbraně",
         RapidFire        = "Rychlá střelba",
         RapidFireDesc    = "Nastavit kadenci na maximum (vyžaduje ACS API)",
         RapidFireSpeed   = "Rychlost palby (RPM)",
@@ -1203,7 +1123,7 @@ local Translations = {
         AntiAFKDesc      = "Zabránit kicku za nečinnost",
         LangSelect       = "Jazyk",
         CreditsTitle     = "Tactical SWAT Hub",
-        CreditsContent   = "Vytvořil Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.6 — přepis ZamrznutíMunice | dynamické skenování BezZpětnéhoRázu | smyčka RychloPřebíjení | trojité zabití Wallbang | posuvník RPM",
+        CreditsContent   = "Vytvořil Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.7 — zachycení myši Wallbang | kamera Bez Zpětného Rázu | limit RPM RapidFire | oprava blízkosti AutoArrest",
         Loaded           = "Hub načten! Taktická výhoda aktivována.",
     },
     DA = {
@@ -1221,10 +1141,6 @@ local Translations = {
         HitboxSize       = "Hitbox-størrelse",
         InfiniteAmmo     = "Uendelig ammunition",
         InfiniteAmmoDesc = "Hold ammunition på 999",
-        FreezeAmmo       = "Frys ammunition",
-        FreezeAmmoDesc   = "Forhindre at ammunition falder",
-        FastReload       = "Hurtig genopfyldning",
-        FastReloadDesc   = "Øjeblikkelig genopfyldning af udrustet våben",
         RapidFire        = "Hurtig skydning",
         RapidFireDesc    = "Sæt skudfrekvens til maksimum (kræver ACS API)",
         RapidFireSpeed   = "Skudhastighed (RPM)",
@@ -1261,7 +1177,7 @@ local Translations = {
         AntiAFKDesc      = "Forhindre kick pga. inaktivitet",
         LangSelect       = "Sprog",
         CreditsTitle     = "Tactical SWAT Hub",
-        CreditsContent   = "Oprettet af Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.6 — fryseAmmo-omskrivning | IngenRekyl-dynamisk-scanning | hurtiggenopladnings-løkke | Wallbang-triple-drab | RPM-skyder",
+        CreditsContent   = "Oprettet af Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.7 — Wallbang museopfangning | Kamera Ingen Recoil | RapidFire RPM-grænse | AutoArrest nærhedsfix",
         Loaded           = "Hub indlæst! Taktisk fordel aktiveret.",
     },
 }
@@ -1283,17 +1199,11 @@ local Settings = {
     HitboxSize      = 4,
     -- Weapons
     InfiniteAmmo    = false,
-    FreezeAmmo      = false,
     RapidFire       = false,
-    RapidFireSpeed  = 1200,
+    RapidFireSpeed  = 850,
     Wallbang        = false,
     NoRecoil        = false,
-    _origRecoil     = nil,
     _origShootRate  = nil,
-    _origPenetration= nil,
-    _origIgnoreProt = nil,
-    _origTorsoDmg   = nil,
-    _origLimbDmg    = nil,
 
     -- Movement
     Fly             = false,
@@ -1810,6 +1720,53 @@ local function isSurrendered(model)
 end
 
 -- ───────────────────────────────────────────────────────────────
+-- WALLBANG INPUT (BUG 3 — mouse-intercept approach)
+-- ───────────────────────────────────────────────────────────────
+local _wallbangInputConn = nil
+local function setupWallbangInput()
+    if _wallbangInputConn then _wallbangInputConn:Disconnect() end
+    _wallbangInputConn = nil
+    local ok, mouse = pcall(function() return LocalPlayer:GetMouse() end)
+    if not ok or not mouse then return end
+    _wallbangInputConn = mouse.Button1Down:Connect(function()
+        if not Settings.Wallbang then return end
+        local myHRP = getHRP()
+        if not myHRP then return end
+        local suspects = getAllSuspects()
+        if #suspects == 0 then return end
+        local saved = {}
+        -- Bring all live suspects to point-blank range (1.5 studs around player)
+        for i, s in ipairs(suspects) do
+            local sh  = s:FindFirstChild("HumanoidRootPart")
+            local hum = s:FindFirstChildOfClass("Humanoid")
+            if sh and hum and hum.Health > 0 then
+                saved[i] = sh.CFrame
+                local ang = (i-1) * (2*math.pi / math.max(#suspects, 1))
+                pcall(function()
+                    sh.CFrame = CFrame.new(
+                        myHRP.Position + Vector3.new(
+                            math.cos(ang)*1.5, 0, math.sin(ang)*1.5))
+                end)
+            end
+        end
+        -- Restore positions after ACS raycast window (0.15s)
+        task.delay(0.15, function()
+            for i, s in ipairs(suspects) do
+                local sh = s:FindFirstChild("HumanoidRootPart")
+                if sh and saved[i] then
+                    pcall(function() sh.CFrame = saved[i] end)
+                end
+            end
+        end)
+    end)
+end
+
+-- ───────────────────────────────────────────────────────────────
+-- NO RECOIL camera-correction variable (BUG 4)
+-- ───────────────────────────────────────────────────────────────
+local _noRecoilPrevCF = nil
+
+-- ───────────────────────────────────────────────────────────────
 -- OVERLAY UI — on-screen buttons (NOT inside Rayfield)
 --   Fly  ▲  — visible only when flying (top)
 --   Fly  ▼  — visible only when flying (below)
@@ -1884,6 +1841,7 @@ end
 
 -- Create overlay UI now (after LocalPlayer is available)
 createOverlayUI()
+setupWallbangInput()
 
 -- ───────────────────────────────────────────────────────────────
 -- TABS
@@ -1989,79 +1947,7 @@ TabWeapons:CreateToggle({
     end,
 })
 
--- b) Freeze Ammo
-TabWeapons:CreateToggle({
-    Name         = T("FreezeAmmo"),
-    CurrentValue = Settings.FreezeAmmo,
-    Flag         = "FreezeAmmo",
-    Callback     = function(v)
-        Settings.FreezeAmmo = v
-        if v then
-            task.spawn(function()
-                while Settings.FreezeAmmo do
-                    local f2, i2, cfg2 = getACSConfig()
-                    if cfg2 then
-                        cfg2.Ammo        = 99999
-                        cfg2.AmmoInGun   = 99999
-                        cfg2.StoredAmmo  = math.huge
-                        if type(cfg2.__MagBase)=="table" then
-                            cfg2.__MagBase.Ammo      = 999
-                            cfg2.__MagBase.AmmoInGun = 999
-                        end
-                        if f2 and debug and debug.setupvalue then
-                            pcall(debug.setupvalue, f2, i2, cfg2)
-                        end
-                    else
-                        Rayfield:Notify({Title="Weapons", Content="Fire your weapon once to activate", Duration=4})
-                        Settings.FreezeAmmo = false
-                        break
-                    end
-                    task.wait(0.1)
-                end
-            end)
-        end
-    end,
-})
-
-TabWeapons:CreateDivider()
-
--- c) Fast Reload (3-second sustained loop)
-TabWeapons:CreateButton({
-    Name     = T("FastReload"),
-    Callback = function()
-        task.spawn(function()
-            local deadline = tick() + 3
-            while tick() < deadline do
-                local f3, i3, cfg3 = getACSConfig()
-                if cfg3 then
-                    cfg3.Ammo       = 99999
-                    cfg3.AmmoInGun  = 99999
-                    cfg3.StoredAmmo = math.huge
-                    cfg3.Jammed     = false
-                    -- Dynamically cancel reload state if field exists
-                    for _, key in ipairs({"IsReloading","Reloading","Reload",
-                                          "IsReload","ReloadActive"}) do
-                        if cfg3[key] ~= nil then cfg3[key] = false end
-                    end
-                    if type(cfg3.__MagBase)=="table" then
-                        cfg3.__MagBase.Ammo      = 999
-                        cfg3.__MagBase.AmmoInGun = 999
-                    end
-                    pcall(debug.setupvalue, f3, i3, cfg3)
-                    Rayfield:Notify({Title=T("FastReload"), Content="✓ Reloaded!", Duration=2})
-                else
-                    Rayfield:Notify({Title=T("FastReload"),
-                        Content="Fire your weapon once to activate", Duration=3})
-                    break
-                end
-                task.wait(0.1)
-            end
-        end)
-    end,
-})
-
-TabWeapons:CreateDivider()
-
+-- b) Rapid Fire toggle
 -- d) Rapid Fire toggle
 TabWeapons:CreateToggle({
     Name         = T("RapidFire"),
@@ -2094,159 +1980,50 @@ TabWeapons:CreateToggle({
                 pcall(function()
                     if Settings._origShootRate ~= nil then
                         setACSValue("ShootRate", Settings._origShootRate)
+                        setACSValue("Jammed", false)
+                        _acsCache = {func=nil, idx=nil, tbl=nil}
                     end
                 end)
+                Rayfield:Notify({Title="Rapid Fire",
+                    Content="Weapon restored — if damage is still broken, rejoin the game.",
+                    Duration=4})
             end)
         else
             if Settings._origShootRate ~= nil then
                 setACSValue("ShootRate", Settings._origShootRate)
+                setACSValue("Jammed", false)
+                _acsCache = {func=nil, idx=nil, tbl=nil}
             end
+            Rayfield:Notify({Title="Rapid Fire",
+                Content="Weapon restored — if damage is still broken, rejoin the game.",
+                Duration=4})
         end
     end,
 })
 
 TabWeapons:CreateSlider({
     Name         = T("RapidFireSpeed"),
-    Range        = {300, 3000},
-    Increment    = 50,
+    Range        = {400, 1000},
+    Increment    = 25,
     CurrentValue = Settings.RapidFireSpeed,
     Flag         = "RapidFireSpeed",
     Callback     = function(v) Settings.RapidFireSpeed = v end,
 })
 
--- e) Wallbang + One Shot toggle
+-- c) Wallbang + One Shot toggle
 TabWeapons:CreateToggle({
     Name         = T("Wallbang"),
+    Description  = T("WallbangDesc"),
     CurrentValue = Settings.Wallbang,
     Flag         = "Wallbang",
     Callback     = function(v)
         Settings.Wallbang = v
-        if v then
-            task.spawn(function()
-                -- Cache originals on first activation
-                local _, _, cfg = getACSConfig()
-                if cfg and Settings._origPenetration == nil then
-                    Settings._origPenetration = cfg.BulletPenetration or 70
-                    Settings._origIgnoreProt  = cfg.IgnoreProtection  or false
-                    Settings._origTorsoDmg    = cfg.TorsoDamage and {cfg.TorsoDamage[1], cfg.TorsoDamage[2]} or {57,62}
-                    Settings._origLimbDmg     = cfg.LimbDamage  and {cfg.LimbDamage[1],  cfg.LimbDamage[2]}  or {30,35}
-                elseif not cfg and Settings._origPenetration == nil then
-                    Settings._origPenetration = 70
-                    Settings._origIgnoreProt  = false
-                    Settings._origTorsoDmg    = {57,62}
-                    Settings._origLimbDmg     = {30,35}
-                end
-                local evFolder = nil
-                pcall(function()
-                    if _acsCache.func and debug and debug.getupvalue then
-                        local ok7, ev7 = pcall(debug.getupvalue, _acsCache.func, 7)
-                        if ok7 and typeof(ev7)=="Instance" then evFolder=ev7 end
-                    end
-                    if not evFolder then
-                        local acs = game:GetService("ReplicatedStorage"):FindFirstChild("ACS_Engine")
-                        if acs then evFolder = acs:FindFirstChild("Events") end
-                    end
-                end)
-                while Settings.Wallbang do
-                    if not isNonLethal() then
-                        local fw, iw, cfw = getACSConfig()
-                        if cfw then
-                            cfw.BulletPenetration = 100
-                            cfw.IgnoreProtection  = true
-                            if type(cfw.TorsoDamage) == "table" then
-                                cfw.TorsoDamage[1] = 9999; cfw.TorsoDamage[2] = 9999
-                            end
-                            if type(cfw.LimbDamage) == "table" then
-                                cfw.LimbDamage[1] = 9999; cfw.LimbDamage[2] = 9999
-                            end
-                            if fw and debug and debug.setupvalue then
-                                pcall(debug.setupvalue, fw, iw, cfw)
-                            end
-                        else
-                            Rayfield:Notify({Title="Weapons", Content="Fire your weapon once to activate", Duration=4})
-                            Settings.Wallbang = false
-                            break
-                        end
-                    end
-                    -- Triple-path NPC kill
-                    for _, obj in ipairs(Workspace:GetChildren()) do
-                        if isSuspect(obj) then
-                            local hum = obj:FindFirstChildOfClass("Humanoid")
-                            local hrp = obj:FindFirstChild("HumanoidRootPart")
-                            if hum and hum.Health > 0 then
-                                -- Path A: TakeDamage
-                                pcall(function() hum:TakeDamage(9999) end)
-                                -- Path B: RemoteFunction invocations
-                                if hrp and evFolder then
-                                    for _, remote in ipairs(evFolder:GetChildren()) do
-                                        if remote:IsA("RemoteFunction") then
-                                            pcall(function() remote:InvokeServer(hrp,obj,9999,"TorsoDamage") end)
-                                            pcall(function() remote:InvokeServer(hrp,9999) end)
-                                        end
-                                    end
-                                end
-                                -- Path C: health direct fallback
-                                pcall(function() hum.Health = 0 end)
-                            end
-                        end
-                    end
-                    task.wait(0.3)
-                end
-                -- Restore originals when loop exits
-                pcall(function()
-                    if Settings._origPenetration ~= nil then
-                        local frx, irx, crx = getACSConfig()
-                        if crx then
-                            crx.BulletPenetration = Settings._origPenetration
-                            crx.IgnoreProtection  = Settings._origIgnoreProt
-                            if type(crx.TorsoDamage)=="table" and Settings._origTorsoDmg then
-                                crx.TorsoDamage[1]=Settings._origTorsoDmg[1]
-                                crx.TorsoDamage[2]=Settings._origTorsoDmg[2]
-                            end
-                            if type(crx.LimbDamage)=="table" and Settings._origLimbDmg then
-                                crx.LimbDamage[1]=Settings._origLimbDmg[1]
-                                crx.LimbDamage[2]=Settings._origLimbDmg[2]
-                            end
-                            if frx and debug and debug.setupvalue then
-                                pcall(debug.setupvalue, frx, irx, crx)
-                            end
-                        end
-                        Settings._origPenetration = nil
-                        Settings._origIgnoreProt  = nil
-                        Settings._origTorsoDmg    = nil
-                        Settings._origLimbDmg     = nil
-                    end
-                end)
-            end)
-        else
-            -- Restore originals immediately when toggled off
-            if Settings._origPenetration ~= nil then
-                local fro, iro, cro = getACSConfig()
-                if cro then
-                    cro.BulletPenetration = Settings._origPenetration
-                    cro.IgnoreProtection  = Settings._origIgnoreProt
-                    if type(cro.TorsoDamage)=="table" and Settings._origTorsoDmg then
-                        cro.TorsoDamage[1]=Settings._origTorsoDmg[1]
-                        cro.TorsoDamage[2]=Settings._origTorsoDmg[2]
-                    end
-                    if type(cro.LimbDamage)=="table" and Settings._origLimbDmg then
-                        cro.LimbDamage[1]=Settings._origLimbDmg[1]
-                        cro.LimbDamage[2]=Settings._origLimbDmg[2]
-                    end
-                    if fro and debug and debug.setupvalue then
-                        pcall(debug.setupvalue, fro, iro, cro)
-                    end
-                end
-                Settings._origPenetration = nil
-                Settings._origIgnoreProt  = nil
-                Settings._origTorsoDmg    = nil
-                Settings._origLimbDmg     = nil
-            end
-        end
+        -- No loop needed: mouse.Button1Down handler is always active,
+        -- reads Settings.Wallbang at the moment of each shot.
     end,
 })
 
--- f) NoRecoil toggle
+-- d) NoRecoil toggle
 TabWeapons:CreateToggle({
     Name         = T("NoRecoil"),
     Description  = T("NoRecoilDesc"),
@@ -2254,71 +2031,11 @@ TabWeapons:CreateToggle({
     Flag         = "NoRecoil",
     Callback     = function(v)
         Settings.NoRecoil = v
-        if v then
-            task.spawn(function()
-                while Settings.NoRecoil do
-                    local fn, idx, cfg = getACSConfig()
-                    if cfg then
-                        -- Dynamic discovery: find actual recoil fields in this ACS build
-                        if Settings._origRecoil == nil then
-                            local discovered = {}
-                            for k, v in pairs(cfg) do
-                                if type(v) == "number" then
-                                    local kl = tostring(k):lower()
-                                    if kl:find("recoil") or kl:find("kick")
-                                        or kl:find("shake") or kl:find("spread")
-                                        or kl:find("sway")  or kl:find("drift") then
-                                        discovered[k] = v
-                                    end
-                                end
-                            end
-                            if next(discovered) then
-                                Settings._origRecoil = discovered
-                            end
-                        end
-                        -- Zero all discovered recoil fields
-                        if Settings._origRecoil then
-                            for k in pairs(Settings._origRecoil) do cfg[k] = 0 end
-                        end
-                        if fn and debug and debug.setupvalue then
-                            pcall(debug.setupvalue, fn, idx, cfg)
-                        end
-                    end
-                    task.wait(0.3)
-                end
-                -- Restore originals on toggle off
-                if Settings._origRecoil then
-                    local fn2, idx2, cfg2 = getACSConfig()
-                    if cfg2 then
-                        for k, val in pairs(Settings._origRecoil) do
-                            if val ~= nil then cfg2[k] = val end
-                        end
-                        if fn2 and debug and debug.setupvalue then
-                            pcall(debug.setupvalue, fn2, idx2, cfg2)
-                        end
-                    end
-                    Settings._origRecoil = nil
-                end
-            end)
-        else
-            -- Immediate restore if already cached
-            if Settings._origRecoil then
-                local fn3, idx3, cfg3 = getACSConfig()
-                if cfg3 then
-                    for k, val in pairs(Settings._origRecoil) do
-                        if val ~= nil then cfg3[k] = val end
-                    end
-                    if fn3 and debug and debug.setupvalue then
-                        pcall(debug.setupvalue, fn3, idx3, cfg3)
-                    end
-                end
-                Settings._origRecoil = nil
-            end
-        end
+        if not v then _noRecoilPrevCF = nil end
     end,
 })
 
--- g) Wall Check (one-shot raycast button)
+-- e) Wall Check (one-shot raycast button)
 TabWeapons:CreateButton({
     Name     = T("WallCheck"),
     Callback = function()
@@ -2691,25 +2408,36 @@ local function tryAutoArrest()
         if isCivilian(obj) then
             local npcHRP = obj:FindFirstChild("HumanoidRootPart")
             if npcHRP and inRange(npcHRP.Position) then
-                -- Fire ShoutNPC to make civilian comply (required before cuff prompt appears)
+                -- 1. Shout to make NPC comply (works at any distance)
                 if ShoutNPC then
                     pcall(function() ShoutNPC:FireServer(obj) end)
                 end
-                -- Short delay so the kneel animation registers before we fire arrest prompt
-                task.delay(0.3, function()
-                    local surrendered = isSurrendered(obj)
+                -- 2. Briefly bring suspect next to player so proximity prompt
+                --    fires within MaxActivationDistance, then restore position
+                local savedNpcCF = npcHRP.CFrame
+                pcall(function()
+                    npcHRP.CFrame = CFrame.new(hrp.Position + Vector3.new(2, 0, 0))
+                end)
+                task.delay(0.1, function()
+                    -- Fire all arrest prompts while suspect is at point-blank
                     for _, pp in ipairs(obj:GetDescendants()) do
                         if pp:IsA("ProximityPrompt") then
                             pcall(function() fireproximityprompt(pp) end)
-                        elseif pp:IsA("ClickDetector") and surrendered then
+                        elseif pp:IsA("ClickDetector") then
                             pcall(function() fireclickdetector(pp) end)
                         end
                     end
+                    -- Restore NPC position after a further 0.3s
+                    task.delay(0.3, function()
+                        local hum = obj:FindFirstChildOfClass("Humanoid")
+                        -- Only restore if the NPC is still alive (not arrested/removed)
+                        if hum and hum.Health > 0 then
+                            pcall(function() npcHRP.CFrame = savedNpcCF end)
+                        end
+                    end)
                 end)
             end
         end
-    end
-
     -- Strategy 2: scan ALL ProximityPrompts by ActionText keyword, within distance
     for _, pp in ipairs(Workspace:GetDescendants()) do
         if pp:IsA("ProximityPrompt") then
@@ -3195,6 +2923,54 @@ RunService.Heartbeat:Connect(function()
 end)
 
 -- ───────────────────────────────────────────────────────────────
+-- NO RECOIL — BindToRenderStep camera-correction (BUG 4 STEP B)
+-- Runs after the default camera update; cancels ACS recoil kick.
+-- ───────────────────────────────────────────────────────────────
+RunService:BindToRenderStep(
+    "SWATNoRecoil",
+    Enum.RenderPriority.Camera.Value + 1,
+    function()
+        if not Settings.NoRecoil then
+            _noRecoilPrevCF = nil
+            return
+        end
+        local cam = Workspace.CurrentCamera
+        if not cam then return end
+
+        if not _noRecoilPrevCF then
+            _noRecoilPrevCF = cam.CFrame
+            return
+        end
+
+        -- Decompose previous and current camera angles
+        local prevX, prevY, prevZ = _noRecoilPrevCF:ToEulerAnglesYXZ()
+        local curX,  curY,  curZ  = cam.CFrame:ToEulerAnglesYXZ()
+
+        -- ACS recoil pushes camera UP (curX decreases / more negative)
+        -- Distinguish recoil from intentional mouse aim using mouse delta:
+        -- mouse.Y < 0 = mouse moved up (player intends to look up)
+        local deltaX = curX - prevX  -- negative = camera went up this frame
+        local ok, md = pcall(function()
+            return UserInputService:GetMouseDelta()
+        end)
+        local mouseMovedUp = ok and md and md.Y < -0.5
+        -- If camera pitched up without matching mouse input → recoil kick
+        if deltaX < -0.02 and not mouseMovedUp then
+            -- Cancel the recoil: restore previous pitch, keep new yaw
+            local pos = cam.CFrame.Position
+            pcall(function()
+                cam.CFrame = CFrame.new(pos)
+                    * CFrame.fromEulerAnglesYXZ(prevX, curY, curZ)
+            end)
+            -- Do not update _noRecoilPrevCF this frame (pitch was forced)
+            return
+        end
+
+        _noRecoilPrevCF = cam.CFrame
+    end
+)
+
+-- ───────────────────────────────────────────────────────────────
 -- INFINITE JUMP — global JumpRequest connection
 -- ───────────────────────────────────────────────────────────────
 UserInputService.JumpRequest:Connect(function()
@@ -3222,6 +2998,7 @@ LocalPlayer.CharacterAdded:Connect(function(char)
         if c:IsA("Tool") then _acsCache = {func=nil, idx=nil, tbl=nil}; _nonLethalUV = nil end
     end)
     createOverlayUI()  -- rebuild overlay buttons after respawn
+    setupWallbangInput()
     if Settings.Fly then
         disableFly()
         task.wait(0.1)
