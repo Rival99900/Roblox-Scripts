@@ -2395,7 +2395,7 @@ local function tryAutoArrest()
         return (pos - hrp.Position).Magnitude <= maxDist
     end
 
-    -- Check if NPC is already arrested/cuffed/dead/has no prompts left
+    -- Check if NPC is already arrested/cuffed/dead
     local function isAlreadyArrested(model)
         local hum = model:FindFirstChildOfClass("Humanoid")
         if not hum or hum.Health <= 0 then return true end
@@ -2411,15 +2411,6 @@ local function tryAutoArrest()
                 end
             end
         end
-        -- If the NPC has NO active ProximityPrompts, it's likely already arrested
-        local hasActivePrompt = false
-        for _, pp in ipairs(model:GetDescendants()) do
-            if pp:IsA("ProximityPrompt") and pp.Enabled then
-                hasActivePrompt = true
-                break
-            end
-        end
-        if not hasActivePrompt then return true end
         -- Check surrendered state (isSurrendered checks animation/tags)
         if isSurrendered and isSurrendered(model) then return true end
         return false
@@ -2918,20 +2909,47 @@ RunService.Heartbeat:Connect(function()
             local hum = obj:FindFirstChildOfClass("Humanoid")
             if hum and hum.Health > 0 then
                 local hrp = obj:FindFirstChild("HumanoidRootPart")
+                local head = obj:FindFirstChild("Head")
                 if hrp then
                     if Settings.Hitbox then
-                        -- Store original size once
+                        local sz = Settings.HitboxSize * 2
+                        -- Expand HRP (for general raycast hits)
                         if not hrp:FindFirstChild("_origSzSWAT") then
                             local sv = Instance.new("Vector3Value")
                             sv.Name   = "_origSzSWAT"
                             sv.Value  = hrp.Size
                             sv.Parent = hrp
                         end
-                        local sz = Settings.HitboxSize * 2
                         hrp.Size                      = Vector3.new(sz, sz, sz)
-                        hrp.LocalTransparencyModifier = 0.6
+                        hrp.Transparency              = 0.6
                         hrp.CanCollide                = false
-                        -- SelectionBox visible indicator (red/orange)
+                        -- Also expand Head (ACS raycasts often target Head)
+                        if head and head:IsA("BasePart") then
+                            if not head:FindFirstChild("_origSzSWAT") then
+                                local sv = Instance.new("Vector3Value")
+                                sv.Name   = "_origSzSWAT"
+                                sv.Value  = head.Size
+                                sv.Parent = head
+                            end
+                            head.Size        = Vector3.new(sz, sz, sz)
+                            head.Transparency = 0.6
+                            head.CanCollide  = false
+                        end
+                        -- Expand all other body parts too (UpperTorso, limbs, etc.)
+                        for _, part in ipairs(obj:GetChildren()) do
+                            if part:IsA("BasePart") and part ~= hrp and part ~= head then
+                                if not part:FindFirstChild("_origSzSWAT") then
+                                    local sv = Instance.new("Vector3Value")
+                                    sv.Name   = "_origSzSWAT"
+                                    sv.Value  = part.Size
+                                    sv.Parent = part
+                                end
+                                part.Size       = Vector3.new(sz, sz, sz)
+                                part.Transparency = 0.6
+                                part.CanCollide = false
+                            end
+                        end
+                        -- SelectionBox visible indicator (orange)
                         if not hrp:FindFirstChild("_hbBoxSWAT") then
                             local box = Instance.new("SelectionBox")
                             box.Name            = "_hbBoxSWAT"
@@ -2943,10 +2961,20 @@ RunService.Heartbeat:Connect(function()
                             box.Parent          = hrp
                         end
                     else
-                        -- Restore original size when hitbox is off
+                        -- Restore all original sizes when hitbox is off
+                        for _, part in ipairs(obj:GetChildren()) do
+                            if part:IsA("BasePart") then
+                                local sv = part:FindFirstChild("_origSzSWAT")
+                                if sv then
+                                    part.Size = sv.Value
+                                    part.Transparency = 0
+                                    sv:Destroy()
+                                end
+                            end
+                        end
                         local sv = hrp:FindFirstChild("_origSzSWAT")
                         if sv then hrp.Size = sv.Value; sv:Destroy() end
-                        hrp.LocalTransparencyModifier = 0
+                        hrp.Transparency = 0
                         -- Remove SelectionBox
                         local box = hrp:FindFirstChild("_hbBoxSWAT")
                         if box then box:Destroy() end
