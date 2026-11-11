@@ -1218,7 +1218,7 @@ local Settings = {
     -- Auto / Tools
     AutoArrest      = false,
     AutoArrestDelay = 0.5,
-    AutoArrestDist  = 10,   -- studs; 0 = unlimited
+    AutoArrestDist  = 0,    -- studs; 0 = unlimited (remote arrest at any distance)
     AntiAFK         = false,
     Fullbright      = false,
 }
@@ -1362,25 +1362,36 @@ end
 
 -- Scan ALL keys in ACS config by pattern and apply overrides.
 -- patterns = { {"kick", 0}, {"penetrat", 999}, ... }
--- Returns a table of {key=originalValue} for every key that was changed.
+-- Also scans nested tables (ACS sometimes nests config in sub-tables).
 local _acsSavedOriginals = {}
 local function applyACSByPattern(tag, patterns)
     local f, i, cfg = getACSConfig()
     if not cfg then return false end
     if not _acsSavedOriginals[tag] then _acsSavedOriginals[tag] = {} end
     local saved = _acsSavedOriginals[tag]
-    for key, val in pairs(cfg) do
-        if type(key) == "string" and type(val) == "number" then
-            local lk = key:lower()
-            for _, pat in ipairs(patterns) do
-                if lk:find(pat[1]) then
-                    if saved[key] == nil then saved[key] = val end
-                    cfg[key] = pat[2]
-                    break
+
+    local function scanTable(tbl, prefix)
+        for key, val in pairs(tbl) do
+            if type(key) == "string" then
+                local fullKey = prefix and (prefix .. "." .. key) or key
+                if type(val) == "number" then
+                    local lk = key:lower()
+                    for _, pat in ipairs(patterns) do
+                        if lk:find(pat[1]) then
+                            if saved[fullKey] == nil then saved[fullKey] = {tbl=tbl, key=key, orig=val} end
+                            tbl[key] = pat[2]
+                            break
+                        end
+                    end
+                elseif type(val) == "table" then
+                    -- Recurse into nested config tables (one level)
+                    if not prefix then scanTable(val, key) end
                 end
             end
         end
     end
+    scanTable(cfg, nil)
+
     if f and debug and debug.setupvalue then
         pcall(debug.setupvalue, f, i, cfg)
     end
@@ -1391,11 +1402,35 @@ local function restoreACSByTag(tag)
     local saved = _acsSavedOriginals[tag]
     if not saved then return end
     local f, i, cfg = getACSConfig()
-    if not cfg then return end
-    for key, val in pairs(saved) do
-        cfg[key] = val
+    for fullKey, info in pairs(saved) do
+        pcall(function() info.tbl[info.key] = info.orig end)
     end
     _acsSavedOriginals[tag] = nil
+    if cfg and f and debug and debug.setupvalue then
+        pcall(debug.setupvalue, f, i, cfg)
+    end
+end
+
+-- Force specific ACS field names directly (bypass pattern scan)
+-- These are the known ACS framework field names — set by exact name.
+local ACS_DAMAGE_FIELDS = {
+    "Damage", "HeadDmg", "TorsoDmg", "LimbDmg", "BaseDamage",
+    "BulletPenetration", "PenetrationAmount", "MaxDist", "MaxRange",
+}
+local ACS_RECOIL_FIELDS = {
+    "CamKickUp", "CamKickDown", "CamKickLeft", "CamKickRight",
+    "CameraRecoilUp", "CameraRecoilDown", "CameraRecoilLeft", "CameraRecoilRight",
+    "GunRecoilUp", "GunRecoilDown", "GunRecoilLeft", "GunRecoilRight",
+    "IdleSpread", "HipSpread", "MoveSpread", "AimSpread",
+    "IdleSway", "AimSway", "CameraShake",
+}
+
+local function forceACSFields(fields, value)
+    local f, i, cfg = getACSConfig()
+    if not cfg then return end
+    for _, name in ipairs(fields) do
+        if cfg[name] ~= nil then cfg[name] = value end
+    end
     if f and debug and debug.setupvalue then
         pcall(debug.setupvalue, f, i, cfg)
     end
@@ -1763,11 +1798,73 @@ local function isSurrendered(model)
 end
 
 -- ───────────────────────────────────────────────────────────────
--- WALLBANG INPUT (BUG 3 — mouse-intercept approach)
+-- WALLBANG — per-frame NPC teleport approach
+-- RenderStepped: teleport suspects to point-blank (before ACS raycast)
+-- Heartbeat: restore original positions (after ACS raycast, same frame)
+-- This is invisible because both happen within the same render frame.
 -- ───────────────────────────────────────────────────────────────
+local _wallbangSavedPositions = nil
+local _wallbangRenderConn = nil
+local _wallbangHeartbeatConn = nil
+
+local function startWallbangTeleport()
+    if _wallbangRenderConn then return end -- already running
+
+    _wallbangRenderConn = RunService.RenderStepped:Connect(function()
+        if not Settings.Wallbang then return end
+        local myHRP = getHRP()
+        if not myHRP then return end
+        local cam = Workspace.CurrentCamera
+        if not cam then return end
+
+        _wallbangSavedPositions = {}
+        local lookDir = cam.CFrame.LookVector
+        local targetPos = myHRP.Position + lookDir * 3
+
+        for _, obj in ipairs(Workspace:GetChildren()) do
+            if isSuspect(obj) then
+                local sHRP = obj:FindFirstChild("HumanoidRootPart")
+                local hum = obj:FindFirstChildOfClass("Humanoid")
+                if sHRP and hum and hum.Health > 0 then
+                    _wallbangSavedPositions[sHRP] = sHRP.CFrame
+                    pcall(function()
+                        sHRP.CFrame = CFrame.new(targetPos)
+                    end)
+                end
+            end
+        end
+    end)
+
+    _wallbangHeartbeatConn = RunService.Heartbeat:Connect(function()
+        if _wallbangSavedPositions then
+            for sHRP, cf in pairs(_wallbangSavedPositions) do
+                pcall(function() sHRP.CFrame = cf end)
+            end
+            _wallbangSavedPositions = nil
+        end
+    end)
+end
+
+local function stopWallbangTeleport()
+    if _wallbangRenderConn then
+        _wallbangRenderConn:Disconnect()
+        _wallbangRenderConn = nil
+    end
+    if _wallbangHeartbeatConn then
+        _wallbangHeartbeatConn:Disconnect()
+        _wallbangHeartbeatConn = nil
+    end
+    -- Restore any leftover positions
+    if _wallbangSavedPositions then
+        for sHRP, cf in pairs(_wallbangSavedPositions) do
+            pcall(function() sHRP.CFrame = cf end)
+        end
+        _wallbangSavedPositions = nil
+    end
+end
+
 local _wallbangInputConn = nil
 local function setupWallbangInput()
-    -- Wallbang now handled via ACS BulletPenetration config — no mouse intercept needed
     if _wallbangInputConn then _wallbangInputConn:Disconnect(); _wallbangInputConn = nil end
 end
 
@@ -1987,6 +2084,8 @@ TabWeapons:CreateToggle({
                                     end
                                 end
                             end
+                            -- Also force high damage so rapid-fire hits register
+                            forceACSFields(ACS_DAMAGE_FIELDS, 9999)
                             if _acsCache.func and debug and debug.setupvalue then
                                 pcall(debug.setupvalue, _acsCache.func, _acsCache.idx, _acsCache.tbl)
                             end
@@ -2041,15 +2140,20 @@ TabWeapons:CreateToggle({
     Callback     = function(v)
         Settings.Wallbang = v
         if not v then
+            stopWallbangTeleport()
             restoreACSByTag("wallbang")
             return
         end
+        -- Start per-frame NPC teleport (suspects appear at point-blank for ACS raycast)
+        startWallbangTeleport()
+        -- Also max out damage + penetration via ACS config (belt and suspenders)
         task.spawn(function()
             while Settings.Wallbang do
                 applyACSByPattern("wallbang", {
                     {"penetrat", 999}, {"damage", 9999}, {"dmg", 9999},
                     {"headshot", 100}, {"range", 99999}, {"dist", 99999},
                 })
+                forceACSFields(ACS_DAMAGE_FIELDS, 9999)
                 task.wait(0.15)
             end
         end)
@@ -2075,6 +2179,7 @@ TabWeapons:CreateToggle({
                     {"kick", 0}, {"recoil", 0}, {"sway", 0},
                     {"shake", 0}, {"spread", 0},
                 })
+                forceACSFields(ACS_RECOIL_FIELDS, 0)
                 task.wait(0.15)
             end
         end)
@@ -2460,7 +2565,8 @@ local function tryAutoArrest()
 
     -- Strategy 1: remote-based arrest at ANY distance (like ShoutNPC)
     --   • ShoutNPC → makes NPC comply (no distance check)
-    --   • Arrest remotes → fire with NPC as argument (no distance check)
+    --   • Brief player teleport to NPC → fire ProximityPrompts → teleport back
+    --   • Arrest remotes → fire with NPC as argument
     --   • Targets civilians only (unarmed NPCs to arrest)
     for _, obj in ipairs(Workspace:GetChildren()) do
         if isCivilian(obj) then
@@ -2470,7 +2576,7 @@ local function tryAutoArrest()
                 if ShoutNPC then
                     pcall(function() ShoutNPC:FireServer(obj) end)
                 end
-                -- 2. Fire all arrest/cuff remotes with NPC (works at any distance)
+                -- 2. Fire all arrest/cuff remotes with NPC
                 for _, remote in ipairs(arrestRemotes) do
                     pcall(function()
                         if remote:IsA("RemoteEvent") then
@@ -2480,15 +2586,26 @@ local function tryAutoArrest()
                         end
                     end)
                 end
-                -- 3. Also fire any ProximityPrompts on the NPC directly
-                --    (fireproximityprompt bypasses distance internally)
+                -- 3. Briefly teleport player next to NPC, fire prompts, teleport back
+                --    (ProximityPrompts are validated server-side by distance)
+                local savedCF = hrp.CFrame
+                pcall(function()
+                    hrp.CFrame = npcHRP.CFrame * CFrame.new(0, 0, 3)
+                end)
+                task.wait() -- yield one frame so server sees new position
                 for _, pp in ipairs(obj:GetDescendants()) do
                     if pp:IsA("ProximityPrompt") then
-                        pcall(function() fireproximityprompt(pp) end)
+                        pcall(function()
+                            local origDist = pp.MaxActivationDistance
+                            pp.MaxActivationDistance = 9999
+                            fireproximityprompt(pp)
+                            pp.MaxActivationDistance = origDist
+                        end)
                     elseif pp:IsA("ClickDetector") then
                         pcall(function() fireclickdetector(pp) end)
                     end
                 end
+                pcall(function() hrp.CFrame = savedCF end)
             end
         end
     end
@@ -2977,8 +3094,9 @@ RunService.Heartbeat:Connect(function()
 end)
 
 -- ───────────────────────────────────────────────────────────────
--- NO RECOIL — BindToRenderStep camera-correction (BUG 4 STEP B)
--- Runs after the default camera update; cancels ACS recoil kick.
+-- NO RECOIL — BindToRenderStep camera-correction
+-- Runs after the default camera update; cancels ALL camera rotation
+-- not caused by mouse/stick input (= ACS recoil kick).
 -- ───────────────────────────────────────────────────────────────
 RunService:BindToRenderStep(
     "SWATNoRecoil",
@@ -2996,27 +3114,20 @@ RunService:BindToRenderStep(
             return
         end
 
-        -- Decompose previous and current camera angles
-        local prevX, prevY, prevZ = _noRecoilPrevCF:ToEulerAnglesYXZ()
-        local curX,  curY,  curZ  = cam.CFrame:ToEulerAnglesYXZ()
-
-        -- ACS recoil pushes camera UP (curX decreases / more negative)
-        -- Distinguish recoil from intentional mouse aim using mouse delta:
-        -- mouse.Y < 0 = mouse moved up (player intends to look up)
-        local deltaX = curX - prevX  -- negative = camera went up this frame
+        -- Check if mouse/stick moved this frame
         local ok, md = pcall(function()
             return UserInputService:GetMouseDelta()
         end)
-        local mouseMovedUp = ok and md and md.Y < -0.5
-        -- If camera pitched up without matching mouse input → recoil kick
-        if deltaX < -0.02 and not mouseMovedUp then
-            -- Cancel the recoil: restore previous pitch, keep new yaw
+        local mouseMoved = ok and md and (math.abs(md.X) > 0.5 or math.abs(md.Y) > 0.5)
+
+        if not mouseMoved then
+            -- No mouse input → any camera rotation change is ACS recoil → restore
             local pos = cam.CFrame.Position
+            local prevRot = _noRecoilPrevCF - _noRecoilPrevCF.Position
             pcall(function()
-                cam.CFrame = CFrame.new(pos)
-                    * CFrame.fromEulerAnglesYXZ(prevX, curY, curZ)
+                cam.CFrame = CFrame.new(pos) * prevRot
             end)
-            -- Do not update _noRecoilPrevCF this frame (pitch was forced)
+            -- Don't update _noRecoilPrevCF — we forced the old rotation
             return
         end
 
