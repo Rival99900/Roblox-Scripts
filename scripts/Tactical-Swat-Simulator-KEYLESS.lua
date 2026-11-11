@@ -1204,6 +1204,8 @@ local Settings = {
     Wallbang        = false,
     NoRecoil        = false,
     _origShootRate  = nil,
+    _origRecoil     = nil,
+    _origWallbang   = nil,
 
     -- Movement
     Fly             = false,
@@ -1724,41 +1726,8 @@ end
 -- ───────────────────────────────────────────────────────────────
 local _wallbangInputConn = nil
 local function setupWallbangInput()
-    if _wallbangInputConn then _wallbangInputConn:Disconnect() end
-    _wallbangInputConn = nil
-    local ok, mouse = pcall(function() return LocalPlayer:GetMouse() end)
-    if not ok or not mouse then return end
-    _wallbangInputConn = mouse.Button1Down:Connect(function()
-        if not Settings.Wallbang then return end
-        local myHRP = getHRP()
-        if not myHRP then return end
-        local suspects = getAllSuspects()
-        if #suspects == 0 then return end
-        local saved = {}
-        -- Bring all live suspects to point-blank range (1.5 studs around player)
-        for i, s in ipairs(suspects) do
-            local sh  = s:FindFirstChild("HumanoidRootPart")
-            local hum = s:FindFirstChildOfClass("Humanoid")
-            if sh and hum and hum.Health > 0 then
-                saved[i] = sh.CFrame
-                local ang = (i-1) * (2*math.pi / math.max(#suspects, 1))
-                pcall(function()
-                    sh.CFrame = CFrame.new(
-                        myHRP.Position + Vector3.new(
-                            math.cos(ang)*1.5, 0, math.sin(ang)*1.5))
-                end)
-            end
-        end
-        -- Restore positions after ACS raycast window (0.15s)
-        task.delay(0.15, function()
-            for i, s in ipairs(suspects) do
-                local sh = s:FindFirstChild("HumanoidRootPart")
-                if sh and saved[i] then
-                    pcall(function() sh.CFrame = saved[i] end)
-                end
-            end
-        end)
-    end)
+    -- Wallbang now handled via ACS BulletPenetration config — no mouse intercept needed
+    if _wallbangInputConn then _wallbangInputConn:Disconnect(); _wallbangInputConn = nil end
 end
 
 -- ───────────────────────────────────────────────────────────────
@@ -1967,6 +1936,7 @@ TabWeapons:CreateToggle({
                     if not isNonLethal() then
                         if _acsCache.tbl then
                             setACSValue("ShootRate", Settings.RapidFireSpeed)
+                            setACSValue("Jammed", false)
                         else
                             Rayfield:Notify({Title="Weapons", Content="Fire your weapon once to activate", Duration=4})
                             Settings.RapidFire = false
@@ -2017,8 +1987,49 @@ TabWeapons:CreateToggle({
     Flag         = "Wallbang",
     Callback     = function(v)
         Settings.Wallbang = v
-        -- No loop needed: mouse.Button1Down handler is always active,
-        -- reads Settings.Wallbang at the moment of each shot.
+        if not v then
+            pcall(function()
+                local f, i, cfg = getACSConfig()
+                if cfg and Settings._origWallbang then
+                    for k, val in pairs(Settings._origWallbang) do
+                        cfg[k] = val
+                    end
+                    if f and debug and debug.setupvalue then
+                        debug.setupvalue(f, i, cfg)
+                    end
+                    Settings._origWallbang = nil
+                end
+            end)
+            return
+        end
+        task.spawn(function()
+            while Settings.Wallbang do
+                local f, i, cfg = getACSConfig()
+                if cfg then
+                    local WK = {"BulletPenetration","BaseDamage","DMG",
+                        "HeadshotMult","HeadshotMultiplier","MaxDist","Range"}
+                    if not Settings._origWallbang then
+                        Settings._origWallbang = {}
+                        for _, k in ipairs(WK) do
+                            if cfg[k] ~= nil then Settings._origWallbang[k] = cfg[k] end
+                        end
+                    end
+                    -- Wallbang: max penetration through walls
+                    cfg.BulletPenetration = 999
+                    -- One-shot: boost all damage fields
+                    if cfg.BaseDamage ~= nil then cfg.BaseDamage = 9999 end
+                    if cfg.DMG ~= nil then cfg.DMG = 9999 end
+                    if cfg.HeadshotMult ~= nil then cfg.HeadshotMult = 100 end
+                    if cfg.HeadshotMultiplier ~= nil then cfg.HeadshotMultiplier = 100 end
+                    if cfg.MaxDist ~= nil then cfg.MaxDist = 99999 end
+                    if cfg.Range ~= nil then cfg.Range = 99999 end
+                    if f and debug and debug.setupvalue then
+                        pcall(debug.setupvalue, f, i, cfg)
+                    end
+                end
+                task.wait(0.2)
+            end
+        end)
     end,
 })
 
@@ -2030,7 +2041,45 @@ TabWeapons:CreateToggle({
     Flag         = "NoRecoil",
     Callback     = function(v)
         Settings.NoRecoil = v
-        if not v then _noRecoilPrevCF = nil end
+        if not v then
+            _noRecoilPrevCF = nil
+            pcall(function()
+                local f, i, cfg = getACSConfig()
+                if cfg and Settings._origRecoil then
+                    for k, val in pairs(Settings._origRecoil) do
+                        cfg[k] = val
+                    end
+                    if f and debug and debug.setupvalue then
+                        debug.setupvalue(f, i, cfg)
+                    end
+                    Settings._origRecoil = nil
+                end
+            end)
+            return
+        end
+        task.spawn(function()
+            while Settings.NoRecoil do
+                local f, i, cfg = getACSConfig()
+                if cfg then
+                    local RK = {"CamKickUp","CamKickDown","CamKickLeft","CamKickRight",
+                        "GunKickBack","GunKickUp","GunKickRight","CamShakeAmount",
+                        "CamShakeSpeed","KickbackMin","KickbackMax","SwayAmp","SwaySpeed"}
+                    if not Settings._origRecoil then
+                        Settings._origRecoil = {}
+                        for _, k in ipairs(RK) do
+                            if cfg[k] ~= nil then Settings._origRecoil[k] = cfg[k] end
+                        end
+                    end
+                    for _, k in ipairs(RK) do
+                        if cfg[k] ~= nil then cfg[k] = 0 end
+                    end
+                    if f and debug and debug.setupvalue then
+                        pcall(debug.setupvalue, f, i, cfg)
+                    end
+                end
+                task.wait(0.2)
+            end
+        end)
     end,
 })
 
@@ -2407,18 +2456,21 @@ local function tryAutoArrest()
         if isCivilian(obj) then
             local npcHRP = obj:FindFirstChild("HumanoidRootPart")
             if npcHRP and inRange(npcHRP.Position) then
-                -- 1. Shout to make NPC comply (works at any distance)
-                if ShoutNPC then
-                    pcall(function() ShoutNPC:FireServer(obj) end)
-                end
-                -- 2. Briefly bring suspect next to player so proximity prompt
-                --    fires within MaxActivationDistance, then restore position
-                local savedNpcCF = npcHRP.CFrame
-                pcall(function()
-                    npcHRP.CFrame = CFrame.new(hrp.Position + Vector3.new(2, 0, 0))
-                end)
-                task.delay(0.1, function()
-                    -- Fire all arrest prompts while suspect is at point-blank
+                task.spawn(function()
+                    -- 1. Shout to make NPC comply (works at any distance)
+                    if ShoutNPC then
+                        pcall(function() ShoutNPC:FireServer(obj) end)
+                    end
+                    -- 2. Wait for NPC to surrender/comply
+                    task.wait(0.6)
+                    -- 3. Move NPC to point-blank for proximity prompt range
+                    local savedNpcCF = npcHRP.CFrame
+                    pcall(function()
+                        npcHRP.CFrame = CFrame.new(hrp.Position + Vector3.new(2, 0, 0))
+                    end)
+                    -- 4. Wait for position update
+                    task.wait(0.2)
+                    -- 5. Fire all arrest/interact prompts
                     for _, pp in ipairs(obj:GetDescendants()) do
                         if pp:IsA("ProximityPrompt") then
                             pcall(function() fireproximityprompt(pp) end)
@@ -2426,14 +2478,12 @@ local function tryAutoArrest()
                             pcall(function() fireclickdetector(pp) end)
                         end
                     end
-                    -- Restore NPC position after a further 0.3s
-                    task.delay(0.3, function()
-                        local hum = obj:FindFirstChildOfClass("Humanoid")
-                        -- Only restore if the NPC is still alive (not arrested/removed)
-                        if hum and hum.Health > 0 then
-                            pcall(function() npcHRP.CFrame = savedNpcCF end)
-                        end
-                    end)
+                    -- 6. Restore NPC position
+                    task.wait(0.4)
+                    local hum = obj:FindFirstChildOfClass("Humanoid")
+                    if hum and hum.Health > 0 then
+                        pcall(function() npcHRP.CFrame = savedNpcCF end)
+                    end
                 end)
             end
         end
