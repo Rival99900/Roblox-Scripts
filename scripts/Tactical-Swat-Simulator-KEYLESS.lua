@@ -1360,6 +1360,47 @@ local function setACSValue(key, value)
     end)
 end
 
+-- Scan ALL keys in ACS config by pattern and apply overrides.
+-- patterns = { {"kick", 0}, {"penetrat", 999}, ... }
+-- Returns a table of {key=originalValue} for every key that was changed.
+local _acsSavedOriginals = {}
+local function applyACSByPattern(tag, patterns)
+    local f, i, cfg = getACSConfig()
+    if not cfg then return false end
+    if not _acsSavedOriginals[tag] then _acsSavedOriginals[tag] = {} end
+    local saved = _acsSavedOriginals[tag]
+    for key, val in pairs(cfg) do
+        if type(key) == "string" and type(val) == "number" then
+            local lk = key:lower()
+            for _, pat in ipairs(patterns) do
+                if lk:find(pat[1]) then
+                    if saved[key] == nil then saved[key] = val end
+                    cfg[key] = pat[2]
+                    break
+                end
+            end
+        end
+    end
+    if f and debug and debug.setupvalue then
+        pcall(debug.setupvalue, f, i, cfg)
+    end
+    return true
+end
+
+local function restoreACSByTag(tag)
+    local saved = _acsSavedOriginals[tag]
+    if not saved then return end
+    local f, i, cfg = getACSConfig()
+    if not cfg then return end
+    for key, val in pairs(saved) do
+        cfg[key] = val
+    end
+    _acsSavedOriginals[tag] = nil
+    if f and debug and debug.setupvalue then
+        pcall(debug.setupvalue, f, i, cfg)
+    end
+end
+
 -- Non-lethal check: returns true if the equipped tool should not receive
 -- damage/fire-rate overrides (Candy Zapper, Taser, Beanbag Shotgun).
 -- Uses _nonLethalUV (upvalue [9]) cached alongside the config.
@@ -1935,8 +1976,20 @@ TabWeapons:CreateToggle({
                 while Settings.RapidFire do
                     if not isNonLethal() then
                         if _acsCache.tbl then
-                            setACSValue("ShootRate", Settings.RapidFireSpeed)
-                            setACSValue("Jammed", false)
+                            _acsCache.tbl.ShootRate = Settings.RapidFireSpeed
+                            _acsCache.tbl.Jammed = false
+                            -- Zero spread for accuracy and ensure fire mode
+                            for key, val in pairs(_acsCache.tbl) do
+                                if type(key) == "string" and type(val) == "number" then
+                                    local lk = key:lower()
+                                    if lk:find("spread") then
+                                        _acsCache.tbl[key] = 0
+                                    end
+                                end
+                            end
+                            if _acsCache.func and debug and debug.setupvalue then
+                                pcall(debug.setupvalue, _acsCache.func, _acsCache.idx, _acsCache.tbl)
+                            end
                         else
                             Rayfield:Notify({Title="Weapons", Content="Fire your weapon once to activate", Duration=4})
                             Settings.RapidFire = false
@@ -1988,46 +2041,16 @@ TabWeapons:CreateToggle({
     Callback     = function(v)
         Settings.Wallbang = v
         if not v then
-            pcall(function()
-                local f, i, cfg = getACSConfig()
-                if cfg and Settings._origWallbang then
-                    for k, val in pairs(Settings._origWallbang) do
-                        cfg[k] = val
-                    end
-                    if f and debug and debug.setupvalue then
-                        debug.setupvalue(f, i, cfg)
-                    end
-                    Settings._origWallbang = nil
-                end
-            end)
+            restoreACSByTag("wallbang")
             return
         end
         task.spawn(function()
             while Settings.Wallbang do
-                local f, i, cfg = getACSConfig()
-                if cfg then
-                    local WK = {"BulletPenetration","BaseDamage","DMG",
-                        "HeadshotMult","HeadshotMultiplier","MaxDist","Range"}
-                    if not Settings._origWallbang then
-                        Settings._origWallbang = {}
-                        for _, k in ipairs(WK) do
-                            if cfg[k] ~= nil then Settings._origWallbang[k] = cfg[k] end
-                        end
-                    end
-                    -- Wallbang: max penetration through walls
-                    cfg.BulletPenetration = 999
-                    -- One-shot: boost all damage fields
-                    if cfg.BaseDamage ~= nil then cfg.BaseDamage = 9999 end
-                    if cfg.DMG ~= nil then cfg.DMG = 9999 end
-                    if cfg.HeadshotMult ~= nil then cfg.HeadshotMult = 100 end
-                    if cfg.HeadshotMultiplier ~= nil then cfg.HeadshotMultiplier = 100 end
-                    if cfg.MaxDist ~= nil then cfg.MaxDist = 99999 end
-                    if cfg.Range ~= nil then cfg.Range = 99999 end
-                    if f and debug and debug.setupvalue then
-                        pcall(debug.setupvalue, f, i, cfg)
-                    end
-                end
-                task.wait(0.2)
+                applyACSByPattern("wallbang", {
+                    {"penetrat", 999}, {"damage", 9999}, {"dmg", 9999},
+                    {"headshot", 100}, {"range", 99999}, {"dist", 99999},
+                })
+                task.wait(0.15)
             end
         end)
     end,
@@ -2043,41 +2066,16 @@ TabWeapons:CreateToggle({
         Settings.NoRecoil = v
         if not v then
             _noRecoilPrevCF = nil
-            pcall(function()
-                local f, i, cfg = getACSConfig()
-                if cfg and Settings._origRecoil then
-                    for k, val in pairs(Settings._origRecoil) do
-                        cfg[k] = val
-                    end
-                    if f and debug and debug.setupvalue then
-                        debug.setupvalue(f, i, cfg)
-                    end
-                    Settings._origRecoil = nil
-                end
-            end)
+            restoreACSByTag("recoil")
             return
         end
         task.spawn(function()
             while Settings.NoRecoil do
-                local f, i, cfg = getACSConfig()
-                if cfg then
-                    local RK = {"CamKickUp","CamKickDown","CamKickLeft","CamKickRight",
-                        "GunKickBack","GunKickUp","GunKickRight","CamShakeAmount",
-                        "CamShakeSpeed","KickbackMin","KickbackMax","SwayAmp","SwaySpeed"}
-                    if not Settings._origRecoil then
-                        Settings._origRecoil = {}
-                        for _, k in ipairs(RK) do
-                            if cfg[k] ~= nil then Settings._origRecoil[k] = cfg[k] end
-                        end
-                    end
-                    for _, k in ipairs(RK) do
-                        if cfg[k] ~= nil then cfg[k] = 0 end
-                    end
-                    if f and debug and debug.setupvalue then
-                        pcall(debug.setupvalue, f, i, cfg)
-                    end
-                end
-                task.wait(0.2)
+                applyACSByPattern("recoil", {
+                    {"kick", 0}, {"recoil", 0}, {"sway", 0},
+                    {"shake", 0}, {"spread", 0},
+                })
+                task.wait(0.15)
             end
         end)
     end,
@@ -2441,50 +2439,56 @@ local function tryAutoArrest()
         return (pos - hrp.Position).Magnitude <= maxDist
     end
 
-    -- Grab ShoutNPC remote once (makes suspects kneel/surrender before arrest)
+    -- Grab Network remotes once (ShoutNPC + any arrest/cuff remotes)
     local ShoutNPC
+    local arrestRemotes = {}
     pcall(function()
         local net = ReplicatedStorage:FindFirstChild("Network")
-        if net then ShoutNPC = net:FindFirstChild("ShoutNPC") end
+        if net then
+            ShoutNPC = net:FindFirstChild("ShoutNPC")
+            for _, child in ipairs(net:GetChildren()) do
+                if child:IsA("RemoteEvent") or child:IsA("RemoteFunction") then
+                    local n = child.Name:lower()
+                    if n:find("arrest") or n:find("cuff") or n:find("detain")
+                        or n:find("handcuff") or n:find("restrain") then
+                        arrestRemotes[#arrestRemotes+1] = child
+                    end
+                end
+            end
+        end
     end)
 
-    -- Strategy 1: fire ProximityPrompts on civilian/hostage NPC models (unarmed = to arrest)
-    --   • Distance check: NPC must be within AutoArrestDist
-    --   • ShoutNPC is fired first to make the civilian comply (prerequisite for cuff prompt)
-    --   • Suspects (armed criminals) are NEVER targeted here — they must be neutralised by shooting
+    -- Strategy 1: remote-based arrest at ANY distance (like ShoutNPC)
+    --   • ShoutNPC → makes NPC comply (no distance check)
+    --   • Arrest remotes → fire with NPC as argument (no distance check)
+    --   • Targets civilians only (unarmed NPCs to arrest)
     for _, obj in ipairs(Workspace:GetChildren()) do
         if isCivilian(obj) then
             local npcHRP = obj:FindFirstChild("HumanoidRootPart")
             if npcHRP and inRange(npcHRP.Position) then
-                task.spawn(function()
-                    -- 1. Shout to make NPC comply (works at any distance)
-                    if ShoutNPC then
-                        pcall(function() ShoutNPC:FireServer(obj) end)
-                    end
-                    -- 2. Wait for NPC to surrender/comply
-                    task.wait(0.6)
-                    -- 3. Move NPC to point-blank for proximity prompt range
-                    local savedNpcCF = npcHRP.CFrame
+                -- 1. Shout to make NPC comply (works at any distance)
+                if ShoutNPC then
+                    pcall(function() ShoutNPC:FireServer(obj) end)
+                end
+                -- 2. Fire all arrest/cuff remotes with NPC (works at any distance)
+                for _, remote in ipairs(arrestRemotes) do
                     pcall(function()
-                        npcHRP.CFrame = CFrame.new(hrp.Position + Vector3.new(2, 0, 0))
-                    end)
-                    -- 4. Wait for position update
-                    task.wait(0.2)
-                    -- 5. Fire all arrest/interact prompts
-                    for _, pp in ipairs(obj:GetDescendants()) do
-                        if pp:IsA("ProximityPrompt") then
-                            pcall(function() fireproximityprompt(pp) end)
-                        elseif pp:IsA("ClickDetector") then
-                            pcall(function() fireclickdetector(pp) end)
+                        if remote:IsA("RemoteEvent") then
+                            remote:FireServer(obj)
+                        elseif remote:IsA("RemoteFunction") then
+                            remote:InvokeServer(obj)
                         end
+                    end)
+                end
+                -- 3. Also fire any ProximityPrompts on the NPC directly
+                --    (fireproximityprompt bypasses distance internally)
+                for _, pp in ipairs(obj:GetDescendants()) do
+                    if pp:IsA("ProximityPrompt") then
+                        pcall(function() fireproximityprompt(pp) end)
+                    elseif pp:IsA("ClickDetector") then
+                        pcall(function() fireclickdetector(pp) end)
                     end
-                    -- 6. Restore NPC position
-                    task.wait(0.4)
-                    local hum = obj:FindFirstChildOfClass("Humanoid")
-                    if hum and hum.Health > 0 then
-                        pcall(function() npcHRP.CFrame = savedNpcCF end)
-                    end
-                end)
+                end
             end
         end
     end
