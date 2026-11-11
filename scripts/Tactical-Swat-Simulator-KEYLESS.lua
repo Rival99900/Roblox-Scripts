@@ -2,7 +2,7 @@
     ================================================================
     Tactical SWAT Hub — Tactical: Swat Simulator
     Created by Rival960 with the help of Claude
-    Version: 1.1.7 | Languages: 21 | Rayfield UI | PC + Mobile
+    Version: 1.2.0 | Languages: 21 | Rayfield UI | PC + Mobile
     Status: untested in-game
     ================================================================
 --]]
@@ -81,6 +81,8 @@ local Translations = {
         -- Auto
         AutoArrest       = "Auto Arrest",
         AutoArrestDesc   = "Auto-fire arrest prompts on suspects in range (hands up required)",
+        AutoArrestSuspects = "Auto Arrest Suspects",
+        AutoArrestSuspectsDesc = "Arrest armed suspects without taser — shout + force arrest",
         AutoArrestDelay  = "Arrest Delay (s)",
         AutoArrestDist   = "Max Arrest Distance (studs)",
         BringNearest     = "Bring Nearest Suspect",
@@ -97,7 +99,7 @@ local Translations = {
         LangSelect       = "Language",
         -- Credits
         CreditsTitle     = "Tactical SWAT Hub",
-        CreditsContent   = "Created by Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.7 — Wallbang mouse-intercept | Camera NoRecoil | RapidFire RPM cap | AutoArrest proximity fix",
+        CreditsContent   = "Created by Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.2.0 — NoRecoil camera lock | Wallbang per-frame teleport | RapidFire fix | Auto Arrest Suspects | InfiniteAmmo optimization",
         Loaded           = "Hub loaded! Tactical advantage enabled.",
     },
     FR = {
@@ -138,6 +140,8 @@ local Translations = {
         JumpPower        = "Puissance du saut",
         AutoArrest       = "Auto Arrestation",
         AutoArrestDesc   = "Déclenche automatiquement les prompts d'arrestation",
+        AutoArrestSuspects = "Auto Arrestation Suspects",
+        AutoArrestSuspectsDesc = "Arrêter les suspects armés sans taser — cri + arrestation forcée",
         AutoArrestDelay  = "Délai (s)",
         BringNearest     = "Amener le suspect le plus proche",
         BringNearestDesc = "Téléporte le suspect le plus proche vers toi",
@@ -151,7 +155,7 @@ local Translations = {
         AntiAFKDesc      = "Empêche le kick pour inactivité",
         LangSelect       = "Langue",
         CreditsTitle     = "Tactical SWAT Hub",
-        CreditsContent   = "Créé par Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.7 — interception souris Wallbang | SansRecul caméra | plafond RPM TirRapide | correctif proximité AutoArrestation",
+        CreditsContent   = "Créé par Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.2.0 — NoRecoil camera lock | Wallbang per-frame teleport | RapidFire fix | Auto Arrest Suspects | InfiniteAmmo optimization",
         Loaded           = "Hub chargé ! Avantage tactique activé.",
     },
     DE = {
@@ -192,6 +196,8 @@ local Translations = {
         JumpPower        = "Sprungkraft",
         AutoArrest       = "Auto-Verhaftung",
         AutoArrestDesc   = "Verhaftungs-Prompts automatisch auslösen",
+        AutoArrestSuspects = "Auto-Verdächtigen-Verhaftung",
+        AutoArrestSuspectsDesc = "Bewaffnete Verdächtige ohne Taser verhaften",
         AutoArrestDelay  = "Verhaftungsverzögerung (s)",
         BringNearest     = "Nächsten Verdächtigen bringen",
         BringNearestDesc = "Nächsten Verdächtigen zu dir teleportieren",
@@ -205,7 +211,7 @@ local Translations = {
         AntiAFKDesc      = "Verhindert den Rauswurf wegen Inaktivität",
         LangSelect       = "Sprache",
         CreditsTitle     = "Tactical SWAT Hub",
-        CreditsContent   = "Erstellt von Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.7 — Wallbang Mausabfang | Kamera Kein Rückstoß | Schnellfeuer RPM-Limit | Auto-Verhaftung Nähe-Fix",
+        CreditsContent   = "Erstellt von Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.2.0 — NoRecoil camera lock | Wallbang per-frame teleport | RapidFire fix | Auto Arrest Suspects | InfiniteAmmo optimization",
         Loaded           = "Hub geladen! Taktischer Vorteil aktiviert.",
     },
     ES = {
@@ -246,6 +252,8 @@ local Translations = {
         JumpPower        = "Potencia de salto",
         AutoArrest       = "Auto Arresto",
         AutoArrestDesc   = "Disparar automáticamente prompts de arresto",
+        AutoArrestSuspects = "Auto Arresto Sospechosos",
+        AutoArrestSuspectsDesc = "Arrestar sospechosos armados sin taser",
         AutoArrestDelay  = "Retraso (s)",
         BringNearest     = "Traer sospechoso más cercano",
         BringNearestDesc = "Teleportar al sospechoso más cercano",
@@ -259,7 +267,7 @@ local Translations = {
         AntiAFKDesc      = "Evitar expulsión por inactividad",
         LangSelect       = "Idioma",
         CreditsTitle     = "Tactical SWAT Hub",
-        CreditsContent   = "Creado por Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.7 — interceptor ratón Wallbang | SinRetroceso cámara | límite RPM Disparo rápido | fix proximidad Auto Arresto",
+        CreditsContent   = "Creado por Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.2.0 — NoRecoil camera lock | Wallbang per-frame teleport | RapidFire fix | Auto Arrest Suspects | InfiniteAmmo optimization",
         Loaded           = "¡Hub cargado! Ventaja táctica activada.",
     },
     PT = {
@@ -300,6 +308,8 @@ local Translations = {
         JumpPower        = "Força do salto",
         AutoArrest       = "Auto Prisão",
         AutoArrestDesc   = "Disparar automaticamente prompts de prisão",
+        AutoArrestSuspects = "Auto Prisão Suspeitos",
+        AutoArrestSuspectsDesc = "Prender suspeitos armados sem taser",
         AutoArrestDelay  = "Atraso (s)",
         BringNearest     = "Trazer suspeito mais próximo",
         BringNearestDesc = "Teleportar o suspeito mais próximo",
@@ -313,7 +323,7 @@ local Translations = {
         AntiAFKDesc      = "Evitar expulsão por inatividade",
         LangSelect       = "Idioma",
         CreditsTitle     = "Tactical SWAT Hub",
-        CreditsContent   = "Criado por Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.7 — interceptador Wallbang | Sem Recuo câmera | limite RPM Tiro Rápido | correção proximidade Auto Prisão",
+        CreditsContent   = "Criado por Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.2.0 — NoRecoil camera lock | Wallbang per-frame teleport | RapidFire fix | Auto Arrest Suspects | InfiniteAmmo optimization",
         Loaded           = "Hub carregado! Vantagem tática ativada.",
     },
     RU = {
@@ -354,6 +364,8 @@ local Translations = {
         JumpPower        = "Сила прыжка",
         AutoArrest       = "Авто-арест",
         AutoArrestDesc   = "Автоматически активирует промпты ареста",
+        AutoArrestSuspects = "Авто-арест подозреваемых",
+        AutoArrestSuspectsDesc = "Арест вооружённых подозреваемых без тазера",
         AutoArrestDelay  = "Задержка (с)",
         BringNearest     = "Притянуть ближайшего",
         BringNearestDesc = "Телепортировать ближайшего подозреваемого к себе",
@@ -367,7 +379,7 @@ local Translations = {
         AntiAFKDesc      = "Предотвратить кик за бездействие",
         LangSelect       = "Язык",
         CreditsTitle     = "Tactical SWAT Hub",
-        CreditsContent   = "Создано Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.7 — перехват мыши Wallbang | камера Без отдачи | ограничение RPM Быстрый огонь | исправление близости Авто Арест",
+        CreditsContent   = "Создано Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.2.0 — NoRecoil camera lock | Wallbang per-frame teleport | RapidFire fix | Auto Arrest Suspects | InfiniteAmmo optimization",
         Loaded           = "Hub загружен! Тактическое преимущество активировано.",
     },
     IT = {
@@ -408,6 +420,8 @@ local Translations = {
         JumpPower        = "Potenza salto",
         AutoArrest       = "Auto Arresto",
         AutoArrestDesc   = "Attiva automaticamente i prompt di arresto",
+        AutoArrestSuspects = "Auto Arresto Sospetti",
+        AutoArrestSuspectsDesc = "Arrestare sospetti armati senza taser",
         AutoArrestDelay  = "Ritardo (s)",
         BringNearest     = "Porta il sospettato più vicino",
         BringNearestDesc = "Teleporta il sospettato più vicino da te",
@@ -421,7 +435,7 @@ local Translations = {
         AntiAFKDesc      = "Previeni il kick per inattività",
         LangSelect       = "Lingua",
         CreditsTitle     = "Tactical SWAT Hub",
-        CreditsContent   = "Creato da Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.7 — intercettazione Wallbang | Nessun Rinculo camera | limite RPM Fuoco Rapido | fix prossimità Auto Arresto",
+        CreditsContent   = "Creato da Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.2.0 — NoRecoil camera lock | Wallbang per-frame teleport | RapidFire fix | Auto Arrest Suspects | InfiniteAmmo optimization",
         Loaded           = "Hub caricato! Vantaggio tattico attivato.",
     },
     NL = {
@@ -462,6 +476,8 @@ local Translations = {
         JumpPower        = "Springkracht",
         AutoArrest       = "Auto-Arrestatie",
         AutoArrestDesc   = "Arrestatieprompts automatisch activeren",
+        AutoArrestSuspects = "Auto-Arrestatie Verdachten",
+        AutoArrestSuspectsDesc = "Gewapende verdachten arresteren zonder taser",
         AutoArrestDelay  = "Vertraging (s)",
         BringNearest     = "Dichtstbijzijnde verdachte brengen",
         BringNearestDesc = "Dichtstbijzijnde verdachte naar jou teleporteren",
@@ -475,7 +491,7 @@ local Translations = {
         AntiAFKDesc      = "Kick door inactiviteit voorkomen",
         LangSelect       = "Taal",
         CreditsTitle     = "Tactical SWAT Hub",
-        CreditsContent   = "Gemaakt door Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.7 — Wallbang muisonderschepping | Camera Geen Terugslag | RapidFire RPM-limiet | AutoArrest proximiteitsfix",
+        CreditsContent   = "Gemaakt door Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.2.0 — NoRecoil camera lock | Wallbang per-frame teleport | RapidFire fix | Auto Arrest Suspects | InfiniteAmmo optimization",
         Loaded           = "Hub geladen! Tactisch voordeel geactiveerd.",
     },
     PL = {
@@ -516,6 +532,8 @@ local Translations = {
         JumpPower        = "Siła skoku",
         AutoArrest       = "Auto-Areszowanie",
         AutoArrestDesc   = "Automatycznie wyzwala prompty aresztu",
+        AutoArrestSuspects = "Auto-Areszowanie Podejrzanych",
+        AutoArrestSuspectsDesc = "Aresztowanie uzbrojonych podejrzanych bez tasera",
         AutoArrestDelay  = "Opóźnienie (s)",
         BringNearest     = "Przyprowadź najbliższego podejrzanego",
         BringNearestDesc = "Teleportuje najbliższego podejrzanego do ciebie",
@@ -529,7 +547,7 @@ local Translations = {
         AntiAFKDesc      = "Zapobiegaj wyrzuceniu za bezczynność",
         LangSelect       = "Język",
         CreditsTitle     = "Tactical SWAT Hub",
-        CreditsContent   = "Stworzone przez Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.7 — przechwycenie myszy Wallbang | kamera Bez Odrzutu | limit RPM Szybki Ogień | naprawa bliskości Auto Areszt",
+        CreditsContent   = "Stworzone przez Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.2.0 — NoRecoil camera lock | Wallbang per-frame teleport | RapidFire fix | Auto Arrest Suspects | InfiniteAmmo optimization",
         Loaded           = "Hub załadowany! Taktyczna przewaga aktywowana.",
     },
     ZH = {
@@ -570,6 +588,8 @@ local Translations = {
         JumpPower        = "跳跃力度",
         AutoArrest       = "自动逮捕",
         AutoArrestDesc   = "自动触发逮捕提示",
+        AutoArrestSuspects = "自动逮捕嫌疑人",
+        AutoArrestSuspectsDesc = "无需电击枪逮捕武装嫌疑人",
         AutoArrestDelay  = "延迟（秒）",
         BringNearest     = "传送最近嫌疑人",
         BringNearestDesc = "将最近的嫌疑人传送到你身边",
@@ -583,7 +603,7 @@ local Translations = {
         AntiAFKDesc      = "防止因挂机被踢出",
         LangSelect       = "语言",
         CreditsTitle     = "战术特警Hub",
-        CreditsContent   = "由 Rival960 创建\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.7 — Wallbang鼠标拦截 | 相机无后坐力 | 快速射击RPM上限 | 自动逮捕近距离修复",
+        CreditsContent   = "由 Rival960 创建\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.2.0 — NoRecoil camera lock | Wallbang per-frame teleport | RapidFire fix | Auto Arrest Suspects | InfiniteAmmo optimization",
         Loaded           = "Hub已加载！战术优势已激活。",
     },
     JA = {
@@ -624,6 +644,8 @@ local Translations = {
         JumpPower        = "ジャンプ力",
         AutoArrest       = "自動逮捕",
         AutoArrestDesc   = "逮捕プロンプトを自動実行",
+        AutoArrestSuspects = "容疑者自動逮捕",
+        AutoArrestSuspectsDesc = "テーザーなしで武装容疑者を逮捕",
         AutoArrestDelay  = "遅延（秒）",
         BringNearest     = "最近の容疑者を召喚",
         BringNearestDesc = "最近の容疑者をTPで手元に召喚",
@@ -637,7 +659,7 @@ local Translations = {
         AntiAFKDesc      = "放置キックを防止",
         LangSelect       = "言語",
         CreditsTitle     = "タクティカルSWATHub",
-        CreditsContent   = "Rival960 作\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.7 — Wallbangマウス割り込み | カメラ無反動 | RapidFire RPM上限 | AutoArrest近接修正",
+        CreditsContent   = "Rival960 作\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.2.0 — NoRecoil camera lock | Wallbang per-frame teleport | RapidFire fix | Auto Arrest Suspects | InfiniteAmmo optimization",
         Loaded           = "Hub読み込み完了！タクティカル優位性が有効化されました。",
     },
     TR = {
@@ -678,6 +700,8 @@ local Translations = {
         JumpPower        = "Zıplama Gücü",
         AutoArrest       = "Otomatik Tutuklama",
         AutoArrestDesc   = "Tutuklama promptlarını otomatik tetikle",
+        AutoArrestSuspects = "Şüphelileri Otomatik Tutuklama",
+        AutoArrestSuspectsDesc = "Taser olmadan silahlı şüphelileri tutuklayın",
         AutoArrestDelay  = "Gecikme (s)",
         BringNearest     = "En Yakın Şüpheliyi Getir",
         BringNearestDesc = "En yakın şüpheliyi yanına teleportle",
@@ -691,7 +715,7 @@ local Translations = {
         AntiAFKDesc      = "Hareketsizlik kickini önle",
         LangSelect       = "Dil",
         CreditsTitle     = "Tactical SWAT Hub",
-        CreditsContent   = "Rival960 tarafından\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.7 — Wallbang fare engeli | Kamera Geri Tepme Yok | RapidFire RPM sınırı | AutoArrest yakınlık düzeltmesi",
+        CreditsContent   = "Rival960 tarafından\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.2.0 — NoRecoil camera lock | Wallbang per-frame teleport | RapidFire fix | Auto Arrest Suspects | InfiniteAmmo optimization",
         Loaded           = "Hub yüklendi! Taktik avantaj aktif.",
     },
     KO = {
@@ -732,6 +756,8 @@ local Translations = {
         JumpPower        = "점프 파워",
         AutoArrest       = "자동 체포",
         AutoArrestDesc   = "체포 프롬프트 자동 실행",
+        AutoArrestSuspects = "용의자 자동 체포",
+        AutoArrestSuspectsDesc = "테이저 없이 무장 용의자 체포",
         AutoArrestDelay  = "지연 (초)",
         BringNearest     = "가장 가까운 용의자 소환",
         BringNearestDesc = "가장 가까운 용의자를 TP로 소환",
@@ -745,7 +771,7 @@ local Translations = {
         AntiAFKDesc      = "비활동으로 인한 킥 방지",
         LangSelect       = "언어",
         CreditsTitle     = "택티컬 스왓 허브",
-        CreditsContent   = "Rival960 제작\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.7 — Wallbang 마우스 가로채기 | 카메라 무반동 | RapidFire RPM 제한 | AutoArrest 근접 수정",
+        CreditsContent   = "Rival960 제작\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.2.0 — NoRecoil camera lock | Wallbang per-frame teleport | RapidFire fix | Auto Arrest Suspects | InfiniteAmmo optimization",
         Loaded           = "허브 로드 완료! 전술적 이점 활성화.",
     },
     AR = {
@@ -786,6 +812,8 @@ local Translations = {
         JumpPower        = "قوة القفز",
         AutoArrest       = "اعتقال تلقائي",
         AutoArrestDesc   = "تشغيل موجهات الاعتقال تلقائياً",
+        AutoArrestSuspects = "اعتقال المشتبه بهم تلقائياً",
+        AutoArrestSuspectsDesc = "اعتقال المشتبه بهم المسلحين بدون تايزر",
         AutoArrestDelay  = "التأخير (ث)",
         BringNearest     = "إحضار أقرب مشتبه به",
         BringNearestDesc = "نقل أقرب مشتبه به إليك",
@@ -799,7 +827,7 @@ local Translations = {
         AntiAFKDesc      = "منع الطرد بسبب عدم النشاط",
         LangSelect       = "اللغة",
         CreditsTitle     = "تاكتيكال سوات هاب",
-        CreditsContent   = "أنشأه Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.7 — اعتراض الفأرة Wallbang | الكاميرا بلا ارتداد | حد RPM RapidFire | إصلاح قرب AutoArrest",
+        CreditsContent   = "أنشأه Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.2.0 — NoRecoil camera lock | Wallbang per-frame teleport | RapidFire fix | Auto Arrest Suspects | InfiniteAmmo optimization",
         Loaded           = "تم تحميل الهاب! تم تفعيل الميزة التكتيكية.",
     },
     VI = {
@@ -840,6 +868,8 @@ local Translations = {
         JumpPower        = "Lực nhảy",
         AutoArrest       = "Tự động bắt giữ",
         AutoArrestDesc   = "Tự động kích hoạt prompt bắt giữ",
+        AutoArrestSuspects = "Tự động bắt nghi phạm",
+        AutoArrestSuspectsDesc = "Bắt nghi phạm có vũ trang không cần taser",
         AutoArrestDelay  = "Độ trễ (s)",
         BringNearest     = "Đưa nghi phạm gần nhất đến",
         BringNearestDesc = "Dịch chuyển nghi phạm gần nhất đến bạn",
@@ -853,7 +883,7 @@ local Translations = {
         AntiAFKDesc      = "Ngăn bị đuổi vì không hoạt động",
         LangSelect       = "Ngôn ngữ",
         CreditsTitle     = "Tactical SWAT Hub",
-        CreditsContent   = "Tạo bởi Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.7 — Wallbang chặn chuột | Camera không giật | giới hạn RPM RapidFire | sửa lỗi khoảng cách AutoArrest",
+        CreditsContent   = "Tạo bởi Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.2.0 — NoRecoil camera lock | Wallbang per-frame teleport | RapidFire fix | Auto Arrest Suspects | InfiniteAmmo optimization",
         Loaded           = "Hub đã tải! Lợi thế chiến thuật được kích hoạt.",
     },
     SV = {
@@ -894,6 +924,8 @@ local Translations = {
         JumpPower        = "Hoppkraft",
         AutoArrest       = "Auto-Gripning",
         AutoArrestDesc   = "Aktivera gripningspromptar automatiskt",
+        AutoArrestSuspects = "Auto-Gripning Misstänkta",
+        AutoArrestSuspectsDesc = "Gripa beväpnade misstänkta utan taser",
         AutoArrestDelay  = "Fördröjning (s)",
         BringNearest     = "Hämta närmaste misstänkte",
         BringNearestDesc = "Teleportera närmaste misstänkte till dig",
@@ -907,7 +939,7 @@ local Translations = {
         AntiAFKDesc      = "Förhindra kick på grund av inaktivitet",
         LangSelect       = "Språk",
         CreditsTitle     = "Tactical SWAT Hub",
-        CreditsContent   = "Skapad av Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.7 — Wallbang musavlyssning | Kamera Inget Rekyl | RapidFire RPM-gräns | AutoArrest närhetsfixning",
+        CreditsContent   = "Skapad av Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.2.0 — NoRecoil camera lock | Wallbang per-frame teleport | RapidFire fix | Auto Arrest Suspects | InfiniteAmmo optimization",
         Loaded           = "Hub laddad! Taktisk fördel aktiverad.",
     },
     EL = {
@@ -948,6 +980,8 @@ local Translations = {
         JumpPower        = "Δύναμη άλματος",
         AutoArrest       = "Αυτόματη σύλληψη",
         AutoArrestDesc   = "Αυτόματη ενεργοποίηση προτροπών σύλληψης",
+        AutoArrestSuspects = "Αυτόματη σύλληψη υπόπτων",
+        AutoArrestSuspectsDesc = "Σύλληψη ένοπλων υπόπτων χωρίς τέιζερ",
         AutoArrestDelay  = "Καθυστέρηση (δευτ.)",
         BringNearest     = "Φέρε τον κοντινότερο ύποπτο",
         BringNearestDesc = "Τηλεμεταφορά κοντινότερου υπόπτου κοντά σου",
@@ -961,7 +995,7 @@ local Translations = {
         AntiAFKDesc      = "Αποτροπή αποβολής λόγω αδράνειας",
         LangSelect       = "Γλώσσα",
         CreditsTitle     = "Tactical SWAT Hub",
-        CreditsContent   = "Δημιουργήθηκε από τον Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.7 — Wallbang αναχαίτιση ποντικιού | κάμερα Χωρίς Recoil | όριο RPM RapidFire | διόρθωση εγγύτητας AutoArrest",
+        CreditsContent   = "Δημιουργήθηκε από τον Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.2.0 — NoRecoil camera lock | Wallbang per-frame teleport | RapidFire fix | Auto Arrest Suspects | InfiniteAmmo optimization",
         Loaded           = "Hub φορτώθηκε! Τακτικό πλεονέκτημα ενεργοποιήθηκε.",
     },
     RO = {
@@ -1002,6 +1036,8 @@ local Translations = {
         JumpPower        = "Puterea saltului",
         AutoArrest       = "Arest Automat",
         AutoArrestDesc   = "Activare automată a prompturilor de arest",
+        AutoArrestSuspects = "Arest Automat Suspecți",
+        AutoArrestSuspectsDesc = "Arestarea suspecților înarmați fără taser",
         AutoArrestDelay  = "Întârziere (s)",
         BringNearest     = "Aduce suspectul cel mai apropiat",
         BringNearestDesc = "Teleportează suspectul cel mai apropiat la tine",
@@ -1015,7 +1051,7 @@ local Translations = {
         AntiAFKDesc      = "Previne kickul din cauza inactivității",
         LangSelect       = "Limbă",
         CreditsTitle     = "Tactical SWAT Hub",
-        CreditsContent   = "Creat de Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.7 — Wallbang interceptare mouse | Camera fără recul | limită RPM RapidFire | remediere proximitate AutoArrest",
+        CreditsContent   = "Creat de Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.2.0 — NoRecoil camera lock | Wallbang per-frame teleport | RapidFire fix | Auto Arrest Suspects | InfiniteAmmo optimization",
         Loaded           = "Hub încărcat! Avantaj tactic activat.",
     },
     UK = {
@@ -1056,6 +1092,8 @@ local Translations = {
         JumpPower        = "Сила стрибка",
         AutoArrest       = "Авто-арешт",
         AutoArrestDesc   = "Автоматично активує підказки арешту",
+        AutoArrestSuspects = "Авто-арешт підозрюваних",
+        AutoArrestSuspectsDesc = "Арешт озброєних підозрюваних без тазера",
         AutoArrestDelay  = "Затримка (с)",
         BringNearest     = "Притягнути найближчого",
         BringNearestDesc = "Телепортувати найближчого підозрюваного до себе",
@@ -1069,7 +1107,7 @@ local Translations = {
         AntiAFKDesc      = "Запобігти кіку за бездіяльність",
         LangSelect       = "Мова",
         CreditsTitle     = "Tactical SWAT Hub",
-        CreditsContent   = "Створено Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.7 — перехоплення миші Wallbang | камера Без віддачі | обмеження RPM RapidFire | виправлення близькості AutoArrest",
+        CreditsContent   = "Створено Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.2.0 — NoRecoil camera lock | Wallbang per-frame teleport | RapidFire fix | Auto Arrest Suspects | InfiniteAmmo optimization",
         Loaded           = "Hub завантажено! Тактичну перевагу активовано.",
     },
     CS = {
@@ -1110,6 +1148,8 @@ local Translations = {
         JumpPower        = "Síla skoku",
         AutoArrest       = "Auto-Zatčení",
         AutoArrestDesc   = "Automaticky spouštět výzvy k zatčení",
+        AutoArrestSuspects = "Auto-Zatčení Podezřelých",
+        AutoArrestSuspectsDesc = "Zatčení ozbrojených podezřelých bez taseru",
         AutoArrestDelay  = "Prodleva (s)",
         BringNearest     = "Přivést nejbližšího podezřelého",
         BringNearestDesc = "Teleportovat nejbližšího podezřelého k tobě",
@@ -1123,7 +1163,7 @@ local Translations = {
         AntiAFKDesc      = "Zabránit kicku za nečinnost",
         LangSelect       = "Jazyk",
         CreditsTitle     = "Tactical SWAT Hub",
-        CreditsContent   = "Vytvořil Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.7 — zachycení myši Wallbang | kamera Bez Zpětného Rázu | limit RPM RapidFire | oprava blízkosti AutoArrest",
+        CreditsContent   = "Vytvořil Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.2.0 — NoRecoil camera lock | Wallbang per-frame teleport | RapidFire fix | Auto Arrest Suspects | InfiniteAmmo optimization",
         Loaded           = "Hub načten! Taktická výhoda aktivována.",
     },
     DA = {
@@ -1164,6 +1204,8 @@ local Translations = {
         JumpPower        = "Hoppekraft",
         AutoArrest       = "Auto-Anholdelse",
         AutoArrestDesc   = "Aktiver anholdelses-prompts automatisk",
+        AutoArrestSuspects = "Auto-Anholdelse Mistænkte",
+        AutoArrestSuspectsDesc = "Anholdelse af bevæbnede mistænkte uden taser",
         AutoArrestDelay  = "Forsinkelse (s)",
         BringNearest     = "Hent nærmeste mistænkte",
         BringNearestDesc = "Teleportér nærmeste mistænkte til dig",
@@ -1177,7 +1219,7 @@ local Translations = {
         AntiAFKDesc      = "Forhindre kick pga. inaktivitet",
         LangSelect       = "Sprog",
         CreditsTitle     = "Tactical SWAT Hub",
-        CreditsContent   = "Oprettet af Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.1.7 — Wallbang museopfangning | Kamera Ingen Recoil | RapidFire RPM-grænse | AutoArrest nærhedsfix",
+        CreditsContent   = "Oprettet af Rival960\nDiscord: rival960\nGitHub: Rival99900\nYouTube: rival9607\n\nv1.2.0 — NoRecoil camera lock | Wallbang per-frame teleport | RapidFire fix | Auto Arrest Suspects | InfiniteAmmo optimization",
         Loaded           = "Hub indlæst! Taktisk fordel aktiveret.",
     },
 }
@@ -1217,6 +1259,7 @@ local Settings = {
     WalkSpeed       = 16,
     -- Auto / Tools
     AutoArrest      = false,
+    AutoArrestSuspects = false,
     AutoArrestDelay = 0.5,
     AutoArrestDist  = 0,    -- studs; 0 = unlimited (remote arrest at any distance)
     AntiAFK         = false,
@@ -2028,26 +2071,29 @@ TabWeapons:CreateToggle({
     Callback     = function(v)
         Settings.InfiniteAmmo = v
         if v then
+            -- Do initial getACSConfig() once (heavy scan), then use cache
+            local f, i, cfg = getACSConfig()
+            if not cfg then
+                Rayfield:Notify({Title="Weapons", Content="Fire your weapon once to activate", Duration=4})
+                Settings.InfiniteAmmo = false
+                return
+            end
             task.spawn(function()
                 while Settings.InfiniteAmmo do
-                    local f, i, cfg = getACSConfig()
-                    if cfg then
-                        cfg.Ammo      = 99999
-                        cfg.AmmoInGun = 99999
-                        cfg.StoredAmmo = math.huge
-                        if type(cfg.__MagBase) == "table" then
-                            cfg.__MagBase.Ammo      = 999
-                            cfg.__MagBase.AmmoInGun = 999
+                    -- Use cached table directly (already found above)
+                    if _acsCache.tbl then
+                        _acsCache.tbl.Ammo      = 99999
+                        _acsCache.tbl.AmmoInGun = 99999
+                        _acsCache.tbl.StoredAmmo = math.huge
+                        if type(_acsCache.tbl.__MagBase) == "table" then
+                            _acsCache.tbl.__MagBase.Ammo      = 999
+                            _acsCache.tbl.__MagBase.AmmoInGun = 999
                         end
-                        if f and debug and debug.setupvalue then
-                            pcall(debug.setupvalue, f, i, cfg)
+                        if _acsCache.func and debug and debug.setupvalue then
+                            pcall(debug.setupvalue, _acsCache.func, _acsCache.idx, _acsCache.tbl)
                         end
-                    else
-                        Rayfield:Notify({Title="Weapons", Content="Fire your weapon once to activate", Duration=4})
-                        Settings.InfiniteAmmo = false
-                        break
                     end
-                    task.wait(0.3)
+                    task.wait(0.5)
                 end
             end)
         end
@@ -2072,52 +2118,36 @@ TabWeapons:CreateToggle({
             task.spawn(function()
                 while Settings.RapidFire do
                     if not isNonLethal() then
-                        if _acsCache.tbl then
-                            _acsCache.tbl.ShootRate = Settings.RapidFireSpeed
-                            _acsCache.tbl.Jammed = false
-                            -- Zero spread for accuracy and ensure fire mode
-                            for key, val in pairs(_acsCache.tbl) do
+                        local f2, i2, cfg2 = getACSConfig()
+                        if cfg2 then
+                            cfg2.ShootRate = Settings.RapidFireSpeed
+                            cfg2.Jammed = false
+                            -- Zero spread for accuracy
+                            for key, val in pairs(cfg2) do
                                 if type(key) == "string" and type(val) == "number" then
                                     local lk = key:lower()
-                                    if lk:find("spread") then
-                                        _acsCache.tbl[key] = 0
-                                    end
+                                    if lk:find("spread") then cfg2[key] = 0 end
                                 end
                             end
-                            -- Also force high damage so rapid-fire hits register
-                            forceACSFields(ACS_DAMAGE_FIELDS, 9999)
-                            if _acsCache.func and debug and debug.setupvalue then
-                                pcall(debug.setupvalue, _acsCache.func, _acsCache.idx, _acsCache.tbl)
+                            if f2 and debug and debug.setupvalue then
+                                pcall(debug.setupvalue, f2, i2, cfg2)
                             end
-                        else
-                            Rayfield:Notify({Title="Weapons", Content="Fire your weapon once to activate", Duration=4})
-                            Settings.RapidFire = false
-                            break
                         end
                     end
                     task.wait(0.3)
                 end
-                -- Restore original shoot rate when loop exits
-                pcall(function()
-                    if Settings._origShootRate ~= nil then
-                        setACSValue("ShootRate", Settings._origShootRate)
-                        setACSValue("Jammed", false)
-                        _acsCache = {func=nil, idx=nil, tbl=nil}
-                    end
-                end)
-                Rayfield:Notify({Title="Rapid Fire",
-                    Content="Weapon restored — if damage is still broken, rejoin the game.",
-                    Duration=4})
             end)
         else
-            if Settings._origShootRate ~= nil then
-                setACSValue("ShootRate", Settings._origShootRate)
-                setACSValue("Jammed", false)
-                _acsCache = {func=nil, idx=nil, tbl=nil}
-            end
+            -- Restore original shoot rate (single notification only)
+            pcall(function()
+                if Settings._origShootRate ~= nil then
+                    setACSValue("ShootRate", Settings._origShootRate)
+                    setACSValue("Jammed", false)
+                end
+            end)
             Rayfield:Notify({Title="Rapid Fire",
-                Content="Weapon restored — if damage is still broken, rejoin the game.",
-                Duration=4})
+                Content="Weapon restored.",
+                Duration=3})
         end
     end,
 })
@@ -2295,6 +2325,13 @@ TabAuto:CreateToggle({
     CurrentValue = Settings.AutoArrest,
     Flag         = "AutoArrest",
     Callback     = function(v) Settings.AutoArrest = v end,
+})
+TabAuto:CreateToggle({
+    Name         = T("AutoArrestSuspects"),
+    Description  = T("AutoArrestSuspectsDesc"),
+    CurrentValue = Settings.AutoArrestSuspects,
+    Flag         = "AutoArrestSuspects",
+    Callback     = function(v) Settings.AutoArrestSuspects = v end,
 })
 TabAuto:CreateSlider({
     Name         = T("AutoArrestDelay"),
@@ -2529,7 +2566,7 @@ local ARREST_KEYWORDS = {
 }
 
 local function tryAutoArrest()
-    if not Settings.AutoArrest then return end
+    if not Settings.AutoArrest and not Settings.AutoArrestSuspects then return end
     local now = tick()
     if now - lastArrestTime < Settings.AutoArrestDelay then return end
     lastArrestTime = now
@@ -2542,6 +2579,25 @@ local function tryAutoArrest()
     local function inRange(pos)
         if maxDist <= 0 then return true end
         return (pos - hrp.Position).Magnitude <= maxDist
+    end
+
+    -- Check if NPC is already arrested/cuffed (dead or surrendered with no prompt left)
+    local function isAlreadyArrested(model)
+        local hum = model:FindFirstChildOfClass("Humanoid")
+        if not hum or hum.Health <= 0 then return true end
+        -- Check for cuffed/arrested state values
+        for _, v in ipairs(model:GetDescendants()) do
+            if v:IsA("BoolValue") then
+                local ok2, vn = pcall(function() return v.Name:lower() end)
+                if ok2 and vn then
+                    if (vn:find("cuffed") or vn:find("arrested") or vn:find("detained"))
+                        and v.Value == true then
+                        return true
+                    end
+                end
+            end
+        end
+        return false
     end
 
     -- Grab Network remotes once (ShoutNPC + any arrest/cuff remotes)
@@ -2563,49 +2619,61 @@ local function tryAutoArrest()
         end
     end)
 
-    -- Strategy 1: remote-based arrest at ANY distance (like ShoutNPC)
-    --   • ShoutNPC → makes NPC comply (no distance check)
-    --   • Brief player teleport to NPC → fire ProximityPrompts → teleport back
-    --   • Arrest remotes → fire with NPC as argument
-    --   • Targets civilians only (unarmed NPCs to arrest)
-    for _, obj in ipairs(Workspace:GetChildren()) do
-        if isCivilian(obj) then
-            local npcHRP = obj:FindFirstChild("HumanoidRootPart")
-            if npcHRP and inRange(npcHRP.Position) then
-                -- 1. Shout to make NPC comply (works at any distance)
-                if ShoutNPC then
-                    pcall(function() ShoutNPC:FireServer(obj) end)
+    -- Helper: attempt arrest on a single NPC
+    local function arrestNPC(obj)
+        local npcHRP = obj:FindFirstChild("HumanoidRootPart")
+        if not npcHRP or not inRange(npcHRP.Position) then return end
+        if isAlreadyArrested(obj) then return end
+
+        -- 1. Shout to make NPC comply (works at any distance)
+        if ShoutNPC then
+            pcall(function() ShoutNPC:FireServer(obj) end)
+        end
+        -- 2. Fire all arrest/cuff remotes with NPC
+        for _, remote in ipairs(arrestRemotes) do
+            pcall(function()
+                if remote:IsA("RemoteEvent") then
+                    remote:FireServer(obj)
+                elseif remote:IsA("RemoteFunction") then
+                    remote:InvokeServer(obj)
                 end
-                -- 2. Fire all arrest/cuff remotes with NPC
-                for _, remote in ipairs(arrestRemotes) do
-                    pcall(function()
-                        if remote:IsA("RemoteEvent") then
-                            remote:FireServer(obj)
-                        elseif remote:IsA("RemoteFunction") then
-                            remote:InvokeServer(obj)
-                        end
-                    end)
-                end
-                -- 3. Briefly teleport player next to NPC, fire prompts, teleport back
-                --    (ProximityPrompts are validated server-side by distance)
-                local savedCF = hrp.CFrame
+            end)
+        end
+        -- 3. Briefly teleport player next to NPC, fire prompts, teleport back
+        local savedCF = hrp.CFrame
+        pcall(function()
+            hrp.CFrame = npcHRP.CFrame * CFrame.new(0, 0, 3)
+        end)
+        task.wait()
+        for _, pp in ipairs(obj:GetDescendants()) do
+            if pp:IsA("ProximityPrompt") then
                 pcall(function()
-                    hrp.CFrame = npcHRP.CFrame * CFrame.new(0, 0, 3)
+                    local origDist = pp.MaxActivationDistance
+                    pp.MaxActivationDistance = 9999
+                    fireproximityprompt(pp)
+                    pp.MaxActivationDistance = origDist
                 end)
-                task.wait() -- yield one frame so server sees new position
-                for _, pp in ipairs(obj:GetDescendants()) do
-                    if pp:IsA("ProximityPrompt") then
-                        pcall(function()
-                            local origDist = pp.MaxActivationDistance
-                            pp.MaxActivationDistance = 9999
-                            fireproximityprompt(pp)
-                            pp.MaxActivationDistance = origDist
-                        end)
-                    elseif pp:IsA("ClickDetector") then
-                        pcall(function() fireclickdetector(pp) end)
-                    end
-                end
-                pcall(function() hrp.CFrame = savedCF end)
+            elseif pp:IsA("ClickDetector") then
+                pcall(function() fireclickdetector(pp) end)
+            end
+        end
+        pcall(function() hrp.CFrame = savedCF end)
+    end
+
+    -- Arrest civilians (AutoArrest)
+    if Settings.AutoArrest then
+        for _, obj in ipairs(Workspace:GetChildren()) do
+            if isCivilian(obj) then
+                arrestNPC(obj)
+            end
+        end
+    end
+
+    -- Arrest suspects/criminals (AutoArrestSuspects)
+    if Settings.AutoArrestSuspects then
+        for _, obj in ipairs(Workspace:GetChildren()) do
+            if isSuspect(obj) then
+                arrestNPC(obj)
             end
         end
     end
