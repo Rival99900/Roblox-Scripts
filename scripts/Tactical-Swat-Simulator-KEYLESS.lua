@@ -32,6 +32,14 @@ if not task then
 end
 
 -- ───────────────────────────────────────────────────────────────
+-- DEFERRED INIT: wrap in task.spawn so script execution returns
+-- immediately and doesn't freeze the game on slower executors
+-- (Volt, Delta, etc.) while parsing the large translation tables
+-- and loading Rayfield.
+-- ───────────────────────────────────────────────────────────────
+task.spawn(function()
+
+-- ───────────────────────────────────────────────────────────────
 -- 21-LANGUAGE SYSTEM
 -- ───────────────────────────────────────────────────────────────
 local CurrentLang = "EN"
@@ -2418,11 +2426,13 @@ local function tryAutoArrest()
         return false
     end
 
-    -- Grab Network remotes once (arrest/cuff remotes)
+    -- Grab Network remotes once (ShoutNPC + arrest/cuff remotes)
+    local ShoutNPC
     local arrestRemotes = {}
     pcall(function()
         local net = ReplicatedStorage:FindFirstChild("Network")
         if net then
+            ShoutNPC = net:FindFirstChild("ShoutNPC")
             for _, child in ipairs(net:GetChildren()) do
                 if child:IsA("RemoteEvent") or child:IsA("RemoteFunction") then
                     local n = child.Name:lower()
@@ -2440,6 +2450,11 @@ local function tryAutoArrest()
         local npcHRP = obj:FindFirstChild("HumanoidRootPart")
         if not npcHRP or not inRange(npcHRP.Position) then return end
         if isAlreadyArrested(obj) then return end
+
+        -- 1. Shout to make NPC comply (works at any distance)
+        if ShoutNPC then
+            pcall(function() ShoutNPC:FireServer(obj) end)
+        end
 
         -- 2. Fire all arrest/cuff remotes with NPC
         for _, remote in ipairs(arrestRemotes) do
@@ -3056,3 +3071,5 @@ Rayfield:Notify({
     Content  = T("Loaded"),
     Duration = 4,
 })
+
+end) -- end task.spawn (deferred init)
