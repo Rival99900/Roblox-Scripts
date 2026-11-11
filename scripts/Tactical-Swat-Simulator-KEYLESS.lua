@@ -2450,12 +2450,7 @@ local function tryAutoArrest()
         if not npcHRP or not inRange(npcHRP.Position) then return end
         if isAlreadyArrested(obj) then return end
 
-        -- 1. Shout to make NPC comply (works at any distance)
-        if ShoutNPC then
-            pcall(function() ShoutNPC:FireServer(obj) end)
-        end
-
-        -- 2. Fire all arrest/cuff remotes with NPC
+        -- 1. Fire all arrest/cuff remotes with NPC
         for _, remote in ipairs(arrestRemotes) do
             pcall(function()
                 if remote:IsA("RemoteEvent") then
@@ -2488,9 +2483,19 @@ local function tryAutoArrest()
 
     -- Arrest civilians (AutoArrest)
     if Settings.AutoArrest then
+        -- Phase 1: Shout at ALL un-arrested civilians (works at any distance server-side)
+        if ShoutNPC then
+            for _, obj in ipairs(Workspace:GetChildren()) do
+                if not Settings.AutoArrest then return end
+                if isCivilian(obj) and not isAlreadyArrested(obj) then
+                    pcall(function() ShoutNPC:FireServer(obj) end)
+                end
+            end
+        end
+        -- Phase 2: Arrest civilians that are within range
         local foundTarget = false
         for _, obj in ipairs(Workspace:GetChildren()) do
-            if not Settings.AutoArrest then return end  -- bail immediately if toggled OFF mid-loop
+            if not Settings.AutoArrest then return end
             if isCivilian(obj) and not isAlreadyArrested(obj) then
                 local npcHRP = obj:FindFirstChild("HumanoidRootPart")
                 if npcHRP and inRange(npcHRP.Position) then
@@ -2499,7 +2504,6 @@ local function tryAutoArrest()
                 end
             end
         end
-        -- If no un-arrested civilians found in range, nothing more to do
         if not foundTarget then return end
     end
 
