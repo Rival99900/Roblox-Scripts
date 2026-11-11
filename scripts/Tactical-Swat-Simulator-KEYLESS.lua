@@ -1138,8 +1138,8 @@ local Settings = {
     WalkSpeed       = 16,
     -- Auto / Tools
     AutoArrest      = false,
-    AutoArrestDelay = 0.5,
-    AutoArrestDist  = 0,    -- studs; 0 = unlimited (remote arrest at any distance)
+    AutoArrestDelay = 0.3,
+    AutoArrestDist  = 50,   -- studs; default 50, slider 10-500
     AntiAFK         = false,
     Fullbright      = false,
 }
@@ -2158,7 +2158,7 @@ TabAuto:CreateSlider({
 })
 TabAuto:CreateSlider({
     Name         = T("AutoArrestDist"),
-    Range        = {0, 500},
+    Range        = {10, 500},
     Increment    = 5,
     CurrentValue = Settings.AutoArrestDist,
     Flag         = "AutoArrestDist",
@@ -2389,10 +2389,9 @@ local function tryAutoArrest()
     local hrp = getHRP()
     if not hrp then return end
 
-    local maxDist = Settings.AutoArrestDist  -- 0 = unlimited
+    local maxDist = Settings.AutoArrestDist
 
     local function inRange(pos)
-        if maxDist <= 0 then return true end
         return (pos - hrp.Position).Magnitude <= maxDist
     end
 
@@ -2489,15 +2488,26 @@ local function tryAutoArrest()
 
     -- Arrest civilians (AutoArrest)
     if Settings.AutoArrest then
+        local foundTarget = false
         for _, obj in ipairs(Workspace:GetChildren()) do
-            if isCivilian(obj) then
-                arrestNPC(obj)
+            if not Settings.AutoArrest then return end  -- bail immediately if toggled OFF mid-loop
+            if isCivilian(obj) and not isAlreadyArrested(obj) then
+                local npcHRP = obj:FindFirstChild("HumanoidRootPart")
+                if npcHRP and inRange(npcHRP.Position) then
+                    foundTarget = true
+                    arrestNPC(obj)
+                end
             end
         end
+        -- If no un-arrested civilians found in range, nothing more to do
+        if not foundTarget then return end
     end
 
-    -- Strategy 2: scan ALL ProximityPrompts by ActionText keyword, within distance
+    if not Settings.AutoArrest then return end  -- bail if toggled OFF
+
+    -- Strategy 2: scan arrest-related ProximityPrompts within distance
     for _, pp in ipairs(Workspace:GetDescendants()) do
+        if not Settings.AutoArrest then return end  -- bail if toggled OFF
         if pp:IsA("ProximityPrompt") then
             local ppPart = pp.Parent
             if ppPart and ppPart:IsA("BasePart") and inRange(ppPart.Position) then
@@ -2525,6 +2535,7 @@ local function tryAutoArrest()
     end
 
     -- Strategy 3: fire arrest-named RemoteEvents at root level
+    if not Settings.AutoArrest then return end  -- bail if toggled OFF
     for _, rs in ipairs({ReplicatedStorage, Workspace}) do
         for _, re in ipairs(rs:GetDescendants()) do
             if re:IsA("RemoteEvent") then
