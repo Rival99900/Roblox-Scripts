@@ -1948,7 +1948,6 @@ TabWeapons:CreateToggle({
 })
 
 -- b) Rapid Fire toggle
--- d) Rapid Fire toggle
 TabWeapons:CreateToggle({
     Name         = T("RapidFire"),
     CurrentValue = Settings.RapidFire,
@@ -2438,6 +2437,7 @@ local function tryAutoArrest()
                 end)
             end
         end
+    end
     -- Strategy 2: scan ALL ProximityPrompts by ActionText keyword, within distance
     for _, pp in ipairs(Workspace:GetDescendants()) do
         if pp:IsA("ProximityPrompt") then
