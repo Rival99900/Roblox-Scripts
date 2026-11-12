@@ -18,7 +18,7 @@ A fusion of [SimpleSpy](https://github.com/exxtremestuffs/SimpleSpySource), [Dar
 Paste this into your executor:
 
 ```lua
-loadstring(game:HttpGet("https://raw.githubusercontent.com/Rival99900/Roblox-Scripts/robloxspy/RobloxSpy/loader.lua"))()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/Rival99900/Roblox-Scripts/refs/heads/main/RobloxSpy/loader.lua"))()
 ```
 
 The loader downloads the single-file bundle (`dist/RobloxSpy-bundle.lua`) and runs it.

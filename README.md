@@ -21,7 +21,7 @@
 | [🕵️ RobloxSpy](RobloxSpy/) | Any game | Remote Spy + R2S, DarkDEX-style Explorer, Network Monitor, Script Viewer, Session History, 21 languages, custom GUI (PC + mobile) | work |
 
 ```lua
-loadstring(game:HttpGet("https://raw.githubusercontent.com/Rival99900/Roblox-Scripts/robloxspy/RobloxSpy/loader.lua"))()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/Rival99900/Roblox-Scripts/refs/heads/main/RobloxSpy/loader.lua"))()
 ```
 
 Full documentation: [RobloxSpy/README.md](RobloxSpy/README.md)
