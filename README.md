@@ -14,6 +14,20 @@
 
 ---
 
+## 🛠 Tools
+
+| Tool | Works in | Features | Status |
+|------|----------|----------|--------|
+| [🕵️ RobloxSpy](RobloxSpy/) | Any game | Remote Spy + R2S, DarkDEX-style Explorer, Network Monitor, Script Viewer, Session History, 21 languages, custom GUI (PC + mobile) | work |
+
+```lua
+loadstring(game:HttpGet("https://raw.githubusercontent.com/Rival99900/Roblox-Scripts/robloxspy/RobloxSpy/loader.lua"))()
+```
+
+Full documentation: [RobloxSpy/README.md](RobloxSpy/README.md)
+
+---
+
 ## 🔵 SCP vs Guard Hub
 
 **Game**: [Be an SCP or Guard](https://www.roblox.com/games/121461214257813/Be-an-SCP-or-Guard)

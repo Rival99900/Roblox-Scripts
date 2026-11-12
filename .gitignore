@@ -93,6 +93,8 @@ oauth_tokens.json
 dist/
 build/
 out/
+# RobloxSpy single-file build is loaded by RobloxSpy/loader.lua: keep it
+!RobloxSpy/dist/
 
 # Backup Files
 *.bak
