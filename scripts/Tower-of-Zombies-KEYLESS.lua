@@ -823,30 +823,94 @@ local function applyAmmoNow(clipVal, reserveVal)
 end
 
 -- ================================================================
--- forceHandlerAmmo — patch Handler's internal clip upvalue
+-- forceHandlerAmmo — patch the weapon Handler's internal clip value
+-- v1.3.0 fix: the old version compared against the value it had
+-- just written (so it never matched) and called debug.getupvalue on
+-- the script Instance instead of its functions. Now it finds the
+-- Handler's Lua functions via getgc (cached per Handler) and replaces
+-- upvalues equal to the OLD clip value.
 -- ================================================================
-local function forceHandlerAmmo(tool, targetValue)
-    if not tool then return end
-    local handler = tool:FindFirstChildOfClass("LocalScript")
-               or  tool:FindFirstChild("Handler")
+local _handlerFnCache = setmetatable({}, { __mode = "k" })
+
+local function getHandlerFunctions(handler)
+    local cached = _handlerFnCache[handler]
+    if cached then return cached end
+    local list = {}
+    if getgc and debug and debug.getupvalue and debug.setupvalue then
+        pcall(function()
+            for _, f in ipairs(getgc(false)) do
+                if type(f) == "function" and (not islclosure or islclosure(f)) then
+                    local ok, env = pcall(getfenv, f)
+                    if ok and type(env) == "table" then
+                        local ok2, scr = pcall(function() return env.script end)
+                        if ok2 and scr == handler then
+                            list[#list + 1] = f
+                        end
+                    end
+                end
+            end
+        end)
+    end
+    _handlerFnCache[handler] = list
+    return list
+end
+
+local function forceHandlerAmmo(tool, targetValue, oldValue)
+    if not tool or not oldValue or oldValue == targetValue then return end
+    local handler = tool:FindFirstChild("Handler")
+               or  tool:FindFirstChildOfClass("LocalScript")
     if not handler then return end
     pcall(function()
-        local info    = tool:FindFirstChild("Info")
-        local clipObj = info and info:FindFirstChild("Clip")
-        if not clipObj then return end
-        local currentClip = clipObj.Value
-        if debug and debug.getupvalue and debug.setupvalue then
-            for i = 1, 80 do
-                pcall(function()
-                    local _, val = debug.getupvalue(handler, i)
-                    if type(val) == "number"
-                    and val >= 0
-                    and val <= 10000
-                    and math.floor(val) == math.floor(currentClip) then
-                        debug.setupvalue(handler, i, targetValue)
-                    end
-                end)
+        for _, f in ipairs(getHandlerFunctions(handler)) do
+            for i = 1, 200 do
+                local ok, a, b = pcall(debug.getupvalue, f, i)
+                if not ok then break end
+                -- some executors return (name, value), others return value only
+                local val = b
+                if val == nil and type(a) ~= "string" then val = a end
+                if a == nil and b == nil then break end
+                if type(val) == "number" and val == oldValue then
+                    pcall(debug.setupvalue, f, i, targetValue)
+                end
             end
+        end
+    end)
+end
+
+-- Per-tool frozen clip (Freeze Ammo), so switching weapons works
+local _frozenByTool = setmetatable({}, { __mode = "k" })
+
+-- Apply the active ammo mode to the equipped tool right now
+local function ammoTick()
+    pcall(function()
+        local char = LocalPlayer.Character
+        if not char then return end
+        local tool    = char:FindFirstChildOfClass("Tool")
+        local reserve = LocalPlayer:FindFirstChild("Reserve")
+        if not (Settings.InfiniteAmmo or Settings.FreezeAmmo) then return end
+
+        -- Reserve always 99999 in both modes (game reserve is 2)
+        if reserve and reserve.Value ~= 99999 then reserve.Value = 99999 end
+        if not tool or isMelee(tool) then return end
+
+        local info = tool:FindFirstChild("Info")
+        local clip = info and info:FindFirstChild("Clip")
+        if not clip then return end
+
+        local want
+        if Settings.InfiniteAmmo then
+            want = 99999
+        else
+            want = _frozenByTool[tool]
+            if not want then
+                want = (clip.Value > 0) and clip.Value or 12
+                _frozenByTool[tool] = want
+            end
+        end
+        if clip.Value ~= want then
+            local old = clip.Value
+            clip.Value = want
+            forceHandlerAmmo(tool, want, old)
         end
     end)
 end
@@ -869,11 +933,7 @@ local function softReequip()
         end
         -- Re-apply active ammo mode
         task.wait(0.05)
-        if Settings.InfiniteAmmo then
-            applyAmmoNow(99999, 99999)
-        elseif Settings.FreezeAmmo and _frozenClip then
-            applyAmmoNow(_frozenClip, _frozenReserve or 99999)
-        end
+        ammoTick()
     end)
 end
 
@@ -1165,7 +1225,7 @@ CombatTab:CreateToggle({
             Settings.FreezeAmmo = false
             _frozenClip    = nil
             _frozenReserve = nil
-            applyAmmoNow(99999, 99999)
+            ammoTick()
         end
     end,
 })
@@ -1177,26 +1237,15 @@ CombatTab:CreateToggle({
         Settings.FreezeAmmo = val
         if val then
             Settings.InfiniteAmmo = false
-            pcall(function()
-                local char = LocalPlayer.Character
-                local tool = char and char:FindFirstChildOfClass("Tool")
-                local cv, rv = 12, 99999
-                if tool then
-                    local info = tool:FindFirstChild("Info")
-                    if info then
-                        local clip = info:FindFirstChild("Clip")
-                        if clip and clip.Value > 0 then cv = clip.Value end
-                    end
-                end
-                _frozenClip    = cv
-                _frozenReserve = rv
-            end)
-            if _frozenClip then
-                applyAmmoNow(_frozenClip, _frozenReserve or 99999)
-            end
+            -- Freeze the current clip of each weapon (captured per tool)
+            for k in pairs(_frozenByTool) do _frozenByTool[k] = nil end
+            _frozenClip    = true
+            _frozenReserve = 99999
+            ammoTick()
         else
             _frozenClip    = nil
             _frozenReserve = nil
+            for k in pairs(_frozenByTool) do _frozenByTool[k] = nil end
         end
     end,
 })
@@ -1309,8 +1358,8 @@ end)
 -- Heartbeat accumulator: several shots per frame when the rate is
 -- higher than the frame rate. Handler never yields (Volt-safe);
 -- the actual firing runs in task.spawn.
--- Target: Silent Aim target if Silent Aim is ON, otherwise the
--- zombie you aim at (camera ray through cursor/touch, with a small
+-- Target: ONLY the zombie you aim at (never other zombies, even if
+-- Silent Aim is ON) — the zombie you aim at (camera ray through cursor/touch, with a small
 -- tolerance around the ray).
 local lastAimPos = nil
 UserInputService.InputChanged:Connect(function(inp)
@@ -1339,7 +1388,7 @@ local function getAimedZombiePart()
             pos = UserInputService:GetMouseLocation()
         end
         local ray = cam:ViewportPointToRay(pos.X, pos.Y)
-        local bestDist = 6 -- studs of tolerance around the aim ray
+        local bestDist = 3 -- studs of tolerance around the aim ray
         for _, zombie in ipairs(folder:GetChildren()) do
             local hum = zombie:FindFirstChildOfClass("Humanoid")
             if hum and hum.Health > 0 then
@@ -1363,12 +1412,99 @@ local function getAimedZombiePart()
     return best
 end
 
+-- Weapon fire-rate boost: speeds up the game's own firing (visible
+-- shots) by scaling rate/cooldown values in tool.Info and tool
+-- attributes. Originals are restored when Rapid Fire is turned off
+-- or the weapon is unequipped.
+local _rateOriginals = {}   -- [instance or {tool,attr}] = original
+
+local RATE_UP   = { "firerate", "rpm", "rateoffire", "shootrate", "fire_rate" }
+local RATE_DOWN = { "cooldown", "firedelay", "delay", "debounce", "firecooldown", "shotdelay", "swingcooldown" }
+
+local function rateKind(name)
+    local n = string.lower(name)
+    for _, k in ipairs(RATE_UP)   do if n == k or n:find(k, 1, true) then return "up"   end end
+    for _, k in ipairs(RATE_DOWN) do if n == k or n:find(k, 1, true) then return "down" end end
+    return nil
+end
+
+local function restoreWeaponRate()
+    for key, orig in pairs(_rateOriginals) do
+        pcall(function()
+            if typeof(key) == "Instance" then
+                key.Value = orig
+            elseif type(key) == "table" then
+                key[1]:SetAttribute(key[2], orig)
+            end
+        end)
+        _rateOriginals[key] = nil
+    end
+end
+
+local _boostedTool = nil
+local function boostWeaponRate(tool)
+    if _boostedTool == tool then return end
+    restoreWeaponRate()
+    _boostedTool = tool
+    if not tool then return end
+    local factor = math.max(1, (Settings.FireRate or 10) / 10)
+    pcall(function()
+        local info = tool:FindFirstChild("Info")
+        local holders = { tool }
+        if info then holders[#holders + 1] = info end
+        for _, holder in ipairs(holders) do
+            for _, v in ipairs(holder:GetChildren()) do
+                if v:IsA("NumberValue") or v:IsA("IntValue") then
+                    local kind = rateKind(v.Name)
+                    if kind and v.Value > 0 then
+                        _rateOriginals[v] = v.Value
+                        if kind == "up" then
+                            v.Value = v.Value * factor
+                        else
+                            v.Value = v.Value / factor
+                        end
+                    end
+                end
+            end
+            for name, val in pairs(holder:GetAttributes()) do
+                if type(val) == "number" and val > 0 then
+                    local kind = rateKind(name)
+                    if kind then
+                        _rateOriginals[{ holder, name }] = val
+                        holder:SetAttribute(name, kind == "up" and val * factor or val / factor)
+                    end
+                end
+            end
+        end
+    end)
+end
+
 local rapidAccum = 0
 RunService.Heartbeat:Connect(function(dt)
-    if not (Settings.RapidFire and fireHolding) then
+    -- No yield in this handler (Volt-safe)
+    if not Settings.RapidFire then
+        if _boostedTool then
+            _boostedTool = nil
+            restoreWeaponRate()
+        end
         rapidAccum = 0
         return
     end
+    local char = LocalPlayer.Character
+    local tool = char and char:FindFirstChildOfClass("Tool")
+    if tool ~= _boostedTool then boostWeaponRate(tool) end
+
+    if not fireHolding or not tool then
+        rapidAccum = 0
+        return
+    end
+
+    -- Native activation every frame → the game's own (visible) shots
+    pcall(function()
+        clearWeaponCooldown(tool)
+        tool:Activate()
+    end)
+
     local rate = math.clamp(Settings.FireRate or 10, 1, 100)
     rapidAccum = rapidAccum + dt * rate
     local shots = math.floor(rapidAccum)
@@ -1377,19 +1513,11 @@ RunService.Heartbeat:Connect(function(dt)
     shots = math.min(shots, 10)
     task.spawn(function()
         pcall(function()
-            local char = LocalPlayer.Character
-            local tool = char and char:FindFirstChildOfClass("Tool")
-            if not tool then return end
-            clearWeaponCooldown(tool)
-            local target = Settings.SilentAim and getSilentTarget() or getAimedZombiePart()
+            local target = getAimedZombiePart()
             for _ = 1, shots do
                 if isMelee(tool) then
-                    if target and Settings.SilentAim then
-                        fireAtTarget(target, true)
-                    else
-                        pcall(function() MeleeRemote:FireServer() end)
-                        lastDamageTime = tick()
-                    end
+                    pcall(function() MeleeRemote:FireServer() end)
+                    lastDamageTime = tick()
                 elseif target then
                     fireAtTarget(target, true)
                 end
@@ -1415,7 +1543,13 @@ CombatTab:CreateSlider({
 CombatTab:CreateToggle({
     Name         = T("RapidFire"),
     CurrentValue = false,
-    Callback     = function(val) Settings.RapidFire = val end,
+    Callback     = function(val)
+        Settings.RapidFire = val
+        if not val then
+            _boostedTool = nil
+            restoreWeaponRate()
+        end
+    end,
 })
 
 CombatTab:CreateSlider({
@@ -1423,7 +1557,13 @@ CombatTab:CreateSlider({
     Range        = {1, 100},
     Increment    = 1,
     CurrentValue = 10,
-    Callback     = function(val) Settings.FireRate = val end,
+    Callback     = function(val)
+        Settings.FireRate = val
+        if Settings.RapidFire then
+            _boostedTool = nil   -- re-apply boost with the new factor
+            restoreWeaponRate()
+        end
+    end,
 })
 
 -- ───── Movement Tab ─────
@@ -1736,42 +1876,27 @@ ToolsTab:CreateLabel(T("LangNote"))
 task.spawn(function()
     while true do
         task.wait(0.3)
-        pcall(function()
-            local char    = LocalPlayer.Character
-            if not char then return end
-            local tool    = char:FindFirstChildOfClass("Tool")
-            local reserve = LocalPlayer:FindFirstChild("Reserve")
-
-            if Settings.InfiniteAmmo then
-                if tool then
-                    local info = tool:FindFirstChild("Info")
-                    if info then
-                        local clip = info:FindFirstChild("Clip")
-                        if clip and clip.Value < 5 then
-                            clip.Value = 99999
-                            forceHandlerAmmo(tool, 99999)
-                        end
-                    end
-                end
-                if reserve and reserve.Value ~= 99999 then reserve.Value = 99999 end
-
-            elseif Settings.FreezeAmmo and _frozenClip then
-                if tool then
-                    local info = tool:FindFirstChild("Info")
-                    if info then
-                        local clip = info:FindFirstChild("Clip")
-                        if clip and clip.Value ~= _frozenClip then
-                            clip.Value = _frozenClip
-                            forceHandlerAmmo(tool, _frozenClip)
-                        end
-                    end
-                end
-                -- Reserve always kept at 99999 (game's reserve is 2, which stops damage once empty)
-                if reserve and reserve.Value ~= 99999 then reserve.Value = 99999 end
-            end
-        end)
+        ammoTick()
     end
 end)
+
+-- Re-apply instantly on weapon switch / respawn (fixes "need to toggle
+-- off and on again"). Handler is given a moment to initialise.
+local function watchCharacterTools(char)
+    if not char then return end
+    char.ChildAdded:Connect(function(child)
+        if child:IsA("Tool") then
+            task.spawn(function()
+                task.wait(0.1)
+                ammoTick()
+                task.wait(0.4)
+                ammoTick()
+            end)
+        end
+    end)
+end
+watchCharacterTools(LocalPlayer.Character)
+LocalPlayer.CharacterAdded:Connect(watchCharacterTools)
 
 -- ================================================================
 -- Lockout watchdog — 0.5s interval
