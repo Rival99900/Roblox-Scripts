@@ -37,6 +37,11 @@ end
 -- (Volt, Delta, etc.) while parsing the large translation tables
 -- and loading Rayfield.
 -- ───────────────────────────────────────────────────────────────
+-- ScriptBlox analytics (own thread so the HTTP request never delays the hub)
+task.spawn(function()
+    pcall(function() loadstring(game:HttpGet("https://scriptblox.com/ingest/clientv2.lua"))("proj_2c23941c4323", "1.0.0", false) end)
+end)
+
 task.spawn(function()
 
 -- ───────────────────────────────────────────────────────────────
