@@ -2,7 +2,7 @@
     ================================================================
     Tower of Zombies Hub — Tower of Zombies
     Created by Rival960 with the help of Claude
-    Version: v1.3.1 | Languages: 21 | Rayfield UI
+    Version: v1.3.0 | Languages: 21 | Rayfield UI
     Status: untested in-game
     ================================================================
 ]]
@@ -43,9 +43,9 @@ local Translations = {
         TabMovement         = "Movement",
         TabTools            = "Tools & Visuals",
         CreditsTitle        = "Credits",
-        CreditsContent      = "Created by Rival960 with the help of AI\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.3.1 — Silent Aim + Rapid Fire + God Mode",
-        ReleaseNotesTitle   = "v1.3.1 — Release Notes",
-        ReleaseNotesContent = "v1.2.0: Fixed ammo reserve location, added melee weapon support, improved executor stability.\nv1.2.1: Fixed game freeze on Volt and other executors caused by task.wait() inside Heartbeat handler; Rayfield now loads asynchronously to prevent main thread blocking.\nv1.3.0: Added Rapid Fire (ranged + melee, adjustable rate) and God Mode (custom health, client-side).\nv1.3.1: Former Rapid Fire renamed Silent Aim with a range slider; new Rapid Fire fires faster at what you aim at (ranged + melee); stronger God Mode.\n\nFound a bug or want to request a feature? Open an issue on GitHub (Rival99900/Roblox-Scripts) or post on ScriptBlox.",
+        CreditsContent      = "Created by Rival960 with the help of AI\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.3.0 — Silent Aim + Rapid Fire",
+        ReleaseNotesTitle   = "v1.3.0 — Release Notes",
+        ReleaseNotesContent = "v1.2.0: Fixed ammo reserve location, added melee weapon support, improved executor stability.\nv1.2.1: Fixed game freeze on Volt and other executors caused by task.wait() inside Heartbeat handler; Rayfield now loads asynchronously to prevent main thread blocking.\nv1.3.0: Added Silent Aim (range slider) and Rapid Fire (up to 100 shots/s, ranged + melee); Infinite/Freeze Ammo now keep Reserve at 99999.\n\nFound a bug or want to request a feature? Open an issue on GitHub (Rival99900/Roblox-Scripts) or post on ScriptBlox.",
         Aimbot              = "Aimbot",
         AutoBring           = "Auto Bring",
         BringRadius         = "Bring Radius (studs)",
@@ -67,9 +67,6 @@ local Translations = {
         SilentAim           = "Silent Aim",
         SilentRange         = "Silent Aim Range (studs)",
         FireRate            = "Fire Rate (shots/s)",
-        GodMode             = "God Mode",
-        GodHealth           = "God Mode Health",
-        GodHealthHint       = "Enter a number",
     },
     FR = {
         WindowTitle         = "Tower of Zombies Hub",
@@ -79,9 +76,9 @@ local Translations = {
         TabMovement         = "Déplacement",
         TabTools            = "Outils & Visuels",
         CreditsTitle        = "Crédits",
-        CreditsContent      = "Créé par Rival960 avec l'aide de l'IA\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.3.1 — Silent Aim + Rapid Fire + God Mode",
-        ReleaseNotesTitle   = "v1.3.1 — Notes de Version",
-        ReleaseNotesContent = "v1.2.0 : Correction de l'emplacement de la réserve de munitions, support des armes de mêlée, stabilité executor améliorée.\nv1.2.1 : Correction du gel du jeu sur Volt et autres executors causé par task.wait() dans le handler Heartbeat ; Rayfield se charge maintenant de manière asynchrone.\nv1.3.0 : Ajout du Tir Rapide (armes à distance + mêlée, cadence réglable) et du Mode Dieu (vie personnalisée, côté client).\nv1.3.1 : L'ancien Tir Rapide devient Silent Aim avec un slider de portée ; nouveau Tir Rapide plus rapide sur ce que vous visez (distance + mêlée) ; Mode Dieu renforcé.\n\nVous avez trouvé un bug ou souhaitez demander une fonctionnalité ? Ouvrez un ticket sur GitHub (Rival99900/Roblox-Scripts) ou postez sur ScriptBlox.",
+        CreditsContent      = "Créé par Rival960 avec l'aide de l'IA\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.3.0 — Silent Aim + Rapid Fire",
+        ReleaseNotesTitle   = "v1.3.0 — Notes de Version",
+        ReleaseNotesContent = "v1.2.0 : Correction de l'emplacement de la réserve de munitions, support des armes de mêlée, stabilité executor améliorée.\nv1.2.1 : Correction du gel du jeu sur Volt et autres executors causé par task.wait() dans le handler Heartbeat ; Rayfield se charge maintenant de manière asynchrone.\nv1.3.0 : Ajout du Silent Aim (slider de portée) et du Tir Rapide (jusqu'à 100 tirs/s, distance + mêlée) ; Munitions Infinies/Gelées gardent la réserve à 99999.\n\nVous avez trouvé un bug ou souhaitez demander une fonctionnalité ? Ouvrez un ticket sur GitHub (Rival99900/Roblox-Scripts) ou postez sur ScriptBlox.",
         Aimbot              = "Aimbot",
         AutoBring           = "Auto Attirer",
         BringRadius         = "Rayon d'attrait (studs)",
@@ -103,9 +100,6 @@ local Translations = {
         SilentAim           = "Silent Aim",
         SilentRange         = "Portée du Silent Aim (studs)",
         FireRate            = "Cadence (tirs/s)",
-        GodMode             = "Mode Dieu",
-        GodHealth           = "Vie du Mode Dieu",
-        GodHealthHint       = "Entrez un nombre",
     },
     DE = {
         WindowTitle         = "Tower of Zombies Hub",
@@ -115,9 +109,9 @@ local Translations = {
         TabMovement         = "Bewegung",
         TabTools            = "Tools & Visuals",
         CreditsTitle        = "Credits",
-        CreditsContent      = "Erstellt von Rival960 mit KI-Hilfe\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.3.1 — Silent Aim + Rapid Fire + God Mode",
-        ReleaseNotesTitle   = "v1.3.1 — Versionshinweise",
-        ReleaseNotesContent = "v1.2.0: Munitionsreserve-Speicherort behoben, Nahkampfwaffen-Support hinzugefügt, Executor-Stabilität verbessert.\nv1.2.1: Spieleinfrierung auf Volt und anderen Executors durch task.wait() im Heartbeat-Handler behoben; Rayfield lädt jetzt asynchron.\nv1.3.0: Schnellfeuer (Fernkampf + Nahkampf, einstellbare Rate) und Gottmodus (eigene Lebenspunkte, clientseitig) hinzugefügt.\nv1.3.1: Altes Schnellfeuer heißt jetzt Silent Aim mit Reichweiten-Slider; neues Schnellfeuer feuert schneller auf dein Ziel (Fernkampf + Nahkampf); stärkerer Gottmodus.\n\nBug gefunden oder Feature-Wunsch? Erstelle ein Issue auf GitHub (Rival99900/Roblox-Scripts) oder schreibe auf ScriptBlox.",
+        CreditsContent      = "Erstellt von Rival960 mit KI-Hilfe\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.3.0 — Silent Aim + Rapid Fire",
+        ReleaseNotesTitle   = "v1.3.0 — Versionshinweise",
+        ReleaseNotesContent = "v1.2.0: Munitionsreserve-Speicherort behoben, Nahkampfwaffen-Support hinzugefügt, Executor-Stabilität verbessert.\nv1.2.1: Spieleinfrierung auf Volt und anderen Executors durch task.wait() im Heartbeat-Handler behoben; Rayfield lädt jetzt asynchron.\nv1.3.0: Silent Aim (Reichweiten-Slider) und Schnellfeuer (bis 100 Schuss/s, Fernkampf + Nahkampf) hinzugefügt; Unendlich/Eingefrorene Munition hält Reserve auf 99999.\n\nBug gefunden oder Feature-Wunsch? Erstelle ein Issue auf GitHub (Rival99900/Roblox-Scripts) oder schreibe auf ScriptBlox.",
         Aimbot              = "Aimbot",
         AutoBring           = "Auto Anziehen",
         BringRadius         = "Anzugsradius (studs)",
@@ -139,9 +133,6 @@ local Translations = {
         SilentAim           = "Silent Aim",
         SilentRange         = "Silent-Aim-Reichweite (studs)",
         FireRate            = "Feuerrate (Schuss/s)",
-        GodMode             = "Gottmodus",
-        GodHealth           = "Gottmodus-Leben",
-        GodHealthHint       = "Zahl eingeben",
     },
     ES = {
         WindowTitle         = "Tower of Zombies Hub",
@@ -151,9 +142,9 @@ local Translations = {
         TabMovement         = "Movimiento",
         TabTools            = "Herramientas",
         CreditsTitle        = "Créditos",
-        CreditsContent      = "Creado por Rival960 con ayuda de IA\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.3.1 — Silent Aim + Rapid Fire + God Mode",
-        ReleaseNotesTitle   = "v1.3.1 — Notas de Versión",
-        ReleaseNotesContent = "v1.2.0: Corrección de la ubicación de la reserva de munición, soporte de armas cuerpo a cuerpo, estabilidad mejorada.\nv1.2.1: Corrección del congelamiento en Volt y otros executors causado por task.wait() dentro del handler Heartbeat; Rayfield ahora carga de forma asíncrona.\nv1.3.0: Añadido Disparo Rápido (distancia + cuerpo a cuerpo, cadencia ajustable) y Modo Dios (vida personalizada, del lado del cliente).\nv1.3.1: El antiguo Disparo Rápido pasa a ser Silent Aim con slider de alcance; nuevo Disparo Rápido más rápido hacia donde apuntas (distancia + cuerpo a cuerpo); Modo Dios reforzado.\n\n¿Encontraste un error o quieres pedir una función? Abre un issue en GitHub (Rival99900/Roblox-Scripts) o publica en ScriptBlox.",
+        CreditsContent      = "Creado por Rival960 con ayuda de IA\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.3.0 — Silent Aim + Rapid Fire",
+        ReleaseNotesTitle   = "v1.3.0 — Notas de Versión",
+        ReleaseNotesContent = "v1.2.0: Corrección de la ubicación de la reserva de munición, soporte de armas cuerpo a cuerpo, estabilidad mejorada.\nv1.2.1: Corrección del congelamiento en Volt y otros executors causado por task.wait() dentro del handler Heartbeat; Rayfield ahora carga de forma asíncrona.\nv1.3.0: Añadido Silent Aim (slider de alcance) y Disparo Rápido (hasta 100 disparos/s, distancia + cuerpo a cuerpo); Munición Infinita/Congelada mantiene la reserva en 99999.\n\n¿Encontraste un error o quieres pedir una función? Abre un issue en GitHub (Rival99900/Roblox-Scripts) o publica en ScriptBlox.",
         Aimbot              = "Aimbot",
         AutoBring           = "Auto Atraer",
         BringRadius         = "Radio de Atracción (studs)",
@@ -175,9 +166,6 @@ local Translations = {
         SilentAim           = "Silent Aim",
         SilentRange         = "Alcance del Silent Aim (studs)",
         FireRate            = "Cadencia (disparos/s)",
-        GodMode             = "Modo Dios",
-        GodHealth           = "Vida del Modo Dios",
-        GodHealthHint       = "Introduce un número",
     },
     PT = {
         WindowTitle         = "Tower of Zombies Hub",
@@ -187,9 +175,9 @@ local Translations = {
         TabMovement         = "Movimento",
         TabTools            = "Ferramentas",
         CreditsTitle        = "Créditos",
-        CreditsContent      = "Criado por Rival960 com ajuda de IA\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.3.1 — Silent Aim + Rapid Fire + God Mode",
-        ReleaseNotesTitle   = "v1.3.1 — Notas da Versão",
-        ReleaseNotesContent = "v1.2.0: Correção da localização da reserva de munição, suporte a armas corpo a corpo, estabilidade melhorada.\nv1.2.1: Correção do congelamento no Volt e outros executors causado por task.wait() dentro do handler Heartbeat; Rayfield agora carrega de forma assíncrona.\nv1.3.0: Adicionado Tiro Rápido (distância + corpo a corpo, cadência ajustável) e Modo Deus (vida personalizada, lado do cliente).\nv1.3.1: O antigo Tiro Rápido virou Silent Aim com slider de alcance; novo Tiro Rápido mais rápido onde você mira (distância + corpo a corpo); Modo Deus reforçado.\n\nEncontrou um bug ou quer sugerir uma função? Abra uma issue no GitHub (Rival99900/Roblox-Scripts) ou publique no ScriptBlox.",
+        CreditsContent      = "Criado por Rival960 com ajuda de IA\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.3.0 — Silent Aim + Rapid Fire",
+        ReleaseNotesTitle   = "v1.3.0 — Notas da Versão",
+        ReleaseNotesContent = "v1.2.0: Correção da localização da reserva de munição, suporte a armas corpo a corpo, estabilidade melhorada.\nv1.2.1: Correção do congelamento no Volt e outros executors causado por task.wait() dentro do handler Heartbeat; Rayfield agora carrega de forma assíncrona.\nv1.3.0: Adicionado Silent Aim (slider de alcance) e Tiro Rápido (até 100 tiros/s, distância + corpo a corpo); Munição Infinita/Congelada mantém a reserva em 99999.\n\nEncontrou um bug ou quer sugerir uma função? Abra uma issue no GitHub (Rival99900/Roblox-Scripts) ou publique no ScriptBlox.",
         Aimbot              = "Aimbot",
         AutoBring           = "Auto Atrair",
         BringRadius         = "Raio de Atração (studs)",
@@ -211,9 +199,6 @@ local Translations = {
         SilentAim           = "Silent Aim",
         SilentRange         = "Alcance do Silent Aim (studs)",
         FireRate            = "Cadência (tiros/s)",
-        GodMode             = "Modo Deus",
-        GodHealth           = "Vida do Modo Deus",
-        GodHealthHint       = "Digite um número",
     },
     RU = {
         WindowTitle         = "Tower of Zombies Hub",
@@ -223,9 +208,9 @@ local Translations = {
         TabMovement         = "Движение",
         TabTools            = "Инструменты",
         CreditsTitle        = "Авторы",
-        CreditsContent      = "Создано Rival960 с помощью ИИ\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.3.1 — Silent Aim + Rapid Fire + God Mode",
-        ReleaseNotesTitle   = "v1.3.1 — Примечания к версии",
-        ReleaseNotesContent = "v1.2.0: Исправлено расположение резерва патронов, добавлена поддержка оружия ближнего боя, улучшена стабильность.\nv1.2.1: Исправлено зависание на Volt и других executors из-за task.wait() внутри обработчика Heartbeat; Rayfield теперь загружается асинхронно.\nv1.3.0: Добавлены быстрая стрельба (дальний + ближний бой, настраиваемая скорость) и режим бога (своё здоровье, на стороне клиента).\nv1.3.1: Старая быстрая стрельба переименована в Silent Aim со слайдером дальности; новая быстрая стрельба бьёт быстрее по цели под прицелом (дальний + ближний бой); усилен режим бога.\n\nНашли баг или хотите предложить функцию? Создайте issue на GitHub (Rival99900/Roblox-Scripts) или напишите на ScriptBlox.",
+        CreditsContent      = "Создано Rival960 с помощью ИИ\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.3.0 — Silent Aim + Rapid Fire",
+        ReleaseNotesTitle   = "v1.3.0 — Примечания к версии",
+        ReleaseNotesContent = "v1.2.0: Исправлено расположение резерва патронов, добавлена поддержка оружия ближнего боя, улучшена стабильность.\nv1.2.1: Исправлено зависание на Volt и других executors из-за task.wait() внутри обработчика Heartbeat; Rayfield теперь загружается асинхронно.\nv1.3.0: Добавлены Silent Aim (слайдер дальности) и быстрая стрельба (до 100 выстр/с, дальний + ближний бой); бесконечные/замороженные патроны держат резерв на 99999.\n\nНашли баг или хотите предложить функцию? Создайте issue на GitHub (Rival99900/Roblox-Scripts) или напишите на ScriptBlox.",
         Aimbot              = "Аимбот",
         AutoBring           = "Авто Притяжение",
         BringRadius         = "Радиус притяжения (ст.)",
@@ -247,9 +232,6 @@ local Translations = {
         SilentAim           = "Silent Aim",
         SilentRange         = "Дальность Silent Aim (ст.)",
         FireRate            = "Скорострельность (выстр/с)",
-        GodMode             = "Режим бога",
-        GodHealth           = "Здоровье режима бога",
-        GodHealthHint       = "Введите число",
     },
     IT = {
         WindowTitle         = "Tower of Zombies Hub",
@@ -259,9 +241,9 @@ local Translations = {
         TabMovement         = "Movimento",
         TabTools            = "Strumenti",
         CreditsTitle        = "Crediti",
-        CreditsContent      = "Creato da Rival960 con l'aiuto dell'IA\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.3.1 — Silent Aim + Rapid Fire + God Mode",
-        ReleaseNotesTitle   = "v1.3.1 — Note di Versione",
-        ReleaseNotesContent = "v1.2.0: Corretta posizione della riserva munizioni, aggiunto supporto armi da mischia, stabilità migliorata.\nv1.2.1: Corretto il congelamento su Volt e altri executor causato da task.wait() nell'handler Heartbeat; Rayfield ora si carica in modo asincrono.\nv1.3.0: Aggiunti Fuoco Rapido (distanza + mischia, cadenza regolabile) e Modalità Dio (vita personalizzata, lato client).\nv1.3.1: Il vecchio Fuoco Rapido diventa Silent Aim con slider di portata; nuovo Fuoco Rapido più veloce su ciò che miri (distanza + mischia); Modalità Dio potenziata.\n\nHai trovato un bug o vuoi richiedere una funzione? Apri un'issue su GitHub (Rival99900/Roblox-Scripts) o scrivi su ScriptBlox.",
+        CreditsContent      = "Creato da Rival960 con l'aiuto dell'IA\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.3.0 — Silent Aim + Rapid Fire",
+        ReleaseNotesTitle   = "v1.3.0 — Note di Versione",
+        ReleaseNotesContent = "v1.2.0: Corretta posizione della riserva munizioni, aggiunto supporto armi da mischia, stabilità migliorata.\nv1.2.1: Corretto il congelamento su Volt e altri executor causato da task.wait() nell'handler Heartbeat; Rayfield ora si carica in modo asincrono.\nv1.3.0: Aggiunti Silent Aim (slider di portata) e Fuoco Rapido (fino a 100 colpi/s, distanza + mischia); Munizioni Infinite/Bloccate tengono la riserva a 99999.\n\nHai trovato un bug o vuoi richiedere una funzione? Apri un'issue su GitHub (Rival99900/Roblox-Scripts) o scrivi su ScriptBlox.",
         Aimbot              = "Aimbot",
         AutoBring           = "Auto Attira",
         BringRadius         = "Raggio di Attrazione (studs)",
@@ -283,9 +265,6 @@ local Translations = {
         SilentAim           = "Silent Aim",
         SilentRange         = "Portata Silent Aim (studs)",
         FireRate            = "Cadenza (colpi/s)",
-        GodMode             = "Modalità Dio",
-        GodHealth           = "Vita Modalità Dio",
-        GodHealthHint       = "Inserisci un numero",
     },
     NL = {
         WindowTitle         = "Tower of Zombies Hub",
@@ -295,9 +274,9 @@ local Translations = {
         TabMovement         = "Beweging",
         TabTools            = "Tools & Visuals",
         CreditsTitle        = "Credits",
-        CreditsContent      = "Gemaakt door Rival960 met AI-hulp\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.3.1 — Silent Aim + Rapid Fire + God Mode",
-        ReleaseNotesTitle   = "v1.3.1 — Versienotities",
-        ReleaseNotesContent = "v1.2.0: Locatie munitiereserve gecorrigeerd, melee-wapenondersteuning toegevoegd, stabiliteit verbeterd.\nv1.2.1: Bevriezing op Volt en andere executors verholpen veroorzaakt door task.wait() in de Heartbeat-handler; Rayfield laadt nu asynchroon.\nv1.3.0: Snelvuur (afstand + melee, instelbare snelheid) en God Modus (eigen levenspunten, client-side) toegevoegd.\nv1.3.1: Oud Snelvuur hernoemd naar Silent Aim met bereik-slider; nieuw Snelvuur vuurt sneller op je doel (afstand + melee); sterkere God Modus.\n\nBug gevonden of wil je een functie aanvragen? Open een issue op GitHub (Rival99900/Roblox-Scripts) of post op ScriptBlox.",
+        CreditsContent      = "Gemaakt door Rival960 met AI-hulp\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.3.0 — Silent Aim + Rapid Fire",
+        ReleaseNotesTitle   = "v1.3.0 — Versienotities",
+        ReleaseNotesContent = "v1.2.0: Locatie munitiereserve gecorrigeerd, melee-wapenondersteuning toegevoegd, stabiliteit verbeterd.\nv1.2.1: Bevriezing op Volt en andere executors verholpen veroorzaakt door task.wait() in de Heartbeat-handler; Rayfield laadt nu asynchroon.\nv1.3.0: Silent Aim (bereik-slider) en Snelvuur (tot 100 schoten/s, afstand + melee) toegevoegd; Oneindige/Bevroren Munitie houdt reserve op 99999.\n\nBug gevonden of wil je een functie aanvragen? Open een issue op GitHub (Rival99900/Roblox-Scripts) of post op ScriptBlox.",
         Aimbot              = "Aimbot",
         AutoBring           = "Auto Aantrekken",
         BringRadius         = "Aantrekkingsradius (studs)",
@@ -319,9 +298,6 @@ local Translations = {
         SilentAim           = "Silent Aim",
         SilentRange         = "Silent Aim Bereik (studs)",
         FireRate            = "Vuursnelheid (schoten/s)",
-        GodMode             = "God Modus",
-        GodHealth           = "God Modus Leven",
-        GodHealthHint       = "Voer een getal in",
     },
     PL = {
         WindowTitle         = "Tower of Zombies Hub",
@@ -331,9 +307,9 @@ local Translations = {
         TabMovement         = "Ruch",
         TabTools            = "Narzędzia",
         CreditsTitle        = "Kredyty",
-        CreditsContent      = "Stworzone przez Rival960 z pomocą AI\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.3.1 — Silent Aim + Rapid Fire + God Mode",
-        ReleaseNotesTitle   = "v1.3.1 — Informacje o Wersji",
-        ReleaseNotesContent = "v1.2.0: Poprawiono lokalizację rezerwy amunicji, dodano wsparcie broni białej, poprawiono stabilność.\nv1.2.1: Naprawiono zamrożenie gry na Volt i innych executorach spowodowane task.wait() wewnątrz handlera Heartbeat; Rayfield ładuje się teraz asynchronicznie.\nv1.3.0: Dodano Szybki Ogień (dystans + walka wręcz, regulowana szybkość) i Tryb Boga (własne zdrowie, po stronie klienta).\nv1.3.1: Stary Szybki Ogień to teraz Silent Aim z suwakiem zasięgu; nowy Szybki Ogień strzela szybciej w cel (dystans + walka wręcz); mocniejszy Tryb Boga.\n\nZnalazłeś błąd lub chcesz zgłosić funkcję? Otwórz issue na GitHub (Rival99900/Roblox-Scripts) lub napisz na ScriptBlox.",
+        CreditsContent      = "Stworzone przez Rival960 z pomocą AI\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.3.0 — Silent Aim + Rapid Fire",
+        ReleaseNotesTitle   = "v1.3.0 — Informacje o Wersji",
+        ReleaseNotesContent = "v1.2.0: Poprawiono lokalizację rezerwy amunicji, dodano wsparcie broni białej, poprawiono stabilność.\nv1.2.1: Naprawiono zamrożenie gry na Volt i innych executorach spowodowane task.wait() wewnątrz handlera Heartbeat; Rayfield ładuje się teraz asynchronicznie.\nv1.3.0: Dodano Silent Aim (suwak zasięgu) i Szybki Ogień (do 100 strz/s, dystans + walka wręcz); Nieskończona/Zamrożona Amunicja trzyma rezerwę na 99999.\n\nZnalazłeś błąd lub chcesz zgłosić funkcję? Otwórz issue na GitHub (Rival99900/Roblox-Scripts) lub napisz na ScriptBlox.",
         Aimbot              = "Aimbot",
         AutoBring           = "Auto Przyciąganie",
         BringRadius         = "Promień przyciągania (studs)",
@@ -355,9 +331,6 @@ local Translations = {
         SilentAim           = "Silent Aim",
         SilentRange         = "Zasięg Silent Aim (studs)",
         FireRate            = "Szybkostrzelność (strz/s)",
-        GodMode             = "Tryb Boga",
-        GodHealth           = "Zdrowie Trybu Boga",
-        GodHealthHint       = "Wpisz liczbę",
     },
     ZH = {
         WindowTitle         = "行尸走肉枢纽",
@@ -367,9 +340,9 @@ local Translations = {
         TabMovement         = "移动",
         TabTools            = "工具与视觉",
         CreditsTitle        = "致谢",
-        CreditsContent      = "由 Rival960 借助 AI 创建\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.3.1 — Silent Aim + Rapid Fire + God Mode",
-        ReleaseNotesTitle   = "v1.3.1 — 版本说明",
-        ReleaseNotesContent = "v1.2.0：修复了备用弹药位置，添加近战武器支持，改善executor稳定性。\nv1.2.1：修复了Volt及其他executor因Heartbeat处理器中的task.wait()导致的游戏冻结；Rayfield现在异步加载。\nv1.3.0：新增快速射击（远程 + 近战，可调射速）和无敌模式（自定义血量，客户端）。\nv1.3.1：旧的快速射击更名为静默瞄准并新增范围滑块；新的快速射击对准星目标更快射击（远程 + 近战）；无敌模式增强。\n\n发现漏洞或想申请功能？请在 GitHub (Rival99900/Roblox-Scripts) 提交 issue 或在 ScriptBlox 发帖。",
+        CreditsContent      = "由 Rival960 借助 AI 创建\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.3.0 — Silent Aim + Rapid Fire",
+        ReleaseNotesTitle   = "v1.3.0 — 版本说明",
+        ReleaseNotesContent = "v1.2.0：修复了备用弹药位置，添加近战武器支持，改善executor稳定性。\nv1.2.1：修复了Volt及其他executor因Heartbeat处理器中的task.wait()导致的游戏冻结；Rayfield现在异步加载。\nv1.3.0：新增静默瞄准（范围滑块）和快速射击（最高 100 发/秒，远程 + 近战）；无限/冻结弹药将备用弹药保持在 99999。\n\n发现漏洞或想申请功能？请在 GitHub (Rival99900/Roblox-Scripts) 提交 issue 或在 ScriptBlox 发帖。",
         Aimbot              = "自动瞄准",
         AutoBring           = "自动吸引",
         BringRadius         = "吸引半径 (格)",
@@ -391,9 +364,6 @@ local Translations = {
         SilentAim           = "静默瞄准",
         SilentRange         = "静默瞄准范围 (格)",
         FireRate            = "射速 (发/秒)",
-        GodMode             = "无敌模式",
-        GodHealth           = "无敌模式血量",
-        GodHealthHint       = "输入数字",
     },
     JA = {
         WindowTitle         = "ゾンビタワーハブ",
@@ -403,9 +373,9 @@ local Translations = {
         TabMovement         = "移動",
         TabTools            = "ツール",
         CreditsTitle        = "クレジット",
-        CreditsContent      = "Rival960 と AI の協力で作成\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.3.1 — Silent Aim + Rapid Fire + God Mode",
-        ReleaseNotesTitle   = "v1.3.1 — リリースノート",
-        ReleaseNotesContent = "v1.2.0：予備弾薬の場所を修正、近接武器サポートを追加、安定性を改善。\nv1.2.1：HeartbeatハンドラーのtaskタスクwaitによるVoltおよび他のExecutorでのフリーズを修正；Rayfieldが非同期で読み込まれるように変更。\nv1.3.0：連射（遠距離＋近接、速度調整可）とゴッドモード（体力カスタム、クライアント側）を追加。\nv1.3.1：旧連射をサイレントエイムに改名し範囲スライダーを追加；新しい連射は照準先へ高速射撃（遠距離＋近接）；ゴッドモード強化。\n\nバグ発見や機能リクエストはGitHub (Rival99900/Roblox-Scripts) のissueまたはScriptBloxに投稿してください。",
+        CreditsContent      = "Rival960 と AI の協力で作成\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.3.0 — Silent Aim + Rapid Fire",
+        ReleaseNotesTitle   = "v1.3.0 — リリースノート",
+        ReleaseNotesContent = "v1.2.0：予備弾薬の場所を修正、近接武器サポートを追加、安定性を改善。\nv1.2.1：HeartbeatハンドラーのtaskタスクwaitによるVoltおよび他のExecutorでのフリーズを修正；Rayfieldが非同期で読み込まれるように変更。\nv1.3.0：サイレントエイム（範囲スライダー）と連射（最大 100 発/秒、遠距離＋近接）を追加；無限/固定弾薬で予備弾薬を 99999 に維持。\n\nバグ発見や機能リクエストはGitHub (Rival99900/Roblox-Scripts) のissueまたはScriptBloxに投稿してください。",
         Aimbot              = "エイムボット",
         AutoBring           = "自動引き寄せ",
         BringRadius         = "引き寄せ半径 (スタッド)",
@@ -427,9 +397,6 @@ local Translations = {
         SilentAim           = "サイレントエイム",
         SilentRange         = "サイレントエイム範囲 (スタッド)",
         FireRate            = "連射速度 (発/秒)",
-        GodMode             = "ゴッドモード",
-        GodHealth           = "ゴッドモード体力",
-        GodHealthHint       = "数値を入力",
     },
     TR = {
         WindowTitle         = "Tower of Zombies Hub",
@@ -439,9 +406,9 @@ local Translations = {
         TabMovement         = "Hareket",
         TabTools            = "Araçlar",
         CreditsTitle        = "Krediler",
-        CreditsContent      = "Rival960 tarafından AI yardımıyla yapılmıştır\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.3.1 — Silent Aim + Rapid Fire + God Mode",
-        ReleaseNotesTitle   = "v1.3.1 — Sürüm Notları",
-        ReleaseNotesContent = "v1.2.0: Mermi rezerv konumu düzeltildi, yakın dövüş silahı desteği eklendi, kararlılık geliştirildi.\nv1.2.1: Heartbeat handler içindeki task.wait() nedeniyle Volt ve diğer executörlerde yaşanan oyun donması düzeltildi; Rayfield artık eşzamansız yükleniyor.\nv1.3.0: Hızlı Ateş (uzak + yakın dövüş, ayarlanabilir hız) ve Tanrı Modu (özel can, istemci tarafı) eklendi.\nv1.3.1: Eski Hızlı Ateş, menzil kaydırıcılı Silent Aim oldu; yeni Hızlı Ateş nişan aldığın yere daha hızlı ateş eder (uzak + yakın dövüş); Tanrı Modu güçlendirildi.\n\nBir hata buldunuz veya özellik talep etmek mi istiyorsunuz? GitHub'da (Rival99900/Roblox-Scripts) issue açın veya ScriptBlox'ta paylaşın.",
+        CreditsContent      = "Rival960 tarafından AI yardımıyla yapılmıştır\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.3.0 — Silent Aim + Rapid Fire",
+        ReleaseNotesTitle   = "v1.3.0 — Sürüm Notları",
+        ReleaseNotesContent = "v1.2.0: Mermi rezerv konumu düzeltildi, yakın dövüş silahı desteği eklendi, kararlılık geliştirildi.\nv1.2.1: Heartbeat handler içindeki task.wait() nedeniyle Volt ve diğer executörlerde yaşanan oyun donması düzeltildi; Rayfield artık eşzamansız yükleniyor.\nv1.3.0: Silent Aim (menzil kaydırıcı) ve Hızlı Ateş (100 atış/sn'ye kadar, uzak + yakın dövüş) eklendi; Sonsuz/Dondurulmuş Mermi rezervi 99999'da tutar.\n\nBir hata buldunuz veya özellik talep etmek mi istiyorsunuz? GitHub'da (Rival99900/Roblox-Scripts) issue açın veya ScriptBlox'ta paylaşın.",
         Aimbot              = "Aimbot",
         AutoBring           = "Otomatik Çekme",
         BringRadius         = "Çekme Yarıçapı (studs)",
@@ -463,9 +430,6 @@ local Translations = {
         SilentAim           = "Silent Aim",
         SilentRange         = "Silent Aim Menzili (studs)",
         FireRate            = "Atış Hızı (atış/sn)",
-        GodMode             = "Tanrı Modu",
-        GodHealth           = "Tanrı Modu Canı",
-        GodHealthHint       = "Bir sayı girin",
     },
     KO = {
         WindowTitle         = "좀비 타워 허브",
@@ -475,9 +439,9 @@ local Translations = {
         TabMovement         = "이동",
         TabTools            = "도구",
         CreditsTitle        = "크레딧",
-        CreditsContent      = "Rival960이 AI의 도움으로 제작\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.3.1 — Silent Aim + Rapid Fire + God Mode",
-        ReleaseNotesTitle   = "v1.3.1 — 릴리즈 노트",
-        ReleaseNotesContent = "v1.2.0: 예비 탄약 위치 수정, 근접 무기 지원 추가, 안정성 개선.\nv1.2.1: Heartbeat 핸들러 내 task.wait()로 인한 Volt 및 다른 executor의 게임 프리즈 수정; Rayfield가 이제 비동기적으로 로드됩니다.\nv1.3.0: 연사(원거리 + 근접, 속도 조절 가능)와 갓 모드(사용자 지정 체력, 클라이언트 측) 추가.\nv1.3.1: 기존 연사를 범위 슬라이더가 있는 사일런트 에임으로 변경; 새 연사는 조준한 대상에 더 빠르게 발사 (원거리 + 근접); 갓 모드 강화.\n\n버그를 찾거나 기능을 요청하고 싶다면? GitHub (Rival99900/Roblox-Scripts)에 이슈를 열거나 ScriptBlox에 게시하세요.",
+        CreditsContent      = "Rival960이 AI의 도움으로 제작\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.3.0 — Silent Aim + Rapid Fire",
+        ReleaseNotesTitle   = "v1.3.0 — 릴리즈 노트",
+        ReleaseNotesContent = "v1.2.0: 예비 탄약 위치 수정, 근접 무기 지원 추가, 안정성 개선.\nv1.2.1: Heartbeat 핸들러 내 task.wait()로 인한 Volt 및 다른 executor의 게임 프리즈 수정; Rayfield가 이제 비동기적으로 로드됩니다.\nv1.3.0: 사일런트 에임(범위 슬라이더)과 연사(최대 100발/초, 원거리 + 근접) 추가; 무한/고정 탄약이 예비 탄약을 99999로 유지.\n\n버그를 찾거나 기능을 요청하고 싶다면? GitHub (Rival99900/Roblox-Scripts)에 이슈를 열거나 ScriptBlox에 게시하세요.",
         Aimbot              = "에임봇",
         AutoBring           = "자동 끌어오기",
         BringRadius         = "끌어오기 반경 (스터드)",
@@ -499,9 +463,6 @@ local Translations = {
         SilentAim           = "사일런트 에임",
         SilentRange         = "사일런트 에임 범위 (스터드)",
         FireRate            = "연사 속도 (발/초)",
-        GodMode             = "갓 모드",
-        GodHealth           = "갓 모드 체력",
-        GodHealthHint       = "숫자 입력",
     },
     AR = {
         WindowTitle         = "Tower of Zombies Hub",
@@ -511,9 +472,9 @@ local Translations = {
         TabMovement         = "الحركة",
         TabTools            = "الأدوات",
         CreditsTitle        = "الاعتمادات",
-        CreditsContent      = "تم إنشاؤه بواسطة Rival960 بمساعدة الذكاء الاصطناعي\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.3.1 — Silent Aim + Rapid Fire + God Mode",
-        ReleaseNotesTitle   = "v1.3.1 — ملاحظات الإصدار",
-        ReleaseNotesContent = "v1.2.0: إصلاح موقع احتياطي الذخيرة، دعم الأسلحة المتلاحمة، تحسين الاستقرار.\nv1.2.1: إصلاح تجميد اللعبة على Volt والمنفذين الآخرين بسبب task.wait() داخل معالج Heartbeat؛ يتم الآن تحميل Rayfield بشكل غير متزامن.\nv1.3.0: إضافة الإطلاق السريع (بعيد + متلاحم، معدل قابل للتعديل) ووضع الإله (صحة مخصصة، من جهة العميل).\nv1.3.1: الإطلاق السريع القديم أصبح تصويبًا صامتًا مع شريط للمدى؛ إطلاق سريع جديد أسرع نحو ما تصوب عليه (بعيد + متلاحم)؛ تقوية وضع الإله.\n\nوجدت خطأ أو تريد طلب ميزة؟ افتح issue على GitHub (Rival99900/Roblox-Scripts) أو انشر على ScriptBlox.",
+        CreditsContent      = "تم إنشاؤه بواسطة Rival960 بمساعدة الذكاء الاصطناعي\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.3.0 — Silent Aim + Rapid Fire",
+        ReleaseNotesTitle   = "v1.3.0 — ملاحظات الإصدار",
+        ReleaseNotesContent = "v1.2.0: إصلاح موقع احتياطي الذخيرة، دعم الأسلحة المتلاحمة، تحسين الاستقرار.\nv1.2.1: إصلاح تجميد اللعبة على Volt والمنفذين الآخرين بسبب task.wait() داخل معالج Heartbeat؛ يتم الآن تحميل Rayfield بشكل غير متزامن.\nv1.3.0: إضافة التصويب الصامت (شريط المدى) والإطلاق السريع (حتى 100 طلقة/ث، بعيد + متلاحم)؛ الذخيرة اللانهائية/المجمدة تبقي الاحتياطي عند 99999.\n\nوجدت خطأ أو تريد طلب ميزة؟ افتح issue على GitHub (Rival99900/Roblox-Scripts) أو انشر على ScriptBlox.",
         Aimbot              = "أيمبوت",
         AutoBring           = "جذب تلقائي",
         BringRadius         = "نطاق الجذب (وحدة)",
@@ -535,9 +496,6 @@ local Translations = {
         SilentAim           = "تصويب صامت",
         SilentRange         = "مدى التصويب الصامت (وحدة)",
         FireRate            = "معدل الإطلاق (طلقة/ث)",
-        GodMode             = "وضع الإله",
-        GodHealth           = "صحة وضع الإله",
-        GodHealthHint       = "أدخل رقمًا",
     },
     VI = {
         WindowTitle         = "Tower of Zombies Hub",
@@ -547,9 +505,9 @@ local Translations = {
         TabMovement         = "Di Chuyển",
         TabTools            = "Công Cụ",
         CreditsTitle        = "Tín Dụng",
-        CreditsContent      = "Tạo bởi Rival960 với sự trợ giúp của AI\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.3.1 — Silent Aim + Rapid Fire + God Mode",
-        ReleaseNotesTitle   = "v1.3.1 — Ghi Chú Phiên Bản",
-        ReleaseNotesContent = "v1.2.0: Sửa vị trí dự trữ đạn, thêm hỗ trợ vũ khí cận chiến, cải thiện độ ổn định.\nv1.2.1: Sửa lỗi đóng băng trên Volt và các executor khác do task.wait() bên trong handler Heartbeat; Rayfield giờ tải không đồng bộ.\nv1.3.0: Thêm Bắn Nhanh (tầm xa + cận chiến, tốc độ tùy chỉnh) và Chế Độ Bất Tử (máu tùy chỉnh, phía client).\nv1.3.1: Bắn Nhanh cũ đổi thành Silent Aim có thanh tầm bắn; Bắn Nhanh mới bắn nhanh hơn vào mục tiêu đang ngắm (tầm xa + cận chiến); Chế Độ Bất Tử mạnh hơn.\n\nTìm thấy lỗi hoặc muốn yêu cầu tính năng? Mở issue trên GitHub (Rival99900/Roblox-Scripts) hoặc đăng trên ScriptBlox.",
+        CreditsContent      = "Tạo bởi Rival960 với sự trợ giúp của AI\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.3.0 — Silent Aim + Rapid Fire",
+        ReleaseNotesTitle   = "v1.3.0 — Ghi Chú Phiên Bản",
+        ReleaseNotesContent = "v1.2.0: Sửa vị trí dự trữ đạn, thêm hỗ trợ vũ khí cận chiến, cải thiện độ ổn định.\nv1.2.1: Sửa lỗi đóng băng trên Volt và các executor khác do task.wait() bên trong handler Heartbeat; Rayfield giờ tải không đồng bộ.\nv1.3.0: Thêm Silent Aim (thanh tầm bắn) và Bắn Nhanh (tối đa 100 phát/s, tầm xa + cận chiến); Đạn Vô Hạn/Đóng Băng giữ dự trữ ở 99999.\n\nTìm thấy lỗi hoặc muốn yêu cầu tính năng? Mở issue trên GitHub (Rival99900/Roblox-Scripts) hoặc đăng trên ScriptBlox.",
         Aimbot              = "Aimbot",
         AutoBring           = "Tự Động Kéo",
         BringRadius         = "Bán Kính Kéo (studs)",
@@ -571,9 +529,6 @@ local Translations = {
         SilentAim           = "Silent Aim",
         SilentRange         = "Tầm Silent Aim (studs)",
         FireRate            = "Tốc Độ Bắn (phát/s)",
-        GodMode             = "Chế Độ Bất Tử",
-        GodHealth           = "Máu Chế Độ Bất Tử",
-        GodHealthHint       = "Nhập một số",
     },
     SV = {
         WindowTitle         = "Tower of Zombies Hub",
@@ -583,9 +538,9 @@ local Translations = {
         TabMovement         = "Rörelse",
         TabTools            = "Verktyg",
         CreditsTitle        = "Erkännanden",
-        CreditsContent      = "Skapad av Rival960 med hjälp av AI\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.3.1 — Silent Aim + Rapid Fire + God Mode",
-        ReleaseNotesTitle   = "v1.3.1 — Versionsanteckningar",
-        ReleaseNotesContent = "v1.2.0: Korrigerade plats för ammunitionsreserv, lade till stöd för närstridsvapen, förbättrad stabilitet.\nv1.2.1: Åtgärdade spelfrysning på Volt och andra executors orsakad av task.wait() i Heartbeat-handler; Rayfield laddas nu asynkront.\nv1.3.0: Lade till Snabbeld (avstånd + närstrid, justerbar hastighet) och Gudläge (egen hälsa, klientsida).\nv1.3.1: Gammal Snabbeld heter nu Silent Aim med räckviddsreglage; ny Snabbeld skjuter snabbare på det du siktar på (avstånd + närstrid); starkare Gudläge.\n\nHittade du en bugg eller vill begära en funktion? Öppna ett issue på GitHub (Rival99900/Roblox-Scripts) eller posta på ScriptBlox.",
+        CreditsContent      = "Skapad av Rival960 med hjälp av AI\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.3.0 — Silent Aim + Rapid Fire",
+        ReleaseNotesTitle   = "v1.3.0 — Versionsanteckningar",
+        ReleaseNotesContent = "v1.2.0: Korrigerade plats för ammunitionsreserv, lade till stöd för närstridsvapen, förbättrad stabilitet.\nv1.2.1: Åtgärdade spelfrysning på Volt och andra executors orsakad av task.wait() i Heartbeat-handler; Rayfield laddas nu asynkront.\nv1.3.0: Lade till Silent Aim (räckviddsreglage) och Snabbeld (upp till 100 skott/s, avstånd + närstrid); Oändlig/Fryst Ammunition håller reserven på 99999.\n\nHittade du en bugg eller vill begära en funktion? Öppna ett issue på GitHub (Rival99900/Roblox-Scripts) eller posta på ScriptBlox.",
         Aimbot              = "Aimbot",
         AutoBring           = "Auto Hämta",
         BringRadius         = "Hämtningsradie (studs)",
@@ -607,9 +562,6 @@ local Translations = {
         SilentAim           = "Silent Aim",
         SilentRange         = "Silent Aim Räckvidd (studs)",
         FireRate            = "Eldhastighet (skott/s)",
-        GodMode             = "Gudläge",
-        GodHealth           = "Gudläge Hälsa",
-        GodHealthHint       = "Ange ett nummer",
     },
     EL = {
         WindowTitle         = "Tower of Zombies Hub",
@@ -619,9 +571,9 @@ local Translations = {
         TabMovement         = "Κίνηση",
         TabTools            = "Εργαλεία",
         CreditsTitle        = "Εύσημα",
-        CreditsContent      = "Δημιουργήθηκε από Rival960 με βοήθεια AI\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.3.1 — Silent Aim + Rapid Fire + God Mode",
-        ReleaseNotesTitle   = "v1.3.1 — Σημειώσεις Έκδοσης",
-        ReleaseNotesContent = "v1.2.0: Διορθώθηκε η θέση του αποθεματικού πυρομαχικών, προστέθηκε υποστήριξη όπλων εκ του σύνεγγυς, βελτιωμένη σταθερότητα.\nv1.2.1: Διορθώθηκε το πάγωμα στο Volt και άλλους executor λόγω task.wait() εντός του handler Heartbeat· το Rayfield φορτώνεται πλέον ασύγχρονα.\nv1.3.0: Προστέθηκαν Γρήγορα Πυρά (απόσταση + σώμα με σώμα, ρυθμιζόμενος ρυθμός) και Λειτουργία Θεού (προσαρμοσμένη ζωή, client-side).\nv1.3.1: Τα παλιά Γρήγορα Πυρά έγιναν Silent Aim με ρυθμιστικό εμβέλειας· νέα Γρήγορα Πυρά πιο γρήγορα στον στόχο σου (απόσταση + σώμα με σώμα)· ισχυρότερη Λειτουργία Θεού.\n\nΒρήκατε σφάλμα ή θέλετε να ζητήσετε λειτουργία; Ανοίξτε ένα issue στο GitHub (Rival99900/Roblox-Scripts) ή δημοσιεύστε στο ScriptBlox.",
+        CreditsContent      = "Δημιουργήθηκε από Rival960 με βοήθεια AI\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.3.0 — Silent Aim + Rapid Fire",
+        ReleaseNotesTitle   = "v1.3.0 — Σημειώσεις Έκδοσης",
+        ReleaseNotesContent = "v1.2.0: Διορθώθηκε η θέση του αποθεματικού πυρομαχικών, προστέθηκε υποστήριξη όπλων εκ του σύνεγγυς, βελτιωμένη σταθερότητα.\nv1.2.1: Διορθώθηκε το πάγωμα στο Volt και άλλους executor λόγω task.wait() εντός του handler Heartbeat· το Rayfield φορτώνεται πλέον ασύγχρονα.\nv1.3.0: Προστέθηκαν Silent Aim (ρυθμιστικό εμβέλειας) και Γρήγορα Πυρά (έως 100 βολές/δ, απόσταση + σώμα με σώμα)· Άπειρα/Παγωμένα Πυρομαχικά κρατούν το αποθεματικό στα 99999.\n\nΒρήκατε σφάλμα ή θέλετε να ζητήσετε λειτουργία; Ανοίξτε ένα issue στο GitHub (Rival99900/Roblox-Scripts) ή δημοσιεύστε στο ScriptBlox.",
         Aimbot              = "Aimbot",
         AutoBring           = "Αυτόματη Έλξη",
         BringRadius         = "Ακτίνα Έλξης (studs)",
@@ -643,9 +595,6 @@ local Translations = {
         SilentAim           = "Silent Aim",
         SilentRange         = "Εμβέλεια Silent Aim (studs)",
         FireRate            = "Ρυθμός Βολής (βολές/δ)",
-        GodMode             = "Λειτουργία Θεού",
-        GodHealth           = "Ζωή Λειτουργίας Θεού",
-        GodHealthHint       = "Εισάγετε αριθμό",
     },
     RO = {
         WindowTitle         = "Tower of Zombies Hub",
@@ -655,9 +604,9 @@ local Translations = {
         TabMovement         = "Mișcare",
         TabTools            = "Instrumente",
         CreditsTitle        = "Credite",
-        CreditsContent      = "Creat de Rival960 cu ajutorul AI\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.3.1 — Silent Aim + Rapid Fire + God Mode",
-        ReleaseNotesTitle   = "v1.3.1 — Note de Lansare",
-        ReleaseNotesContent = "v1.2.0: Corectată locația rezervei de muniție, adăugat suport arme corp la corp, stabilitate îmbunătățită.\nv1.2.1: Remediată înghețarea jocului pe Volt și alți executori cauzată de task.wait() în handlerul Heartbeat; Rayfield se încarcă acum asincron.\nv1.3.0: Adăugat Foc Rapid (distanță + corp la corp, cadență reglabilă) și Mod Zeu (viață personalizată, client-side).\nv1.3.1: Vechiul Foc Rapid devine Silent Aim cu slider de rază; nou Foc Rapid mai rapid spre ținta vizată (distanță + corp la corp); Mod Zeu întărit.\n\nAți găsit un bug sau doriți să solicitați o funcție? Deschideți un issue pe GitHub (Rival99900/Roblox-Scripts) sau postați pe ScriptBlox.",
+        CreditsContent      = "Creat de Rival960 cu ajutorul AI\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.3.0 — Silent Aim + Rapid Fire",
+        ReleaseNotesTitle   = "v1.3.0 — Note de Lansare",
+        ReleaseNotesContent = "v1.2.0: Corectată locația rezervei de muniție, adăugat suport arme corp la corp, stabilitate îmbunătățită.\nv1.2.1: Remediată înghețarea jocului pe Volt și alți executori cauzată de task.wait() în handlerul Heartbeat; Rayfield se încarcă acum asincron.\nv1.3.0: Adăugat Silent Aim (slider de rază) și Foc Rapid (până la 100 focuri/s, distanță + corp la corp); Muniția Infinită/Înghețată ține rezerva la 99999.\n\nAți găsit un bug sau doriți să solicitați o funcție? Deschideți un issue pe GitHub (Rival99900/Roblox-Scripts) sau postați pe ScriptBlox.",
         Aimbot              = "Aimbot",
         AutoBring           = "Auto Atragere",
         BringRadius         = "Raza de Atragere (studs)",
@@ -679,9 +628,6 @@ local Translations = {
         SilentAim           = "Silent Aim",
         SilentRange         = "Rază Silent Aim (studs)",
         FireRate            = "Cadență (focuri/s)",
-        GodMode             = "Mod Zeu",
-        GodHealth           = "Viață Mod Zeu",
-        GodHealthHint       = "Introduceți un număr",
     },
     UK = {
         WindowTitle         = "Tower of Zombies Hub",
@@ -691,9 +637,9 @@ local Translations = {
         TabMovement         = "Рух",
         TabTools            = "Інструменти",
         CreditsTitle        = "Автори",
-        CreditsContent      = "Створено Rival960 за допомогою AI\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.3.1 — Silent Aim + Rapid Fire + God Mode",
-        ReleaseNotesTitle   = "v1.3.1 — Примітки до версії",
-        ReleaseNotesContent = "v1.2.0: Виправлено розташування резерву патронів, додано підтримку зброї ближнього бою, покращена стабільність.\nv1.2.1: Виправлено зависання на Volt та інших executor через task.wait() всередині обробника Heartbeat; Rayfield тепер завантажується асинхронно.\nv1.3.0: Додано швидку стрільбу (дальній + ближній бій, налаштовувана швидкість) та режим бога (власне здоров'я, на боці клієнта).\nv1.3.1: Стару швидку стрільбу перейменовано на Silent Aim зі слайдером дальності; нова швидка стрільба б'є швидше по цілі під прицілом (дальній + ближній бій); посилено режим бога.\n\nЗнайшли баг або хочете запропонувати функцію? Створіть issue на GitHub (Rival99900/Roblox-Scripts) або напишіть на ScriptBlox.",
+        CreditsContent      = "Створено Rival960 за допомогою AI\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.3.0 — Silent Aim + Rapid Fire",
+        ReleaseNotesTitle   = "v1.3.0 — Примітки до версії",
+        ReleaseNotesContent = "v1.2.0: Виправлено розташування резерву патронів, додано підтримку зброї ближнього бою, покращена стабільність.\nv1.2.1: Виправлено зависання на Volt та інших executor через task.wait() всередині обробника Heartbeat; Rayfield тепер завантажується асинхронно.\nv1.3.0: Додано Silent Aim (слайдер дальності) та швидку стрільбу (до 100 постр/с, дальній + ближній бій); нескінченні/заморожені патрони тримають резерв на 99999.\n\nЗнайшли баг або хочете запропонувати функцію? Створіть issue на GitHub (Rival99900/Roblox-Scripts) або напишіть на ScriptBlox.",
         Aimbot              = "Аімбот",
         AutoBring           = "Авто Притягання",
         BringRadius         = "Радіус притягання (ст.)",
@@ -715,9 +661,6 @@ local Translations = {
         SilentAim           = "Silent Aim",
         SilentRange         = "Дальність Silent Aim (ст.)",
         FireRate            = "Скорострільність (постр/с)",
-        GodMode             = "Режим бога",
-        GodHealth           = "Здоров'я режиму бога",
-        GodHealthHint       = "Введіть число",
     },
     CS = {
         WindowTitle         = "Tower of Zombies Hub",
@@ -727,9 +670,9 @@ local Translations = {
         TabMovement         = "Pohyb",
         TabTools            = "Nástroje",
         CreditsTitle        = "Poděkování",
-        CreditsContent      = "Vytvořeno Rival960 s pomocí AI\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.3.1 — Silent Aim + Rapid Fire + God Mode",
-        ReleaseNotesTitle   = "v1.3.1 — Poznámky k Vydání",
-        ReleaseNotesContent = "v1.2.0: Opravena poloha zásoby munice, přidána podpora zbraní zblízka, zlepšena stabilita.\nv1.2.1: Opraveno zamrznutí hry na Volt a dalších executorech způsobené task.wait() uvnitř handleru Heartbeat; Rayfield se nyní načítá asynchronně.\nv1.3.0: Přidána Rychlá Palba (dálka + zblízka, nastavitelná kadence) a Režim Boha (vlastní zdraví, na straně klienta).\nv1.3.1: Stará Rychlá Palba je nyní Silent Aim s posuvníkem dosahu; nová Rychlá Palba střílí rychleji na zaměřený cíl (dálka + zblízka); silnější Režim Boha.\n\nNašli jste chybu nebo chcete požádat o funkci? Otevřete issue na GitHub (Rival99900/Roblox-Scripts) nebo přidejte příspěvek na ScriptBlox.",
+        CreditsContent      = "Vytvořeno Rival960 s pomocí AI\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.3.0 — Silent Aim + Rapid Fire",
+        ReleaseNotesTitle   = "v1.3.0 — Poznámky k Vydání",
+        ReleaseNotesContent = "v1.2.0: Opravena poloha zásoby munice, přidána podpora zbraní zblízka, zlepšena stabilita.\nv1.2.1: Opraveno zamrznutí hry na Volt a dalších executorech způsobené task.wait() uvnitř handleru Heartbeat; Rayfield se nyní načítá asynchronně.\nv1.3.0: Přidán Silent Aim (posuvník dosahu) a Rychlá Palba (až 100 ran/s, dálka + zblízka); Nekonečná/Zmrazená Munice drží zásobu na 99999.\n\nNašli jste chybu nebo chcete požádat o funkci? Otevřete issue na GitHub (Rival99900/Roblox-Scripts) nebo přidejte příspěvek na ScriptBlox.",
         Aimbot              = "Aimbot",
         AutoBring           = "Auto Přitáhnout",
         BringRadius         = "Poloměr přitáhnutí (studs)",
@@ -751,9 +694,6 @@ local Translations = {
         SilentAim           = "Silent Aim",
         SilentRange         = "Dosah Silent Aim (studs)",
         FireRate            = "Kadence (ran/s)",
-        GodMode             = "Režim Boha",
-        GodHealth           = "Zdraví Režimu Boha",
-        GodHealthHint       = "Zadejte číslo",
     },
     DA = {
         WindowTitle         = "Tower of Zombies Hub",
@@ -763,9 +703,9 @@ local Translations = {
         TabMovement         = "Bevægelse",
         TabTools            = "Værktøjer",
         CreditsTitle        = "Anerkendelser",
-        CreditsContent      = "Oprettet af Rival960 med hjælp fra AI\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.3.1 — Silent Aim + Rapid Fire + God Mode",
-        ReleaseNotesTitle   = "v1.3.1 — Udgivelsesnoter",
-        ReleaseNotesContent = "v1.2.0: Rettet placering af ammunitionsreserve, tilføjet støtte til nærkampsvåben, forbedret stabilitet.\nv1.2.1: Rettet spilfrysning på Volt og andre executors forårsaget af task.wait() inde i Heartbeat-handler; Rayfield indlæses nu asynkront.\nv1.3.0: Tilføjet Hurtig Ild (afstand + nærkamp, justerbar hastighed) og Gudetilstand (eget liv, klientside).\nv1.3.1: Gammel Hurtig Ild hedder nu Silent Aim med rækkevidde-skyder; ny Hurtig Ild skyder hurtigere mod dit sigte (afstand + nærkamp); stærkere Gudetilstand.\n\nFandt du en fejl eller vil du anmode om en funktion? Åbn et issue på GitHub (Rival99900/Roblox-Scripts) eller post på ScriptBlox.",
+        CreditsContent      = "Oprettet af Rival960 med hjælp fra AI\nGitHub: Rival99900 | Discord: rival960 | YouTube: rival9607\nv1.3.0 — Silent Aim + Rapid Fire",
+        ReleaseNotesTitle   = "v1.3.0 — Udgivelsesnoter",
+        ReleaseNotesContent = "v1.2.0: Rettet placering af ammunitionsreserve, tilføjet støtte til nærkampsvåben, forbedret stabilitet.\nv1.2.1: Rettet spilfrysning på Volt og andre executors forårsaget af task.wait() inde i Heartbeat-handler; Rayfield indlæses nu asynkront.\nv1.3.0: Tilføjet Silent Aim (rækkevidde-skyder) og Hurtig Ild (op til 100 skud/s, afstand + nærkamp); Uendelig/Frosset Ammunition holder reserven på 99999.\n\nFandt du en fejl eller vil du anmode om en funktion? Åbn et issue på GitHub (Rival99900/Roblox-Scripts) eller post på ScriptBlox.",
         Aimbot              = "Aimbot",
         AutoBring           = "Auto Hent",
         BringRadius         = "Hentningsradius (studs)",
@@ -787,9 +727,6 @@ local Translations = {
         SilentAim           = "Silent Aim",
         SilentRange         = "Silent Aim Rækkevidde (studs)",
         FireRate            = "Skudhastighed (skud/s)",
-        GodMode             = "Gudetilstand",
-        GodHealth           = "Gudetilstand Liv",
-        GodHealthHint       = "Indtast et tal",
     },
 }
 
@@ -821,8 +758,6 @@ local Settings = {
     SilentAim     = false,
     SilentRange   = 150,
     FireRate      = 10,
-    GodMode       = false,
-    GodHealth     = 999999,
 }
 
 -- Ammo state
@@ -1011,13 +946,13 @@ local function getClosestZombieTarget(maxDist)
 end
 
 -- fireAtTarget — handles both ranged and melee weapons
-local function fireAtTarget(targetPart)
+local function fireAtTarget(targetPart, bypassCooldown)
     local now = tick()
     local cooldown = FIRE_COOLDOWN
-    if (Settings.RapidFire or Settings.SilentAim) and Settings.FireRate > 0 then
-        cooldown = 1 / Settings.FireRate
+    if Settings.SilentAim and Settings.FireRate > 0 then
+        cooldown = 1 / math.min(Settings.FireRate, 30)
     end
-    if (now - lastFireTime) < cooldown then return false end
+    if not bypassCooldown and (now - lastFireTime) < cooldown then return false end
     lastFireTime = now
 
     local char = LocalPlayer.Character
@@ -1253,8 +1188,6 @@ CombatTab:CreateToggle({
                         if clip and clip.Value > 0 then cv = clip.Value end
                     end
                 end
-                local reserve = LocalPlayer:FindFirstChild("Reserve")
-                if reserve and reserve.Value > 0 then rv = reserve.Value end
                 _frozenClip    = cv
                 _frozenReserve = rv
             end)
@@ -1311,7 +1244,7 @@ local function getCursorZombiePart()
 end
 
 -- ================================================================
--- Silent Aim (v1.3.1 — formerly "Rapid Fire" in v1.3.0)
+-- Silent Aim (v1.3.0)
 -- While firing, hits the zombie under the cursor, otherwise the
 -- closest zombie within Silent Aim Range. Melee uses MeleeRequest.
 -- ================================================================
@@ -1327,7 +1260,7 @@ local function getSilentTarget()
 end
 
 -- ================================================================
--- Rapid Fire (v1.3.1) — fires faster at what you aim at
+-- Rapid Fire helpers (v1.3.0) — weapon cooldown reset
 -- Ranged: extra Fire/Fire_2 shots on the zombie under the cursor.
 -- Melee: extra MeleeRequest swings at the chosen rate.
 -- Also clears the weapon's Firing/cooldown attributes so the
@@ -1346,31 +1279,123 @@ local function clearWeaponCooldown(tool)
     end)
 end
 
+-- Silent Aim loop (unchanged behaviour, max 30 shots/s)
 task.spawn(function()
     while true do
         local rate = math.clamp(Settings.FireRate or 10, 1, 30)
         task.wait(1 / rate)
-        if fireHolding and (Settings.RapidFire or Settings.SilentAim) then
+        if fireHolding and Settings.SilentAim and not Settings.RapidFire then
             pcall(function()
                 local char = LocalPlayer.Character
                 local tool = char and char:FindFirstChildOfClass("Tool")
                 if not tool then return end
-                if Settings.RapidFire then clearWeaponCooldown(tool) end
+                local target = getSilentTarget()
                 if isMelee(tool) then
-                    local target = Settings.SilentAim and getSilentTarget() or nil
                     if target then
                         fireAtTarget(target)          -- pulls zombie close + swings
                     else
                         MeleeRemote:FireServer()
                         lastDamageTime = tick()
                     end
-                else
-                    local target = Settings.SilentAim and getSilentTarget() or getCursorZombiePart()
-                    if target then fireAtTarget(target) end
+                elseif target then
+                    fireAtTarget(target)
                 end
             end)
         end
     end
+end)
+
+-- Rapid Fire (v1.3.0) — up to 100 shots/s
+-- Heartbeat accumulator: several shots per frame when the rate is
+-- higher than the frame rate. Handler never yields (Volt-safe);
+-- the actual firing runs in task.spawn.
+-- Target: Silent Aim target if Silent Aim is ON, otherwise the
+-- zombie you aim at (camera ray through cursor/touch, with a small
+-- tolerance around the ray).
+local lastAimPos = nil
+UserInputService.InputChanged:Connect(function(inp)
+    if inp.UserInputType == Enum.UserInputType.Touch then
+        lastAimPos = Vector2.new(inp.Position.X, inp.Position.Y)
+    end
+end)
+UserInputService.InputBegan:Connect(function(inp)
+    if inp.UserInputType == Enum.UserInputType.Touch then
+        lastAimPos = Vector2.new(inp.Position.X, inp.Position.Y)
+    end
+end)
+
+local function getAimedZombiePart()
+    local cursor = getCursorZombiePart()
+    if cursor then return cursor end
+    local best = nil
+    pcall(function()
+        local cam    = workspace.CurrentCamera
+        local folder = workspace:FindFirstChild("ActiveZombies")
+        if not cam or not folder then return end
+        local pos
+        if UserInputService.TouchEnabled and lastAimPos then
+            pos = lastAimPos
+        else
+            pos = UserInputService:GetMouseLocation()
+        end
+        local ray = cam:ViewportPointToRay(pos.X, pos.Y)
+        local bestDist = 6 -- studs of tolerance around the aim ray
+        for _, zombie in ipairs(folder:GetChildren()) do
+            local hum = zombie:FindFirstChildOfClass("Humanoid")
+            if hum and hum.Health > 0 then
+                local part = zombie:FindFirstChild("HeadHitbox")
+                          or zombie:FindFirstChild("Head")
+                          or zombie:FindFirstChild("HumanoidRootPart")
+                if part then
+                    local rel = part.Position - ray.Origin
+                    local along = rel:Dot(ray.Direction)
+                    if along > 0 and along <= Settings.MaxZombieDist then
+                        local off = (rel - ray.Direction * along).Magnitude
+                        if off < bestDist then
+                            bestDist = off
+                            best = part
+                        end
+                    end
+                end
+            end
+        end
+    end)
+    return best
+end
+
+local rapidAccum = 0
+RunService.Heartbeat:Connect(function(dt)
+    if not (Settings.RapidFire and fireHolding) then
+        rapidAccum = 0
+        return
+    end
+    local rate = math.clamp(Settings.FireRate or 10, 1, 100)
+    rapidAccum = rapidAccum + dt * rate
+    local shots = math.floor(rapidAccum)
+    if shots < 1 then return end
+    rapidAccum = rapidAccum - shots
+    shots = math.min(shots, 10)
+    task.spawn(function()
+        pcall(function()
+            local char = LocalPlayer.Character
+            local tool = char and char:FindFirstChildOfClass("Tool")
+            if not tool then return end
+            clearWeaponCooldown(tool)
+            local target = Settings.SilentAim and getSilentTarget() or getAimedZombiePart()
+            for _ = 1, shots do
+                if isMelee(tool) then
+                    if target and Settings.SilentAim then
+                        fireAtTarget(target, true)
+                    else
+                        pcall(function() MeleeRemote:FireServer() end)
+                        lastDamageTime = tick()
+                    end
+                elseif target then
+                    fireAtTarget(target, true)
+                end
+            end
+        end)
+    end)
 end)
 
 CombatTab:CreateToggle({
@@ -1395,131 +1420,10 @@ CombatTab:CreateToggle({
 
 CombatTab:CreateSlider({
     Name         = T("FireRate"),
-    Range        = {1, 30},
+    Range        = {1, 100},
     Increment    = 1,
     CurrentValue = 10,
     Callback     = function(val) Settings.FireRate = val end,
-})
-
--- ================================================================
--- God Mode (v1.3.1) — stronger version
--- * Humanoid MaxHealth/Health forced every Heartbeat (no yield)
--- * Dead state disabled, BreakJointsOnDeath/RequiresNeck off
--- * Custom health values (NumberValue/IntValue/attributes named
---   Health/HP on the character or player) forced too
--- Client-side: the server may still override health.
--- ================================================================
-local godHealthConn, godBeatConn = nil, nil
-local HEALTH_NAMES = { health = true, hp = true, currenthealth = true, maxhealth = true }
-
-local function forceCustomHealth(container, hp)
-    if not container then return end
-    pcall(function()
-        for _, v in ipairs(container:GetChildren()) do
-            if (v:IsA("NumberValue") or v:IsA("IntValue")) and HEALTH_NAMES[string.lower(v.Name)] then
-                if v.Value < hp then v.Value = hp end
-            end
-        end
-        for name, val in pairs(container:GetAttributes()) do
-            if type(val) == "number" and HEALTH_NAMES[string.lower(name)] and val < hp then
-                container:SetAttribute(name, hp)
-            end
-        end
-    end)
-end
-
-local function applyGodHealth()
-    local hp = Settings.GodHealth
-    pcall(function()
-        local hum = getHum()
-        if not hum then return end
-        if hum.MaxHealth ~= hp then hum.MaxHealth = hp end
-        if hum.Health < hp then hum.Health = hp end
-    end)
-    forceCustomHealth(getChar(), hp)
-    forceCustomHealth(LocalPlayer, hp)
-end
-
-local function setDeathProtection(on)
-    pcall(function()
-        local hum = getHum()
-        if not hum then return end
-        hum:SetStateEnabled(Enum.HumanoidStateType.Dead, not on)
-        pcall(function() hum.BreakJointsOnDeath = not on end)
-        pcall(function() hum.RequiresNeck = not on end)
-    end)
-end
-
-local function hookGodHumanoid()
-    if godHealthConn then godHealthConn:Disconnect(); godHealthConn = nil end
-    local hum = getHum()
-    if not hum then return end
-    setDeathProtection(true)
-    -- No yield inside this handler (Volt-safe)
-    godHealthConn = hum.HealthChanged:Connect(function(newHp)
-        if Settings.GodMode and newHp < Settings.GodHealth then
-            pcall(function() hum.Health = Settings.GodHealth end)
-        end
-    end)
-end
-
-local function startGodLoop()
-    if godBeatConn then godBeatConn:Disconnect() end
-    -- No yield inside this handler (Volt-safe)
-    godBeatConn = RunService.Heartbeat:Connect(function()
-        if Settings.GodMode then applyGodHealth() end
-    end)
-end
-
-local function stopGodMode()
-    if godHealthConn then godHealthConn:Disconnect(); godHealthConn = nil end
-    if godBeatConn   then godBeatConn:Disconnect();   godBeatConn   = nil end
-    setDeathProtection(false)
-    pcall(function()
-        local hum = getHum()
-        if hum then
-            hum.MaxHealth = 100
-            if hum.Health > 100 then hum.Health = 100 end
-        end
-    end)
-end
-
-LocalPlayer.CharacterAdded:Connect(function(char)
-    task.spawn(function()
-        pcall(function() char:WaitForChild("Humanoid", 10) end)
-        if Settings.GodMode then
-            hookGodHumanoid()
-            applyGodHealth()
-        end
-    end)
-end)
-
-CombatTab:CreateToggle({
-    Name         = T("GodMode"),
-    CurrentValue = false,
-    Callback     = function(val)
-        Settings.GodMode = val
-        if val then
-            hookGodHumanoid()
-            startGodLoop()
-            applyGodHealth()
-        else
-            stopGodMode()
-        end
-    end,
-})
-
-CombatTab:CreateInput({
-    Name                     = T("GodHealth"),
-    PlaceholderText          = T("GodHealthHint") .. " (999999)",
-    RemoveTextAfterFocusLost = false,
-    Callback                 = function(text)
-        local n = tonumber(text)
-        if n and n > 0 then
-            Settings.GodHealth = math.floor(math.min(n, 1e9))
-            if Settings.GodMode then applyGodHealth() end
-        end
-    end,
 })
 
 -- ───── Movement Tab ─────
@@ -1849,7 +1753,7 @@ task.spawn(function()
                         end
                     end
                 end
-                if reserve and reserve.Value < 5 then reserve.Value = 99999 end
+                if reserve and reserve.Value ~= 99999 then reserve.Value = 99999 end
 
             elseif Settings.FreezeAmmo and _frozenClip then
                 if tool then
@@ -1862,9 +1766,8 @@ task.spawn(function()
                         end
                     end
                 end
-                if reserve and _frozenReserve and reserve.Value ~= _frozenReserve then
-                    reserve.Value = _frozenReserve
-                end
+                -- Reserve always kept at 99999 (game's reserve is 2, which stops damage once empty)
+                if reserve and reserve.Value ~= 99999 then reserve.Value = 99999 end
             end
         end)
     end
