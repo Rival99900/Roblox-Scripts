@@ -163,6 +163,7 @@ About 11,000 lines of Luau (≈4,000 of them are translations).
 
 ## ⚠️ Disclaimer
 
+- The loader sends **anonymous usage statistics** to [ScriptBlox](https://scriptblox.com) analytics: executor name, platform, PlaceId, session events and a SHA-256 hash of your UserId (no username). Run `dist/RobloxSpy-bundle.lua` directly to avoid it
 - For **educational and research purposes** only
 - No guarantee of safety or undetectability; server-side checks still apply
 - The authors are not responsible for bans or any other consequences

