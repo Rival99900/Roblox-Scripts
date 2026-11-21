@@ -15,7 +15,7 @@
 -- its HttpGet retries forever, so it must never block RobloxSpy.
 task.spawn(function()
     pcall(function()
-        loadstring(game:HttpGet("https://scriptblox.com/ingest/clientv2.lua"))("proj_6ec7ebb3da58", "1.1.0", false)
+        loadstring(game:HttpGet("https://scriptblox.com/ingest/clientv2.lua"))("proj_849b154ff892", "1.1.0", false)
     end)
 end)
 
