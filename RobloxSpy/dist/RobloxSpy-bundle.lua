@@ -438,6 +438,22 @@ do
         logIncoming      = true,
         autoScroll       = true,
         windowSize       = "Medium",
+
+        -- v1.1.0
+        lastSeenVersion  = nil,                 -- shows the release notes once per version
+        accent           = "blue",              -- blue | purple | green | red | orange
+        textScale        = "normal",            -- small | normal | large
+        windowTransparency = 0,                 -- 0 … 0.5
+        toggleKey        = "RightShift",        -- PC keybind to show / hide
+        mobileBottomTabs = true,                -- mobile: tab bar at the bottom
+        floodLimit       = 30,                  -- logged calls per remote per second (0 = off)
+        groupDuplicates  = true,                -- identical consecutive calls → one row "×N"
+        captureReturns   = false,               -- InvokeServer return values
+        captureClientInvoke = false,            -- OnClientInvoke (needs getcallbackvalue)
+        spyBindables     = false,               -- BindableEvent / BindableFunction
+        alertsEnabled    = true,
+        alertKeywords    = "buy,purchase,admin,ban,kick,give,reward,money,cash,gems",
+        games            = {},                  -- [PlaceId] = { ignore = {}, drop = {}, watch = {} }
     }
 
     local _data = {}
@@ -450,7 +466,7 @@ do
         local ok, parsed = pcall(function() return HttpService:JSONDecode(raw) end)
         if not ok or type(parsed) ~= "table" then return false end
         for k, v in pairs(parsed) do
-            if DEFAULTS[k] ~= nil or k == "language" then
+            if DEFAULTS[k] ~= nil or k == "language" or k == "lastSeenVersion" then
                 _data[k] = v
             end
         end
@@ -471,6 +487,33 @@ do
 
     function Config.get(key)
         return _data[key]
+    end
+
+    -- Per-game rule lists (saved by PlaceId): kind = "ignore" | "drop" | "watch"
+    function Config.getGameList(kind)
+        local games = _data.games
+        if type(games) ~= "table" then games = {}; _data.games = games end
+        local g = games[tostring(game.PlaceId)]
+        if type(g) ~= "table" then return {} end
+        return type(g[kind]) == "table" and g[kind] or {}
+    end
+
+    function Config.setGameRule(kind, path, enabled)
+        local games = _data.games
+        if type(games) ~= "table" then games = {}; _data.games = games end
+        local key = tostring(game.PlaceId)
+        local g = games[key]
+        if type(g) ~= "table" then g = {}; games[key] = g end
+        local list = type(g[kind]) == "table" and g[kind] or {}
+        local out, found = {}, false
+        for _, p in ipairs(list) do
+            if p == path then found = true end
+            if p ~= path then table.insert(out, p) end
+        end
+        if enabled then table.insert(out, path) end
+        g[kind] = out
+        Config.save()
+        return not found and enabled
     end
 
     function Config.set(key, value)
@@ -687,6 +730,114 @@ do
         n_autosave_off = "Auto-save off",
         n_lang = "Language: %s",
         credits = "by Rival960 — Made with the help of Claude",
+        tab_errors = "Errors",
+        ok = "OK",
+        cancel = "Cancel",
+        off = "Off",
+        status_events = "%d events",
+        status_flood = "%d skipped (flood)",
+        status_errors = "%d errors",
+        f_clientinvoke = "📨 ClientInvoke",
+        f_bindable = "🔗 Bindable",
+        f_watched = "⭐ Watched",
+        lbl_clientinvoke = "C-INVOKE",
+        lbl_bindable = "BINDABLE",
+        watch = "⭐ Watch",
+        unwatch = "☆ Unwatch",
+        st_watched = "⭐ Watched",
+        dir_local = "🔁 Client ↔ Client (local)",
+        code_clientinvoke = "-- RobloxSpy — OnClientInvoke (server asked the client)",
+        code_clientinvoke_note = "-- The server called this RemoteFunction's OnClientInvoke with:",
+        k_grouped = "Grouped",
+        grouped_fmt = "%d identical calls in a row",
+        k_flood = "Flood",
+        flood_fmt = "%d calls skipped just before (anti-flood)",
+        skipped_prefix = "(+%d skipped)",
+        sec_stats = "📈  STATS FOR THIS REMOTE",
+        k_total = "Total calls",
+        k_rate = "Rate",
+        rate_fmt = "%.1f calls / min",
+        k_first_last = "First → last",
+        k_callers = "Callers",
+        diff_hint = "changes vs previous call in yellow",
+        diff_was = "was: %s",
+        sec_return = "↩  RETURNED BY THE SERVER",
+        ret_nothing = "(nothing returned)",
+        ret_waiting = "Waiting for the server's answer…",
+        ret_disabled = "Enable \"Capture InvokeServer return values\" in Settings",
+        n_alert = "🔔 Alert: %s (keyword \"%s\")",
+        n_saved_game = "saved for this game",
+        n_watch_on = "⭐ %s added to the watchlist",
+        n_watch_off = "%s removed from the watchlist",
+        empty_feed = "No events yet — play a bit, every remote call will appear here.",
+        empty_filter = "Nothing matches this filter.",
+        empty_network = "No traffic recorded yet.",
+        empty_scripts = "Click \"Scan scripts\" to list the game's client scripts.",
+        empty_errors = "No errors — everything is running fine.",
+        net_click_hint = "click a row to filter the spy",
+        err_copy = "📋 Copy all",
+        err_clear = "🧹 Clear",
+        err_count = "%d error(s)",
+        c_errors = "Errors",
+        hi_export_script = "🧾 Export as script",
+        se_capture = "📡 Capture",
+        se_returns = "↩ Capture InvokeServer return values",
+        se_returns_note = "Shows what the server answers. Turn it off if a game behaves strangely.",
+        se_clientinvoke = "📨 Capture OnClientInvoke (needs getcallbackvalue)",
+        se_bindables = "🔗 Spy BindableEvent / BindableFunction",
+        se_group = "🧮 Group identical calls (×N)",
+        se_flood = "🌊 Anti-flood (max logged calls per remote per second)",
+        se_alerts = "🔔 Alerts",
+        se_alerts_on = "🔔 Notify when a remote name contains a keyword",
+        se_keywords = "Keywords (comma separated)",
+        n_keywords_saved = "Keywords saved",
+        se_appearance = "🎨 Appearance",
+        se_accent = "Accent color",
+        c_blue = "Blue",
+        c_purple = "Purple",
+        c_green = "Green",
+        c_red = "Red",
+        c_orange = "Orange",
+        se_transparency = "Window transparency",
+        se_textsize = "Text size",
+        se_bottomtabs = "📱 Tab bar at the bottom",
+        se_keybind = "⌨ Show / hide key: %s (click to change)",
+        se_keybind_wait = "Press a key… (Esc = cancel)",
+        n_keybind = "Key set: %s",
+        se_tools = "🧰 Tools",
+        se_export_script = "🧾 Export this session as a replay script",
+        se_whatsnew = "🎉 What's new",
+        se_unload = "⏏ Unload RobloxSpy",
+        unload_title = "Unload RobloxSpy?",
+        unload_body = "Hooks are removed, the session is saved and the interface closes. Run the script again to restart it.",
+        n_returns_on = "Return values captured for new InvokeServer calls",
+        n_option_off = "Option disabled",
+        n_need_fn = "%s is not supported by %s",
+        tip_maximize = "Maximize / restore",
+        tip_minimize = "Minimize",
+        tip_close = "Hide (the round button brings it back)",
+        tip_reopen = "Open RobloxSpy (drag to move)",
+        tip_copy_r2s = "Copy the R2S code",
+        tip_ignore = "Ignore this remote (still sent, not logged)",
+        tip_delete = "Delete this row",
+        tip_pause = "Pause / resume the capture",
+        tip_clear = "Clear the feed",
+        tip_expand = "Enlarge the window",
+        tip_refire = "Send this call again",
+        tip_watch = "Add to the watchlist (saved for this game)",
+        tip_drop = "Block: the call never reaches the server",
+        rn_title = "🎉 What's new in v%s",
+        rn_1 = "Running the script twice replaces the old instance, and the new \"Unload\" button removes everything cleanly.",
+        rn_2 = "Anti-flood and grouping: identical calls are merged into one row \"×N\".",
+        rn_3 = "InvokeServer return values, OnClientInvoke and Bindables can be captured (Settings → Capture).",
+        rn_4 = "Per-remote stats, highlighted differences with the previous call, keyword alerts.",
+        rn_5 = "Watchlist and ignore / block lists are saved per game.",
+        rn_6 = "Export a whole session as a replayable script (Settings → Tools, or History).",
+        rn_7 = "New drawn icons, reopen button with an unread counter, PC keybind (RightShift).",
+        rn_8 = "Mobile: bottom tab bar, bigger rows and buttons. Tooltips everywhere (long press on mobile).",
+        rn_9 = "Accent colors, transparency and text size in Settings → Appearance.",
+        rn_10 = "New Errors tab, faster Explorer, lighter auto-save — plus several bug fixes.",
+        as_live = "Live (every 2 s)",
     }
 
     LANG.FR = {
@@ -872,6 +1023,114 @@ do
         n_autosave_off = "Sauvegarde auto désactivée",
         n_lang = "Langue : %s",
         credits = "par Rival960 — Réalisé avec l'aide de Claude",
+        tab_errors = "Erreurs",
+        ok = "OK",
+        cancel = "Annuler",
+        off = "Off",
+        status_events = "%d events",
+        status_flood = "%d ignorés (flood)",
+        status_errors = "%d erreurs",
+        f_clientinvoke = "📨 ClientInvoke",
+        f_bindable = "🔗 Bindable",
+        f_watched = "⭐ Suivis",
+        lbl_clientinvoke = "C-INVOKE",
+        lbl_bindable = "BINDABLE",
+        watch = "⭐ Suivre",
+        unwatch = "☆ Ne plus suivre",
+        st_watched = "⭐ Suivi",
+        dir_local = "🔁 Client ↔ Client (local)",
+        code_clientinvoke = "-- RobloxSpy — OnClientInvoke (le serveur interroge le client)",
+        code_clientinvoke_note = "-- Le serveur a appelé l'OnClientInvoke de ce RemoteFunction avec :",
+        k_grouped = "Regroupé",
+        grouped_fmt = "%d appels identiques à la suite",
+        k_flood = "Flood",
+        flood_fmt = "%d appels ignorés juste avant (anti-flood)",
+        skipped_prefix = "(+%d ignorés)",
+        sec_stats = "📈  STATS DE CE REMOTE",
+        k_total = "Appels totaux",
+        k_rate = "Fréquence",
+        rate_fmt = "%.1f appels / min",
+        k_first_last = "Premier → dernier",
+        k_callers = "Appelants",
+        diff_hint = "changements vs appel précédent en jaune",
+        diff_was = "avant : %s",
+        sec_return = "↩  RENVOYÉ PAR LE SERVEUR",
+        ret_nothing = "(rien de renvoyé)",
+        ret_waiting = "En attente de la réponse du serveur…",
+        ret_disabled = "Active « Capturer les retours d'InvokeServer » dans les Paramètres",
+        n_alert = "🔔 Alerte : %s (mot-clé « %s »)",
+        n_saved_game = "enregistré pour ce jeu",
+        n_watch_on = "⭐ %s ajouté à la watchlist",
+        n_watch_off = "%s retiré de la watchlist",
+        empty_feed = "Aucun event pour l'instant — joue un peu, chaque appel de remote s'affichera ici.",
+        empty_filter = "Rien ne correspond à ce filtre.",
+        empty_network = "Aucun trafic enregistré pour l'instant.",
+        empty_scripts = "Clique sur « Scanner les scripts » pour lister les scripts client du jeu.",
+        empty_errors = "Aucune erreur — tout fonctionne.",
+        net_click_hint = "clique sur une ligne pour filtrer le spy",
+        err_copy = "📋 Tout copier",
+        err_clear = "🧹 Vider",
+        err_count = "%d erreur(s)",
+        c_errors = "Erreurs",
+        hi_export_script = "🧾 Exporter en script",
+        se_capture = "📡 Capture",
+        se_returns = "↩ Capturer les retours d'InvokeServer",
+        se_returns_note = "Affiche ce que répond le serveur. Désactive-le si un jeu se comporte bizarrement.",
+        se_clientinvoke = "📨 Capturer les OnClientInvoke (nécessite getcallbackvalue)",
+        se_bindables = "🔗 Espionner BindableEvent / BindableFunction",
+        se_group = "🧮 Regrouper les appels identiques (×N)",
+        se_flood = "🌊 Anti-flood (max d'appels loggés par remote et par seconde)",
+        se_alerts = "🔔 Alertes",
+        se_alerts_on = "🔔 Notifier quand le nom d'un remote contient un mot-clé",
+        se_keywords = "Mots-clés (séparés par des virgules)",
+        n_keywords_saved = "Mots-clés enregistrés",
+        se_appearance = "🎨 Apparence",
+        se_accent = "Couleur d'accent",
+        c_blue = "Bleu",
+        c_purple = "Violet",
+        c_green = "Vert",
+        c_red = "Rouge",
+        c_orange = "Orange",
+        se_transparency = "Transparence de la fenêtre",
+        se_textsize = "Taille du texte",
+        se_bottomtabs = "📱 Barre d'onglets en bas",
+        se_keybind = "⌨ Touche afficher / cacher : %s (clique pour changer)",
+        se_keybind_wait = "Appuie sur une touche… (Échap = annuler)",
+        n_keybind = "Touche définie : %s",
+        se_tools = "🧰 Outils",
+        se_export_script = "🧾 Exporter cette session en script de replay",
+        se_whatsnew = "🎉 Nouveautés",
+        se_unload = "⏏ Décharger RobloxSpy",
+        unload_title = "Décharger RobloxSpy ?",
+        unload_body = "Les hooks sont retirés, la session est sauvegardée et l'interface se ferme. Relance le script pour le redémarrer.",
+        n_returns_on = "Valeurs de retour capturées pour les nouveaux InvokeServer",
+        n_option_off = "Option désactivée",
+        n_need_fn = "%s n'est pas supporté par %s",
+        tip_maximize = "Agrandir / restaurer",
+        tip_minimize = "Réduire",
+        tip_close = "Cacher (le bouton rond la fait revenir)",
+        tip_reopen = "Ouvrir RobloxSpy (glisse pour déplacer)",
+        tip_copy_r2s = "Copier le code R2S",
+        tip_ignore = "Ignorer ce remote (toujours envoyé, plus loggé)",
+        tip_delete = "Supprimer cette ligne",
+        tip_pause = "Mettre en pause / reprendre la capture",
+        tip_clear = "Vider le flux",
+        tip_expand = "Agrandir la fenêtre",
+        tip_refire = "Renvoyer cet appel",
+        tip_watch = "Ajouter à la watchlist (enregistré pour ce jeu)",
+        tip_drop = "Bloquer : l'appel n'arrive jamais au serveur",
+        rn_title = "🎉 Nouveautés de la v%s",
+        rn_1 = "Relancer le script remplace l'ancienne instance, et le nouveau bouton « Décharger » retire tout proprement.",
+        rn_2 = "Anti-flood et regroupement : les appels identiques sont fusionnés en une ligne « ×N ».",
+        rn_3 = "Les retours d'InvokeServer, les OnClientInvoke et les Bindables peuvent être capturés (Paramètres → Capture).",
+        rn_4 = "Stats par remote, différences avec l'appel précédent surlignées, alertes par mot-clé.",
+        rn_5 = "La watchlist et les listes ignorés / bloqués sont sauvegardées par jeu.",
+        rn_6 = "Export d'une session complète en script rejouable (Paramètres → Outils, ou Historique).",
+        rn_7 = "Nouvelles icônes dessinées, bouton de réouverture avec compteur, raccourci PC (RightShift).",
+        rn_8 = "Mobile : onglets en bas, lignes et boutons plus grands. Infobulles partout (appui long sur mobile).",
+        rn_9 = "Couleurs d'accent, transparence et taille du texte dans Paramètres → Apparence.",
+        rn_10 = "Nouvel onglet Erreurs, Explorer plus rapide, auto-save plus léger — et plusieurs bugs corrigés.",
+        as_live = "En continu (toutes les 2 s)",
     }
 
     LANG.DE = {
@@ -1057,6 +1316,114 @@ do
         n_autosave_off = "Auto-Speicherung aus",
         n_lang = "Sprache: %s",
         credits = "von Rival960 — Erstellt mit Hilfe von Claude",
+        tab_errors = "Fehler",
+        ok = "OK",
+        cancel = "Abbrechen",
+        off = "Aus",
+        status_events = "%d Events",
+        status_flood = "%d übersprungen (Flood)",
+        status_errors = "%d Fehler",
+        f_clientinvoke = "📨 ClientInvoke",
+        f_bindable = "🔗 Bindable",
+        f_watched = "⭐ Beobachtet",
+        lbl_clientinvoke = "C-INVOKE",
+        lbl_bindable = "BINDABLE",
+        watch = "⭐ Beobachten",
+        unwatch = "☆ Nicht mehr beobachten",
+        st_watched = "⭐ Beobachtet",
+        dir_local = "🔁 Client ↔ Client (lokal)",
+        code_clientinvoke = "-- RobloxSpy — OnClientInvoke (Server fragt den Client)",
+        code_clientinvoke_note = "-- Der Server rief OnClientInvoke dieser RemoteFunction auf mit:",
+        k_grouped = "Gruppiert",
+        grouped_fmt = "%d identische Aufrufe hintereinander",
+        k_flood = "Flood",
+        flood_fmt = "%d Aufrufe kurz davor übersprungen (Anti-Flood)",
+        skipped_prefix = "(+%d übersprungen)",
+        sec_stats = "📈  STATISTIK DIESES REMOTES",
+        k_total = "Aufrufe gesamt",
+        k_rate = "Rate",
+        rate_fmt = "%.1f Aufrufe / Min",
+        k_first_last = "Erster → letzter",
+        k_callers = "Aufrufer",
+        diff_hint = "Änderungen zum vorigen Aufruf in Gelb",
+        diff_was = "vorher: %s",
+        sec_return = "↩  VOM SERVER ZURÜCKGEGEBEN",
+        ret_nothing = "(nichts zurückgegeben)",
+        ret_waiting = "Warte auf die Antwort des Servers…",
+        ret_disabled = "Aktiviere „InvokeServer-Rückgabewerte erfassen“ in den Einstellungen",
+        n_alert = "🔔 Alarm: %s (Stichwort „%s“)",
+        n_saved_game = "für dieses Spiel gespeichert",
+        n_watch_on = "⭐ %s zur Beobachtungsliste hinzugefügt",
+        n_watch_off = "%s von der Beobachtungsliste entfernt",
+        empty_feed = "Noch keine Events — spiel ein bisschen, jeder Remote-Aufruf erscheint hier.",
+        empty_filter = "Nichts passt zu diesem Filter.",
+        empty_network = "Noch kein Traffic aufgezeichnet.",
+        empty_scripts = "Klicke auf „Skripte scannen“, um die Client-Skripte des Spiels aufzulisten.",
+        empty_errors = "Keine Fehler — alles läuft.",
+        net_click_hint = "Zeile anklicken, um den Spy zu filtern",
+        err_copy = "📋 Alles kopieren",
+        err_clear = "🧹 Leeren",
+        err_count = "%d Fehler",
+        c_errors = "Fehler",
+        hi_export_script = "🧾 Als Skript exportieren",
+        se_capture = "📡 Erfassung",
+        se_returns = "↩ InvokeServer-Rückgabewerte erfassen",
+        se_returns_note = "Zeigt, was der Server antwortet. Deaktivieren, falls sich ein Spiel seltsam verhält.",
+        se_clientinvoke = "📨 OnClientInvoke erfassen (benötigt getcallbackvalue)",
+        se_bindables = "🔗 BindableEvent / BindableFunction überwachen",
+        se_group = "🧮 Identische Aufrufe gruppieren (×N)",
+        se_flood = "🌊 Anti-Flood (max. protokollierte Aufrufe pro Remote pro Sekunde)",
+        se_alerts = "🔔 Alarme",
+        se_alerts_on = "🔔 Benachrichtigen, wenn ein Remote-Name ein Stichwort enthält",
+        se_keywords = "Stichwörter (durch Komma getrennt)",
+        n_keywords_saved = "Stichwörter gespeichert",
+        se_appearance = "🎨 Darstellung",
+        se_accent = "Akzentfarbe",
+        c_blue = "Blau",
+        c_purple = "Lila",
+        c_green = "Grün",
+        c_red = "Rot",
+        c_orange = "Orange",
+        se_transparency = "Fenstertransparenz",
+        se_textsize = "Textgröße",
+        se_bottomtabs = "📱 Tableiste unten",
+        se_keybind = "⌨ Taste anzeigen / verbergen: %s (klicken zum Ändern)",
+        se_keybind_wait = "Drücke eine Taste… (Esc = Abbrechen)",
+        n_keybind = "Taste gesetzt: %s",
+        se_tools = "🧰 Werkzeuge",
+        se_export_script = "🧾 Diese Sitzung als Replay-Skript exportieren",
+        se_whatsnew = "🎉 Neuigkeiten",
+        se_unload = "⏏ RobloxSpy entladen",
+        unload_title = "RobloxSpy entladen?",
+        unload_body = "Die Hooks werden entfernt, die Sitzung gespeichert und die Oberfläche geschlossen. Führe das Skript erneut aus, um es neu zu starten.",
+        n_returns_on = "Rückgabewerte für neue InvokeServer-Aufrufe werden erfasst",
+        n_option_off = "Option deaktiviert",
+        n_need_fn = "%s wird von %s nicht unterstützt",
+        tip_maximize = "Maximieren / wiederherstellen",
+        tip_minimize = "Minimieren",
+        tip_close = "Ausblenden (der runde Knopf holt es zurück)",
+        tip_reopen = "RobloxSpy öffnen (ziehen zum Verschieben)",
+        tip_copy_r2s = "R2S-Code kopieren",
+        tip_ignore = "Diesen Remote ignorieren (wird gesendet, nicht protokolliert)",
+        tip_delete = "Diese Zeile löschen",
+        tip_pause = "Erfassung pausieren / fortsetzen",
+        tip_clear = "Feed leeren",
+        tip_expand = "Fenster vergrößern",
+        tip_refire = "Diesen Aufruf erneut senden",
+        tip_watch = "Zur Beobachtungsliste hinzufügen (für dieses Spiel gespeichert)",
+        tip_drop = "Blockieren: der Aufruf erreicht den Server nie",
+        rn_title = "🎉 Neu in v%s",
+        rn_1 = "Ein zweiter Start ersetzt die alte Instanz, und der neue Knopf „Entladen“ entfernt alles sauber.",
+        rn_2 = "Anti-Flood und Gruppierung: identische Aufrufe werden zu einer Zeile „×N“ zusammengefasst.",
+        rn_3 = "InvokeServer-Rückgaben, OnClientInvoke und Bindables können erfasst werden (Einstellungen → Erfassung).",
+        rn_4 = "Statistik pro Remote, hervorgehobene Unterschiede zum vorigen Aufruf, Stichwort-Alarme.",
+        rn_5 = "Beobachtungsliste und Ignorier-/Blockierlisten werden pro Spiel gespeichert.",
+        rn_6 = "Eine ganze Sitzung als abspielbares Skript exportieren (Einstellungen → Werkzeuge oder Verlauf).",
+        rn_7 = "Neue gezeichnete Icons, Öffnen-Knopf mit Zähler, PC-Taste (RightShift).",
+        rn_8 = "Mobil: Tableiste unten, größere Zeilen und Knöpfe. Tooltips überall (langes Drücken auf Mobil).",
+        rn_9 = "Akzentfarben, Transparenz und Textgröße unter Einstellungen → Darstellung.",
+        rn_10 = "Neuer Fehler-Tab, schnellerer Explorer, leichtere Auto-Speicherung — plus mehrere Fehlerbehebungen.",
+        as_live = "Live (alle 2 s)",
     }
 
     LANG.ES = {
@@ -1242,6 +1609,114 @@ do
         n_autosave_off = "Guardado automático desactivado",
         n_lang = "Idioma: %s",
         credits = "por Rival960 — Hecho con la ayuda de Claude",
+        tab_errors = "Errores",
+        ok = "OK",
+        cancel = "Cancelar",
+        off = "No",
+        status_events = "%d eventos",
+        status_flood = "%d omitidos (flood)",
+        status_errors = "%d errores",
+        f_clientinvoke = "📨 ClientInvoke",
+        f_bindable = "🔗 Bindable",
+        f_watched = "⭐ Vigilados",
+        lbl_clientinvoke = "C-INVOKE",
+        lbl_bindable = "BINDABLE",
+        watch = "⭐ Vigilar",
+        unwatch = "☆ Dejar de vigilar",
+        st_watched = "⭐ Vigilado",
+        dir_local = "🔁 Cliente ↔ Cliente (local)",
+        code_clientinvoke = "-- RobloxSpy — OnClientInvoke (el servidor pregunta al cliente)",
+        code_clientinvoke_note = "-- El servidor llamó al OnClientInvoke de este RemoteFunction con:",
+        k_grouped = "Agrupado",
+        grouped_fmt = "%d llamadas idénticas seguidas",
+        k_flood = "Flood",
+        flood_fmt = "%d llamadas omitidas justo antes (anti-flood)",
+        skipped_prefix = "(+%d omitidas)",
+        sec_stats = "📈  ESTADÍSTICAS DE ESTE REMOTE",
+        k_total = "Llamadas totales",
+        k_rate = "Frecuencia",
+        rate_fmt = "%.1f llamadas / min",
+        k_first_last = "Primera → última",
+        k_callers = "Llamadores",
+        diff_hint = "cambios respecto a la llamada anterior en amarillo",
+        diff_was = "antes: %s",
+        sec_return = "↩  DEVUELTO POR EL SERVIDOR",
+        ret_nothing = "(no devolvió nada)",
+        ret_waiting = "Esperando la respuesta del servidor…",
+        ret_disabled = "Activa «Capturar los retornos de InvokeServer» en Ajustes",
+        n_alert = "🔔 Alerta: %s (palabra clave «%s»)",
+        n_saved_game = "guardado para este juego",
+        n_watch_on = "⭐ %s añadido a la lista de vigilancia",
+        n_watch_off = "%s quitado de la lista de vigilancia",
+        empty_feed = "Aún no hay eventos — juega un poco, cada llamada a un remote aparecerá aquí.",
+        empty_filter = "Nada coincide con este filtro.",
+        empty_network = "Todavía no hay tráfico registrado.",
+        empty_scripts = "Pulsa «Escanear scripts» para listar los scripts de cliente del juego.",
+        empty_errors = "Sin errores — todo funciona.",
+        net_click_hint = "pulsa una fila para filtrar el spy",
+        err_copy = "📋 Copiar todo",
+        err_clear = "🧹 Limpiar",
+        err_count = "%d error(es)",
+        c_errors = "Errores",
+        hi_export_script = "🧾 Exportar como script",
+        se_capture = "📡 Captura",
+        se_returns = "↩ Capturar los retornos de InvokeServer",
+        se_returns_note = "Muestra lo que responde el servidor. Desactívalo si un juego se comporta raro.",
+        se_clientinvoke = "📨 Capturar OnClientInvoke (requiere getcallbackvalue)",
+        se_bindables = "🔗 Espiar BindableEvent / BindableFunction",
+        se_group = "🧮 Agrupar llamadas idénticas (×N)",
+        se_flood = "🌊 Anti-flood (máx. llamadas registradas por remote y segundo)",
+        se_alerts = "🔔 Alertas",
+        se_alerts_on = "🔔 Avisar cuando el nombre de un remote contiene una palabra clave",
+        se_keywords = "Palabras clave (separadas por comas)",
+        n_keywords_saved = "Palabras clave guardadas",
+        se_appearance = "🎨 Apariencia",
+        se_accent = "Color de acento",
+        c_blue = "Azul",
+        c_purple = "Morado",
+        c_green = "Verde",
+        c_red = "Rojo",
+        c_orange = "Naranja",
+        se_transparency = "Transparencia de la ventana",
+        se_textsize = "Tamaño del texto",
+        se_bottomtabs = "📱 Barra de pestañas abajo",
+        se_keybind = "⌨ Tecla mostrar / ocultar: %s (pulsa para cambiar)",
+        se_keybind_wait = "Pulsa una tecla… (Esc = cancelar)",
+        n_keybind = "Tecla definida: %s",
+        se_tools = "🧰 Herramientas",
+        se_export_script = "🧾 Exportar esta sesión como script de repetición",
+        se_whatsnew = "🎉 Novedades",
+        se_unload = "⏏ Descargar RobloxSpy",
+        unload_title = "¿Descargar RobloxSpy?",
+        unload_body = "Se quitan los hooks, se guarda la sesión y se cierra la interfaz. Vuelve a ejecutar el script para reiniciarlo.",
+        n_returns_on = "Se capturan los retornos de los nuevos InvokeServer",
+        n_option_off = "Opción desactivada",
+        n_need_fn = "%s no es compatible con %s",
+        tip_maximize = "Maximizar / restaurar",
+        tip_minimize = "Minimizar",
+        tip_close = "Ocultar (el botón redondo la trae de vuelta)",
+        tip_reopen = "Abrir RobloxSpy (arrastra para mover)",
+        tip_copy_r2s = "Copiar el código R2S",
+        tip_ignore = "Ignorar este remote (se envía, no se registra)",
+        tip_delete = "Eliminar esta fila",
+        tip_pause = "Pausar / reanudar la captura",
+        tip_clear = "Limpiar el registro",
+        tip_expand = "Agrandar la ventana",
+        tip_refire = "Enviar esta llamada otra vez",
+        tip_watch = "Añadir a la lista de vigilancia (guardado para este juego)",
+        tip_drop = "Bloquear: la llamada nunca llega al servidor",
+        rn_title = "🎉 Novedades de la v%s",
+        rn_1 = "Ejecutar el script dos veces reemplaza la instancia anterior, y el nuevo botón «Descargar» lo quita todo limpiamente.",
+        rn_2 = "Anti-flood y agrupación: las llamadas idénticas se unen en una fila «×N».",
+        rn_3 = "Se pueden capturar los retornos de InvokeServer, OnClientInvoke y Bindables (Ajustes → Captura).",
+        rn_4 = "Estadísticas por remote, diferencias resaltadas con la llamada anterior, alertas por palabra clave.",
+        rn_5 = "La lista de vigilancia y las listas de ignorados / bloqueados se guardan por juego.",
+        rn_6 = "Exporta una sesión entera como script reproducible (Ajustes → Herramientas, o Historial).",
+        rn_7 = "Nuevos iconos dibujados, botón de reapertura con contador, tecla en PC (RightShift).",
+        rn_8 = "Móvil: pestañas abajo, filas y botones más grandes. Ayudas en todas partes (pulsación larga en móvil).",
+        rn_9 = "Colores de acento, transparencia y tamaño del texto en Ajustes → Apariencia.",
+        rn_10 = "Nueva pestaña Errores, Explorador más rápido, guardado automático más ligero — y varios errores corregidos.",
+        as_live = "En vivo (cada 2 s)",
     }
 
     LANG.PT = {
@@ -1427,6 +1902,114 @@ do
         n_autosave_off = "Salvamento automático desligado",
         n_lang = "Idioma: %s",
         credits = "por Rival960 — Feito com a ajuda do Claude",
+        tab_errors = "Erros",
+        ok = "OK",
+        cancel = "Cancelar",
+        off = "Desl.",
+        status_events = "%d eventos",
+        status_flood = "%d ignorados (flood)",
+        status_errors = "%d erros",
+        f_clientinvoke = "📨 ClientInvoke",
+        f_bindable = "🔗 Bindable",
+        f_watched = "⭐ Observados",
+        lbl_clientinvoke = "C-INVOKE",
+        lbl_bindable = "BINDABLE",
+        watch = "⭐ Observar",
+        unwatch = "☆ Parar de observar",
+        st_watched = "⭐ Observado",
+        dir_local = "🔁 Cliente ↔ Cliente (local)",
+        code_clientinvoke = "-- RobloxSpy — OnClientInvoke (o servidor pergunta ao cliente)",
+        code_clientinvoke_note = "-- O servidor chamou o OnClientInvoke deste RemoteFunction com:",
+        k_grouped = "Agrupado",
+        grouped_fmt = "%d chamadas idênticas seguidas",
+        k_flood = "Flood",
+        flood_fmt = "%d chamadas ignoradas logo antes (anti-flood)",
+        skipped_prefix = "(+%d ignoradas)",
+        sec_stats = "📈  ESTATÍSTICAS DESTE REMOTE",
+        k_total = "Chamadas totais",
+        k_rate = "Frequência",
+        rate_fmt = "%.1f chamadas / min",
+        k_first_last = "Primeira → última",
+        k_callers = "Chamadores",
+        diff_hint = "mudanças em relação à chamada anterior em amarelo",
+        diff_was = "antes: %s",
+        sec_return = "↩  RETORNADO PELO SERVIDOR",
+        ret_nothing = "(nada retornado)",
+        ret_waiting = "Aguardando a resposta do servidor…",
+        ret_disabled = "Ative \"Capturar retornos do InvokeServer\" nas Configurações",
+        n_alert = "🔔 Alerta: %s (palavra-chave \"%s\")",
+        n_saved_game = "salvo para este jogo",
+        n_watch_on = "⭐ %s adicionado à lista de observação",
+        n_watch_off = "%s removido da lista de observação",
+        empty_feed = "Nenhum evento ainda — jogue um pouco, cada chamada de remote aparecerá aqui.",
+        empty_filter = "Nada corresponde a este filtro.",
+        empty_network = "Nenhum tráfego registrado ainda.",
+        empty_scripts = "Clique em \"Escanear scripts\" para listar os scripts de cliente do jogo.",
+        empty_errors = "Nenhum erro — tudo funcionando.",
+        net_click_hint = "clique numa linha para filtrar o spy",
+        err_copy = "📋 Copiar tudo",
+        err_clear = "🧹 Limpar",
+        err_count = "%d erro(s)",
+        c_errors = "Erros",
+        hi_export_script = "🧾 Exportar como script",
+        se_capture = "📡 Captura",
+        se_returns = "↩ Capturar retornos do InvokeServer",
+        se_returns_note = "Mostra o que o servidor responde. Desative se um jogo se comportar de forma estranha.",
+        se_clientinvoke = "📨 Capturar OnClientInvoke (requer getcallbackvalue)",
+        se_bindables = "🔗 Espionar BindableEvent / BindableFunction",
+        se_group = "🧮 Agrupar chamadas idênticas (×N)",
+        se_flood = "🌊 Anti-flood (máx. de chamadas registradas por remote por segundo)",
+        se_alerts = "🔔 Alertas",
+        se_alerts_on = "🔔 Avisar quando o nome de um remote contém uma palavra-chave",
+        se_keywords = "Palavras-chave (separadas por vírgula)",
+        n_keywords_saved = "Palavras-chave salvas",
+        se_appearance = "🎨 Aparência",
+        se_accent = "Cor de destaque",
+        c_blue = "Azul",
+        c_purple = "Roxo",
+        c_green = "Verde",
+        c_red = "Vermelho",
+        c_orange = "Laranja",
+        se_transparency = "Transparência da janela",
+        se_textsize = "Tamanho do texto",
+        se_bottomtabs = "📱 Barra de abas embaixo",
+        se_keybind = "⌨ Tecla mostrar / esconder: %s (clique para mudar)",
+        se_keybind_wait = "Pressione uma tecla… (Esc = cancelar)",
+        n_keybind = "Tecla definida: %s",
+        se_tools = "🧰 Ferramentas",
+        se_export_script = "🧾 Exportar esta sessão como script de replay",
+        se_whatsnew = "🎉 Novidades",
+        se_unload = "⏏ Descarregar RobloxSpy",
+        unload_title = "Descarregar RobloxSpy?",
+        unload_body = "Os hooks são removidos, a sessão é salva e a interface fecha. Execute o script de novo para reiniciá-lo.",
+        n_returns_on = "Retornos capturados para novos InvokeServer",
+        n_option_off = "Opção desativada",
+        n_need_fn = "%s não é suportado por %s",
+        tip_maximize = "Maximizar / restaurar",
+        tip_minimize = "Minimizar",
+        tip_close = "Esconder (o botão redondo traz de volta)",
+        tip_reopen = "Abrir RobloxSpy (arraste para mover)",
+        tip_copy_r2s = "Copiar o código R2S",
+        tip_ignore = "Ignorar este remote (ainda enviado, não registrado)",
+        tip_delete = "Excluir esta linha",
+        tip_pause = "Pausar / retomar a captura",
+        tip_clear = "Limpar o feed",
+        tip_expand = "Aumentar a janela",
+        tip_refire = "Enviar esta chamada de novo",
+        tip_watch = "Adicionar à lista de observação (salvo para este jogo)",
+        tip_drop = "Bloquear: a chamada nunca chega ao servidor",
+        rn_title = "🎉 Novidades da v%s",
+        rn_1 = "Executar o script duas vezes substitui a instância antiga, e o novo botão \"Descarregar\" remove tudo de forma limpa.",
+        rn_2 = "Anti-flood e agrupamento: chamadas idênticas viram uma linha \"×N\".",
+        rn_3 = "Retornos do InvokeServer, OnClientInvoke e Bindables podem ser capturados (Configurações → Captura).",
+        rn_4 = "Estatísticas por remote, diferenças destacadas com a chamada anterior, alertas por palavra-chave.",
+        rn_5 = "A lista de observação e as listas de ignorados / bloqueados são salvas por jogo.",
+        rn_6 = "Exporte uma sessão inteira como script reproduzível (Configurações → Ferramentas, ou Histórico).",
+        rn_7 = "Novos ícones desenhados, botão de reabrir com contador, tecla no PC (RightShift).",
+        rn_8 = "Celular: abas embaixo, linhas e botões maiores. Dicas em todo lugar (toque longo no celular).",
+        rn_9 = "Cores de destaque, transparência e tamanho do texto em Configurações → Aparência.",
+        rn_10 = "Nova aba Erros, Explorador mais rápido, salvamento automático mais leve — e vários bugs corrigidos.",
+        as_live = "Ao vivo (a cada 2 s)",
     }
 
     LANG.RU = {
@@ -1612,6 +2195,114 @@ do
         n_autosave_off = "Автосохранение выключено",
         n_lang = "Язык: %s",
         credits = "от Rival960 — Сделано с помощью Claude",
+        tab_errors = "Ошибки",
+        ok = "ОК",
+        cancel = "Отмена",
+        off = "Выкл",
+        status_events = "событий: %d",
+        status_flood = "пропущено: %d (флуд)",
+        status_errors = "ошибок: %d",
+        f_clientinvoke = "📨 ClientInvoke",
+        f_bindable = "🔗 Bindable",
+        f_watched = "⭐ Отслеживаемые",
+        lbl_clientinvoke = "C-INVOKE",
+        lbl_bindable = "BINDABLE",
+        watch = "⭐ Отслеживать",
+        unwatch = "☆ Не отслеживать",
+        st_watched = "⭐ Отслеживается",
+        dir_local = "🔁 Клиент ↔ Клиент (локально)",
+        code_clientinvoke = "-- RobloxSpy — OnClientInvoke (сервер спрашивает клиента)",
+        code_clientinvoke_note = "-- Сервер вызвал OnClientInvoke этого RemoteFunction с:",
+        k_grouped = "Сгруппировано",
+        grouped_fmt = "%d одинаковых вызовов подряд",
+        k_flood = "Флуд",
+        flood_fmt = "%d вызовов пропущено перед этим (антифлуд)",
+        skipped_prefix = "(+%d пропущено)",
+        sec_stats = "📈  СТАТИСТИКА ЭТОГО РЕМОУТА",
+        k_total = "Всего вызовов",
+        k_rate = "Частота",
+        rate_fmt = "%.1f вызовов / мин",
+        k_first_last = "Первый → последний",
+        k_callers = "Вызывающие",
+        diff_hint = "изменения относительно прошлого вызова — жёлтым",
+        diff_was = "было: %s",
+        sec_return = "↩  ВОЗВРАЩЕНО СЕРВЕРОМ",
+        ret_nothing = "(ничего не возвращено)",
+        ret_waiting = "Ожидание ответа сервера…",
+        ret_disabled = "Включи «Захват возвратов InvokeServer» в настройках",
+        n_alert = "🔔 Тревога: %s (ключевое слово «%s»)",
+        n_saved_game = "сохранено для этой игры",
+        n_watch_on = "⭐ %s добавлен в отслеживаемые",
+        n_watch_off = "%s убран из отслеживаемых",
+        empty_feed = "Событий пока нет — поиграй немного, каждый вызов ремоута появится здесь.",
+        empty_filter = "Ничего не подходит под фильтр.",
+        empty_network = "Трафик пока не записан.",
+        empty_scripts = "Нажми «Сканировать скрипты», чтобы увидеть клиентские скрипты игры.",
+        empty_errors = "Ошибок нет — всё работает.",
+        net_click_hint = "нажми на строку, чтобы отфильтровать спай",
+        err_copy = "📋 Копировать всё",
+        err_clear = "🧹 Очистить",
+        err_count = "ошибок: %d",
+        c_errors = "Ошибки",
+        hi_export_script = "🧾 Экспорт как скрипт",
+        se_capture = "📡 Захват",
+        se_returns = "↩ Захватывать возвраты InvokeServer",
+        se_returns_note = "Показывает ответ сервера. Выключи, если игра ведёт себя странно.",
+        se_clientinvoke = "📨 Захватывать OnClientInvoke (нужен getcallbackvalue)",
+        se_bindables = "🔗 Следить за BindableEvent / BindableFunction",
+        se_group = "🧮 Группировать одинаковые вызовы (×N)",
+        se_flood = "🌊 Антифлуд (макс. записанных вызовов на ремоут в секунду)",
+        se_alerts = "🔔 Оповещения",
+        se_alerts_on = "🔔 Уведомлять, если имя ремоута содержит ключевое слово",
+        se_keywords = "Ключевые слова (через запятую)",
+        n_keywords_saved = "Ключевые слова сохранены",
+        se_appearance = "🎨 Внешний вид",
+        se_accent = "Цвет акцента",
+        c_blue = "Синий",
+        c_purple = "Фиолетовый",
+        c_green = "Зелёный",
+        c_red = "Красный",
+        c_orange = "Оранжевый",
+        se_transparency = "Прозрачность окна",
+        se_textsize = "Размер текста",
+        se_bottomtabs = "📱 Вкладки внизу",
+        se_keybind = "⌨ Клавиша показать / скрыть: %s (нажми, чтобы сменить)",
+        se_keybind_wait = "Нажми клавишу… (Esc = отмена)",
+        n_keybind = "Клавиша: %s",
+        se_tools = "🧰 Инструменты",
+        se_export_script = "🧾 Экспорт сессии как скрипта повтора",
+        se_whatsnew = "🎉 Что нового",
+        se_unload = "⏏ Выгрузить RobloxSpy",
+        unload_title = "Выгрузить RobloxSpy?",
+        unload_body = "Хуки снимаются, сессия сохраняется, интерфейс закрывается. Запусти скрипт снова, чтобы перезапустить.",
+        n_returns_on = "Возвраты новых InvokeServer захватываются",
+        n_option_off = "Опция выключена",
+        n_need_fn = "%s не поддерживается в %s",
+        tip_maximize = "Развернуть / восстановить",
+        tip_minimize = "Свернуть",
+        tip_close = "Скрыть (круглая кнопка вернёт окно)",
+        tip_reopen = "Открыть RobloxSpy (перетащи, чтобы двигать)",
+        tip_copy_r2s = "Копировать код R2S",
+        tip_ignore = "Игнорировать ремоут (отправляется, но не пишется)",
+        tip_delete = "Удалить строку",
+        tip_pause = "Пауза / продолжить захват",
+        tip_clear = "Очистить ленту",
+        tip_expand = "Увеличить окно",
+        tip_refire = "Отправить вызов снова",
+        tip_watch = "В отслеживаемые (сохраняется для игры)",
+        tip_drop = "Блокировать: вызов не дойдёт до сервера",
+        rn_title = "🎉 Что нового в v%s",
+        rn_1 = "Повторный запуск заменяет старый экземпляр, а новая кнопка «Выгрузить» чисто всё убирает.",
+        rn_2 = "Антифлуд и группировка: одинаковые вызовы объединяются в одну строку «×N».",
+        rn_3 = "Можно захватывать возвраты InvokeServer, OnClientInvoke и Bindables (Настройки → Захват).",
+        rn_4 = "Статистика по ремоутам, подсветка отличий от прошлого вызова, оповещения по ключевым словам.",
+        rn_5 = "Отслеживаемые и списки игнора / блокировки сохраняются для каждой игры.",
+        rn_6 = "Экспорт всей сессии как скрипта повтора (Настройки → Инструменты или История).",
+        rn_7 = "Новые рисованные иконки, кнопка открытия со счётчиком, клавиша на ПК (RightShift).",
+        rn_8 = "Телефон: вкладки внизу, крупные строки и кнопки. Подсказки везде (долгое нажатие на телефоне).",
+        rn_9 = "Цвета акцента, прозрачность и размер текста в Настройки → Внешний вид.",
+        rn_10 = "Новая вкладка «Ошибки», более быстрый проводник, лёгкое автосохранение — и исправления ошибок.",
+        as_live = "Постоянно (каждые 2 с)",
     }
 
     LANG.IT = {
@@ -1797,6 +2488,114 @@ do
         n_autosave_off = "Salvataggio automatico disattivato",
         n_lang = "Lingua: %s",
         credits = "di Rival960 — Realizzato con l'aiuto di Claude",
+        tab_errors = "Errori",
+        ok = "OK",
+        cancel = "Annulla",
+        off = "No",
+        status_events = "%d eventi",
+        status_flood = "%d saltati (flood)",
+        status_errors = "%d errori",
+        f_clientinvoke = "📨 ClientInvoke",
+        f_bindable = "🔗 Bindable",
+        f_watched = "⭐ Seguiti",
+        lbl_clientinvoke = "C-INVOKE",
+        lbl_bindable = "BINDABLE",
+        watch = "⭐ Segui",
+        unwatch = "☆ Non seguire",
+        st_watched = "⭐ Seguito",
+        dir_local = "🔁 Client ↔ Client (locale)",
+        code_clientinvoke = "-- RobloxSpy — OnClientInvoke (il server interroga il client)",
+        code_clientinvoke_note = "-- Il server ha chiamato l'OnClientInvoke di questa RemoteFunction con:",
+        k_grouped = "Raggruppato",
+        grouped_fmt = "%d chiamate identiche di fila",
+        k_flood = "Flood",
+        flood_fmt = "%d chiamate saltate subito prima (anti-flood)",
+        skipped_prefix = "(+%d saltate)",
+        sec_stats = "📈  STATISTICHE DI QUESTO REMOTE",
+        k_total = "Chiamate totali",
+        k_rate = "Frequenza",
+        rate_fmt = "%.1f chiamate / min",
+        k_first_last = "Prima → ultima",
+        k_callers = "Chiamanti",
+        diff_hint = "differenze rispetto alla chiamata precedente in giallo",
+        diff_was = "prima: %s",
+        sec_return = "↩  RESTITUITO DAL SERVER",
+        ret_nothing = "(nulla restituito)",
+        ret_waiting = "In attesa della risposta del server…",
+        ret_disabled = "Attiva \"Cattura i ritorni di InvokeServer\" nelle Impostazioni",
+        n_alert = "🔔 Avviso: %s (parola chiave \"%s\")",
+        n_saved_game = "salvato per questo gioco",
+        n_watch_on = "⭐ %s aggiunto ai seguiti",
+        n_watch_off = "%s rimosso dai seguiti",
+        empty_feed = "Nessun evento per ora — gioca un po', ogni chiamata remote apparirà qui.",
+        empty_filter = "Niente corrisponde a questo filtro.",
+        empty_network = "Nessun traffico registrato per ora.",
+        empty_scripts = "Premi \"Scansiona script\" per elencare gli script client del gioco.",
+        empty_errors = "Nessun errore — tutto funziona.",
+        net_click_hint = "clicca una riga per filtrare lo spy",
+        err_copy = "📋 Copia tutto",
+        err_clear = "🧹 Svuota",
+        err_count = "%d errore/i",
+        c_errors = "Errori",
+        hi_export_script = "🧾 Esporta come script",
+        se_capture = "📡 Cattura",
+        se_returns = "↩ Cattura i ritorni di InvokeServer",
+        se_returns_note = "Mostra cosa risponde il server. Disattivalo se un gioco si comporta in modo strano.",
+        se_clientinvoke = "📨 Cattura OnClientInvoke (richiede getcallbackvalue)",
+        se_bindables = "🔗 Spia BindableEvent / BindableFunction",
+        se_group = "🧮 Raggruppa chiamate identiche (×N)",
+        se_flood = "🌊 Anti-flood (max chiamate registrate per remote al secondo)",
+        se_alerts = "🔔 Avvisi",
+        se_alerts_on = "🔔 Avvisa quando il nome di un remote contiene una parola chiave",
+        se_keywords = "Parole chiave (separate da virgole)",
+        n_keywords_saved = "Parole chiave salvate",
+        se_appearance = "🎨 Aspetto",
+        se_accent = "Colore d'accento",
+        c_blue = "Blu",
+        c_purple = "Viola",
+        c_green = "Verde",
+        c_red = "Rosso",
+        c_orange = "Arancione",
+        se_transparency = "Trasparenza della finestra",
+        se_textsize = "Dimensione del testo",
+        se_bottomtabs = "📱 Barra delle schede in basso",
+        se_keybind = "⌨ Tasto mostra / nascondi: %s (clicca per cambiare)",
+        se_keybind_wait = "Premi un tasto… (Esc = annulla)",
+        n_keybind = "Tasto impostato: %s",
+        se_tools = "🧰 Strumenti",
+        se_export_script = "🧾 Esporta questa sessione come script di replay",
+        se_whatsnew = "🎉 Novità",
+        se_unload = "⏏ Scarica RobloxSpy",
+        unload_title = "Scaricare RobloxSpy?",
+        unload_body = "Gli hook vengono rimossi, la sessione salvata e l'interfaccia chiusa. Riesegui lo script per riavviarlo.",
+        n_returns_on = "Ritorni catturati per i nuovi InvokeServer",
+        n_option_off = "Opzione disattivata",
+        n_need_fn = "%s non è supportato da %s",
+        tip_maximize = "Ingrandisci / ripristina",
+        tip_minimize = "Riduci",
+        tip_close = "Nascondi (il pulsante tondo la riporta)",
+        tip_reopen = "Apri RobloxSpy (trascina per spostare)",
+        tip_copy_r2s = "Copia il codice R2S",
+        tip_ignore = "Ignora questo remote (inviato, non registrato)",
+        tip_delete = "Elimina questa riga",
+        tip_pause = "Pausa / riprendi la cattura",
+        tip_clear = "Svuota il feed",
+        tip_expand = "Ingrandisci la finestra",
+        tip_refire = "Invia di nuovo questa chiamata",
+        tip_watch = "Aggiungi ai seguiti (salvato per questo gioco)",
+        tip_drop = "Blocca: la chiamata non arriva mai al server",
+        rn_title = "🎉 Novità della v%s",
+        rn_1 = "Rieseguire lo script sostituisce la vecchia istanza, e il nuovo pulsante \"Scarica\" rimuove tutto in modo pulito.",
+        rn_2 = "Anti-flood e raggruppamento: le chiamate identiche diventano una riga \"×N\".",
+        rn_3 = "Si possono catturare i ritorni di InvokeServer, OnClientInvoke e Bindables (Impostazioni → Cattura).",
+        rn_4 = "Statistiche per remote, differenze evidenziate con la chiamata precedente, avvisi per parola chiave.",
+        rn_5 = "I seguiti e le liste ignorati / bloccati vengono salvati per gioco.",
+        rn_6 = "Esporta un'intera sessione come script riproducibile (Impostazioni → Strumenti, o Cronologia).",
+        rn_7 = "Nuove icone disegnate, pulsante di riapertura con contatore, tasto su PC (RightShift).",
+        rn_8 = "Mobile: schede in basso, righe e pulsanti più grandi. Suggerimenti ovunque (pressione lunga su mobile).",
+        rn_9 = "Colori d'accento, trasparenza e dimensione del testo in Impostazioni → Aspetto.",
+        rn_10 = "Nuova scheda Errori, Esplora più veloce, salvataggio automatico più leggero — e vari bug corretti.",
+        as_live = "Continuo (ogni 2 s)",
     }
 
     LANG.NL = {
@@ -1982,6 +2781,114 @@ do
         n_autosave_off = "Automatisch opslaan uit",
         n_lang = "Taal: %s",
         credits = "door Rival960 — Gemaakt met hulp van Claude",
+        tab_errors = "Fouten",
+        ok = "OK",
+        cancel = "Annuleren",
+        off = "Uit",
+        status_events = "%d events",
+        status_flood = "%d overgeslagen (flood)",
+        status_errors = "%d fouten",
+        f_clientinvoke = "📨 ClientInvoke",
+        f_bindable = "🔗 Bindable",
+        f_watched = "⭐ Gevolgd",
+        lbl_clientinvoke = "C-INVOKE",
+        lbl_bindable = "BINDABLE",
+        watch = "⭐ Volgen",
+        unwatch = "☆ Niet meer volgen",
+        st_watched = "⭐ Gevolgd",
+        dir_local = "🔁 Client ↔ Client (lokaal)",
+        code_clientinvoke = "-- RobloxSpy — OnClientInvoke (server vraagt de client)",
+        code_clientinvoke_note = "-- De server riep OnClientInvoke van deze RemoteFunction aan met:",
+        k_grouped = "Gegroepeerd",
+        grouped_fmt = "%d identieke aanroepen achter elkaar",
+        k_flood = "Flood",
+        flood_fmt = "%d aanroepen vlak ervoor overgeslagen (anti-flood)",
+        skipped_prefix = "(+%d overgeslagen)",
+        sec_stats = "📈  STATISTIEKEN VAN DEZE REMOTE",
+        k_total = "Totaal aanroepen",
+        k_rate = "Frequentie",
+        rate_fmt = "%.1f aanroepen / min",
+        k_first_last = "Eerste → laatste",
+        k_callers = "Aanroepers",
+        diff_hint = "wijzigingen t.o.v. vorige aanroep in geel",
+        diff_was = "was: %s",
+        sec_return = "↩  TERUGGEGEVEN DOOR DE SERVER",
+        ret_nothing = "(niets teruggegeven)",
+        ret_waiting = "Wachten op het antwoord van de server…",
+        ret_disabled = "Zet \"InvokeServer-returnwaarden vastleggen\" aan in Instellingen",
+        n_alert = "🔔 Melding: %s (trefwoord \"%s\")",
+        n_saved_game = "opgeslagen voor dit spel",
+        n_watch_on = "⭐ %s toegevoegd aan de volglijst",
+        n_watch_off = "%s verwijderd van de volglijst",
+        empty_feed = "Nog geen events — speel even, elke remote-aanroep verschijnt hier.",
+        empty_filter = "Niets komt overeen met dit filter.",
+        empty_network = "Nog geen verkeer vastgelegd.",
+        empty_scripts = "Klik op \"Scripts scannen\" om de clientscripts van het spel te tonen.",
+        empty_errors = "Geen fouten — alles werkt.",
+        net_click_hint = "klik op een rij om de spy te filteren",
+        err_copy = "📋 Alles kopiëren",
+        err_clear = "🧹 Wissen",
+        err_count = "%d fout(en)",
+        c_errors = "Fouten",
+        hi_export_script = "🧾 Exporteren als script",
+        se_capture = "📡 Vastleggen",
+        se_returns = "↩ InvokeServer-returnwaarden vastleggen",
+        se_returns_note = "Toont wat de server antwoordt. Zet uit als een spel zich vreemd gedraagt.",
+        se_clientinvoke = "📨 OnClientInvoke vastleggen (vereist getcallbackvalue)",
+        se_bindables = "🔗 BindableEvent / BindableFunction bespioneren",
+        se_group = "🧮 Identieke aanroepen groeperen (×N)",
+        se_flood = "🌊 Anti-flood (max. gelogde aanroepen per remote per seconde)",
+        se_alerts = "🔔 Meldingen",
+        se_alerts_on = "🔔 Melden als een remote-naam een trefwoord bevat",
+        se_keywords = "Trefwoorden (gescheiden door komma's)",
+        n_keywords_saved = "Trefwoorden opgeslagen",
+        se_appearance = "🎨 Uiterlijk",
+        se_accent = "Accentkleur",
+        c_blue = "Blauw",
+        c_purple = "Paars",
+        c_green = "Groen",
+        c_red = "Rood",
+        c_orange = "Oranje",
+        se_transparency = "Venstertransparantie",
+        se_textsize = "Tekstgrootte",
+        se_bottomtabs = "📱 Tabbalk onderaan",
+        se_keybind = "⌨ Toets tonen / verbergen: %s (klik om te wijzigen)",
+        se_keybind_wait = "Druk op een toets… (Esc = annuleren)",
+        n_keybind = "Toets ingesteld: %s",
+        se_tools = "🧰 Hulpmiddelen",
+        se_export_script = "🧾 Deze sessie exporteren als afspeelscript",
+        se_whatsnew = "🎉 Wat is er nieuw",
+        se_unload = "⏏ RobloxSpy ontladen",
+        unload_title = "RobloxSpy ontladen?",
+        unload_body = "De hooks worden verwijderd, de sessie opgeslagen en de interface gesloten. Voer het script opnieuw uit om te herstarten.",
+        n_returns_on = "Returnwaarden van nieuwe InvokeServer worden vastgelegd",
+        n_option_off = "Optie uitgeschakeld",
+        n_need_fn = "%s wordt niet ondersteund door %s",
+        tip_maximize = "Maximaliseren / herstellen",
+        tip_minimize = "Minimaliseren",
+        tip_close = "Verbergen (de ronde knop brengt het terug)",
+        tip_reopen = "RobloxSpy openen (sleep om te verplaatsen)",
+        tip_copy_r2s = "R2S-code kopiëren",
+        tip_ignore = "Deze remote negeren (wordt verzonden, niet gelogd)",
+        tip_delete = "Deze rij verwijderen",
+        tip_pause = "Vastleggen pauzeren / hervatten",
+        tip_clear = "Feed wissen",
+        tip_expand = "Venster vergroten",
+        tip_refire = "Deze aanroep opnieuw sturen",
+        tip_watch = "Aan volglijst toevoegen (opgeslagen voor dit spel)",
+        tip_drop = "Blokkeren: de aanroep bereikt de server nooit",
+        rn_title = "🎉 Nieuw in v%s",
+        rn_1 = "Het script opnieuw starten vervangt de oude instantie, en de nieuwe knop \"Ontladen\" ruimt alles netjes op.",
+        rn_2 = "Anti-flood en groeperen: identieke aanroepen worden één rij \"×N\".",
+        rn_3 = "InvokeServer-returns, OnClientInvoke en Bindables kunnen worden vastgelegd (Instellingen → Vastleggen).",
+        rn_4 = "Statistieken per remote, gemarkeerde verschillen met de vorige aanroep, meldingen op trefwoord.",
+        rn_5 = "De volglijst en de negeer- / blokkeerlijsten worden per spel opgeslagen.",
+        rn_6 = "Exporteer een hele sessie als afspeelbaar script (Instellingen → Hulpmiddelen, of Geschiedenis).",
+        rn_7 = "Nieuwe getekende iconen, openknop met teller, pc-toets (RightShift).",
+        rn_8 = "Mobiel: tabbalk onderaan, grotere rijen en knoppen. Tooltips overal (lang drukken op mobiel).",
+        rn_9 = "Accentkleuren, transparantie en tekstgrootte in Instellingen → Uiterlijk.",
+        rn_10 = "Nieuw tabblad Fouten, snellere verkenner, lichter automatisch opslaan — plus diverse bugfixes.",
+        as_live = "Live (elke 2 s)",
     }
 
     LANG.PL = {
@@ -2167,6 +3074,114 @@ do
         n_autosave_off = "Autozapis wyłączony",
         n_lang = "Język: %s",
         credits = "autor: Rival960 — Stworzone z pomocą Claude",
+        tab_errors = "Błędy",
+        ok = "OK",
+        cancel = "Anuluj",
+        off = "Wył.",
+        status_events = "zdarzeń: %d",
+        status_flood = "pominięto: %d (flood)",
+        status_errors = "błędów: %d",
+        f_clientinvoke = "📨 ClientInvoke",
+        f_bindable = "🔗 Bindable",
+        f_watched = "⭐ Obserwowane",
+        lbl_clientinvoke = "C-INVOKE",
+        lbl_bindable = "BINDABLE",
+        watch = "⭐ Obserwuj",
+        unwatch = "☆ Przestań obserwować",
+        st_watched = "⭐ Obserwowany",
+        dir_local = "🔁 Klient ↔ Klient (lokalnie)",
+        code_clientinvoke = "-- RobloxSpy — OnClientInvoke (serwer pyta klienta)",
+        code_clientinvoke_note = "-- Serwer wywołał OnClientInvoke tej RemoteFunction z:",
+        k_grouped = "Zgrupowane",
+        grouped_fmt = "%d identycznych wywołań pod rząd",
+        k_flood = "Flood",
+        flood_fmt = "%d wywołań pominiętych tuż przed (antyflood)",
+        skipped_prefix = "(+%d pominięto)",
+        sec_stats = "📈  STATYSTYKI TEGO REMOTE'A",
+        k_total = "Wszystkie wywołania",
+        k_rate = "Częstość",
+        rate_fmt = "%.1f wywołań / min",
+        k_first_last = "Pierwsze → ostatnie",
+        k_callers = "Wywołujący",
+        diff_hint = "zmiany względem poprzedniego wywołania na żółto",
+        diff_was = "było: %s",
+        sec_return = "↩  ZWRÓCONE PRZEZ SERWER",
+        ret_nothing = "(nic nie zwrócono)",
+        ret_waiting = "Czekam na odpowiedź serwera…",
+        ret_disabled = "Włącz „Przechwytuj wyniki InvokeServer” w Ustawieniach",
+        n_alert = "🔔 Alert: %s (słowo kluczowe „%s”)",
+        n_saved_game = "zapisano dla tej gry",
+        n_watch_on = "⭐ Dodano %s do obserwowanych",
+        n_watch_off = "Usunięto %s z obserwowanych",
+        empty_feed = "Brak zdarzeń — pograj chwilę, każde wywołanie remote'a pojawi się tutaj.",
+        empty_filter = "Nic nie pasuje do tego filtra.",
+        empty_network = "Nie zarejestrowano jeszcze ruchu.",
+        empty_scripts = "Kliknij „Skanuj skrypty”, aby wyświetlić skrypty klienta gry.",
+        empty_errors = "Brak błędów — wszystko działa.",
+        net_click_hint = "kliknij wiersz, aby przefiltrować spy",
+        err_copy = "📋 Kopiuj wszystko",
+        err_clear = "🧹 Wyczyść",
+        err_count = "błędów: %d",
+        c_errors = "Błędy",
+        hi_export_script = "🧾 Eksportuj jako skrypt",
+        se_capture = "📡 Przechwytywanie",
+        se_returns = "↩ Przechwytuj wyniki InvokeServer",
+        se_returns_note = "Pokazuje odpowiedź serwera. Wyłącz, jeśli gra zachowuje się dziwnie.",
+        se_clientinvoke = "📨 Przechwytuj OnClientInvoke (wymaga getcallbackvalue)",
+        se_bindables = "🔗 Śledź BindableEvent / BindableFunction",
+        se_group = "🧮 Grupuj identyczne wywołania (×N)",
+        se_flood = "🌊 Antyflood (maks. zapisanych wywołań na remote na sekundę)",
+        se_alerts = "🔔 Alerty",
+        se_alerts_on = "🔔 Powiadamiaj, gdy nazwa remote'a zawiera słowo kluczowe",
+        se_keywords = "Słowa kluczowe (oddzielone przecinkami)",
+        n_keywords_saved = "Słowa kluczowe zapisane",
+        se_appearance = "🎨 Wygląd",
+        se_accent = "Kolor akcentu",
+        c_blue = "Niebieski",
+        c_purple = "Fioletowy",
+        c_green = "Zielony",
+        c_red = "Czerwony",
+        c_orange = "Pomarańczowy",
+        se_transparency = "Przezroczystość okna",
+        se_textsize = "Rozmiar tekstu",
+        se_bottomtabs = "📱 Pasek kart na dole",
+        se_keybind = "⌨ Klawisz pokaż / ukryj: %s (kliknij, aby zmienić)",
+        se_keybind_wait = "Naciśnij klawisz… (Esc = anuluj)",
+        n_keybind = "Ustawiono klawisz: %s",
+        se_tools = "🧰 Narzędzia",
+        se_export_script = "🧾 Eksportuj sesję jako skrypt odtwarzania",
+        se_whatsnew = "🎉 Co nowego",
+        se_unload = "⏏ Wyładuj RobloxSpy",
+        unload_title = "Wyładować RobloxSpy?",
+        unload_body = "Hooki zostaną usunięte, sesja zapisana, a interfejs zamknięty. Uruchom skrypt ponownie, aby go zrestartować.",
+        n_returns_on = "Wyniki nowych InvokeServer są przechwytywane",
+        n_option_off = "Opcja wyłączona",
+        n_need_fn = "%s nie jest obsługiwane przez %s",
+        tip_maximize = "Maksymalizuj / przywróć",
+        tip_minimize = "Minimalizuj",
+        tip_close = "Ukryj (okrągły przycisk je przywróci)",
+        tip_reopen = "Otwórz RobloxSpy (przeciągnij, aby przesunąć)",
+        tip_copy_r2s = "Kopiuj kod R2S",
+        tip_ignore = "Ignoruj ten remote (wysyłany, ale nie logowany)",
+        tip_delete = "Usuń ten wiersz",
+        tip_pause = "Wstrzymaj / wznów przechwytywanie",
+        tip_clear = "Wyczyść listę",
+        tip_expand = "Powiększ okno",
+        tip_refire = "Wyślij to wywołanie ponownie",
+        tip_watch = "Dodaj do obserwowanych (zapisane dla tej gry)",
+        tip_drop = "Blokuj: wywołanie nigdy nie dotrze do serwera",
+        rn_title = "🎉 Nowości w v%s",
+        rn_1 = "Ponowne uruchomienie zastępuje starą instancję, a nowy przycisk „Wyładuj” czysto wszystko usuwa.",
+        rn_2 = "Antyflood i grupowanie: identyczne wywołania łączą się w jeden wiersz „×N”.",
+        rn_3 = "Można przechwytywać wyniki InvokeServer, OnClientInvoke i Bindables (Ustawienia → Przechwytywanie).",
+        rn_4 = "Statystyki remote'ów, podświetlone różnice z poprzednim wywołaniem, alerty słów kluczowych.",
+        rn_5 = "Obserwowane oraz listy ignorowanych / blokowanych są zapisywane dla każdej gry.",
+        rn_6 = "Eksport całej sesji jako skryptu do odtworzenia (Ustawienia → Narzędzia lub Historia).",
+        rn_7 = "Nowe rysowane ikony, przycisk otwierania z licznikiem, klawisz na PC (RightShift).",
+        rn_8 = "Telefon: karty na dole, większe wiersze i przyciski. Podpowiedzi wszędzie (długie naciśnięcie na telefonie).",
+        rn_9 = "Kolory akcentu, przezroczystość i rozmiar tekstu w Ustawienia → Wygląd.",
+        rn_10 = "Nowa karta Błędy, szybszy eksplorator, lżejszy autozapis — i kilka poprawek błędów.",
+        as_live = "Na bieżąco (co 2 s)",
     }
 
     LANG.ZH = {
@@ -2352,6 +3367,114 @@ do
         n_autosave_off = "自动保存已关闭",
         n_lang = "语言：%s",
         credits = "作者 Rival960 — 在 Claude 的帮助下制作",
+        tab_errors = "错误",
+        ok = "确定",
+        cancel = "取消",
+        off = "关",
+        status_events = "%d 个事件",
+        status_flood = "已跳过 %d（防刷屏）",
+        status_errors = "%d 个错误",
+        f_clientinvoke = "📨 ClientInvoke",
+        f_bindable = "🔗 Bindable",
+        f_watched = "⭐ 关注",
+        lbl_clientinvoke = "C-INVOKE",
+        lbl_bindable = "BINDABLE",
+        watch = "⭐ 关注",
+        unwatch = "☆ 取消关注",
+        st_watched = "⭐ 已关注",
+        dir_local = "🔁 客户端 ↔ 客户端（本地）",
+        code_clientinvoke = "-- RobloxSpy — OnClientInvoke（服务器询问客户端）",
+        code_clientinvoke_note = "-- 服务器调用了此 RemoteFunction 的 OnClientInvoke，参数：",
+        k_grouped = "已合并",
+        grouped_fmt = "连续 %d 次相同调用",
+        k_flood = "刷屏",
+        flood_fmt = "此前跳过了 %d 次调用（防刷屏）",
+        skipped_prefix = "（+%d 已跳过）",
+        sec_stats = "📈  此远程的统计",
+        k_total = "总调用数",
+        k_rate = "频率",
+        rate_fmt = "%.1f 次 / 分钟",
+        k_first_last = "首次 → 最近",
+        k_callers = "调用者",
+        diff_hint = "与上一次调用的不同之处以黄色显示",
+        diff_was = "之前：%s",
+        sec_return = "↩  服务器返回值",
+        ret_nothing = "（无返回值）",
+        ret_waiting = "正在等待服务器响应…",
+        ret_disabled = "请在设置中开启“捕获 InvokeServer 返回值”",
+        n_alert = "🔔 警报：%s（关键词“%s”）",
+        n_saved_game = "已为此游戏保存",
+        n_watch_on = "⭐ 已将 %s 加入关注列表",
+        n_watch_off = "已将 %s 移出关注列表",
+        empty_feed = "暂无事件 — 玩一会儿，每次远程调用都会显示在这里。",
+        empty_filter = "没有符合筛选条件的内容。",
+        empty_network = "尚未记录流量。",
+        empty_scripts = "点击“扫描脚本”以列出游戏的客户端脚本。",
+        empty_errors = "没有错误 — 一切正常。",
+        net_click_hint = "点击某行可筛选监视列表",
+        err_copy = "📋 全部复制",
+        err_clear = "🧹 清空",
+        err_count = "%d 个错误",
+        c_errors = "错误",
+        hi_export_script = "🧾 导出为脚本",
+        se_capture = "📡 捕获",
+        se_returns = "↩ 捕获 InvokeServer 返回值",
+        se_returns_note = "显示服务器的响应。如果游戏表现异常，请关闭。",
+        se_clientinvoke = "📨 捕获 OnClientInvoke（需要 getcallbackvalue）",
+        se_bindables = "🔗 监视 BindableEvent / BindableFunction",
+        se_group = "🧮 合并相同调用（×N）",
+        se_flood = "🌊 防刷屏（每个远程每秒最多记录的调用数）",
+        se_alerts = "🔔 警报",
+        se_alerts_on = "🔔 当远程名称包含关键词时通知",
+        se_keywords = "关键词（用逗号分隔）",
+        n_keywords_saved = "关键词已保存",
+        se_appearance = "🎨 外观",
+        se_accent = "强调色",
+        c_blue = "蓝色",
+        c_purple = "紫色",
+        c_green = "绿色",
+        c_red = "红色",
+        c_orange = "橙色",
+        se_transparency = "窗口透明度",
+        se_textsize = "文字大小",
+        se_bottomtabs = "📱 标签栏置于底部",
+        se_keybind = "⌨ 显示 / 隐藏按键：%s（点击更改）",
+        se_keybind_wait = "请按一个键…（Esc = 取消）",
+        n_keybind = "按键已设置：%s",
+        se_tools = "🧰 工具",
+        se_export_script = "🧾 将此会话导出为重放脚本",
+        se_whatsnew = "🎉 新功能",
+        se_unload = "⏏ 卸载 RobloxSpy",
+        unload_title = "卸载 RobloxSpy？",
+        unload_body = "将移除钩子、保存会话并关闭界面。再次运行脚本即可重新启动。",
+        n_returns_on = "新的 InvokeServer 返回值将被捕获",
+        n_option_off = "选项已关闭",
+        n_need_fn = "%s 不受 %s 支持",
+        tip_maximize = "最大化 / 还原",
+        tip_minimize = "最小化",
+        tip_close = "隐藏（圆形按钮可重新打开）",
+        tip_reopen = "打开 RobloxSpy（拖动可移动）",
+        tip_copy_r2s = "复制 R2S 代码",
+        tip_ignore = "忽略此远程（仍会发送，但不记录）",
+        tip_delete = "删除此行",
+        tip_pause = "暂停 / 继续捕获",
+        tip_clear = "清空列表",
+        tip_expand = "放大窗口",
+        tip_refire = "再次发送此调用",
+        tip_watch = "加入关注列表（为此游戏保存）",
+        tip_drop = "拦截：调用永远不会到达服务器",
+        rn_title = "🎉 v%s 新功能",
+        rn_1 = "再次运行脚本会替换旧实例，新的“卸载”按钮可干净地移除一切。",
+        rn_2 = "防刷屏与合并：相同的调用合并为一行“×N”。",
+        rn_3 = "可捕获 InvokeServer 返回值、OnClientInvoke 和 Bindables（设置 → 捕获）。",
+        rn_4 = "每个远程的统计、与上一次调用的差异高亮、关键词警报。",
+        rn_5 = "关注列表以及忽略 / 拦截列表按游戏保存。",
+        rn_6 = "将整个会话导出为可重放脚本（设置 → 工具，或历史）。",
+        rn_7 = "全新绘制图标，带未读计数的打开按钮，PC 快捷键（RightShift）。",
+        rn_8 = "手机：标签栏在底部，行和按钮更大。处处有提示（手机上长按）。",
+        rn_9 = "在设置 → 外观中调整强调色、透明度和文字大小。",
+        rn_10 = "新增错误标签页，资源管理器更快，自动保存更轻量 — 并修复了多个错误。",
+        as_live = "实时（每 2 秒）",
     }
 
     LANG.JA = {
@@ -2537,6 +3660,114 @@ do
         n_autosave_off = "自動保存オフ",
         n_lang = "言語: %s",
         credits = "制作 Rival960 — Claude の協力で作成",
+        tab_errors = "エラー",
+        ok = "OK",
+        cancel = "キャンセル",
+        off = "オフ",
+        status_events = "%d 件のイベント",
+        status_flood = "%d 件スキップ（フラッド）",
+        status_errors = "%d 件のエラー",
+        f_clientinvoke = "📨 ClientInvoke",
+        f_bindable = "🔗 Bindable",
+        f_watched = "⭐ ウォッチ",
+        lbl_clientinvoke = "C-INVOKE",
+        lbl_bindable = "BINDABLE",
+        watch = "⭐ ウォッチ",
+        unwatch = "☆ ウォッチ解除",
+        st_watched = "⭐ ウォッチ中",
+        dir_local = "🔁 クライアント ↔ クライアント（ローカル）",
+        code_clientinvoke = "-- RobloxSpy — OnClientInvoke（サーバーがクライアントに問い合わせ）",
+        code_clientinvoke_note = "-- サーバーがこの RemoteFunction の OnClientInvoke を次の引数で呼び出しました:",
+        k_grouped = "まとめ表示",
+        grouped_fmt = "同一の呼び出しが %d 回連続",
+        k_flood = "フラッド",
+        flood_fmt = "直前に %d 回の呼び出しをスキップ（フラッド対策）",
+        skipped_prefix = "（+%d スキップ）",
+        sec_stats = "📈  このリモートの統計",
+        k_total = "総呼び出し",
+        k_rate = "頻度",
+        rate_fmt = "%.1f 回 / 分",
+        k_first_last = "最初 → 最後",
+        k_callers = "呼び出し元",
+        diff_hint = "前回の呼び出しとの違いを黄色で表示",
+        diff_was = "前回: %s",
+        sec_return = "↩  サーバーからの戻り値",
+        ret_nothing = "（戻り値なし）",
+        ret_waiting = "サーバーの応答を待っています…",
+        ret_disabled = "設定で「InvokeServer の戻り値をキャプチャ」を有効にしてください",
+        n_alert = "🔔 アラート: %s（キーワード「%s」）",
+        n_saved_game = "このゲーム用に保存しました",
+        n_watch_on = "⭐ %s をウォッチリストに追加",
+        n_watch_off = "%s をウォッチリストから削除",
+        empty_feed = "まだイベントはありません — 少し遊ぶと、リモート呼び出しがここに表示されます。",
+        empty_filter = "このフィルターに一致するものはありません。",
+        empty_network = "まだトラフィックは記録されていません。",
+        empty_scripts = "「スクリプトをスキャン」を押すと、ゲームのクライアントスクリプトを一覧表示します。",
+        empty_errors = "エラーはありません — すべて正常です。",
+        net_click_hint = "行をクリックするとスパイを絞り込みます",
+        err_copy = "📋 すべてコピー",
+        err_clear = "🧹 クリア",
+        err_count = "%d 件のエラー",
+        c_errors = "エラー",
+        hi_export_script = "🧾 スクリプトとして出力",
+        se_capture = "📡 キャプチャ",
+        se_returns = "↩ InvokeServer の戻り値をキャプチャ",
+        se_returns_note = "サーバーの応答を表示します。ゲームの挙動がおかしい場合はオフにしてください。",
+        se_clientinvoke = "📨 OnClientInvoke をキャプチャ（getcallbackvalue が必要）",
+        se_bindables = "🔗 BindableEvent / BindableFunction を監視",
+        se_group = "🧮 同一の呼び出しをまとめる（×N）",
+        se_flood = "🌊 フラッド対策（リモートごとの毎秒の最大記録数）",
+        se_alerts = "🔔 アラート",
+        se_alerts_on = "🔔 リモート名にキーワードが含まれると通知",
+        se_keywords = "キーワード（カンマ区切り）",
+        n_keywords_saved = "キーワードを保存しました",
+        se_appearance = "🎨 外観",
+        se_accent = "アクセントカラー",
+        c_blue = "青",
+        c_purple = "紫",
+        c_green = "緑",
+        c_red = "赤",
+        c_orange = "オレンジ",
+        se_transparency = "ウィンドウの透明度",
+        se_textsize = "文字サイズ",
+        se_bottomtabs = "📱 タブバーを下に表示",
+        se_keybind = "⌨ 表示 / 非表示キー: %s（クリックで変更）",
+        se_keybind_wait = "キーを押してください…（Esc = キャンセル）",
+        n_keybind = "キーを設定: %s",
+        se_tools = "🧰 ツール",
+        se_export_script = "🧾 このセッションを再生スクリプトとして出力",
+        se_whatsnew = "🎉 新機能",
+        se_unload = "⏏ RobloxSpy をアンロード",
+        unload_title = "RobloxSpy をアンロードしますか？",
+        unload_body = "フックを外し、セッションを保存して、画面を閉じます。再起動するにはスクリプトをもう一度実行してください。",
+        n_returns_on = "新しい InvokeServer の戻り値をキャプチャします",
+        n_option_off = "オプションを無効にしました",
+        n_need_fn = "%s は %s で利用できません",
+        tip_maximize = "最大化 / 元に戻す",
+        tip_minimize = "最小化",
+        tip_close = "隠す（丸いボタンで戻せます）",
+        tip_reopen = "RobloxSpy を開く（ドラッグで移動）",
+        tip_copy_r2s = "R2S コードをコピー",
+        tip_ignore = "このリモートを無視（送信はされるが記録しない）",
+        tip_delete = "この行を削除",
+        tip_pause = "キャプチャを一時停止 / 再開",
+        tip_clear = "フィードをクリア",
+        tip_expand = "ウィンドウを拡大",
+        tip_refire = "この呼び出しを再送信",
+        tip_watch = "ウォッチリストに追加（このゲーム用に保存）",
+        tip_drop = "ブロック: 呼び出しはサーバーに届きません",
+        rn_title = "🎉 v%s の新機能",
+        rn_1 = "スクリプトを再実行すると古いインスタンスが置き換わり、新しい「アンロード」ボタンですべてきれいに削除できます。",
+        rn_2 = "フラッド対策とまとめ表示: 同一の呼び出しは「×N」の1行にまとまります。",
+        rn_3 = "InvokeServer の戻り値、OnClientInvoke、Bindables をキャプチャ可能（設定 → キャプチャ）。",
+        rn_4 = "リモートごとの統計、前回の呼び出しとの差分の強調、キーワードアラート。",
+        rn_5 = "ウォッチリストと無視 / ブロックのリストはゲームごとに保存されます。",
+        rn_6 = "セッション全体を再生可能なスクリプトとして出力（設定 → ツール、または履歴）。",
+        rn_7 = "新しい描画アイコン、未読カウンター付きの再表示ボタン、PC のキー（RightShift）。",
+        rn_8 = "モバイル: タブバーを下に、行とボタンを大きく。どこでもヒント表示（モバイルは長押し）。",
+        rn_9 = "アクセントカラー、透明度、文字サイズは 設定 → 外観 で変更できます。",
+        rn_10 = "新しいエラータブ、より速いエクスプローラー、軽くなった自動保存 — さらに複数の不具合を修正。",
+        as_live = "リアルタイム（2 秒ごと）",
     }
 
     LANG.TR = {
@@ -2722,6 +3953,114 @@ do
         n_autosave_off = "Otomatik kayıt kapalı",
         n_lang = "Dil: %s",
         credits = "Rival960 tarafından — Claude'un yardımıyla yapıldı",
+        tab_errors = "Hatalar",
+        ok = "Tamam",
+        cancel = "İptal",
+        off = "Kapalı",
+        status_events = "%d olay",
+        status_flood = "%d atlandı (flood)",
+        status_errors = "%d hata",
+        f_clientinvoke = "📨 ClientInvoke",
+        f_bindable = "🔗 Bindable",
+        f_watched = "⭐ İzlenenler",
+        lbl_clientinvoke = "C-INVOKE",
+        lbl_bindable = "BINDABLE",
+        watch = "⭐ İzle",
+        unwatch = "☆ İzlemeyi bırak",
+        st_watched = "⭐ İzleniyor",
+        dir_local = "🔁 İstemci ↔ İstemci (yerel)",
+        code_clientinvoke = "-- RobloxSpy — OnClientInvoke (sunucu istemciye soruyor)",
+        code_clientinvoke_note = "-- Sunucu bu RemoteFunction'ın OnClientInvoke'unu şu argümanlarla çağırdı:",
+        k_grouped = "Gruplandı",
+        grouped_fmt = "Art arda %d aynı çağrı",
+        k_flood = "Flood",
+        flood_fmt = "Hemen önce %d çağrı atlandı (anti-flood)",
+        skipped_prefix = "(+%d atlandı)",
+        sec_stats = "📈  BU REMOTE'UN İSTATİSTİKLERİ",
+        k_total = "Toplam çağrı",
+        k_rate = "Sıklık",
+        rate_fmt = "dakikada %.1f çağrı",
+        k_first_last = "İlk → son",
+        k_callers = "Çağıranlar",
+        diff_hint = "önceki çağrıya göre değişenler sarı",
+        diff_was = "önce: %s",
+        sec_return = "↩  SUNUCUNUN DÖNDÜRDÜĞÜ",
+        ret_nothing = "(hiçbir şey döndürülmedi)",
+        ret_waiting = "Sunucunun yanıtı bekleniyor…",
+        ret_disabled = "Ayarlar'da \"InvokeServer dönüş değerlerini yakala\"yı aç",
+        n_alert = "🔔 Uyarı: %s (anahtar kelime \"%s\")",
+        n_saved_game = "bu oyun için kaydedildi",
+        n_watch_on = "⭐ %s izleme listesine eklendi",
+        n_watch_off = "%s izleme listesinden çıkarıldı",
+        empty_feed = "Henüz olay yok — biraz oyna, her remote çağrısı burada görünecek.",
+        empty_filter = "Bu filtreye uyan bir şey yok.",
+        empty_network = "Henüz trafik kaydedilmedi.",
+        empty_scripts = "Oyunun istemci scriptlerini listelemek için \"Scriptleri tara\"ya bas.",
+        empty_errors = "Hata yok — her şey çalışıyor.",
+        net_click_hint = "spy'ı filtrelemek için bir satıra tıkla",
+        err_copy = "📋 Hepsini kopyala",
+        err_clear = "🧹 Temizle",
+        err_count = "%d hata",
+        c_errors = "Hatalar",
+        hi_export_script = "🧾 Script olarak dışa aktar",
+        se_capture = "📡 Yakalama",
+        se_returns = "↩ InvokeServer dönüş değerlerini yakala",
+        se_returns_note = "Sunucunun yanıtını gösterir. Oyun garip davranırsa kapat.",
+        se_clientinvoke = "📨 OnClientInvoke yakala (getcallbackvalue gerekir)",
+        se_bindables = "🔗 BindableEvent / BindableFunction izle",
+        se_group = "🧮 Aynı çağrıları grupla (×N)",
+        se_flood = "🌊 Anti-flood (remote başına saniyede en fazla kayıt)",
+        se_alerts = "🔔 Uyarılar",
+        se_alerts_on = "🔔 Remote adı bir anahtar kelime içerince bildir",
+        se_keywords = "Anahtar kelimeler (virgülle ayrılmış)",
+        n_keywords_saved = "Anahtar kelimeler kaydedildi",
+        se_appearance = "🎨 Görünüm",
+        se_accent = "Vurgu rengi",
+        c_blue = "Mavi",
+        c_purple = "Mor",
+        c_green = "Yeşil",
+        c_red = "Kırmızı",
+        c_orange = "Turuncu",
+        se_transparency = "Pencere saydamlığı",
+        se_textsize = "Yazı boyutu",
+        se_bottomtabs = "📱 Sekme çubuğu altta",
+        se_keybind = "⌨ Göster / gizle tuşu: %s (değiştirmek için tıkla)",
+        se_keybind_wait = "Bir tuşa bas… (Esc = iptal)",
+        n_keybind = "Tuş ayarlandı: %s",
+        se_tools = "🧰 Araçlar",
+        se_export_script = "🧾 Bu oturumu tekrar oynatma scripti olarak dışa aktar",
+        se_whatsnew = "🎉 Yenilikler",
+        se_unload = "⏏ RobloxSpy'ı kaldır",
+        unload_title = "RobloxSpy kaldırılsın mı?",
+        unload_body = "Hook'lar kaldırılır, oturum kaydedilir ve arayüz kapanır. Yeniden başlatmak için scripti tekrar çalıştır.",
+        n_returns_on = "Yeni InvokeServer dönüş değerleri yakalanıyor",
+        n_option_off = "Seçenek kapatıldı",
+        n_need_fn = "%s, %s tarafından desteklenmiyor",
+        tip_maximize = "Büyüt / geri yükle",
+        tip_minimize = "Küçült",
+        tip_close = "Gizle (yuvarlak düğme geri getirir)",
+        tip_reopen = "RobloxSpy'ı aç (taşımak için sürükle)",
+        tip_copy_r2s = "R2S kodunu kopyala",
+        tip_ignore = "Bu remote'u yoksay (gönderilir, kaydedilmez)",
+        tip_delete = "Bu satırı sil",
+        tip_pause = "Yakalamayı duraklat / devam ettir",
+        tip_clear = "Akışı temizle",
+        tip_expand = "Pencereyi büyüt",
+        tip_refire = "Bu çağrıyı tekrar gönder",
+        tip_watch = "İzleme listesine ekle (bu oyun için kaydedilir)",
+        tip_drop = "Engelle: çağrı sunucuya hiç ulaşmaz",
+        rn_title = "🎉 v%s yenilikleri",
+        rn_1 = "Scripti tekrar çalıştırmak eski örneği değiştirir; yeni \"Kaldır\" düğmesi her şeyi temizce kaldırır.",
+        rn_2 = "Anti-flood ve gruplama: aynı çağrılar tek satırda \"×N\" olarak birleşir.",
+        rn_3 = "InvokeServer dönüşleri, OnClientInvoke ve Bindables yakalanabilir (Ayarlar → Yakalama).",
+        rn_4 = "Remote başına istatistikler, önceki çağrıyla farkların vurgulanması, anahtar kelime uyarıları.",
+        rn_5 = "İzleme listesi ve yoksay / engelle listeleri oyun başına kaydedilir.",
+        rn_6 = "Bütün bir oturumu tekrar oynatılabilir script olarak dışa aktar (Ayarlar → Araçlar veya Geçmiş).",
+        rn_7 = "Yeni çizilmiş simgeler, okunmamış sayaçlı açma düğmesi, PC tuşu (RightShift).",
+        rn_8 = "Mobil: sekmeler altta, daha büyük satırlar ve düğmeler. Her yerde ipuçları (mobilde uzun bas).",
+        rn_9 = "Vurgu renkleri, saydamlık ve yazı boyutu Ayarlar → Görünüm'de.",
+        rn_10 = "Yeni Hatalar sekmesi, daha hızlı gezgin, daha hafif otomatik kayıt — ve birçok hata düzeltmesi.",
+        as_live = "Canlı (2 sn'de bir)",
     }
 
     LANG.KO = {
@@ -2907,6 +4246,114 @@ do
         n_autosave_off = "자동 저장 꺼짐",
         n_lang = "언어: %s",
         credits = "제작 Rival960 — Claude의 도움으로 제작",
+        tab_errors = "오류",
+        ok = "확인",
+        cancel = "취소",
+        off = "끔",
+        status_events = "이벤트 %d개",
+        status_flood = "%d개 건너뜀 (플러드)",
+        status_errors = "오류 %d개",
+        f_clientinvoke = "📨 ClientInvoke",
+        f_bindable = "🔗 Bindable",
+        f_watched = "⭐ 관심 목록",
+        lbl_clientinvoke = "C-INVOKE",
+        lbl_bindable = "BINDABLE",
+        watch = "⭐ 관심 등록",
+        unwatch = "☆ 관심 해제",
+        st_watched = "⭐ 관심 등록됨",
+        dir_local = "🔁 클라이언트 ↔ 클라이언트 (로컬)",
+        code_clientinvoke = "-- RobloxSpy — OnClientInvoke (서버가 클라이언트에 요청)",
+        code_clientinvoke_note = "-- 서버가 이 RemoteFunction의 OnClientInvoke를 다음 인수로 호출했습니다:",
+        k_grouped = "묶음",
+        grouped_fmt = "같은 호출 %d번 연속",
+        k_flood = "플러드",
+        flood_fmt = "바로 전에 %d번 호출을 건너뜀 (안티 플러드)",
+        skipped_prefix = "(+%d개 건너뜀)",
+        sec_stats = "📈  이 리모트의 통계",
+        k_total = "총 호출",
+        k_rate = "빈도",
+        rate_fmt = "분당 %.1f번",
+        k_first_last = "처음 → 마지막",
+        k_callers = "호출자",
+        diff_hint = "이전 호출과 달라진 값은 노란색",
+        diff_was = "이전: %s",
+        sec_return = "↩  서버가 반환한 값",
+        ret_nothing = "(반환값 없음)",
+        ret_waiting = "서버 응답을 기다리는 중…",
+        ret_disabled = "설정에서 \"InvokeServer 반환값 캡처\"를 켜세요",
+        n_alert = "🔔 알림: %s (키워드 \"%s\")",
+        n_saved_game = "이 게임에 저장됨",
+        n_watch_on = "⭐ %s을(를) 관심 목록에 추가",
+        n_watch_off = "%s을(를) 관심 목록에서 제거",
+        empty_feed = "아직 이벤트가 없습니다 — 조금 플레이하면 모든 리모트 호출이 여기에 표시됩니다.",
+        empty_filter = "이 필터에 맞는 항목이 없습니다.",
+        empty_network = "아직 기록된 트래픽이 없습니다.",
+        empty_scripts = "\"스크립트 스캔\"을 눌러 게임의 클라이언트 스크립트를 나열하세요.",
+        empty_errors = "오류 없음 — 모두 정상입니다.",
+        net_click_hint = "행을 누르면 스파이를 필터링합니다",
+        err_copy = "📋 모두 복사",
+        err_clear = "🧹 지우기",
+        err_count = "오류 %d개",
+        c_errors = "오류",
+        hi_export_script = "🧾 스크립트로 내보내기",
+        se_capture = "📡 캡처",
+        se_returns = "↩ InvokeServer 반환값 캡처",
+        se_returns_note = "서버의 응답을 보여줍니다. 게임이 이상하게 동작하면 끄세요.",
+        se_clientinvoke = "📨 OnClientInvoke 캡처 (getcallbackvalue 필요)",
+        se_bindables = "🔗 BindableEvent / BindableFunction 감시",
+        se_group = "🧮 같은 호출 묶기 (×N)",
+        se_flood = "🌊 안티 플러드 (리모트당 초당 최대 기록 수)",
+        se_alerts = "🔔 알림",
+        se_alerts_on = "🔔 리모트 이름에 키워드가 있으면 알림",
+        se_keywords = "키워드 (쉼표로 구분)",
+        n_keywords_saved = "키워드 저장됨",
+        se_appearance = "🎨 모양",
+        se_accent = "강조 색상",
+        c_blue = "파랑",
+        c_purple = "보라",
+        c_green = "초록",
+        c_red = "빨강",
+        c_orange = "주황",
+        se_transparency = "창 투명도",
+        se_textsize = "글자 크기",
+        se_bottomtabs = "📱 탭 바를 아래에",
+        se_keybind = "⌨ 표시 / 숨기기 키: %s (눌러서 변경)",
+        se_keybind_wait = "키를 누르세요… (Esc = 취소)",
+        n_keybind = "키 설정됨: %s",
+        se_tools = "🧰 도구",
+        se_export_script = "🧾 이 세션을 재생 스크립트로 내보내기",
+        se_whatsnew = "🎉 새로운 기능",
+        se_unload = "⏏ RobloxSpy 언로드",
+        unload_title = "RobloxSpy를 언로드할까요?",
+        unload_body = "후크가 제거되고 세션이 저장되며 인터페이스가 닫힙니다. 다시 시작하려면 스크립트를 다시 실행하세요.",
+        n_returns_on = "새 InvokeServer의 반환값을 캡처합니다",
+        n_option_off = "옵션 꺼짐",
+        n_need_fn = "%s은(는) %s에서 지원되지 않습니다",
+        tip_maximize = "최대화 / 복원",
+        tip_minimize = "최소화",
+        tip_close = "숨기기 (둥근 버튼으로 다시 열기)",
+        tip_reopen = "RobloxSpy 열기 (드래그로 이동)",
+        tip_copy_r2s = "R2S 코드 복사",
+        tip_ignore = "이 리모트 무시 (전송은 되지만 기록 안 함)",
+        tip_delete = "이 행 삭제",
+        tip_pause = "캡처 일시정지 / 재개",
+        tip_clear = "피드 지우기",
+        tip_expand = "창 크게 보기",
+        tip_refire = "이 호출 다시 보내기",
+        tip_watch = "관심 목록에 추가 (이 게임에 저장)",
+        tip_drop = "차단: 호출이 서버에 절대 도달하지 않음",
+        rn_title = "🎉 v%s 새로운 기능",
+        rn_1 = "스크립트를 다시 실행하면 이전 인스턴스를 대체하고, 새 \"언로드\" 버튼으로 모두 깔끔하게 제거합니다.",
+        rn_2 = "안티 플러드와 묶기: 같은 호출은 \"×N\" 한 줄로 합쳐집니다.",
+        rn_3 = "InvokeServer 반환값, OnClientInvoke, Bindables를 캡처할 수 있습니다 (설정 → 캡처).",
+        rn_4 = "리모트별 통계, 이전 호출과의 차이 강조, 키워드 알림.",
+        rn_5 = "관심 목록과 무시 / 차단 목록은 게임별로 저장됩니다.",
+        rn_6 = "세션 전체를 재생 가능한 스크립트로 내보내기 (설정 → 도구 또는 기록).",
+        rn_7 = "새로 그린 아이콘, 읽지 않은 수가 표시되는 열기 버튼, PC 키 (RightShift).",
+        rn_8 = "모바일: 아래쪽 탭 바, 더 큰 행과 버튼. 어디서나 도움말 (모바일은 길게 누르기).",
+        rn_9 = "강조 색상, 투명도, 글자 크기는 설정 → 모양에서 바꿀 수 있습니다.",
+        rn_10 = "새 오류 탭, 더 빠른 탐색기, 가벼워진 자동 저장 — 그리고 여러 버그 수정.",
+        as_live = "실시간 (2초마다)",
     }
 
     LANG.AR = {
@@ -3092,6 +4539,114 @@ do
         n_autosave_off = "الحفظ التلقائي متوقف",
         n_lang = "اللغة: %s",
         credits = "بواسطة Rival960 — صُنع بمساعدة Claude",
+        tab_errors = "الأخطاء",
+        ok = "موافق",
+        cancel = "إلغاء",
+        off = "إيقاف",
+        status_events = "%d حدث",
+        status_flood = "تم تخطي %d (إغراق)",
+        status_errors = "%d خطأ",
+        f_clientinvoke = "📨 ClientInvoke",
+        f_bindable = "🔗 Bindable",
+        f_watched = "⭐ المراقَبة",
+        lbl_clientinvoke = "C-INVOKE",
+        lbl_bindable = "BINDABLE",
+        watch = "⭐ مراقبة",
+        unwatch = "☆ إلغاء المراقبة",
+        st_watched = "⭐ مراقَب",
+        dir_local = "🔁 عميل ↔ عميل (محلي)",
+        code_clientinvoke = "-- RobloxSpy — OnClientInvoke (الخادم يسأل العميل)",
+        code_clientinvoke_note = "-- استدعى الخادم OnClientInvoke لهذه RemoteFunction مع:",
+        k_grouped = "مجمّع",
+        grouped_fmt = "%d استدعاءات متطابقة متتالية",
+        k_flood = "إغراق",
+        flood_fmt = "تم تخطي %d استدعاء قبل ذلك مباشرة (مضاد الإغراق)",
+        skipped_prefix = "(+%d متخطى)",
+        sec_stats = "📈  إحصائيات هذا الريموت",
+        k_total = "إجمالي الاستدعاءات",
+        k_rate = "المعدّل",
+        rate_fmt = "%.1f استدعاء / دقيقة",
+        k_first_last = "الأول → الأخير",
+        k_callers = "المستدعون",
+        diff_hint = "التغييرات مقارنة بالاستدعاء السابق باللون الأصفر",
+        diff_was = "سابقًا: %s",
+        sec_return = "↩  ما أعاده الخادم",
+        ret_nothing = "(لم يُعد شيئًا)",
+        ret_waiting = "بانتظار رد الخادم…",
+        ret_disabled = "فعّل \"التقاط قيم إرجاع InvokeServer\" في الإعدادات",
+        n_alert = "🔔 تنبيه: %s (الكلمة المفتاحية \"%s\")",
+        n_saved_game = "حُفظ لهذه اللعبة",
+        n_watch_on = "⭐ أُضيف %s إلى قائمة المراقبة",
+        n_watch_off = "أُزيل %s من قائمة المراقبة",
+        empty_feed = "لا توجد أحداث بعد — العب قليلًا، وسيظهر هنا كل استدعاء ريموت.",
+        empty_filter = "لا شيء يطابق هذا الفلتر.",
+        empty_network = "لم تُسجَّل أي حركة بعد.",
+        empty_scripts = "اضغط \"فحص السكربتات\" لعرض سكربتات العميل في اللعبة.",
+        empty_errors = "لا أخطاء — كل شيء يعمل.",
+        net_click_hint = "اضغط على صف لتصفية المراقب",
+        err_copy = "📋 نسخ الكل",
+        err_clear = "🧹 مسح",
+        err_count = "%d خطأ",
+        c_errors = "الأخطاء",
+        hi_export_script = "🧾 تصدير كسكربت",
+        se_capture = "📡 الالتقاط",
+        se_returns = "↩ التقاط قيم إرجاع InvokeServer",
+        se_returns_note = "يعرض ما يرد به الخادم. أوقفه إذا تصرفت اللعبة بشكل غريب.",
+        se_clientinvoke = "📨 التقاط OnClientInvoke (يتطلب getcallbackvalue)",
+        se_bindables = "🔗 مراقبة BindableEvent / BindableFunction",
+        se_group = "🧮 تجميع الاستدعاءات المتطابقة (×N)",
+        se_flood = "🌊 مضاد الإغراق (أقصى عدد استدعاءات مسجّلة لكل ريموت في الثانية)",
+        se_alerts = "🔔 التنبيهات",
+        se_alerts_on = "🔔 التنبيه عندما يحتوي اسم الريموت على كلمة مفتاحية",
+        se_keywords = "الكلمات المفتاحية (مفصولة بفواصل)",
+        n_keywords_saved = "تم حفظ الكلمات المفتاحية",
+        se_appearance = "🎨 المظهر",
+        se_accent = "لون التمييز",
+        c_blue = "أزرق",
+        c_purple = "بنفسجي",
+        c_green = "أخضر",
+        c_red = "أحمر",
+        c_orange = "برتقالي",
+        se_transparency = "شفافية النافذة",
+        se_textsize = "حجم النص",
+        se_bottomtabs = "📱 شريط التبويبات في الأسفل",
+        se_keybind = "⌨ مفتاح الإظهار / الإخفاء: %s (اضغط للتغيير)",
+        se_keybind_wait = "اضغط مفتاحًا… (Esc = إلغاء)",
+        n_keybind = "تم تعيين المفتاح: %s",
+        se_tools = "🧰 الأدوات",
+        se_export_script = "🧾 تصدير هذه الجلسة كسكربت إعادة تشغيل",
+        se_whatsnew = "🎉 الجديد",
+        se_unload = "⏏ إلغاء تحميل RobloxSpy",
+        unload_title = "إلغاء تحميل RobloxSpy؟",
+        unload_body = "تُزال الخطافات وتُحفظ الجلسة وتُغلق الواجهة. شغّل السكربت مرة أخرى لإعادة تشغيله.",
+        n_returns_on = "تُلتقط قيم إرجاع InvokeServer الجديدة",
+        n_option_off = "تم إيقاف الخيار",
+        n_need_fn = "%s غير مدعوم في %s",
+        tip_maximize = "تكبير / استعادة",
+        tip_minimize = "تصغير",
+        tip_close = "إخفاء (الزر الدائري يعيدها)",
+        tip_reopen = "فتح RobloxSpy (اسحب للتحريك)",
+        tip_copy_r2s = "نسخ كود R2S",
+        tip_ignore = "تجاهل هذا الريموت (يُرسل لكن لا يُسجَّل)",
+        tip_delete = "حذف هذا الصف",
+        tip_pause = "إيقاف / استئناف الالتقاط",
+        tip_clear = "مسح القائمة",
+        tip_expand = "تكبير النافذة",
+        tip_refire = "إرسال هذا الاستدعاء مجددًا",
+        tip_watch = "إضافة إلى قائمة المراقبة (يُحفظ لهذه اللعبة)",
+        tip_drop = "حظر: لن يصل الاستدعاء إلى الخادم أبدًا",
+        rn_title = "🎉 الجديد في v%s",
+        rn_1 = "تشغيل السكربت مرتين يستبدل النسخة القديمة، وزر \"إلغاء التحميل\" الجديد يزيل كل شيء بنظافة.",
+        rn_2 = "مضاد الإغراق والتجميع: الاستدعاءات المتطابقة تُدمج في صف واحد \"×N\".",
+        rn_3 = "يمكن التقاط قيم إرجاع InvokeServer وOnClientInvoke وBindables (الإعدادات → الالتقاط).",
+        rn_4 = "إحصائيات لكل ريموت، إبراز الفروقات مع الاستدعاء السابق، تنبيهات بالكلمات المفتاحية.",
+        rn_5 = "قائمة المراقبة وقوائم التجاهل / الحظر تُحفظ لكل لعبة.",
+        rn_6 = "تصدير جلسة كاملة كسكربت قابل لإعادة التشغيل (الإعدادات → الأدوات، أو السجل).",
+        rn_7 = "أيقونات مرسومة جديدة، زر فتح مع عدّاد غير المقروء، مفتاح على الحاسوب (RightShift).",
+        rn_8 = "الجوال: التبويبات في الأسفل، صفوف وأزرار أكبر. تلميحات في كل مكان (ضغط مطوّل على الجوال).",
+        rn_9 = "ألوان التمييز والشفافية وحجم النص في الإعدادات → المظهر.",
+        rn_10 = "تبويب أخطاء جديد، مستكشف أسرع، حفظ تلقائي أخف — وإصلاح عدة أخطاء.",
+        as_live = "مباشر (كل 2 ث)",
     }
 
     LANG.VI = {
@@ -3277,6 +4832,114 @@ do
         n_autosave_off = "Tắt tự động lưu",
         n_lang = "Ngôn ngữ: %s",
         credits = "bởi Rival960 — Làm với sự trợ giúp của Claude",
+        tab_errors = "Lỗi",
+        ok = "OK",
+        cancel = "Hủy",
+        off = "Tắt",
+        status_events = "%d sự kiện",
+        status_flood = "%d bị bỏ qua (flood)",
+        status_errors = "%d lỗi",
+        f_clientinvoke = "📨 ClientInvoke",
+        f_bindable = "🔗 Bindable",
+        f_watched = "⭐ Theo dõi",
+        lbl_clientinvoke = "C-INVOKE",
+        lbl_bindable = "BINDABLE",
+        watch = "⭐ Theo dõi",
+        unwatch = "☆ Bỏ theo dõi",
+        st_watched = "⭐ Đang theo dõi",
+        dir_local = "🔁 Client ↔ Client (cục bộ)",
+        code_clientinvoke = "-- RobloxSpy — OnClientInvoke (server hỏi client)",
+        code_clientinvoke_note = "-- Server đã gọi OnClientInvoke của RemoteFunction này với:",
+        k_grouped = "Đã gộp",
+        grouped_fmt = "%d lệnh gọi giống nhau liên tiếp",
+        k_flood = "Flood",
+        flood_fmt = "%d lệnh gọi bị bỏ qua ngay trước đó (chống flood)",
+        skipped_prefix = "(+%d bị bỏ qua)",
+        sec_stats = "📈  THỐNG KÊ REMOTE NÀY",
+        k_total = "Tổng lệnh gọi",
+        k_rate = "Tần suất",
+        rate_fmt = "%.1f lệnh gọi / phút",
+        k_first_last = "Đầu → cuối",
+        k_callers = "Bên gọi",
+        diff_hint = "thay đổi so với lần gọi trước màu vàng",
+        diff_was = "trước: %s",
+        sec_return = "↩  SERVER TRẢ VỀ",
+        ret_nothing = "(không trả về gì)",
+        ret_waiting = "Đang chờ phản hồi của server…",
+        ret_disabled = "Bật \"Ghi giá trị trả về của InvokeServer\" trong Cài đặt",
+        n_alert = "🔔 Cảnh báo: %s (từ khóa \"%s\")",
+        n_saved_game = "đã lưu cho game này",
+        n_watch_on = "⭐ Đã thêm %s vào danh sách theo dõi",
+        n_watch_off = "Đã gỡ %s khỏi danh sách theo dõi",
+        empty_feed = "Chưa có sự kiện — chơi một chút, mọi lệnh gọi remote sẽ hiện ở đây.",
+        empty_filter = "Không có gì khớp bộ lọc này.",
+        empty_network = "Chưa ghi nhận lưu lượng nào.",
+        empty_scripts = "Bấm \"Quét script\" để liệt kê script client của game.",
+        empty_errors = "Không có lỗi — mọi thứ đều ổn.",
+        net_click_hint = "bấm vào một dòng để lọc spy",
+        err_copy = "📋 Sao chép tất cả",
+        err_clear = "🧹 Xóa",
+        err_count = "%d lỗi",
+        c_errors = "Lỗi",
+        hi_export_script = "🧾 Xuất thành script",
+        se_capture = "📡 Ghi nhận",
+        se_returns = "↩ Ghi giá trị trả về của InvokeServer",
+        se_returns_note = "Hiển thị server trả lời gì. Tắt nếu game hoạt động lạ.",
+        se_clientinvoke = "📨 Ghi OnClientInvoke (cần getcallbackvalue)",
+        se_bindables = "🔗 Theo dõi BindableEvent / BindableFunction",
+        se_group = "🧮 Gộp các lệnh gọi giống nhau (×N)",
+        se_flood = "🌊 Chống flood (tối đa lệnh gọi được ghi mỗi remote mỗi giây)",
+        se_alerts = "🔔 Cảnh báo",
+        se_alerts_on = "🔔 Báo khi tên remote chứa từ khóa",
+        se_keywords = "Từ khóa (cách nhau bởi dấu phẩy)",
+        n_keywords_saved = "Đã lưu từ khóa",
+        se_appearance = "🎨 Giao diện",
+        se_accent = "Màu nhấn",
+        c_blue = "Xanh dương",
+        c_purple = "Tím",
+        c_green = "Xanh lá",
+        c_red = "Đỏ",
+        c_orange = "Cam",
+        se_transparency = "Độ trong suốt cửa sổ",
+        se_textsize = "Cỡ chữ",
+        se_bottomtabs = "📱 Thanh tab ở dưới",
+        se_keybind = "⌨ Phím hiện / ẩn: %s (bấm để đổi)",
+        se_keybind_wait = "Nhấn một phím… (Esc = hủy)",
+        n_keybind = "Đã đặt phím: %s",
+        se_tools = "🧰 Công cụ",
+        se_export_script = "🧾 Xuất phiên này thành script phát lại",
+        se_whatsnew = "🎉 Có gì mới",
+        se_unload = "⏏ Gỡ RobloxSpy",
+        unload_title = "Gỡ RobloxSpy?",
+        unload_body = "Các hook sẽ bị gỡ, phiên được lưu và giao diện đóng lại. Chạy lại script để khởi động lại.",
+        n_returns_on = "Đang ghi giá trị trả về của các InvokeServer mới",
+        n_option_off = "Đã tắt tùy chọn",
+        n_need_fn = "%s không được %s hỗ trợ",
+        tip_maximize = "Phóng to / khôi phục",
+        tip_minimize = "Thu nhỏ",
+        tip_close = "Ẩn (nút tròn sẽ mở lại)",
+        tip_reopen = "Mở RobloxSpy (kéo để di chuyển)",
+        tip_copy_r2s = "Sao chép code R2S",
+        tip_ignore = "Bỏ qua remote này (vẫn gửi, không ghi)",
+        tip_delete = "Xóa dòng này",
+        tip_pause = "Tạm dừng / tiếp tục ghi",
+        tip_clear = "Xóa danh sách",
+        tip_expand = "Phóng to cửa sổ",
+        tip_refire = "Gửi lại lệnh gọi này",
+        tip_watch = "Thêm vào danh sách theo dõi (lưu cho game này)",
+        tip_drop = "Chặn: lệnh gọi không bao giờ tới server",
+        rn_title = "🎉 Có gì mới trong v%s",
+        rn_1 = "Chạy script lần nữa sẽ thay phiên bản cũ, và nút \"Gỡ\" mới dọn sạch mọi thứ.",
+        rn_2 = "Chống flood và gộp: các lệnh gọi giống nhau gộp thành một dòng \"×N\".",
+        rn_3 = "Có thể ghi giá trị trả về InvokeServer, OnClientInvoke và Bindables (Cài đặt → Ghi nhận).",
+        rn_4 = "Thống kê từng remote, tô sáng khác biệt với lần gọi trước, cảnh báo theo từ khóa.",
+        rn_5 = "Danh sách theo dõi và danh sách bỏ qua / chặn được lưu theo từng game.",
+        rn_6 = "Xuất cả một phiên thành script phát lại được (Cài đặt → Công cụ, hoặc Lịch sử).",
+        rn_7 = "Biểu tượng vẽ mới, nút mở lại có bộ đếm chưa đọc, phím tắt trên PC (RightShift).",
+        rn_8 = "Điện thoại: tab ở dưới, dòng và nút lớn hơn. Chú thích ở khắp nơi (nhấn giữ trên điện thoại).",
+        rn_9 = "Màu nhấn, độ trong suốt và cỡ chữ ở Cài đặt → Giao diện.",
+        rn_10 = "Tab Lỗi mới, trình duyệt nhanh hơn, tự động lưu nhẹ hơn — cùng nhiều lỗi đã được sửa.",
+        as_live = "Liên tục (mỗi 2 giây)",
     }
 
     LANG.SV = {
@@ -3462,6 +5125,114 @@ do
         n_autosave_off = "Autospar av",
         n_lang = "Språk: %s",
         credits = "av Rival960 — Gjord med hjälp av Claude",
+        tab_errors = "Fel",
+        ok = "OK",
+        cancel = "Avbryt",
+        off = "Av",
+        status_events = "%d händelser",
+        status_flood = "%d hoppades över (flood)",
+        status_errors = "%d fel",
+        f_clientinvoke = "📨 ClientInvoke",
+        f_bindable = "🔗 Bindable",
+        f_watched = "⭐ Bevakade",
+        lbl_clientinvoke = "C-INVOKE",
+        lbl_bindable = "BINDABLE",
+        watch = "⭐ Bevaka",
+        unwatch = "☆ Sluta bevaka",
+        st_watched = "⭐ Bevakad",
+        dir_local = "🔁 Klient ↔ Klient (lokalt)",
+        code_clientinvoke = "-- RobloxSpy — OnClientInvoke (servern frågar klienten)",
+        code_clientinvoke_note = "-- Servern anropade OnClientInvoke på denna RemoteFunction med:",
+        k_grouped = "Grupperad",
+        grouped_fmt = "%d identiska anrop i rad",
+        k_flood = "Flood",
+        flood_fmt = "%d anrop hoppades över precis innan (anti-flood)",
+        skipped_prefix = "(+%d överhoppade)",
+        sec_stats = "📈  STATISTIK FÖR DENNA REMOTE",
+        k_total = "Totalt antal anrop",
+        k_rate = "Frekvens",
+        rate_fmt = "%.1f anrop / min",
+        k_first_last = "Första → senaste",
+        k_callers = "Anropare",
+        diff_hint = "ändringar mot förra anropet i gult",
+        diff_was = "förut: %s",
+        sec_return = "↩  RETURNERAT AV SERVERN",
+        ret_nothing = "(inget returnerades)",
+        ret_waiting = "Väntar på serverns svar…",
+        ret_disabled = "Aktivera \"Fånga InvokeServer-returvärden\" i Inställningar",
+        n_alert = "🔔 Varning: %s (nyckelord \"%s\")",
+        n_saved_game = "sparat för detta spel",
+        n_watch_on = "⭐ %s lades till i bevakningslistan",
+        n_watch_off = "%s togs bort från bevakningslistan",
+        empty_feed = "Inga händelser än — spela lite, varje remote-anrop visas här.",
+        empty_filter = "Inget matchar detta filter.",
+        empty_network = "Ingen trafik registrerad än.",
+        empty_scripts = "Klicka på \"Skanna skript\" för att lista spelets klientskript.",
+        empty_errors = "Inga fel — allt fungerar.",
+        net_click_hint = "klicka på en rad för att filtrera spyn",
+        err_copy = "📋 Kopiera allt",
+        err_clear = "🧹 Rensa",
+        err_count = "%d fel",
+        c_errors = "Fel",
+        hi_export_script = "🧾 Exportera som skript",
+        se_capture = "📡 Infångning",
+        se_returns = "↩ Fånga InvokeServer-returvärden",
+        se_returns_note = "Visar vad servern svarar. Stäng av om ett spel beter sig konstigt.",
+        se_clientinvoke = "📨 Fånga OnClientInvoke (kräver getcallbackvalue)",
+        se_bindables = "🔗 Spionera på BindableEvent / BindableFunction",
+        se_group = "🧮 Gruppera identiska anrop (×N)",
+        se_flood = "🌊 Anti-flood (max loggade anrop per remote per sekund)",
+        se_alerts = "🔔 Varningar",
+        se_alerts_on = "🔔 Meddela när ett remote-namn innehåller ett nyckelord",
+        se_keywords = "Nyckelord (kommaseparerade)",
+        n_keywords_saved = "Nyckelord sparade",
+        se_appearance = "🎨 Utseende",
+        se_accent = "Accentfärg",
+        c_blue = "Blå",
+        c_purple = "Lila",
+        c_green = "Grön",
+        c_red = "Röd",
+        c_orange = "Orange",
+        se_transparency = "Fönstrets genomskinlighet",
+        se_textsize = "Textstorlek",
+        se_bottomtabs = "📱 Flikfält längst ner",
+        se_keybind = "⌨ Tangent visa / dölj: %s (klicka för att ändra)",
+        se_keybind_wait = "Tryck på en tangent… (Esc = avbryt)",
+        n_keybind = "Tangent inställd: %s",
+        se_tools = "🧰 Verktyg",
+        se_export_script = "🧾 Exportera denna session som uppspelningsskript",
+        se_whatsnew = "🎉 Nyheter",
+        se_unload = "⏏ Ladda ur RobloxSpy",
+        unload_title = "Ladda ur RobloxSpy?",
+        unload_body = "Hookarna tas bort, sessionen sparas och gränssnittet stängs. Kör skriptet igen för att starta om.",
+        n_returns_on = "Returvärden för nya InvokeServer fångas",
+        n_option_off = "Alternativet avstängt",
+        n_need_fn = "%s stöds inte av %s",
+        tip_maximize = "Maximera / återställ",
+        tip_minimize = "Minimera",
+        tip_close = "Dölj (den runda knappen tar tillbaka det)",
+        tip_reopen = "Öppna RobloxSpy (dra för att flytta)",
+        tip_copy_r2s = "Kopiera R2S-koden",
+        tip_ignore = "Ignorera denna remote (skickas, loggas inte)",
+        tip_delete = "Ta bort denna rad",
+        tip_pause = "Pausa / återuppta infångningen",
+        tip_clear = "Rensa flödet",
+        tip_expand = "Förstora fönstret",
+        tip_refire = "Skicka detta anrop igen",
+        tip_watch = "Lägg till i bevakningslistan (sparas för detta spel)",
+        tip_drop = "Blockera: anropet når aldrig servern",
+        rn_title = "🎉 Nytt i v%s",
+        rn_1 = "Att köra skriptet igen ersätter den gamla instansen, och nya knappen \"Ladda ur\" tar bort allt rent.",
+        rn_2 = "Anti-flood och gruppering: identiska anrop slås ihop till en rad \"×N\".",
+        rn_3 = "InvokeServer-returer, OnClientInvoke och Bindables kan fångas (Inställningar → Infångning).",
+        rn_4 = "Statistik per remote, markerade skillnader mot förra anropet, nyckelordsvarningar.",
+        rn_5 = "Bevakningslistan och ignorera- / blockeralistor sparas per spel.",
+        rn_6 = "Exportera en hel session som uppspelningsbart skript (Inställningar → Verktyg, eller Historik).",
+        rn_7 = "Nya ritade ikoner, öppna-knapp med räknare för olästa, PC-tangent (RightShift).",
+        rn_8 = "Mobil: flikar längst ner, större rader och knappar. Tips överallt (långt tryck på mobil).",
+        rn_9 = "Accentfärger, genomskinlighet och textstorlek under Inställningar → Utseende.",
+        rn_10 = "Ny Fel-flik, snabbare utforskare, lättare autospar — plus flera buggfixar.",
+        as_live = "Live (var 2:e s)",
     }
 
     LANG.EL = {
@@ -3647,6 +5418,114 @@ do
         n_autosave_off = "Αυτόματη αποθήκευση ανενεργή",
         n_lang = "Γλώσσα: %s",
         credits = "από Rival960 — Φτιαγμένο με τη βοήθεια του Claude",
+        tab_errors = "Σφάλματα",
+        ok = "OK",
+        cancel = "Άκυρο",
+        off = "Ανενεργό",
+        status_events = "%d συμβάντα",
+        status_flood = "%d παραλείφθηκαν (flood)",
+        status_errors = "%d σφάλματα",
+        f_clientinvoke = "📨 ClientInvoke",
+        f_bindable = "🔗 Bindable",
+        f_watched = "⭐ Παρακολουθούμενα",
+        lbl_clientinvoke = "C-INVOKE",
+        lbl_bindable = "BINDABLE",
+        watch = "⭐ Παρακολούθηση",
+        unwatch = "☆ Διακοπή παρακολούθησης",
+        st_watched = "⭐ Παρακολουθείται",
+        dir_local = "🔁 Πελάτης ↔ Πελάτης (τοπικά)",
+        code_clientinvoke = "-- RobloxSpy — OnClientInvoke (ο διακομιστής ρωτά τον πελάτη)",
+        code_clientinvoke_note = "-- Ο διακομιστής κάλεσε το OnClientInvoke αυτού του RemoteFunction με:",
+        k_grouped = "Ομαδοποίηση",
+        grouped_fmt = "%d ίδιες κλήσεις στη σειρά",
+        k_flood = "Flood",
+        flood_fmt = "%d κλήσεις παραλείφθηκαν ακριβώς πριν (anti-flood)",
+        skipped_prefix = "(+%d παραλείφθηκαν)",
+        sec_stats = "📈  ΣΤΑΤΙΣΤΙΚΑ ΑΥΤΟΥ ΤΟΥ REMOTE",
+        k_total = "Σύνολο κλήσεων",
+        k_rate = "Συχνότητα",
+        rate_fmt = "%.1f κλήσεις / λεπτό",
+        k_first_last = "Πρώτη → τελευταία",
+        k_callers = "Καλούντες",
+        diff_hint = "οι αλλαγές από την προηγούμενη κλήση με κίτρινο",
+        diff_was = "πριν: %s",
+        sec_return = "↩  ΕΠΙΣΤΡΑΦΗΚΕ ΑΠΟ ΤΟΝ ΔΙΑΚΟΜΙΣΤΗ",
+        ret_nothing = "(δεν επιστράφηκε τίποτα)",
+        ret_waiting = "Αναμονή απάντησης διακομιστή…",
+        ret_disabled = "Ενεργοποίησε «Καταγραφή επιστροφών InvokeServer» στις Ρυθμίσεις",
+        n_alert = "🔔 Ειδοποίηση: %s (λέξη-κλειδί «%s»)",
+        n_saved_game = "αποθηκεύτηκε για αυτό το παιχνίδι",
+        n_watch_on = "⭐ Το %s προστέθηκε στη λίστα παρακολούθησης",
+        n_watch_off = "Το %s αφαιρέθηκε από τη λίστα παρακολούθησης",
+        empty_feed = "Κανένα συμβάν ακόμα — παίξε λίγο, κάθε κλήση remote θα εμφανιστεί εδώ.",
+        empty_filter = "Τίποτα δεν ταιριάζει σε αυτό το φίλτρο.",
+        empty_network = "Δεν έχει καταγραφεί κίνηση ακόμα.",
+        empty_scripts = "Πάτα «Σάρωση σκριπτ» για να δεις τα σκριπτ πελάτη του παιχνιδιού.",
+        empty_errors = "Κανένα σφάλμα — όλα λειτουργούν.",
+        net_click_hint = "πάτα μια γραμμή για φιλτράρισμα του spy",
+        err_copy = "📋 Αντιγραφή όλων",
+        err_clear = "🧹 Καθαρισμός",
+        err_count = "%d σφάλμα(τα)",
+        c_errors = "Σφάλματα",
+        hi_export_script = "🧾 Εξαγωγή ως σκριπτ",
+        se_capture = "📡 Καταγραφή",
+        se_returns = "↩ Καταγραφή επιστροφών InvokeServer",
+        se_returns_note = "Δείχνει τι απαντά ο διακομιστής. Απενεργοποίησέ το αν ένα παιχνίδι συμπεριφέρεται παράξενα.",
+        se_clientinvoke = "📨 Καταγραφή OnClientInvoke (απαιτεί getcallbackvalue)",
+        se_bindables = "🔗 Παρακολούθηση BindableEvent / BindableFunction",
+        se_group = "🧮 Ομαδοποίηση ίδιων κλήσεων (×N)",
+        se_flood = "🌊 Anti-flood (μέγιστες καταγεγραμμένες κλήσεις ανά remote ανά δευτερόλεπτο)",
+        se_alerts = "🔔 Ειδοποιήσεις",
+        se_alerts_on = "🔔 Ειδοποίηση όταν το όνομα remote περιέχει λέξη-κλειδί",
+        se_keywords = "Λέξεις-κλειδιά (χωρισμένες με κόμμα)",
+        n_keywords_saved = "Οι λέξεις-κλειδιά αποθηκεύτηκαν",
+        se_appearance = "🎨 Εμφάνιση",
+        se_accent = "Χρώμα έμφασης",
+        c_blue = "Μπλε",
+        c_purple = "Μωβ",
+        c_green = "Πράσινο",
+        c_red = "Κόκκινο",
+        c_orange = "Πορτοκαλί",
+        se_transparency = "Διαφάνεια παραθύρου",
+        se_textsize = "Μέγεθος κειμένου",
+        se_bottomtabs = "📱 Γραμμή καρτελών κάτω",
+        se_keybind = "⌨ Πλήκτρο εμφάνισης / απόκρυψης: %s (πάτα για αλλαγή)",
+        se_keybind_wait = "Πάτα ένα πλήκτρο… (Esc = άκυρο)",
+        n_keybind = "Ορίστηκε πλήκτρο: %s",
+        se_tools = "🧰 Εργαλεία",
+        se_export_script = "🧾 Εξαγωγή αυτής της συνεδρίας ως σκριπτ αναπαραγωγής",
+        se_whatsnew = "🎉 Τι νέο υπάρχει",
+        se_unload = "⏏ Αποφόρτωση RobloxSpy",
+        unload_title = "Αποφόρτωση του RobloxSpy;",
+        unload_body = "Τα hooks αφαιρούνται, η συνεδρία αποθηκεύεται και το περιβάλλον κλείνει. Τρέξε ξανά το σκριπτ για επανεκκίνηση.",
+        n_returns_on = "Καταγράφονται οι επιστροφές των νέων InvokeServer",
+        n_option_off = "Η επιλογή απενεργοποιήθηκε",
+        n_need_fn = "Το %s δεν υποστηρίζεται από τον %s",
+        tip_maximize = "Μεγιστοποίηση / επαναφορά",
+        tip_minimize = "Ελαχιστοποίηση",
+        tip_close = "Απόκρυψη (το στρογγυλό κουμπί το επαναφέρει)",
+        tip_reopen = "Άνοιγμα RobloxSpy (σύρε για μετακίνηση)",
+        tip_copy_r2s = "Αντιγραφή κώδικα R2S",
+        tip_ignore = "Παράβλεψη αυτού του remote (στέλνεται, δεν καταγράφεται)",
+        tip_delete = "Διαγραφή αυτής της γραμμής",
+        tip_pause = "Παύση / συνέχεια καταγραφής",
+        tip_clear = "Καθαρισμός λίστας",
+        tip_expand = "Μεγέθυνση παραθύρου",
+        tip_refire = "Ξανά αποστολή αυτής της κλήσης",
+        tip_watch = "Προσθήκη στη λίστα παρακολούθησης (αποθηκεύεται για αυτό το παιχνίδι)",
+        tip_drop = "Αποκλεισμός: η κλήση δεν φτάνει ποτέ στον διακομιστή",
+        rn_title = "🎉 Τι νέο στην v%s",
+        rn_1 = "Αν τρέξεις ξανά το σκριπτ, αντικαθιστά την παλιά εκτέλεση, και το νέο κουμπί «Αποφόρτωση» αφαιρεί τα πάντα καθαρά.",
+        rn_2 = "Anti-flood και ομαδοποίηση: οι ίδιες κλήσεις γίνονται μία γραμμή «×N».",
+        rn_3 = "Μπορούν να καταγραφούν επιστροφές InvokeServer, OnClientInvoke και Bindables (Ρυθμίσεις → Καταγραφή).",
+        rn_4 = "Στατιστικά ανά remote, επισήμανση διαφορών με την προηγούμενη κλήση, ειδοποιήσεις λέξεων-κλειδιών.",
+        rn_5 = "Η λίστα παρακολούθησης και οι λίστες παράβλεψης / αποκλεισμού αποθηκεύονται ανά παιχνίδι.",
+        rn_6 = "Εξαγωγή ολόκληρης συνεδρίας ως σκριπτ αναπαραγωγής (Ρυθμίσεις → Εργαλεία ή Ιστορικό).",
+        rn_7 = "Νέα σχεδιασμένα εικονίδια, κουμπί ανοίγματος με μετρητή, πλήκτρο στο PC (RightShift).",
+        rn_8 = "Κινητό: καρτέλες κάτω, μεγαλύτερες γραμμές και κουμπιά. Συμβουλές παντού (παρατεταμένο πάτημα στο κινητό).",
+        rn_9 = "Χρώματα έμφασης, διαφάνεια και μέγεθος κειμένου στις Ρυθμίσεις → Εμφάνιση.",
+        rn_10 = "Νέα καρτέλα Σφάλματα, ταχύτερος εξερευνητής, ελαφρύτερη αυτόματη αποθήκευση — και αρκετές διορθώσεις.",
+        as_live = "Συνεχώς (κάθε 2 δ)",
     }
 
     LANG.RO = {
@@ -3832,6 +5711,114 @@ do
         n_autosave_off = "Salvare automată oprită",
         n_lang = "Limbă: %s",
         credits = "de Rival960 — Realizat cu ajutorul lui Claude",
+        tab_errors = "Erori",
+        ok = "OK",
+        cancel = "Anulează",
+        off = "Oprit",
+        status_events = "%d evenimente",
+        status_flood = "%d sărite (flood)",
+        status_errors = "%d erori",
+        f_clientinvoke = "📨 ClientInvoke",
+        f_bindable = "🔗 Bindable",
+        f_watched = "⭐ Urmărite",
+        lbl_clientinvoke = "C-INVOKE",
+        lbl_bindable = "BINDABLE",
+        watch = "⭐ Urmărește",
+        unwatch = "☆ Nu mai urmări",
+        st_watched = "⭐ Urmărit",
+        dir_local = "🔁 Client ↔ Client (local)",
+        code_clientinvoke = "-- RobloxSpy — OnClientInvoke (serverul întreabă clientul)",
+        code_clientinvoke_note = "-- Serverul a apelat OnClientInvoke al acestui RemoteFunction cu:",
+        k_grouped = "Grupat",
+        grouped_fmt = "%d apeluri identice la rând",
+        k_flood = "Flood",
+        flood_fmt = "%d apeluri sărite chiar înainte (anti-flood)",
+        skipped_prefix = "(+%d sărite)",
+        sec_stats = "📈  STATISTICI PENTRU ACEST REMOTE",
+        k_total = "Apeluri totale",
+        k_rate = "Frecvență",
+        rate_fmt = "%.1f apeluri / min",
+        k_first_last = "Primul → ultimul",
+        k_callers = "Apelanți",
+        diff_hint = "schimbările față de apelul anterior cu galben",
+        diff_was = "înainte: %s",
+        sec_return = "↩  RETURNAT DE SERVER",
+        ret_nothing = "(nimic returnat)",
+        ret_waiting = "Se așteaptă răspunsul serverului…",
+        ret_disabled = "Activează „Capturează valorile returnate de InvokeServer” în Setări",
+        n_alert = "🔔 Alertă: %s (cuvânt-cheie „%s”)",
+        n_saved_game = "salvat pentru acest joc",
+        n_watch_on = "⭐ %s adăugat în lista de urmărire",
+        n_watch_off = "%s scos din lista de urmărire",
+        empty_feed = "Niciun eveniment încă — joacă puțin, fiecare apel remote va apărea aici.",
+        empty_filter = "Nimic nu corespunde acestui filtru.",
+        empty_network = "Niciun trafic înregistrat încă.",
+        empty_scripts = "Apasă „Scanează scripturile” pentru a lista scripturile client ale jocului.",
+        empty_errors = "Nicio eroare — totul funcționează.",
+        net_click_hint = "apasă pe un rând pentru a filtra spy-ul",
+        err_copy = "📋 Copiază tot",
+        err_clear = "🧹 Golește",
+        err_count = "%d eroare(i)",
+        c_errors = "Erori",
+        hi_export_script = "🧾 Exportă ca script",
+        se_capture = "📡 Captură",
+        se_returns = "↩ Capturează valorile returnate de InvokeServer",
+        se_returns_note = "Arată ce răspunde serverul. Dezactivează dacă un joc se comportă ciudat.",
+        se_clientinvoke = "📨 Capturează OnClientInvoke (necesită getcallbackvalue)",
+        se_bindables = "🔗 Spionează BindableEvent / BindableFunction",
+        se_group = "🧮 Grupează apelurile identice (×N)",
+        se_flood = "🌊 Anti-flood (max. apeluri înregistrate per remote pe secundă)",
+        se_alerts = "🔔 Alerte",
+        se_alerts_on = "🔔 Notifică atunci când numele unui remote conține un cuvânt-cheie",
+        se_keywords = "Cuvinte-cheie (separate prin virgulă)",
+        n_keywords_saved = "Cuvinte-cheie salvate",
+        se_appearance = "🎨 Aspect",
+        se_accent = "Culoare de accent",
+        c_blue = "Albastru",
+        c_purple = "Mov",
+        c_green = "Verde",
+        c_red = "Roșu",
+        c_orange = "Portocaliu",
+        se_transparency = "Transparența ferestrei",
+        se_textsize = "Mărimea textului",
+        se_bottomtabs = "📱 Bara de file jos",
+        se_keybind = "⌨ Tastă afișare / ascundere: %s (apasă pentru a schimba)",
+        se_keybind_wait = "Apasă o tastă… (Esc = anulează)",
+        n_keybind = "Tastă setată: %s",
+        se_tools = "🧰 Unelte",
+        se_export_script = "🧾 Exportă această sesiune ca script de redare",
+        se_whatsnew = "🎉 Noutăți",
+        se_unload = "⏏ Descarcă RobloxSpy",
+        unload_title = "Descarci RobloxSpy?",
+        unload_body = "Hook-urile sunt eliminate, sesiunea este salvată și interfața se închide. Rulează din nou scriptul pentru a-l reporni.",
+        n_returns_on = "Se capturează valorile returnate de noile InvokeServer",
+        n_option_off = "Opțiune dezactivată",
+        n_need_fn = "%s nu este suportat de %s",
+        tip_maximize = "Maximizează / restabilește",
+        tip_minimize = "Minimizează",
+        tip_close = "Ascunde (butonul rotund o readuce)",
+        tip_reopen = "Deschide RobloxSpy (trage pentru a muta)",
+        tip_copy_r2s = "Copiază codul R2S",
+        tip_ignore = "Ignoră acest remote (trimis, dar neînregistrat)",
+        tip_delete = "Șterge acest rând",
+        tip_pause = "Pune pe pauză / reia captura",
+        tip_clear = "Golește lista",
+        tip_expand = "Mărește fereastra",
+        tip_refire = "Trimite din nou acest apel",
+        tip_watch = "Adaugă în lista de urmărire (salvat pentru acest joc)",
+        tip_drop = "Blochează: apelul nu ajunge niciodată la server",
+        rn_title = "🎉 Noutăți în v%s",
+        rn_1 = "Rularea scriptului a doua oară înlocuiește instanța veche, iar noul buton „Descarcă” elimină totul curat.",
+        rn_2 = "Anti-flood și grupare: apelurile identice devin un singur rând „×N”.",
+        rn_3 = "Se pot captura valorile returnate de InvokeServer, OnClientInvoke și Bindables (Setări → Captură).",
+        rn_4 = "Statistici per remote, diferențe evidențiate față de apelul anterior, alerte pe cuvinte-cheie.",
+        rn_5 = "Lista de urmărire și listele de ignorate / blocate sunt salvate per joc.",
+        rn_6 = "Exportă o sesiune întreagă ca script redabil (Setări → Unelte, sau Istoric).",
+        rn_7 = "Iconițe noi desenate, buton de redeschidere cu contor, tastă pe PC (RightShift).",
+        rn_8 = "Mobil: file jos, rânduri și butoane mai mari. Indicii peste tot (apăsare lungă pe mobil).",
+        rn_9 = "Culori de accent, transparență și mărimea textului în Setări → Aspect.",
+        rn_10 = "Filă nouă Erori, explorator mai rapid, salvare automată mai ușoară — și mai multe erori reparate.",
+        as_live = "Continuu (la 2 s)",
     }
 
     LANG.UK = {
@@ -4017,6 +6004,114 @@ do
         n_autosave_off = "Автозбереження вимкнено",
         n_lang = "Мова: %s",
         credits = "від Rival960 — Зроблено за допомогою Claude",
+        tab_errors = "Помилки",
+        ok = "ОК",
+        cancel = "Скасувати",
+        off = "Вимк",
+        status_events = "подій: %d",
+        status_flood = "пропущено: %d (флуд)",
+        status_errors = "помилок: %d",
+        f_clientinvoke = "📨 ClientInvoke",
+        f_bindable = "🔗 Bindable",
+        f_watched = "⭐ Відстежувані",
+        lbl_clientinvoke = "C-INVOKE",
+        lbl_bindable = "BINDABLE",
+        watch = "⭐ Відстежувати",
+        unwatch = "☆ Не відстежувати",
+        st_watched = "⭐ Відстежується",
+        dir_local = "🔁 Клієнт ↔ Клієнт (локально)",
+        code_clientinvoke = "-- RobloxSpy — OnClientInvoke (сервер питає клієнта)",
+        code_clientinvoke_note = "-- Сервер викликав OnClientInvoke цієї RemoteFunction з:",
+        k_grouped = "Згруповано",
+        grouped_fmt = "%d однакових викликів поспіль",
+        k_flood = "Флуд",
+        flood_fmt = "%d викликів пропущено перед цим (антифлуд)",
+        skipped_prefix = "(+%d пропущено)",
+        sec_stats = "📈  СТАТИСТИКА ЦЬОГО РЕМОУТА",
+        k_total = "Усього викликів",
+        k_rate = "Частота",
+        rate_fmt = "%.1f викликів / хв",
+        k_first_last = "Перший → останній",
+        k_callers = "Хто викликав",
+        diff_hint = "зміни щодо попереднього виклику — жовтим",
+        diff_was = "було: %s",
+        sec_return = "↩  ПОВЕРНУТО СЕРВЕРОМ",
+        ret_nothing = "(нічого не повернуто)",
+        ret_waiting = "Очікування відповіді сервера…",
+        ret_disabled = "Увімкни «Захоплювати повернення InvokeServer» у налаштуваннях",
+        n_alert = "🔔 Тривога: %s (ключове слово «%s»)",
+        n_saved_game = "збережено для цієї гри",
+        n_watch_on = "⭐ %s додано до відстежуваних",
+        n_watch_off = "%s прибрано з відстежуваних",
+        empty_feed = "Подій поки немає — пограй трохи, кожен виклик ремоута з'явиться тут.",
+        empty_filter = "Нічого не відповідає фільтру.",
+        empty_network = "Трафік ще не записано.",
+        empty_scripts = "Натисни «Сканувати скрипти», щоб побачити клієнтські скрипти гри.",
+        empty_errors = "Помилок немає — усе працює.",
+        net_click_hint = "натисни рядок, щоб відфільтрувати спай",
+        err_copy = "📋 Копіювати все",
+        err_clear = "🧹 Очистити",
+        err_count = "помилок: %d",
+        c_errors = "Помилки",
+        hi_export_script = "🧾 Експорт як скрипт",
+        se_capture = "📡 Захоплення",
+        se_returns = "↩ Захоплювати повернення InvokeServer",
+        se_returns_note = "Показує відповідь сервера. Вимкни, якщо гра поводиться дивно.",
+        se_clientinvoke = "📨 Захоплювати OnClientInvoke (потрібен getcallbackvalue)",
+        se_bindables = "🔗 Стежити за BindableEvent / BindableFunction",
+        se_group = "🧮 Групувати однакові виклики (×N)",
+        se_flood = "🌊 Антифлуд (макс. записаних викликів на ремоут за секунду)",
+        se_alerts = "🔔 Сповіщення",
+        se_alerts_on = "🔔 Сповіщати, якщо назва ремоута містить ключове слово",
+        se_keywords = "Ключові слова (через кому)",
+        n_keywords_saved = "Ключові слова збережено",
+        se_appearance = "🎨 Вигляд",
+        se_accent = "Колір акценту",
+        c_blue = "Синій",
+        c_purple = "Фіолетовий",
+        c_green = "Зелений",
+        c_red = "Червоний",
+        c_orange = "Помаранчевий",
+        se_transparency = "Прозорість вікна",
+        se_textsize = "Розмір тексту",
+        se_bottomtabs = "📱 Вкладки внизу",
+        se_keybind = "⌨ Клавіша показати / сховати: %s (натисни, щоб змінити)",
+        se_keybind_wait = "Натисни клавішу… (Esc = скасувати)",
+        n_keybind = "Клавіша: %s",
+        se_tools = "🧰 Інструменти",
+        se_export_script = "🧾 Експорт сесії як скрипта повтору",
+        se_whatsnew = "🎉 Що нового",
+        se_unload = "⏏ Вивантажити RobloxSpy",
+        unload_title = "Вивантажити RobloxSpy?",
+        unload_body = "Хуки знімаються, сесія зберігається, інтерфейс закривається. Запусти скрипт знову, щоб перезапустити.",
+        n_returns_on = "Повернення нових InvokeServer захоплюються",
+        n_option_off = "Опцію вимкнено",
+        n_need_fn = "%s не підтримується в %s",
+        tip_maximize = "Розгорнути / відновити",
+        tip_minimize = "Згорнути",
+        tip_close = "Сховати (кругла кнопка поверне вікно)",
+        tip_reopen = "Відкрити RobloxSpy (перетягни, щоб рухати)",
+        tip_copy_r2s = "Копіювати код R2S",
+        tip_ignore = "Ігнорувати ремоут (надсилається, але не пишеться)",
+        tip_delete = "Видалити рядок",
+        tip_pause = "Пауза / продовжити захоплення",
+        tip_clear = "Очистити стрічку",
+        tip_expand = "Збільшити вікно",
+        tip_refire = "Надіслати виклик знову",
+        tip_watch = "До відстежуваних (зберігається для гри)",
+        tip_drop = "Блокувати: виклик не дійде до сервера",
+        rn_title = "🎉 Що нового у v%s",
+        rn_1 = "Повторний запуск замінює старий екземпляр, а нова кнопка «Вивантажити» чисто все прибирає.",
+        rn_2 = "Антифлуд і групування: однакові виклики об'єднуються в один рядок «×N».",
+        rn_3 = "Можна захоплювати повернення InvokeServer, OnClientInvoke і Bindables (Налаштування → Захоплення).",
+        rn_4 = "Статистика ремоутів, підсвічування відмінностей від попереднього виклику, сповіщення за ключовими словами.",
+        rn_5 = "Відстежувані та списки ігнору / блокування зберігаються для кожної гри.",
+        rn_6 = "Експорт усієї сесії як скрипта повтору (Налаштування → Інструменти або Історія).",
+        rn_7 = "Нові намальовані іконки, кнопка відкриття з лічильником, клавіша на ПК (RightShift).",
+        rn_8 = "Телефон: вкладки внизу, більші рядки й кнопки. Підказки всюди (довге натискання на телефоні).",
+        rn_9 = "Кольори акценту, прозорість і розмір тексту в Налаштування → Вигляд.",
+        rn_10 = "Нова вкладка «Помилки», швидший провідник, легше автозбереження — і виправлення помилок.",
+        as_live = "Постійно (кожні 2 с)",
     }
 
     LANG.CS = {
@@ -4202,6 +6297,114 @@ do
         n_autosave_off = "Automatické ukládání vypnuto",
         n_lang = "Jazyk: %s",
         credits = "od Rival960 — Vytvořeno s pomocí Claude",
+        tab_errors = "Chyby",
+        ok = "OK",
+        cancel = "Zrušit",
+        off = "Vyp.",
+        status_events = "událostí: %d",
+        status_flood = "přeskočeno: %d (flood)",
+        status_errors = "chyb: %d",
+        f_clientinvoke = "📨 ClientInvoke",
+        f_bindable = "🔗 Bindable",
+        f_watched = "⭐ Sledované",
+        lbl_clientinvoke = "C-INVOKE",
+        lbl_bindable = "BINDABLE",
+        watch = "⭐ Sledovat",
+        unwatch = "☆ Přestat sledovat",
+        st_watched = "⭐ Sledováno",
+        dir_local = "🔁 Klient ↔ Klient (lokálně)",
+        code_clientinvoke = "-- RobloxSpy — OnClientInvoke (server se ptá klienta)",
+        code_clientinvoke_note = "-- Server zavolal OnClientInvoke této RemoteFunction s:",
+        k_grouped = "Seskupeno",
+        grouped_fmt = "%d stejných volání za sebou",
+        k_flood = "Flood",
+        flood_fmt = "%d volání přeskočeno těsně předtím (anti-flood)",
+        skipped_prefix = "(+%d přeskočeno)",
+        sec_stats = "📈  STATISTIKY TOHOTO REMOTU",
+        k_total = "Celkem volání",
+        k_rate = "Frekvence",
+        rate_fmt = "%.1f volání / min",
+        k_first_last = "První → poslední",
+        k_callers = "Volající",
+        diff_hint = "změny oproti předchozímu volání žlutě",
+        diff_was = "dříve: %s",
+        sec_return = "↩  VRÁCENO SERVEREM",
+        ret_nothing = "(nic nevráceno)",
+        ret_waiting = "Čekám na odpověď serveru…",
+        ret_disabled = "Zapni „Zachytávat návratové hodnoty InvokeServer“ v Nastavení",
+        n_alert = "🔔 Upozornění: %s (klíčové slovo „%s“)",
+        n_saved_game = "uloženo pro tuto hru",
+        n_watch_on = "⭐ %s přidán do sledovaných",
+        n_watch_off = "%s odebrán ze sledovaných",
+        empty_feed = "Zatím žádné události — chvíli hraj, každé volání remotu se objeví tady.",
+        empty_filter = "Tomuto filtru nic neodpovídá.",
+        empty_network = "Zatím nebyl zaznamenán žádný provoz.",
+        empty_scripts = "Klikni na „Skenovat skripty“ pro výpis klientských skriptů hry.",
+        empty_errors = "Žádné chyby — vše funguje.",
+        net_click_hint = "klikni na řádek pro filtrování spye",
+        err_copy = "📋 Kopírovat vše",
+        err_clear = "🧹 Vymazat",
+        err_count = "chyb: %d",
+        c_errors = "Chyby",
+        hi_export_script = "🧾 Exportovat jako skript",
+        se_capture = "📡 Zachytávání",
+        se_returns = "↩ Zachytávat návratové hodnoty InvokeServer",
+        se_returns_note = "Ukazuje, co server odpoví. Vypni, pokud se hra chová divně.",
+        se_clientinvoke = "📨 Zachytávat OnClientInvoke (vyžaduje getcallbackvalue)",
+        se_bindables = "🔗 Sledovat BindableEvent / BindableFunction",
+        se_group = "🧮 Seskupovat stejná volání (×N)",
+        se_flood = "🌊 Anti-flood (max. zaznamenaných volání na remote za sekundu)",
+        se_alerts = "🔔 Upozornění",
+        se_alerts_on = "🔔 Upozornit, když název remotu obsahuje klíčové slovo",
+        se_keywords = "Klíčová slova (oddělená čárkou)",
+        n_keywords_saved = "Klíčová slova uložena",
+        se_appearance = "🎨 Vzhled",
+        se_accent = "Barva zvýraznění",
+        c_blue = "Modrá",
+        c_purple = "Fialová",
+        c_green = "Zelená",
+        c_red = "Červená",
+        c_orange = "Oranžová",
+        se_transparency = "Průhlednost okna",
+        se_textsize = "Velikost textu",
+        se_bottomtabs = "📱 Lišta karet dole",
+        se_keybind = "⌨ Klávesa zobrazit / skrýt: %s (klikni pro změnu)",
+        se_keybind_wait = "Stiskni klávesu… (Esc = zrušit)",
+        n_keybind = "Klávesa nastavena: %s",
+        se_tools = "🧰 Nástroje",
+        se_export_script = "🧾 Exportovat tuto relaci jako skript pro přehrání",
+        se_whatsnew = "🎉 Co je nového",
+        se_unload = "⏏ Uvolnit RobloxSpy",
+        unload_title = "Uvolnit RobloxSpy?",
+        unload_body = "Hooky se odstraní, relace se uloží a rozhraní se zavře. Pro restart spusť skript znovu.",
+        n_returns_on = "Návratové hodnoty nových InvokeServer se zachytávají",
+        n_option_off = "Možnost vypnuta",
+        n_need_fn = "%s není podporováno v %s",
+        tip_maximize = "Maximalizovat / obnovit",
+        tip_minimize = "Minimalizovat",
+        tip_close = "Skrýt (kulaté tlačítko ho vrátí)",
+        tip_reopen = "Otevřít RobloxSpy (táhni pro přesun)",
+        tip_copy_r2s = "Kopírovat kód R2S",
+        tip_ignore = "Ignorovat tento remote (odesílá se, nezaznamenává)",
+        tip_delete = "Smazat tento řádek",
+        tip_pause = "Pozastavit / obnovit zachytávání",
+        tip_clear = "Vymazat seznam",
+        tip_expand = "Zvětšit okno",
+        tip_refire = "Odeslat toto volání znovu",
+        tip_watch = "Přidat do sledovaných (uloženo pro tuto hru)",
+        tip_drop = "Blokovat: volání nikdy nedorazí na server",
+        rn_title = "🎉 Novinky ve v%s",
+        rn_1 = "Opětovné spuštění nahradí starou instanci a nové tlačítko „Uvolnit“ vše čistě odstraní.",
+        rn_2 = "Anti-flood a seskupování: stejná volání se spojí do jednoho řádku „×N“.",
+        rn_3 = "Lze zachytávat návratové hodnoty InvokeServer, OnClientInvoke a Bindables (Nastavení → Zachytávání).",
+        rn_4 = "Statistiky remotů, zvýrazněné rozdíly oproti předchozímu volání, upozornění na klíčová slova.",
+        rn_5 = "Sledované a seznamy ignorovaných / blokovaných se ukládají pro každou hru.",
+        rn_6 = "Export celé relace jako přehratelného skriptu (Nastavení → Nástroje nebo Historie).",
+        rn_7 = "Nové kreslené ikony, tlačítko otevření s počítadlem, klávesa na PC (RightShift).",
+        rn_8 = "Mobil: karty dole, větší řádky a tlačítka. Nápověda všude (dlouhý stisk na mobilu).",
+        rn_9 = "Barvy zvýraznění, průhlednost a velikost textu v Nastavení → Vzhled.",
+        rn_10 = "Nová karta Chyby, rychlejší průzkumník, lehčí automatické ukládání — a řada oprav chyb.",
+        as_live = "Průběžně (každé 2 s)",
     }
 
     LANG.DA = {
@@ -4387,6 +6590,114 @@ do
         n_autosave_off = "Autogem slået fra",
         n_lang = "Sprog: %s",
         credits = "af Rival960 — Lavet med hjælp fra Claude",
+        tab_errors = "Fejl",
+        ok = "OK",
+        cancel = "Annullér",
+        off = "Fra",
+        status_events = "%d events",
+        status_flood = "%d sprunget over (flood)",
+        status_errors = "%d fejl",
+        f_clientinvoke = "📨 ClientInvoke",
+        f_bindable = "🔗 Bindable",
+        f_watched = "⭐ Overvågede",
+        lbl_clientinvoke = "C-INVOKE",
+        lbl_bindable = "BINDABLE",
+        watch = "⭐ Overvåg",
+        unwatch = "☆ Stop overvågning",
+        st_watched = "⭐ Overvåges",
+        dir_local = "🔁 Klient ↔ Klient (lokalt)",
+        code_clientinvoke = "-- RobloxSpy — OnClientInvoke (serveren spørger klienten)",
+        code_clientinvoke_note = "-- Serveren kaldte OnClientInvoke på denne RemoteFunction med:",
+        k_grouped = "Grupperet",
+        grouped_fmt = "%d identiske kald i træk",
+        k_flood = "Flood",
+        flood_fmt = "%d kald sprunget over lige før (anti-flood)",
+        skipped_prefix = "(+%d sprunget over)",
+        sec_stats = "📈  STATISTIK FOR DENNE REMOTE",
+        k_total = "Kald i alt",
+        k_rate = "Frekvens",
+        rate_fmt = "%.1f kald / min",
+        k_first_last = "Første → seneste",
+        k_callers = "Kaldere",
+        diff_hint = "ændringer ift. forrige kald med gult",
+        diff_was = "før: %s",
+        sec_return = "↩  RETURNERET AF SERVEREN",
+        ret_nothing = "(intet returneret)",
+        ret_waiting = "Venter på serverens svar…",
+        ret_disabled = "Slå \"Fang InvokeServer-returværdier\" til i Indstillinger",
+        n_alert = "🔔 Advarsel: %s (nøgleord \"%s\")",
+        n_saved_game = "gemt for dette spil",
+        n_watch_on = "⭐ %s føjet til overvågningslisten",
+        n_watch_off = "%s fjernet fra overvågningslisten",
+        empty_feed = "Ingen events endnu — spil lidt, hvert remote-kald vises her.",
+        empty_filter = "Intet matcher dette filter.",
+        empty_network = "Ingen trafik registreret endnu.",
+        empty_scripts = "Klik på \"Scan scripts\" for at vise spillets klientscripts.",
+        empty_errors = "Ingen fejl — alt kører.",
+        net_click_hint = "klik på en række for at filtrere spyen",
+        err_copy = "📋 Kopiér alt",
+        err_clear = "🧹 Ryd",
+        err_count = "%d fejl",
+        c_errors = "Fejl",
+        hi_export_script = "🧾 Eksportér som script",
+        se_capture = "📡 Opsamling",
+        se_returns = "↩ Fang InvokeServer-returværdier",
+        se_returns_note = "Viser hvad serveren svarer. Slå fra, hvis et spil opfører sig mærkeligt.",
+        se_clientinvoke = "📨 Fang OnClientInvoke (kræver getcallbackvalue)",
+        se_bindables = "🔗 Spionér på BindableEvent / BindableFunction",
+        se_group = "🧮 Gruppér identiske kald (×N)",
+        se_flood = "🌊 Anti-flood (maks. loggede kald pr. remote pr. sekund)",
+        se_alerts = "🔔 Advarsler",
+        se_alerts_on = "🔔 Giv besked, når et remote-navn indeholder et nøgleord",
+        se_keywords = "Nøgleord (adskilt med komma)",
+        n_keywords_saved = "Nøgleord gemt",
+        se_appearance = "🎨 Udseende",
+        se_accent = "Accentfarve",
+        c_blue = "Blå",
+        c_purple = "Lilla",
+        c_green = "Grøn",
+        c_red = "Rød",
+        c_orange = "Orange",
+        se_transparency = "Vinduets gennemsigtighed",
+        se_textsize = "Tekststørrelse",
+        se_bottomtabs = "📱 Fanebjælke nederst",
+        se_keybind = "⌨ Tast vis / skjul: %s (klik for at ændre)",
+        se_keybind_wait = "Tryk på en tast… (Esc = annullér)",
+        n_keybind = "Tast indstillet: %s",
+        se_tools = "🧰 Værktøjer",
+        se_export_script = "🧾 Eksportér denne session som afspilningsscript",
+        se_whatsnew = "🎉 Nyheder",
+        se_unload = "⏏ Afmonter RobloxSpy",
+        unload_title = "Afmonter RobloxSpy?",
+        unload_body = "Hooks fjernes, sessionen gemmes og grænsefladen lukkes. Kør scriptet igen for at genstarte.",
+        n_returns_on = "Returværdier for nye InvokeServer fanges",
+        n_option_off = "Indstilling slået fra",
+        n_need_fn = "%s understøttes ikke af %s",
+        tip_maximize = "Maksimér / gendan",
+        tip_minimize = "Minimér",
+        tip_close = "Skjul (den runde knap henter det tilbage)",
+        tip_reopen = "Åbn RobloxSpy (træk for at flytte)",
+        tip_copy_r2s = "Kopiér R2S-koden",
+        tip_ignore = "Ignorér denne remote (sendes, logges ikke)",
+        tip_delete = "Slet denne række",
+        tip_pause = "Sæt opsamling på pause / genoptag",
+        tip_clear = "Ryd listen",
+        tip_expand = "Forstør vinduet",
+        tip_refire = "Send dette kald igen",
+        tip_watch = "Føj til overvågningslisten (gemt for dette spil)",
+        tip_drop = "Blokér: kaldet når aldrig serveren",
+        rn_title = "🎉 Nyt i v%s",
+        rn_1 = "At køre scriptet igen erstatter den gamle instans, og den nye \"Afmonter\"-knap fjerner alt rent.",
+        rn_2 = "Anti-flood og gruppering: identiske kald samles i én række \"×N\".",
+        rn_3 = "InvokeServer-returværdier, OnClientInvoke og Bindables kan fanges (Indstillinger → Opsamling).",
+        rn_4 = "Statistik pr. remote, fremhævede forskelle fra forrige kald, nøgleordsadvarsler.",
+        rn_5 = "Overvågningslisten og ignorér- / blokérlister gemmes pr. spil.",
+        rn_6 = "Eksportér en hel session som afspilleligt script (Indstillinger → Værktøjer eller Historik).",
+        rn_7 = "Nye tegnede ikoner, åbn-knap med tæller for ulæste, PC-tast (RightShift).",
+        rn_8 = "Mobil: faner nederst, større rækker og knapper. Tips overalt (langt tryk på mobil).",
+        rn_9 = "Accentfarver, gennemsigtighed og tekststørrelse under Indstillinger → Udseende.",
+        rn_10 = "Ny Fejl-fane, hurtigere stifinder, lettere autogem — plus flere fejlrettelser.",
+        as_live = "Live (hvert 2. s)",
     }
 
     -- Roblox locale prefix → language code
@@ -4450,6 +6761,136 @@ do
         return list
     end
     _G._RSPY.I18n = I18n
+end
+
+-- ══════════════════════════════════════════════════════════════
+-- MODULE: core/errors.lua
+-- ══════════════════════════════════════════════════════════════
+do
+    --[[
+        RobloxSpy — core/errors.lua
+        Internal error journal
+
+        Every error RobloxSpy catches is recorded here (deduplicated with a
+        counter) instead of being lost in the F9 console. The Errors tab
+        lists them so the user can copy and report them.
+    ]]
+
+    local Errors = {}
+
+    local MAX_ENTRIES = 200
+
+    local _list = {}      -- ordered entries { source, message, count, first, last }
+    local _byKey = {}     -- [source .. message] = entry
+    local _listeners = {}
+
+    local function notify(entry)
+        for _, fn in ipairs(_listeners) do
+            pcall(fn, entry)
+        end
+    end
+
+    -- Records an error. Returns true the first time this exact error is seen.
+    function Errors.add(source, message)
+        source = tostring(source or "?")
+        message = tostring(message or "?")
+        local key = source .. "\0" .. message
+        local now = os.time()
+
+        local entry = _byKey[key]
+        if entry then
+            entry.count = entry.count + 1
+            entry.last = now
+            notify(entry)
+            return false
+        end
+
+        entry = { source = source, message = message, count = 1, first = now, last = now }
+        _byKey[key] = entry
+        table.insert(_list, entry)
+        if #_list > MAX_ENTRIES then
+            local old = table.remove(_list, 1)
+            _byKey[old.source .. "\0" .. old.message] = nil
+        end
+
+        warn("[RobloxSpy] " .. source .. ": " .. message)
+        notify(entry)
+        return true
+    end
+
+    -- Runs fn with a traceback on failure; the error is recorded under source.
+    function Errors.guard(source, fn, ...)
+        local args = table.pack(...)
+        local ok, res = xpcall(function() return fn(table.unpack(args, 1, args.n)) end, function(e)
+            local tb = (debug and debug.traceback) and debug.traceback("", 2) or ""
+            return tostring(e) .. (tb ~= "" and ("\n" .. tb) or "")
+        end)
+        if not ok then Errors.add(source, res) end
+        return ok, res
+    end
+
+    -- Also catch RobloxSpy errors that escape every pcall (they reach the
+    -- F9 console): LogService errors that mention RobloxSpy are recorded.
+    local _logConn
+    function Errors.watchConsole()
+        if _logConn then return end
+        pcall(function()
+            local LogService = game:GetService("LogService")
+            _logConn = LogService.MessageOut:Connect(function(msg, msgType)
+                if msgType ~= Enum.MessageType.MessageError then return end
+                msg = tostring(msg)
+                if msg:find("[RobloxSpy]", 1, true) then return end -- our own warn()
+                local low = msg:lower()
+                if low:find("robloxspy", 1, true) or low:find("rspy", 1, true) then
+                    Errors.add("Console", msg)
+                end
+            end)
+        end)
+    end
+
+    function Errors.stopConsole()
+        if _logConn then pcall(function() _logConn:Disconnect() end) end
+        _logConn = nil
+    end
+
+    function Errors.list()
+        return _list
+    end
+
+    function Errors.count()
+        return #_list
+    end
+
+    function Errors.clear()
+        _list = {}
+        _byKey = {}
+        notify(nil)
+    end
+
+    -- fn(entry) — entry is nil when the journal was cleared
+    function Errors.subscribe(fn)
+        table.insert(_listeners, fn)
+    end
+
+    function Errors.toText()
+        local lines = { "RobloxSpy — Error journal (" .. #_list .. ")" }
+        for _, e in ipairs(_list) do
+            table.insert(lines, string.format("[%s] x%d  %s: %s",
+                os.date("%H:%M:%S", e.last), e.count, e.source, e.message))
+        end
+        return table.concat(lines, "\n")
+    end
+
+    -- pcall wrapper that records failures: Errors.try("source", fn, ...)
+    function Errors.try(source, fn, ...)
+        local result = table.pack(pcall(fn, ...))
+        if not result[1] then
+            Errors.add(source, result[2])
+            return false, result[2]
+        end
+        return table.unpack(result, 1, result.n)
+    end
+    _G._RSPY.Errors = Errors
 end
 
 -- ══════════════════════════════════════════════════════════════
@@ -4579,7 +7020,10 @@ do
     end
 
     -- Roblox value types
-    local robloxConstructors = {
+    -- Declared first: the constructors below reference the table itself
+    -- (a `local x = { … x … }` initializer can't see its own local).
+    local robloxConstructors
+    robloxConstructors = {
         Vector3 = function(v)
             if v == Vector3.zero then return "Vector3.zero" end
             if v == Vector3.one then return "Vector3.one" end
@@ -4874,16 +7318,18 @@ do
         table.insert(lines, "")
 
         -- Args
-        if args and #args > 0 then
-            for i, arg in ipairs(args) do
+        -- args.n (table.pack) keeps nil holes: FireServer("a", nil, 5) has 3 args
+        local argCount = args and (args.n or #args) or 0
+        if argCount > 0 then
+            for i = 1, argCount do
                 local varName = "arg" .. i
-                table.insert(lines, "local " .. varName .. " = " .. Serializer.serialize(arg, 1))
+                table.insert(lines, "local " .. varName .. " = " .. Serializer.serialize(args[i], 1))
             end
             table.insert(lines, "")
 
             -- Call
             local argNames = {}
-            for i = 1, #args do
+            for i = 1, argCount do
                 table.insert(argNames, "arg" .. i)
             end
 
@@ -4960,12 +7406,26 @@ do
     -- ── COMPACT ONE-LINE SUMMARY ─────────────────────────────────────
     -- For log display: short, max ~120 chars.
 
+    -- Serializes every argument (nil holes kept) → { {index, type, value} }
+    function Serializer.serializeArgs(args)
+        local out = {}
+        local count = args and (args.n or #args) or 0
+        for i = 1, count do
+            local v = args[i]
+            local ok, res = pcall(Serializer.serialize, v, 1)
+            table.insert(out, { index = i, type = typeof(v), value = ok and res or tostring(v) })
+        end
+        return out
+    end
+
     function Serializer.summarize(args, maxLen)
         maxLen = maxLen or 120
-        if not args or #args == 0 then return "()" end
+        local count = args and (args.n or #args) or 0
+        if count == 0 then return "()" end
 
         local parts = {}
-        for i, arg in ipairs(args) do
+        for i = 1, count do
+            local arg = args[i]
             local t = typeof(arg)
             local s
             if t == "string" then
@@ -5009,59 +7469,85 @@ end
 do
     --[[
         RobloxSpy — core/hooks.lua
-        Remote call interception engine
+        Remote call interception engine (v1.1.0)
 
-        Hooks __namecall (preferred) or individual remote functions
-        to capture FireServer / InvokeServer / OnClientEvent traffic.
+        Captures:
+          • outgoing  FireServer / InvokeServer          (__namecall or hookfunction)
+          • result    values returned by InvokeServer     (optional)
+          • incoming  OnClientEvent                       (listener, never steals)
+          • clientinvoke  OnClientInvoke callbacks        (optional, getcallbackvalue)
+          • bindable  BindableEvent:Fire / BindableFunction:Invoke (optional)
 
-        FIX v2: Replaced checkcaller() guard with _processing flag.
-        checkcaller() returns true INSIDE a hookmetamethod closure on
-        most executors, which silently skipped every single call.
+        CRITICAL RULES (each one fixed a real bug — never regress):
+          1. No ":" method call inside the __namecall hook before the original
+             is called: it overwrites the namecall method (lobbies break).
+             Type checks use .ClassName only.
+          2. Never filter with checkcaller() inside the hook (always true there).
+          3. The hook only queues captures; processing + publishing run in a
+             Heartbeat loop owned by the executor thread.
+          4. The hookfunction fallback calls the TRUE original, never the
+             hooked function (infinite recursion).
+          5. OnClientEvent is listened to only once the game already listens
+             (the first listener receives the queued server messages).
+          6. "..." is captured with table.pack before any nested function.
     ]]
 
-    local Compat   = _G._RSPY.Compat
+    local Compat = _G._RSPY.Compat
     local Serializer = _G._RSPY.Serializer
+    local Errors = _G._RSPY.Errors
 
     local Hooks = {}
 
     -- ── STATE ────────────────────────────────────────────────────────
     local _started           = false
+    local _unloaded          = false        -- true → hooks are pure pass-through
     local _strategy          = "none"       -- "namecall" | "hookfunc" | "none"
     local _callbacks         = {}
+    local _resultCallbacks   = {}
     local _callId            = 0
+    local _captureSeq        = 0            -- links an InvokeServer to its result
     local _originalNamecall  = nil
-    local _hookedFunctions   = {}           -- { original = fn, ... }
-    local _incomingConns     = {}           -- OnClientEvent connections
-    local _scannedRemotes    = {}           -- already-scanned remotes
+    local _hookedFunctions   = {}           -- { target = hookedFn, original = fn, method = name }
+    local _incomingConns     = {}           -- every connection we own
+    local _scannedRemotes    = {}           -- remotes already listened (OnClientEvent)
     local _processing        = false        -- recursion guard (replaces checkcaller)
     local _queue             = {}           -- raw captures waiting to be processed
     local _drainConn         = nil          -- Heartbeat connection draining _queue
-    local _errorShown        = {}           -- avoid console spam
 
-    -- Filters
+    -- Options
     local _paused            = false
+    local _logIncoming       = true
+    local _captureReturns    = false        -- off by default: wraps InvokeServer in pcall
+    local _captureClientInvoke = false
+    local _spyBindables      = false
+    local _floodLimit        = 30           -- max logged calls per remote per second (0 = no limit)
+
+    -- Filters / rules
     local _blockedRemotes    = {}           -- [remote] = true  (ignored: not logged)
     local _dropRemotes       = {}           -- [remote] = true  (call cancelled)
-    local _typeFilter        = nil          -- nil = all, or "RemoteEvent"/"RemoteFunction"
+    local _ignorePaths       = {}           -- [fullName] = true (per-game saved rules)
+    local _dropPaths         = {}           -- [fullName] = true
+    local _typeFilter        = nil
+
+    -- Anti-flood
+    local _rate              = {}           -- [remote] = { second, count }
+    local _floodSkipped      = {}           -- [remote] = skipped since last logged call
+    local _floodTotal        = 0
+
+    -- OnClientInvoke wrappers
+    local _clientInvokeWraps = {}           -- [remote] = { original = fn, wrapper = fn }
 
     -- ── HELPERS ──────────────────────────────────────────────────────
     local Players = game:GetService("Players")
 
     local FIRE_METHODS = {
-        FireServer      = true,
-        InvokeServer    = true,
-        fireServer      = true,
-        invokeServer    = true,
+        FireServer = "FireServer", fireServer = "FireServer",
+        InvokeServer = "InvokeServer", invokeServer = "InvokeServer",
     }
-
-    local function getMethodType(method)
-        if method == "FireServer" or method == "fireServer" then
-            return "FireServer"
-        elseif method == "InvokeServer" or method == "invokeServer" then
-            return "InvokeServer"
-        end
-        return nil
-    end
+    local BINDABLE_METHODS = {
+        Fire = "Fire", fire = "Fire",
+        Invoke = "Invoke", invoke = "Invoke",
+    }
 
     -- Classes captured by the spy (checked with .ClassName: safe inside hooks)
     local REMOTE_CLASSES = {
@@ -5069,20 +7555,30 @@ do
         RemoteFunction = true,
         UnreliableRemoteEvent = true,
     }
+    local BINDABLE_CLASSES = {
+        BindableEvent = true,
+        BindableFunction = true,
+    }
 
-    local function isRemoteInstance(obj)
-        if typeof(obj) ~= "Instance" then return false end
+    local function getClass(obj)
+        if typeof(obj) ~= "Instance" then return nil end
         local cls = nil
         pcall(function() cls = obj.ClassName end)
-        return REMOTE_CLASSES[cls] == true
+        return cls
     end
 
-    local function getRemoteType(obj)
-        if typeof(obj) ~= "Instance" then return "Unknown" end
-        local cls = nil
-        pcall(function() cls = obj.ClassName end)
-        if REMOTE_CLASSES[cls] then return cls end
-        return "Unknown"
+    local function isRemoteInstance(obj)
+        return REMOTE_CLASSES[getClass(obj)] == true
+    end
+
+    local function isCapturable(obj)
+        local cls = getClass(obj)
+        return REMOTE_CLASSES[cls] == true or BINDABLE_CLASSES[cls] == true
+    end
+
+    local function fullName(obj)
+        local ok, name = pcall(function() return obj:GetFullName() end)
+        return ok and name or tostring(obj)
     end
 
     local function generateCallId()
@@ -5090,103 +7586,133 @@ do
         return _callId
     end
 
+    local function track(conn)
+        if conn then table.insert(_incomingConns, conn) end
+        return conn
+    end
+
     -- ── EVENT PUBLISHING ─────────────────────────────────────────────
     local function publish(event)
         for _, cb in ipairs(_callbacks) do
             local ok, err = pcall(cb, event)
-            if not ok then
-                local key = tostring(err)
-                if not _errorShown[key] then
-                    _errorShown[key] = true
-                    warn("[RobloxSpy] Callback error: " .. key)
-                end
-            end
+            if not ok then Errors.add("Hooks.callback", err) end
         end
     end
 
-    local function processCall(remote, methodName, args, callingScript)
-        if _paused then return end
-        if not isRemoteInstance(remote) then return end
-        if _blockedRemotes[remote] then return end
-
-        local remoteType = getRemoteType(remote)
-        if _typeFilter and remoteType ~= _typeFilter then return end
-
-        local remotePath = ""
-        local ok1, path = pcall(function() return Serializer.getInstancePath(remote) end)
-        if ok1 then remotePath = path else remotePath = tostring(remote) end
-
-        local serializedArgs = {}
-        local ok2, sArgs = pcall(function() return Serializer.serializeArgs(args) end)
-        if ok2 then serializedArgs = sArgs end
-
-        local r2s = ""
-        local ok3, code = pcall(function() return Serializer.generateR2S(remote, methodName, args) end)
-        if ok3 then r2s = code end
-
-        local event = {
-            id             = generateCallId(),
-            type           = "outgoing",
-            method         = methodName,
-            remote         = remote,
-            remoteName     = (pcall(function() return remote.Name end)) and remote.Name or "???",
-            remotePath     = remotePath,
-            remoteType     = remoteType,
-            args           = args,
-            serializedArgs = serializedArgs,
-            r2s            = r2s,
-            callingScript  = callingScript,
-            timestamp      = os.clock(),
-            blocked        = _dropRemotes[remote] == true,
-        }
-
-        publish(event)
+    local function publishResult(event)
+        for _, cb in ipairs(_resultCallbacks) do
+            local ok, err = pcall(cb, event)
+            if not ok then Errors.add("Hooks.resultCallback", err) end
+        end
     end
 
-    local function processIncoming(remote, args)
-        if _paused then return end
-        if not isRemoteInstance(remote) then return end
-        if _blockedRemotes[remote] then return end
+    -- Applies saved per-game path rules to a remote (runs in OUR thread)
+    local function applyPathRules(remote)
+        local name = fullName(remote)
+        if _ignorePaths[name] then _blockedRemotes[remote] = true end
+        if _dropPaths[name] then _dropRemotes[remote] = true end
+    end
 
+    -- Anti-flood: returns false when this call must not be logged
+    local function allowByRate(remote)
+        if _floodLimit <= 0 then return true end
+        local sec = math.floor(os.clock())
+        local r = _rate[remote]
+        if not r or r[1] ~= sec then
+            r = { sec, 0 }
+            _rate[remote] = r
+        end
+        r[2] = r[2] + 1
+        if r[2] > _floodLimit then
+            _floodSkipped[remote] = (_floodSkipped[remote] or 0) + 1
+            _floodTotal = _floodTotal + 1
+            return false
+        end
+        return true
+    end
+
+    local function buildEvent(c, eventType, remoteType)
+        local remote = c.remote
         local remotePath = ""
-        local ok1, path = pcall(function() return Serializer.getInstancePath(remote) end)
-        if ok1 then remotePath = path else remotePath = tostring(remote) end
+        local ok1, path = pcall(Serializer.getInstancePath, remote)
+        remotePath = ok1 and path or tostring(remote)
 
         local serializedArgs = {}
-        local ok2, sArgs = pcall(function() return Serializer.serializeArgs(args or {}) end)
+        local ok2, sArgs = pcall(Serializer.serializeArgs, c.args or {})
         if ok2 then serializedArgs = sArgs end
 
-        local event = {
-            id             = generateCallId(),
-            type           = "incoming",
-            method         = "OnClientEvent",
-            remote         = remote,
-            remoteName     = (pcall(function() return remote.Name end)) and remote.Name or "???",
-            remotePath     = remotePath,
-            remoteType     = "RemoteEvent",
-            args           = args or {},
-            serializedArgs = serializedArgs,
-            r2s            = "-- Incoming event (server → client)",
-            callingScript  = nil,
-            timestamp      = os.clock(),
-            blocked        = false,
-        }
+        local name = "???"
+        pcall(function() name = remote.Name end)
 
-        publish(event)
+        local skipped = 0
+        if eventType ~= "result" then
+            skipped = _floodSkipped[remote] or 0
+            _floodSkipped[remote] = nil
+        end
+
+        return {
+            id             = generateCallId(),
+            captureId      = c.captureId,
+            type           = eventType,
+            method         = c.method,
+            remote         = remote,
+            remoteName     = name,
+            remotePath     = remotePath,
+            remoteFullName = fullName(remote),
+            remoteType     = remoteType or getClass(remote) or "Unknown",
+            args           = c.args or {},
+            serializedArgs = serializedArgs,
+            r2s            = "",
+            callingScript  = c.callingScript,
+            timestamp      = c.time or os.clock(),
+            blocked        = _dropRemotes[remote] == true,
+            floodSkipped   = skipped,
+        }
+    end
+
+    local function processCapture(c)
+        if _paused then return end
+        local remote = c.remote
+        if typeof(remote) ~= "Instance" then return end
+
+        -- Result of an InvokeServer: attached to its call, never a new row
+        if c.kind == "result" then
+            local ev = buildEvent(c, "result")
+            publishResult(ev)
+            return
+        end
+
+        if _blockedRemotes[remote] then return end
+        if c.kind == "incoming" or c.kind == "clientinvoke" then
+            if not isRemoteInstance(remote) then return end
+        elseif not isCapturable(remote) then
+            return
+        end
+        if _typeFilter and getClass(remote) ~= _typeFilter then return end
+        if not allowByRate(remote) then return end
+
+        local eventType = (c.kind == "incoming" and "incoming")
+            or (c.kind == "clientinvoke" and "clientinvoke")
+            or (c.kind == "bindable" and "bindable")
+            or "outgoing"
+        local ev = buildEvent(c, eventType)
+
+        if eventType == "outgoing" or eventType == "bindable" then
+            local ok3, code = pcall(Serializer.generateR2S, remote, c.method, c.args)
+            if ok3 then ev.r2s = code end
+        end
+
+        publish(ev)
     end
 
     -- ── CAPTURE QUEUE ────────────────────────────────────────────────
-    -- The hooks run inside the GAME's thread (low identity): creating GUI
-    -- in gethui()/CoreGui or serializing there fails silently. So hooks only
-    -- push a raw capture; the drain loop below (connected from OUR executor
-    -- thread) does serialization, session recording and GUI updates.
-
-    local function enqueue(kind, remote, method, args, callingScript)
-        if _paused then return end
-        if #_queue > 2000 then return end -- safety cap
+    local function enqueue(kind, remote, method, args, callingScript, captureId)
+        if _paused or _unloaded then return end
+        if #_queue > 4000 then return end -- safety cap
         _queue[#_queue + 1] = {
             kind = kind, remote = remote, method = method,
             args = args, callingScript = callingScript,
+            captureId = captureId, time = os.clock(),
         }
     end
 
@@ -5195,20 +7721,8 @@ do
         local batch = _queue
         _queue = {}
         for i = 1, #batch do
-            local c = batch[i]
-            local ok, err
-            if c.kind == "incoming" then
-                ok, err = pcall(processIncoming, c.remote, c.args)
-            else
-                ok, err = pcall(processCall, c.remote, c.method, c.args, c.callingScript)
-            end
-            if not ok then
-                local key = tostring(err)
-                if not _errorShown[key] then
-                    _errorShown[key] = true
-                    warn("[RobloxSpy] process error: " .. key)
-                end
-            end
+            local ok, err = pcall(processCapture, batch[i])
+            if not ok then Errors.add("Hooks.process", err) end
         end
     end
 
@@ -5217,53 +7731,82 @@ do
         _drainConn = game:GetService("RunService").Heartbeat:Connect(drainQueue)
     end
 
+    -- Shared capture logic (called from inside the hooks — no ":" calls here)
+    local function captureCall(self, normalizedMethod, kind, args)
+        local captureId = nil
+        _processing = true
+        pcall(function()
+            _captureSeq = _captureSeq + 1
+            captureId = _captureSeq
+            local callingScript = nil
+            local fn = Compat.getGlobal("getcallingscript")
+            if fn then
+                local okS, scr = pcall(fn)
+                if okS then callingScript = scr end
+            end
+            enqueue(kind, self, normalizedMethod, args, callingScript, captureId)
+        end)
+        _processing = false
+        return captureId
+    end
+
+    -- Calls the original and, if enabled, captures what InvokeServer returned
+    local function callWithResult(original, self, captureId, ...)
+        local res = table.pack(pcall(original, self, ...))
+        if not res[1] then
+            error(res[2], 0) -- same error the game would have received
+        end
+        enqueue("result", self, "InvokeServer", table.pack(table.unpack(res, 2, res.n)), nil, captureId)
+        return table.unpack(res, 2, res.n)
+    end
+
     -- ── STRATEGY 1: __namecall HOOK ──────────────────────────────────
     local function installNamecallHook()
-        -- Resolve globals directly — more reliable than wrappers in hook context
-        local hookmetamethod   = Compat.getGlobal("hookmetamethod")
+        local hookmetamethod    = Compat.getGlobal("hookmetamethod")
         local getnamecallmethod = Compat.getGlobal("getnamecallmethod")
+        local setnamecallmethod = Compat.getGlobal("setnamecallmethod")
         local newcclosure       = Compat.getGlobal("newcclosure")
 
         if not hookmetamethod or not getnamecallmethod then
             return false
         end
 
-        -- Build the hook function
-        local setnamecallmethod = Compat.getGlobal("setnamecallmethod")
-
-        -- CRITICAL RULE: nothing inside this hook may use a ":" method call
-        -- (obj:IsA(), obj:GetFullName()...) before the original is called.
-        -- A ":" call goes through __namecall again and OVERWRITES the current
-        -- namecall method, so the game's FireServer/InvokeServer would silently
-        -- become IsA() and never reach the server (lobbies, shops... break).
-        -- Only property reads (obj.ClassName) and plain functions are used here.
         local function namecallHook(self, ...)
+            if _unloaded then
+                return _originalNamecall(self, ...)
+            end
+
             local method = getnamecallmethod()
 
-            if not _processing and FIRE_METHODS[method] and typeof(self) == "Instance" then
-                local cls = nil
-                pcall(function() cls = self.ClassName end) -- __index, not __namecall
-                if REMOTE_CLASSES[cls] then
-                    _processing = true
-                    local args = table.pack(...)
-                    pcall(function()
-                        local callingScript = nil
-                        local fn = Compat.getGlobal("getcallingscript")
-                        if fn then
-                            local okS, scr = pcall(fn)
-                            if okS then callingScript = scr end
+            if not _processing and typeof(self) == "Instance" then
+                local normalized = FIRE_METHODS[method]
+                local kind = "outgoing"
+                if not normalized and _spyBindables then
+                    normalized = BINDABLE_METHODS[method]
+                    kind = "bindable"
+                end
+
+                if normalized then
+                    local cls = nil
+                    pcall(function() cls = self.ClassName end) -- __index, not __namecall
+                    local valid = (kind == "outgoing" and REMOTE_CLASSES[cls])
+                        or (kind == "bindable" and BINDABLE_CLASSES[cls])
+
+                    if valid then
+                        local captureId = captureCall(self, normalized, kind, table.pack(...))
+
+                        if kind == "outgoing" and _dropRemotes[self] then
+                            return nil -- call cancelled by the user
                         end
-                        enqueue("outgoing", self, getMethodType(method), args, callingScript)
-                    end)
-                    _processing = false
 
-                    if _dropRemotes[self] then
-                        return nil -- call cancelled by the user
-                    end
+                        -- Safety net: restore the method in case anything changed it
+                        if setnamecallmethod then
+                            pcall(setnamecallmethod, method)
+                        end
 
-                    -- Safety net: restore the method in case anything above changed it
-                    if setnamecallmethod then
-                        pcall(setnamecallmethod, method)
+                        if normalized == "InvokeServer" and _captureReturns then
+                            return callWithResult(_originalNamecall, self, captureId, ...)
+                        end
                     end
                 end
             end
@@ -5271,36 +7814,29 @@ do
             return _originalNamecall(self, ...)
         end
 
-        -- Wrap in newcclosure if available (some executors need it)
         local wrappedHook = namecallHook
         if newcclosure then
             local ok, wrapped = pcall(newcclosure, namecallHook)
-            if ok and wrapped then
-                wrappedHook = wrapped
-            end
+            if ok and wrapped then wrappedHook = wrapped end
         end
 
-        -- Save the original BEFORE hooking: some executors' hookmetamethod
-        -- returns nil instead of the old metamethod
+        -- Save the original BEFORE hooking: some executors return nil
         local preOriginal = nil
         pcall(function()
             local mt = Compat.getRawMetatable(game)
             if mt then preOriginal = rawget(mt, "__namecall") end
         end)
-
-        -- _originalNamecall must exist before the first call reaches the hook
         _originalNamecall = preOriginal
 
-        -- Install the hook
         local ok, original = pcall(hookmetamethod, game, "__namecall", wrappedHook)
         if not ok then
-            warn("[RobloxSpy] hookmetamethod failed: " .. tostring(original))
+            Errors.add("Hooks.namecall", "hookmetamethod failed: " .. tostring(original))
             return false
         end
 
         _originalNamecall = original or preOriginal
         if not _originalNamecall then
-            warn("[RobloxSpy] hookmetamethod returned no original __namecall")
+            Errors.add("Hooks.namecall", "hookmetamethod returned no original __namecall")
             return false
         end
         _strategy = "namecall"
@@ -5312,46 +7848,39 @@ do
     local function installFunctionHooks()
         local hookfunction = Compat.getGlobal("hookfunction") or Compat.getGlobal("replaceclosure")
         local newcclosure  = Compat.getGlobal("newcclosure")
+        if not hookfunction then return false end
 
-        if not hookfunction then
-            return false
-        end
+        local function hookMethod(className, methodName, kind)
+            local temp = nil
+            pcall(function() temp = Instance.new(className) end)
+            if not temp then return end
 
-        -- We need temporary instances to get method references
-        local tempRE = Instance.new("RemoteEvent")
-        local tempRF = Instance.new("RemoteFunction")
-
-        local function hookRemoteMethod(instance, methodName)
             local origMethod = nil
-            local ok = pcall(function()
-                origMethod = instance[methodName]
-            end)
-            if not ok or not origMethod then return end
+            pcall(function() origMethod = temp[methodName] end)
+            pcall(function() temp:Destroy() end)
+            if not origMethod then return end
 
-            local original = origMethod -- replaced by the real original below
+            local original = nil -- the TRUE original, never origMethod after hooking
 
             local function hookFn(self, ...)
-                if not _processing and isRemoteInstance(self) then
-                    _processing = true
-                    local args = table.pack(...)
-                    pcall(function()
-                        local callingScript = nil
-                        local fn = Compat.getGlobal("getcallingscript")
-                        if fn then
-                            local okS, scr = pcall(fn)
-                            if okS then callingScript = scr end
-                        end
-                        enqueue("outgoing", self, getMethodType(methodName), args, callingScript)
-                    end)
-                    _processing = false
-
-                    if _dropRemotes[self] then
-                        return nil -- call cancelled by the user
+                if _unloaded or not original then
+                    return (original or origMethod)(self, ...)
+                end
+                local valid = false
+                if not _processing then
+                    local cls = getClass(self)
+                    valid = (kind == "outgoing" and REMOTE_CLASSES[cls])
+                        or (kind == "bindable" and _spyBindables and BINDABLE_CLASSES[cls])
+                end
+                if valid then
+                    local captureId = captureCall(self, methodName, kind, table.pack(...))
+                    if kind == "outgoing" and _dropRemotes[self] then
+                        return nil
+                    end
+                    if methodName == "InvokeServer" and _captureReturns then
+                        return callWithResult(original, self, captureId, ...)
                     end
                 end
-
-                -- Call the ORIGINAL (returned by hookfunction), never origMethod:
-                -- origMethod is now the hooked function → infinite recursion.
                 return original(self, ...)
             end
 
@@ -5362,43 +7891,46 @@ do
             end
 
             -- Keep a clean copy first: some executors' hookfunction returns nil
+            local clone = nil
             pcall(function()
-                local clone = Compat.getGlobal("clonefunction") or Compat.getGlobal("clonefunc")
-                if clone then original = clone(origMethod) end
+                local cf = Compat.getGlobal("clonefunction") or Compat.getGlobal("clonefunc")
+                if cf then clone = cf(origMethod) end
             end)
 
             local ok3, orig = pcall(hookfunction, origMethod, wrappedHook)
-            if ok3 and (orig or original ~= origMethod) then
-                original = orig or original
-                original = orig
-                table.insert(_hookedFunctions, { original = original, method = methodName })
+            if ok3 then
+                original = orig or clone
+                if original then
+                    table.insert(_hookedFunctions, { target = origMethod, original = original, method = methodName })
+                else
+                    -- Hook installed but no way to call the original: neutralise it
+                    _unloaded = true
+                    Errors.add("Hooks.hookfunction", "no original returned for " .. methodName)
+                end
             end
         end
 
-        hookRemoteMethod(tempRE, "FireServer")
-        hookRemoteMethod(tempRF, "InvokeServer")
+        hookMethod("RemoteEvent", "FireServer", "outgoing")
+        hookMethod("UnreliableRemoteEvent", "FireServer", "outgoing")
+        hookMethod("RemoteFunction", "InvokeServer", "outgoing")
+        hookMethod("BindableEvent", "Fire", "bindable")
+        hookMethod("BindableFunction", "Invoke", "bindable")
 
-        pcall(function() tempRE:Destroy() end)
-        pcall(function() tempRF:Destroy() end)
-
-        if #_hookedFunctions > 0 then
+        if #_hookedFunctions > 0 and not _unloaded then
             _strategy = "hookfunc"
             print("[RobloxSpy] ✓ hookfunction hooks installed (" .. #_hookedFunctions .. " methods)")
             return true
         end
-
         return false
     end
 
-    -- ── INCOMING EVENT SCANNER ───────────────────────────────────────
-    -- IMPORTANT: when nothing listens to a RemoteEvent yet, Roblox queues the
-    -- server's messages and hands them to the FIRST OnClientEvent connection.
-    -- If the spy connects before the game, it steals those messages and the
-    -- game breaks (e.g. joining a lobby never completes). So we only listen to
-    -- a remote once the game itself is already listening to it.
+    -- ── INCOMING EVENTS / CLIENT INVOKES SCANNER ─────────────────────
+    -- When nothing listens to a RemoteEvent yet, Roblox hands the queued
+    -- server messages to the FIRST OnClientEvent connection. We therefore
+    -- only listen once the game itself already listens.
 
-    local _candidates   = {}   -- [remote] = firstSeenClock
-    local _logIncoming  = true
+    local _candidates   = {}   -- [RemoteEvent] = firstSeenClock
+    local _functions    = {}   -- [RemoteFunction] = true (OnClientInvoke candidates)
     local _scanThread   = nil
 
     local function gameIsListening(remote)
@@ -5410,7 +7942,6 @@ do
                 return #conns > 0
             end
         end
-        -- No getconnections: wait long enough that the game has had time to connect
         local seen = _candidates[remote]
         return seen ~= nil and (os.clock() - seen) > 10
     end
@@ -5423,18 +7954,56 @@ do
         _scannedRemotes[remote] = true
         _candidates[remote] = nil
         pcall(function()
-            local conn = remote.OnClientEvent:Connect(function(...)
-                enqueue("incoming", remote, "OnClientEvent", {...})
-            end)
-            table.insert(_incomingConns, conn)
+            track(remote.OnClientEvent:Connect(function(...)
+                enqueue("incoming", remote, "OnClientEvent", table.pack(...))
+            end))
         end)
     end
 
+    -- Wraps an existing OnClientInvoke callback (never creates one)
+    local function tryWrapClientInvoke(remote)
+        if not _captureClientInvoke then return end
+        local getcallbackvalue = Compat.getGlobal("getcallbackvalue")
+        if not getcallbackvalue then return end
+        if not remote.Parent then _functions[remote] = nil; return end
+
+        local okCb, current = pcall(getcallbackvalue, remote, "OnClientInvoke")
+        if not okCb or type(current) ~= "function" then return end
+
+        local wrap = _clientInvokeWraps[remote]
+        if wrap and wrap.wrapper == current then return end -- still ours
+
+        local original = current
+        local wrapper = function(...)
+            enqueue("clientinvoke", remote, "OnClientInvoke", table.pack(...))
+            return original(...)
+        end
+        local okSet = pcall(function() remote.OnClientInvoke = wrapper end)
+        if okSet then
+            _clientInvokeWraps[remote] = { original = original, wrapper = wrapper }
+        end
+    end
+
+    local function restoreClientInvokes()
+        for remote, w in pairs(_clientInvokeWraps) do
+            pcall(function()
+                local getcallbackvalue = Compat.getGlobal("getcallbackvalue")
+                local current = getcallbackvalue and getcallbackvalue(remote, "OnClientInvoke")
+                if current == w.wrapper then
+                    remote.OnClientInvoke = w.original
+                end
+            end)
+        end
+        _clientInvokeWraps = {}
+    end
+
     local function addCandidate(obj)
-        local ok, isRE = pcall(function()
-            return obj:IsA("RemoteEvent") or obj.ClassName == "UnreliableRemoteEvent"
-        end)
-        if ok and isRE and not _scannedRemotes[obj] and not _candidates[obj] then
+        local cls = getClass(obj)
+        if not REMOTE_CLASSES[cls] then return end
+        applyPathRules(obj)
+        if cls == "RemoteFunction" then
+            _functions[obj] = true
+        elseif not _scannedRemotes[obj] and not _candidates[obj] then
             _candidates[obj] = os.clock()
         end
     end
@@ -5442,8 +8011,9 @@ do
     local function scanForRemotes(container)
         local ok, descendants = pcall(function() return container:GetDescendants() end)
         if not ok then return end
-        for _, obj in ipairs(descendants) do
+        for i, obj in ipairs(descendants) do
             addCandidate(obj)
+            if i % 5000 == 0 then task.wait() end
         end
     end
 
@@ -5457,19 +8027,22 @@ do
         end)
 
         for _, c in ipairs(containers) do
-            scanForRemotes(c)
             pcall(function()
-                local conn = c.DescendantAdded:Connect(addCandidate)
-                table.insert(_incomingConns, conn)
+                track(c.DescendantAdded:Connect(addCandidate))
             end)
         end
 
-        -- Re-check candidates regularly (cheap: only remotes not yet listened)
         if not _scanThread then
             _scanThread = task.spawn(function()
-                while _started or #_incomingConns > 0 do
+                for _, c in ipairs(containers) do scanForRemotes(c) end
+                while _started and not _unloaded do
                     for remote in pairs(_candidates) do
                         pcall(tryListen, remote)
+                    end
+                    if _captureClientInvoke then
+                        for remote in pairs(_functions) do
+                            pcall(tryWrapClientInvoke, remote)
+                        end
                     end
                     task.wait(2)
                 end
@@ -5491,98 +8064,97 @@ do
         end
     end
 
+    -- callback(resultEvent) — resultEvent.captureId links it to the call
+    function Hooks.onResult(callback)
+        table.insert(_resultCallbacks, callback)
+    end
+
     function Hooks.start()
         if _started then return true end
+        _unloaded = false
 
         print("[RobloxSpy] Installing hooks...")
         print("[RobloxSpy] " .. Compat.report())
 
-        -- Drain loop runs in OUR thread (connected here, from the executor)
         startDrain()
+        _started = true
 
-        -- Try namecall first, then hookfunction fallback
         local success = installNamecallHook()
         if not success then
             warn("[RobloxSpy] __namecall hook unavailable, trying hookfunction...")
             success = installFunctionHooks()
         end
 
+        pcall(startIncomingScanner)
+
         if not success then
-            -- Incoming events don't need hooks: keep logging them anyway
-            pcall(startIncomingScanner)
-            _started = true
-            warn("[RobloxSpy] ⚠ No hooking method available — outgoing calls will NOT be captured (incoming only)")
-            warn("[RobloxSpy] Required: hookmetamethod + getnamecallmethod, OR hookfunction")
+            _strategy = "none"
+            Errors.add("Hooks.start", "No hooking method available — outgoing calls will NOT be captured (incoming only)")
             return false
         end
 
-        -- Start scanning for incoming events
-        pcall(startIncomingScanner)
-
-        _started = true
         print("[RobloxSpy] ✓ Hooks active (strategy: " .. _strategy .. ")")
         return true
     end
 
+    -- Light stop (teleport): stops listening, hooks stay pass-through-ready
     function Hooks.stop()
         _started = false
-        _strategy = "none"
-
-        -- Disconnect incoming event listeners
         for _, conn in ipairs(_incomingConns) do
             pcall(function() conn:Disconnect() end)
         end
         _incomingConns = {}
         _scannedRemotes = {}
         _candidates = {}
+        _functions = {}
         _queue = {}
         if _drainConn then pcall(function() _drainConn:Disconnect() end); _drainConn = nil end
-
-        -- Note: we can't easily unhook __namecall or hookfunction
-        -- Setting _started = false + _paused = true effectively stops processing
         _paused = true
     end
 
-    function Hooks.pause()
-        _paused = true
+    -- Full unload: restores the original __namecall / functions / callbacks.
+    -- Even if restoring fails, _unloaded makes every hook a pure pass-through.
+    function Hooks.unload()
+        _unloaded = true
+        Hooks.stop()
+        restoreClientInvokes()
+
+        if _strategy == "namecall" and _originalNamecall then
+            pcall(function()
+                local hookmetamethod = Compat.getGlobal("hookmetamethod")
+                if hookmetamethod then hookmetamethod(game, "__namecall", _originalNamecall) end
+            end)
+        elseif _strategy == "hookfunc" then
+            local hookfunction = Compat.getGlobal("hookfunction") or Compat.getGlobal("replaceclosure")
+            for _, h in ipairs(_hookedFunctions) do
+                pcall(function()
+                    if hookfunction then hookfunction(h.target, h.original) end
+                end)
+            end
+        end
+        _hookedFunctions = {}
+        _callbacks = {}
+        _resultCallbacks = {}
+        _strategy = "none"
     end
 
-    function Hooks.resume()
-        _paused = false
-    end
+    function Hooks.isUnloaded() return _unloaded end
 
-    function Hooks.isPaused()
-        return _paused
-    end
-
-    function Hooks.isActive()
-        return _started
-    end
-
-    function Hooks.getStrategy()
-        return _strategy
-    end
-
-    function Hooks.getQueueSize()
-        return #_queue
-    end
-
-    function Hooks.getCallCount()
-        return _callId
-    end
+    function Hooks.pause() _paused = true end
+    function Hooks.resume() _paused = false end
+    function Hooks.isPaused() return _paused end
+    function Hooks.isActive() return _started end
+    function Hooks.getStrategy() return _strategy end
+    function Hooks.getQueueSize() return #_queue end
+    function Hooks.getCallCount() return _callId end
+    function Hooks.getFloodSkipped() return _floodTotal end
 
     function Hooks.blockRemote(remote)
-        if typeof(remote) == "Instance" then
-            _blockedRemotes[remote] = true
-        end
+        if typeof(remote) == "Instance" then _blockedRemotes[remote] = true end
     end
-
     function Hooks.unblockRemote(remote)
-        if typeof(remote) == "Instance" then
-            _blockedRemotes[remote] = nil
-        end
+        if typeof(remote) == "Instance" then _blockedRemotes[remote] = nil end
     end
-
     function Hooks.isBlocked(remote)
         return _blockedRemotes[remote] == true
     end
@@ -5602,20 +8174,34 @@ do
         return _dropRemotes[remote] == true
     end
 
-    function Hooks.setLogIncoming(enabled)
-        _logIncoming = enabled and true or false
+    -- Per-game saved rules (full names, applied as remotes are discovered)
+    function Hooks.setPathRules(ignoreList, dropList)
+        _ignorePaths, _dropPaths = {}, {}
+        for _, p in ipairs(ignoreList or {}) do _ignorePaths[p] = true end
+        for _, p in ipairs(dropList or {}) do _dropPaths[p] = true end
     end
-    function Hooks.getLogIncoming()
-        return _logIncoming
+    function Hooks.getFullName(remote)
+        return fullName(remote)
     end
 
-    function Hooks.setTypeFilter(filterType)
-        _typeFilter = filterType
+    -- Options
+    function Hooks.setLogIncoming(enabled) _logIncoming = enabled and true or false end
+    function Hooks.getLogIncoming() return _logIncoming end
+    function Hooks.setCaptureReturns(enabled) _captureReturns = enabled and true or false end
+    function Hooks.getCaptureReturns() return _captureReturns end
+    function Hooks.setCaptureClientInvoke(enabled)
+        _captureClientInvoke = enabled and true or false
+        if not _captureClientInvoke then restoreClientInvokes() end
     end
+    function Hooks.getCaptureClientInvoke() return _captureClientInvoke end
+    function Hooks.canCaptureClientInvoke() return Compat.getGlobal("getcallbackvalue") ~= nil end
+    function Hooks.setSpyBindables(enabled) _spyBindables = enabled and true or false end
+    function Hooks.getSpyBindables() return _spyBindables end
+    function Hooks.setFloodLimit(n) _floodLimit = math.max(0, tonumber(n) or 30) end
+    function Hooks.getFloodLimit() return _floodLimit end
 
-    function Hooks.getTypeFilter()
-        return _typeFilter
-    end
+    function Hooks.setTypeFilter(filterType) _typeFilter = filterType end
+    function Hooks.getTypeFilter() return _typeFilter end
     _G._RSPY.Hooks = Hooks
 end
 
@@ -5767,8 +8353,10 @@ do
             entryType = "invoke"
         elseif event.method == "OnClientEvent" then
             entryType = "incoming"
-        elseif event.method:find(":Return") then
-            entryType = "return"
+        elseif event.type == "clientinvoke" then
+            entryType = "clientinvoke"
+        elseif event.type == "bindable" then
+            entryType = "bindable"
         end
         if event.blocked then
             entryType = "block"
@@ -5793,15 +8381,17 @@ do
         end)
 
         local callerStr = nil
-        if event.caller then
-            pcall(function() callerStr = event.caller:GetFullName() end)
+        local callerObj = event.callingScript or event.caller
+        if callerObj then
+            pcall(function() callerStr = callerObj:GetFullName() end)
         end
 
         -- Summarize args (lightweight, no full serialize)
         local argsSummary = ""
         pcall(function()
             local argParts = {}
-            for i, arg in ipairs(event.args) do
+            for i = 1, (event.args.n or #event.args) do
+                local arg = event.args[i]
                 local t = typeof(arg)
                 if t == "string" then
                     local s = arg:sub(1, 40)
@@ -5834,6 +8424,8 @@ do
             path   = remotePath,
             args   = argsSummary,
             caller = callerStr,
+            -- Full R2S line(s), used by the "export as script" feature
+            code   = (type(event.r2s) == "string" and event.r2s ~= "") and event.r2s:sub(1, 3000) or nil,
         }
 
         table.insert(_currentSession.entries, entry)
@@ -6038,6 +8630,47 @@ do
         return table.concat(lines, "\n")
     end
 
+    -- Rebuilds a session as ONE replayable script: every outgoing call in
+    -- order, with the original delays (capped) between them.
+    function Session.toR2SScript(data, maxDelay)
+        if not data then return "" end
+        maxDelay = maxDelay or 5
+        local lines = {
+            "-- RobloxSpy — Session replay script",
+            "-- Game: " .. tostring(data.gameName) .. " (PlaceId " .. tostring(data.placeId) .. ")",
+            "-- Recorded: " .. (data.startTime and os.date("%Y-%m-%d %H:%M:%S", data.startTime) or "?"),
+            "-- ⚠ Review before running: calls are replayed exactly as recorded.",
+            "",
+        }
+        local lastT, n = nil, 0
+        for _, e in ipairs(data.entries or {}) do
+            if e.code and (e.type == "fire" or e.type == "invoke" or e.type == "block" or e.type == "bindable") then
+                if lastT then
+                    local gap = math.min(maxDelay, math.max(0, ((e.t or 0) - lastT) / 1000))
+                    if gap >= 0.03 then
+                        table.insert(lines, string.format("task.wait(%.2f)", gap))
+                    end
+                end
+                lastT = e.t or 0
+                n = n + 1
+                table.insert(lines, string.format("-- [%d] %s  (%.2fs)", n, tostring(e.remote), (e.t or 0) / 1000))
+                -- do … end keeps each call's locals separate (200-local limit)
+                table.insert(lines, "do")
+                for line in tostring(e.code):gmatch("[^\n]+") do
+                    if not line:match("^%s*%-%-") then
+                        table.insert(lines, "    " .. line)
+                    end
+                end
+                table.insert(lines, "end")
+                table.insert(lines, "")
+            end
+        end
+        if n == 0 then
+            table.insert(lines, "-- (no replayable outgoing calls in this session)")
+        end
+        return table.concat(lines, "\n")
+    end
+
     -- ── CURRENT SESSION ACCESS ───────────────────────────────────────
 
     function Session.getCurrent()
@@ -6113,6 +8746,7 @@ do
     ]]
 
     local I18n = _G._RSPY.I18n
+    local Config = _G._RSPY.Config
 
     local Theme = {}
 
@@ -6148,7 +8782,10 @@ do
         FireServer    = Color3.fromRGB(255, 140, 60),
         InvokeServer  = Color3.fromRGB(130, 100, 255),
         OnClientEvent = Color3.fromRGB(60, 200, 160),
+        ClientInvoke  = Color3.fromRGB(240, 110, 190),
+        Bindable      = Color3.fromRGB(150, 200, 70),
         Blocked       = Color3.fromRGB(220, 70, 70),
+        Watched       = Color3.fromRGB(255, 210, 60),
 
         -- Borders
         Border       = Color3.fromRGB(55, 55, 65),
@@ -6157,6 +8794,39 @@ do
         -- Scrollbar
         ScrollBar    = Color3.fromRGB(80, 80, 95),
     }
+
+    -- ── ACCENT THEMES ──────────────────────────────────────────────
+    -- Applied at startup and when changed in Settings (UI is rebuilt).
+
+    Theme.Accents = {
+        { id = "blue",   color = Color3.fromRGB(75, 130, 255) },
+        { id = "purple", color = Color3.fromRGB(150, 95, 255) },
+        { id = "green",  color = Color3.fromRGB(50, 190, 120) },
+        { id = "red",    color = Color3.fromRGB(230, 75, 85) },
+        { id = "orange", color = Color3.fromRGB(245, 145, 45) },
+    }
+
+    local function lighten(c, f)
+        return Color3.new(math.min(1, c.R + (1 - c.R) * f), math.min(1, c.G + (1 - c.G) * f), math.min(1, c.B + (1 - c.B) * f))
+    end
+    local function darken(c, f)
+        return Color3.new(c.R * (1 - f), c.G * (1 - f), c.B * (1 - f))
+    end
+
+    function Theme.applyAccent(id)
+        for _, a in ipairs(Theme.Accents) do
+            if a.id == id then
+                Theme.Colors.Accent = a.color
+                Theme.Colors.AccentHover = lighten(a.color, 0.15)
+                Theme.Colors.AccentDim = darken(a.color, 0.3)
+                Theme.Colors.TextAccent = lighten(a.color, 0.35)
+                Theme.Colors.Info = a.color
+                Theme.AccentId = id
+                return true
+            end
+        end
+        return false
+    end
 
     -- ── TYPOGRAPHY ──────────────────────────────────────────────────
 
@@ -6176,6 +8846,19 @@ do
         Tiny    = 10,
         Code    = 12,
     }
+
+    -- Text scale (Small / Normal / Large) — applied before the UI is built
+    local BASE_SIZES = {}
+    for k, v in pairs(Theme.TextSizes) do BASE_SIZES[k] = v end
+    Theme.TextScales = { small = 0.9, normal = 1, large = 1.2 }
+
+    function Theme.applyTextScale(id)
+        local f = Theme.TextScales[id] or 1
+        for k, v in pairs(BASE_SIZES) do
+            Theme.TextSizes[k] = math.floor(v * f + 0.5)
+        end
+        Theme.TextScaleId = Theme.TextScales[id] and id or "normal"
+    end
 
     -- ── SPACING ─────────────────────────────────────────────────────
 
@@ -6202,6 +8885,8 @@ do
         if entryType == "invoke" then return Theme.Colors.InvokeServer end
         if entryType == "incoming" then return Theme.Colors.OnClientEvent end
         if entryType == "block" then return Theme.Colors.Blocked end
+        if entryType == "clientinvoke" then return Theme.Colors.ClientInvoke end
+        if entryType == "bindable" then return Theme.Colors.Bindable end
         return Theme.Colors.TextSecondary
     end
 
@@ -6212,9 +8897,265 @@ do
         if entryType == "incoming" then return T("lbl_incoming") end
         if entryType == "block" then return T("lbl_blocked") end
         if entryType == "return" then return T("lbl_return") end
+        if entryType == "clientinvoke" then return T("lbl_clientinvoke") end
+        if entryType == "bindable" then return T("lbl_bindable") end
         return "?"
     end
+
+    -- Saved preferences
+    Theme.applyAccent(Config.get("accent") or "blue")
+    Theme.applyTextScale(Config.get("textScale") or "normal")
     _G._RSPY.Theme = Theme
+end
+
+-- ══════════════════════════════════════════════════════════════
+-- MODULE: gui/icons.lua
+-- ══════════════════════════════════════════════════════════════
+do
+    --[[
+        RobloxSpy — gui/icons.lua
+        Vector-style icons drawn with plain Frames (no emoji, no image assets)
+
+        Emoji render differently on iPhone / Android / Windows and are missing
+        on some executors' fonts. These icons are built from Frames, UIStroke
+        and UICorner, so they look identical everywhere and take any color.
+
+        Icons.draw(name, parent, size, color, bg) → Frame (container)
+          name : close | maximize | restore | minimize | logo | spy | explorer |
+                 network | scripts | history | settings | errors | check |
+                 copy | ignore | star
+          size : pixels (square)
+          bg   : background color behind the icon (used for "holes")
+    ]]
+
+    local Icons = {}
+
+    local function new(class, props, parent)
+        local o = Instance.new(class)
+        for k, v in pairs(props) do
+            pcall(function() o[k] = v end)
+        end
+        o.Parent = parent
+        return o
+    end
+
+    -- Filled bar, centered at (cx, cy) in 0..1 coordinates of the container
+    local function bar(parent, cx, cy, w, h, rot, color)
+        return new("Frame", {
+            Name = "Bar",
+            AnchorPoint = Vector2.new(0.5, 0.5),
+            Position = UDim2.new(cx, 0, cy, 0),
+            Size = UDim2.new(w, 0, 0, h),
+            Rotation = rot or 0,
+            BackgroundColor3 = color,
+            BorderSizePixel = 0,
+        }, parent)
+    end
+
+    -- Bar with a pixel width and a relative height (vertical bars)
+    local function vbar(parent, cx, cy, wPx, h, color)
+        return new("Frame", {
+            Name = "VBar",
+            AnchorPoint = Vector2.new(0.5, 1),
+            Position = UDim2.new(cx, 0, cy, 0),
+            Size = UDim2.new(0, wPx, h, 0),
+            BackgroundColor3 = color,
+            BorderSizePixel = 0,
+        }, parent)
+    end
+
+    -- Circle outline (ring) or filled circle
+    local function circle(parent, cx, cy, d, color, thickness, filled)
+        local f = new("Frame", {
+            Name = "Circle",
+            AnchorPoint = Vector2.new(0.5, 0.5),
+            Position = UDim2.new(cx, 0, cy, 0),
+            Size = UDim2.new(d, 0, d, 0),
+            BackgroundColor3 = color,
+            BackgroundTransparency = filled and 0 or 1,
+            BorderSizePixel = 0,
+        }, parent)
+        new("UICorner", { CornerRadius = UDim.new(0.5, 0) }, f)
+        if not filled then
+            new("UIStroke", { Color = color, Thickness = thickness or 2, ApplyStrokeMode = Enum.ApplyStrokeMode.Border }, f)
+        end
+        return f
+    end
+
+    -- Square outline
+    local function square(parent, cx, cy, d, color, thickness, bg)
+        local f = new("Frame", {
+            Name = "Square",
+            AnchorPoint = Vector2.new(0.5, 0.5),
+            Position = UDim2.new(cx, 0, cy, 0),
+            Size = UDim2.new(d, 0, d, 0),
+            BackgroundColor3 = bg or color,
+            BackgroundTransparency = bg and 0 or 1,
+            BorderSizePixel = 0,
+        }, parent)
+        new("UICorner", { CornerRadius = UDim.new(0, 2) }, f)
+        new("UIStroke", { Color = color, Thickness = thickness or 2, ApplyStrokeMode = Enum.ApplyStrokeMode.Border }, f)
+        return f
+    end
+
+    local DRAW = {}
+
+    DRAW.close = function(c, s, color)
+        local t = math.max(2, math.floor(s / 7))
+        bar(c, 0.5, 0.5, 0.78, t, 45, color)
+        bar(c, 0.5, 0.5, 0.78, t, -45, color)
+    end
+
+    DRAW.maximize = function(c, s, color)
+        square(c, 0.5, 0.5, 0.6, color, 2)
+    end
+
+    DRAW.restore = function(c, s, color, bg)
+        square(c, 0.58, 0.42, 0.46, color, 2)
+        local front = square(c, 0.42, 0.58, 0.46, color, 2, bg or Color3.fromRGB(50, 50, 60)) -- hides the back one
+        front.Name = "Hole"
+    end
+
+    DRAW.minimize = function(c, s, color)
+        bar(c, 0.5, 0.62, 0.6, math.max(2, math.floor(s / 7)), 0, color)
+    end
+
+    -- Two stacked sheets
+    DRAW.copy = function(c, s, color, bg)
+        square(c, 0.6, 0.4, 0.5, color, 1.5)
+        local front = square(c, 0.4, 0.6, 0.5, color, 1.5, bg or Color3.fromRGB(35, 35, 44))
+        front.Name = "Hole"
+    end
+
+    -- Circle with a slash ("ignore / mute")
+    DRAW.ignore = function(c, s, color)
+        circle(c, 0.5, 0.5, 0.8, color, 1.5)
+        bar(c, 0.5, 0.5, 0.8, math.max(2, math.floor(s / 8)), -45, color)
+    end
+
+    -- Star outline approximation: two crossed squares (watchlist)
+    DRAW.star = function(c, s, color)
+        local a = square(c, 0.5, 0.5, 0.56, color, 0, nil)
+        a.BackgroundTransparency = 0
+        local b = square(c, 0.5, 0.5, 0.56, color, 0, nil)
+        b.BackgroundTransparency = 0
+        b.Rotation = 45
+    end
+
+    DRAW.check = function(c, s, color)
+        local t = math.max(2, math.floor(s / 7))
+        bar(c, 0.36, 0.6, 0.32, t, 45, color)
+        bar(c, 0.6, 0.48, 0.55, t, -50, color)
+    end
+
+    -- Magnifying glass (reopen button / brand)
+    DRAW.logo = function(c, s, color)
+        circle(c, 0.42, 0.42, 0.52, color, math.max(2, math.floor(s / 9)))
+        bar(c, 0.74, 0.74, 0.34, math.max(3, math.floor(s / 7)), 45, color)
+    end
+
+    -- Radar: ring + inner ring + dot
+    DRAW.spy = function(c, s, color)
+        circle(c, 0.5, 0.5, 0.9, color, 2)
+        circle(c, 0.5, 0.5, 0.45, color, 1.5)
+        circle(c, 0.5, 0.5, 0.18, color, 0, true)
+    end
+
+    -- Tree: trunk + three branches
+    DRAW.explorer = function(c, s, color)
+        local t = math.max(2, math.floor(s / 8))
+        new("Frame", { AnchorPoint = Vector2.new(0.5, 0), Position = UDim2.new(0.22, 0, 0.12, 0),
+            Size = UDim2.new(0, t, 0.72, 0), BackgroundColor3 = color, BorderSizePixel = 0 }, c)
+        bar(c, 0.55, 0.18, 0.62, t, 0, color)
+        bar(c, 0.6, 0.5, 0.5, t, 0, color)
+        bar(c, 0.6, 0.82, 0.5, t, 0, color)
+    end
+
+    -- Signal bars
+    DRAW.network = function(c, s, color)
+        local w = math.max(2, math.floor(s / 5))
+        vbar(c, 0.22, 0.9, w, 0.35, color)
+        vbar(c, 0.5, 0.9, w, 0.6, color)
+        vbar(c, 0.78, 0.9, w, 0.85, color)
+    end
+
+    -- Code brackets "</>" (Code font: no emoji involved)
+    DRAW.scripts = function(c, s, color)
+        new("TextLabel", {
+            Size = UDim2.new(1, 0, 1, 0),
+            BackgroundTransparency = 1,
+            Text = "</>",
+            TextColor3 = color,
+            Font = Enum.Font.Code,
+            TextScaled = true,
+        }, c)
+    end
+
+    -- Clock
+    DRAW.history = function(c, s, color)
+        local t = math.max(2, math.floor(s / 8))
+        circle(c, 0.5, 0.5, 0.88, color, 2)
+        new("Frame", { AnchorPoint = Vector2.new(0.5, 1), Position = UDim2.new(0.5, 0, 0.52, 0),
+            Size = UDim2.new(0, t, 0.3, 0), BackgroundColor3 = color, BorderSizePixel = 0 }, c)
+        new("Frame", { AnchorPoint = Vector2.new(0, 0.5), Position = UDim2.new(0.48, 0, 0.5, 0),
+            Size = UDim2.new(0.24, 0, 0, t), BackgroundColor3 = color, BorderSizePixel = 0 }, c)
+    end
+
+    -- Gear: 4 crossing teeth + filled wheel + hole
+    DRAW.settings = function(c, s, color, bg)
+        local t = math.max(3, math.floor(s / 4.5))
+        for _, r in ipairs({ 0, 45, 90, 135 }) do
+            bar(c, 0.5, 0.5, 0.92, t, r, color)
+        end
+        circle(c, 0.5, 0.5, 0.66, color, 0, true)
+        local hole = circle(c, 0.5, 0.5, 0.28, bg or Color3.fromRGB(25, 25, 32), 0, true)
+        hole.Name = "Hole" -- keeps the background color on recolor
+    end
+
+    -- Warning: ring + "!"
+    DRAW.errors = function(c, s, color)
+        circle(c, 0.5, 0.5, 0.88, color, 2)
+        local t = math.max(2, math.floor(s / 7))
+        new("Frame", { AnchorPoint = Vector2.new(0.5, 0), Position = UDim2.new(0.5, 0, 0.22, 0),
+            Size = UDim2.new(0, t, 0.34, 0), BackgroundColor3 = color, BorderSizePixel = 0 }, c)
+        new("Frame", { AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.new(0.5, 0, 0.72, 0),
+            Size = UDim2.new(0, t, 0, t), BackgroundColor3 = color, BorderSizePixel = 0 }, c)
+    end
+
+    function Icons.has(name)
+        return DRAW[name] ~= nil
+    end
+
+    function Icons.draw(name, parent, size, color, bg)
+        size = size or 16
+        color = color or Color3.fromRGB(220, 220, 235)
+        local container = new("Frame", {
+            Name = "Icon_" .. tostring(name),
+            Size = UDim2.new(0, size, 0, size),
+            BackgroundTransparency = 1,
+            BorderSizePixel = 0,
+        }, parent)
+        local fn = DRAW[name]
+        if fn then
+            local ok, err = pcall(fn, container, size, color, bg)
+            if not ok then warn("[RobloxSpy] icon '" .. tostring(name) .. "': " .. tostring(err)) end
+        end
+        return container
+    end
+
+    -- Recolors every part of an icon (hover states, active tab…)
+    function Icons.recolor(container, color)
+        for _, d in ipairs(container:GetDescendants()) do
+            if d:IsA("UIStroke") then
+                d.Color = color
+            elseif d:IsA("TextLabel") then
+                d.TextColor3 = color
+            elseif d:IsA("Frame") and d.BackgroundTransparency == 0 and d.Name ~= "Hole" then
+                d.BackgroundColor3 = color
+            end
+        end
+    end
+    _G._RSPY.Icons = Icons
 end
 
 -- ══════════════════════════════════════════════════════════════
@@ -6236,6 +9177,9 @@ do
     local RunService = game:GetService("RunService")
 
     local I18n = _G._RSPY.I18n
+    local Config = _G._RSPY.Config
+    local Theme = _G._RSPY.Theme
+    local Icons = _G._RSPY.Icons
     local T = I18n.T
 
     local Framework = {}
@@ -6407,15 +9351,22 @@ do
         frame.Position = UDim2.fromOffset(x, y)
     end
 
+    -- Stores a connection in an owner list so it can be disconnected later
+    -- (v1.1.0: global connections used to leak on every UI rebuild)
+    local function own(conns, conn)
+        if conns and conn then table.insert(conns, conn) end
+        return conn
+    end
+
     -- Re-clamp automatically when the screen rotates / resizes
-    local function keepOnScreen(frame, margin)
+    local function keepOnScreen(frame, margin, conns)
         local function reclamp()
             task.defer(function() pcall(clampToScreen, frame, margin) end)
         end
         pcall(function()
-            getScreenGui():GetPropertyChangedSignal("AbsoluteSize"):Connect(reclamp)
+            own(conns, getScreenGui():GetPropertyChangedSignal("AbsoluteSize"):Connect(reclamp))
         end)
-        frame:GetPropertyChangedSignal("Visible"):Connect(reclamp)
+        own(conns, frame:GetPropertyChangedSignal("Visible"):Connect(reclamp))
         reclamp()
     end
 
@@ -6428,7 +9379,7 @@ do
     -- Returns a function wasDragged() → true if the last press moved > 6px
     -- (lets buttons ignore the click that ends a drag).
 
-    local function makeDraggable(frame, handle, margin)
+    local function makeDraggable(frame, handle, margin, conns)
         handle = handle or frame
         pcall(function() handle.Active = true end)
         pcall(function() frame.Active = true end)
@@ -6466,7 +9417,7 @@ do
             end
         end)
 
-        UserInputService.InputChanged:Connect(function(input)
+        own(conns, UserInputService.InputChanged:Connect(function(input)
             if not dragging then return end
             local isMouse = input.UserInputType == Enum.UserInputType.MouseMovement
             local isOurTouch = input.UserInputType == Enum.UserInputType.Touch and input == dragInput
@@ -6481,14 +9432,14 @@ do
             local x = math.clamp(startPos.X.Offset + delta.X, m, math.max(m, vp.X - size.X - m))
             local y = math.clamp(startPos.Y.Offset + delta.Y, m, math.max(m, vp.Y - size.Y - m))
             frame.Position = UDim2.fromOffset(x, y)
-        end)
+        end))
 
         return function() return moved end
     end
 
     -- ── RESIZING ────────────────────────────────────────────────────
 
-    local function makeResizable(frame, minSize)
+    local function makeResizable(frame, minSize, conns)
         minSize = minSize or MIN_WINDOW_SIZE
 
         local handle = create("Frame", {
@@ -6501,16 +9452,25 @@ do
             Parent = frame,
         })
 
-        -- Visual grip dots
-        create("TextLabel", {
-            Text = "⋮⋮",
-            Size = UDim2.new(1, 0, 1, 0),
-            BackgroundTransparency = 1,
-            TextColor3 = Color3.fromRGB(100, 100, 110),
-            Font = Enum.Font.GothamBold,
-            TextSize = 12,
-            Parent = handle,
-        })
+        -- Visual grip: three diagonal dots (drawn, no glyph)
+        for i = 0, 2 do
+            create("Frame", {
+                Size = UDim2.new(0, 3, 0, 3),
+                Position = UDim2.new(1, -6 - i * 5, 1, -6),
+                BackgroundColor3 = Color3.fromRGB(100, 100, 110),
+                BorderSizePixel = 0,
+                Parent = handle,
+            })
+            if i > 0 then
+                create("Frame", {
+                    Size = UDim2.new(0, 3, 0, 3),
+                    Position = UDim2.new(1, -6, 1, -6 - i * 5),
+                    BackgroundColor3 = Color3.fromRGB(100, 100, 110),
+                    BorderSizePixel = 0,
+                    Parent = handle,
+                })
+            end
+        end
 
         local resizing = false
         local resizeStart, startSize
@@ -6532,7 +9492,7 @@ do
             end
         end)
 
-        UserInputService.InputChanged:Connect(function(input)
+        own(conns, UserInputService.InputChanged:Connect(function(input)
             if not resizing then return end
             if input.UserInputType == Enum.UserInputType.MouseMovement
                 or input.UserInputType == Enum.UserInputType.Touch then
@@ -6546,7 +9506,7 @@ do
                 local newH = math.clamp(startSize.Y + delta.Y, minSize.Y, maxH)
                 frame.Size = UDim2.new(0, newW, 0, newH)
             end
-        end)
+        end))
     end
 
     -- ── WINDOW CLASS ────────────────────────────────────────────────
@@ -6607,96 +9567,105 @@ do
             Parent = self.TitleBar,
         })
 
-        -- Title text
+        -- Logo + title text
+        local logo = Icons.draw("logo", self.TitleBar, 16, Theme.Colors.Accent)
+        logo.Position = UDim2.new(0, 10, 0.5, -8)
+
         self.TitleLabel = create("TextLabel", {
             Name = "Title",
-            Size = UDim2.new(1, -124, 1, 0),
-            Position = UDim2.new(0, 12, 0, 0),
+            Size = UDim2.new(1, -150, 1, 0),
+            Position = UDim2.new(0, 32, 0, 0),
             BackgroundTransparency = 1,
             Text = title,
             TextColor3 = Color3.fromRGB(220, 220, 230),
             Font = Enum.Font.GothamBold,
             TextSize = 14,
             TextXAlignment = Enum.TextXAlignment.Left,
+            TextTruncate = Enum.TextTruncate.AtEnd,
             Parent = self.TitleBar,
         })
 
-        -- Window controls (minimize, close)
+        -- Window controls (maximize, minimize, close) — drawn icons
+        local btnSize = IS_MOBILE and 30 or 26
         local controlsFrame = create("Frame", {
             Name = "Controls",
-            Size = UDim2.new(0, 102, 0, 28),
-            Position = UDim2.new(1, -110, 0, 4),
+            Size = UDim2.new(0, btnSize * 3 + 12, 0, btnSize),
+            Position = UDim2.new(1, -(btnSize * 3 + 18), 0.5, -btnSize / 2),
             BackgroundTransparency = 1,
             Parent = self.TitleBar,
         })
         create("UIListLayout", {
             FillDirection = Enum.FillDirection.Horizontal,
             HorizontalAlignment = Enum.HorizontalAlignment.Right,
+            VerticalAlignment = Enum.VerticalAlignment.Center,
             Padding = UDim.new(0, 4),
+            SortOrder = Enum.SortOrder.LayoutOrder,
             Parent = controlsFrame,
         })
 
-        -- Maximize button (fills the screen, click again to restore)
-        local maxBtn = create("TextButton", {
-            Name = "Maximize",
-            Size = UDim2.new(0, 28, 0, 28),
-            BackgroundColor3 = Color3.fromRGB(50, 50, 60),
-            Text = "⛶",
-            TextColor3 = Color3.fromRGB(180, 180, 190),
-            Font = Enum.Font.GothamBold,
-            TextSize = 14,
-            Parent = controlsFrame,
-        })
-        applyCorner(maxBtn, UDim.new(0, 6))
+        local NEUTRAL = Color3.fromRGB(50, 50, 60)
+        local NEUTRAL_HOVER = Color3.fromRGB(70, 70, 82)
+        local ICON_COLOR = Color3.fromRGB(200, 200, 212)
+
+        local function controlButton(name, iconName, bg, order)
+            local b = create("TextButton", {
+                Name = name,
+                Size = UDim2.new(0, btnSize, 0, btnSize),
+                BackgroundColor3 = bg,
+                AutoButtonColor = false,
+                Text = "",
+                LayoutOrder = order,
+                Parent = controlsFrame,
+            })
+            applyCorner(b, UDim.new(0, 6))
+            local icon = Icons.draw(iconName, b, math.floor(btnSize * 0.5), ICON_COLOR, bg)
+            icon.AnchorPoint = Vector2.new(0.5, 0.5)
+            icon.Position = UDim2.new(0.5, 0, 0.5, 0)
+            return b, icon
+        end
+
+        local maxBtn, maxIcon = controlButton("Maximize", "maximize", NEUTRAL, 1)
+        local minBtn = controlButton("Minimize", "minimize", NEUTRAL, 2)
+        local closeBtn, closeIcon = controlButton("Close", "close", Color3.fromRGB(180, 50, 50), 3)
+        Icons.recolor(closeIcon, Color3.fromRGB(255, 255, 255))
         self.MaxButton = maxBtn
+        self._maxIcon = maxIcon
+        self._iconColor = ICON_COLOR
 
-        -- Minimize button
-        local minBtn = create("TextButton", {
-            Name = "Minimize",
-            Size = UDim2.new(0, 28, 0, 28),
-            BackgroundColor3 = Color3.fromRGB(50, 50, 60),
-            Text = "─",
-            TextColor3 = Color3.fromRGB(180, 180, 190),
-            Font = Enum.Font.GothamBold,
-            TextSize = 14,
-            Parent = controlsFrame,
-        })
-        applyCorner(minBtn, UDim.new(0, 6))
+        -- Tab bar (scrolls horizontally when tabs don't fit).
+        -- Mobile: at the bottom, within thumb reach (can be turned off).
+        self._bottomTabs = IS_MOBILE and Config.get("mobileBottomTabs") ~= false
+        local TAB_H = IS_MOBILE and 40 or 32
+        local STATUS_H = 22
+        self._tabHeight = TAB_H
 
-        -- Close button
-        local closeBtn = create("TextButton", {
-            Name = "Close",
-            Size = UDim2.new(0, 28, 0, 28),
-            BackgroundColor3 = Color3.fromRGB(180, 50, 50),
-            Text = "✕",
-            TextColor3 = Color3.fromRGB(255, 255, 255),
-            Font = Enum.Font.GothamBold,
-            TextSize = 12,
-            Parent = controlsFrame,
-        })
-        applyCorner(closeBtn, UDim.new(0, 6))
-
-        -- Tab bar
-        self.TabBar = create("Frame", {
+        self.TabBar = create("ScrollingFrame", {
             Name = "TabBar",
-            Size = UDim2.new(1, 0, 0, 32),
-            Position = UDim2.new(0, 0, 0, 36),
+            Size = UDim2.new(1, 0, 0, TAB_H),
+            Position = self._bottomTabs and UDim2.new(0, 0, 1, -(TAB_H + STATUS_H)) or UDim2.new(0, 0, 0, 36),
             BackgroundColor3 = Color3.fromRGB(25, 25, 32),
             BorderSizePixel = 0,
+            ScrollBarThickness = 0,
+            ScrollingDirection = Enum.ScrollingDirection.X,
+            CanvasSize = UDim2.new(0, 0, 0, 0),
+            AutomaticCanvasSize = Enum.AutomaticSize.X,
             Parent = self.Frame,
         })
         create("UIListLayout", {
             FillDirection = Enum.FillDirection.Horizontal,
+            VerticalAlignment = Enum.VerticalAlignment.Center,
             Padding = UDim.new(0, 2),
+            SortOrder = Enum.SortOrder.LayoutOrder,
             Parent = self.TabBar,
         })
-        applyPadding(self.TabBar, 0, 4, 0, 4)
+        applyPadding(self.TabBar, 3, 4, 3, 4)
 
-        -- Content area
+        -- Content area (between title/tab bar and status bar)
         self.Content = create("Frame", {
             Name = "Content",
-            Size = UDim2.new(1, 0, 1, -68),
-            Position = UDim2.new(0, 0, 0, 68),
+            Size = self._bottomTabs and UDim2.new(1, 0, 1, -(36 + TAB_H + STATUS_H))
+                or UDim2.new(1, 0, 1, -(36 + TAB_H + STATUS_H)),
+            Position = self._bottomTabs and UDim2.new(0, 0, 0, 36) or UDim2.new(0, 0, 0, 36 + TAB_H),
             BackgroundColor3 = Color3.fromRGB(18, 18, 24),
             BorderSizePixel = 0,
             ClipsDescendants = true,
@@ -6706,8 +9675,8 @@ do
         -- Status bar
         self.StatusBar = create("Frame", {
             Name = "StatusBar",
-            Size = UDim2.new(1, 0, 0, 22),
-            Position = UDim2.new(0, 0, 1, -22),
+            Size = UDim2.new(1, 0, 0, STATUS_H),
+            Position = UDim2.new(0, 0, 1, -STATUS_H),
             BackgroundColor3 = Color3.fromRGB(25, 25, 32),
             BorderSizePixel = 0,
             Parent = self.Frame,
@@ -6721,30 +9690,24 @@ do
             Font = Enum.Font.Gotham,
             TextSize = 11,
             TextXAlignment = Enum.TextXAlignment.Left,
+            TextTruncate = Enum.TextTruncate.AtEnd,
             Parent = self.StatusBar,
         })
 
-        -- Drag & Resize
-        makeDraggable(self.Frame, self.TitleBar)
+        -- Drag & Resize (connections owned by the window → no leak on rebuild)
+        makeDraggable(self.Frame, self.TitleBar, nil, self._connections)
         if not IS_MOBILE then
-            makeResizable(self.Frame)
+            makeResizable(self.Frame, nil, self._connections)
         end
-        keepOnScreen(self.Frame)
-        -- Also re-clamp when the window is resized (size presets, minimize…)
-        self.Frame:GetPropertyChangedSignal("Size"):Connect(function()
+        keepOnScreen(self.Frame, nil, self._connections)
+        own(self._connections, self.Frame:GetPropertyChangedSignal("Size"):Connect(function()
             task.defer(function() pcall(clampToScreen, self.Frame) end)
-        end)
+        end))
 
         -- Button handlers
-        maxBtn.Activated:Connect(function()
-            self:toggleMaximize()
-        end)
-        minBtn.MouseButton1Click:Connect(function()
-            self:toggleMinimize()
-        end)
-        closeBtn.MouseButton1Click:Connect(function()
-            self:hide()
-        end)
+        maxBtn.Activated:Connect(function() self:toggleMaximize() end)
+        minBtn.Activated:Connect(function() self:toggleMinimize() end)
+        closeBtn.Activated:Connect(function() self:hide() end)
 
         -- Hover effects
         local function hoverBtn(btn, normalColor, hoverColor)
@@ -6755,11 +9718,19 @@ do
                 tween(btn, { BackgroundColor3 = normalColor }, 0.15):Play()
             end)
         end
-        hoverBtn(minBtn, Color3.fromRGB(50, 50, 60), Color3.fromRGB(70, 70, 80))
-        hoverBtn(maxBtn, Color3.fromRGB(50, 50, 60), Color3.fromRGB(70, 70, 80))
+        hoverBtn(minBtn, NEUTRAL, NEUTRAL_HOVER)
+        hoverBtn(maxBtn, NEUTRAL, NEUTRAL_HOVER)
+        hoverBtn(closeBtn, Color3.fromRGB(180, 50, 50), Color3.fromRGB(220, 60, 60))
+
+        -- Tooltips
+        Framework.tooltip(maxBtn, T("tip_maximize"))
+        Framework.tooltip(minBtn, T("tip_minimize"))
+        Framework.tooltip(closeBtn, T("tip_close"))
+
+        -- Saved transparency
+        self:setTransparency(tonumber(Config.get("windowTransparency")) or 0)
 
         Framework._mainWindow = self
-        hoverBtn(closeBtn, Color3.fromRGB(180, 50, 50), Color3.fromRGB(220, 60, 60))
 
         return self
     end
@@ -6767,25 +9738,75 @@ do
     -- ── WINDOW METHODS ──────────────────────────────────────────────
 
     function Window:addTab(name, icon)
+        local iconSize = IS_MOBILE and 18 or 13
         local tabBtn = create("TextButton", {
             Name = "Tab_" .. name,
-            Size = UDim2.new(0, 0, 1, 0),
-            AutomaticSize = Enum.AutomaticSize.X,
+            Size = IS_MOBILE and UDim2.new(0, 46, 1, 0) or UDim2.new(0, 0, 1, 0),
+            AutomaticSize = IS_MOBILE and Enum.AutomaticSize.None or Enum.AutomaticSize.X,
             BackgroundColor3 = Color3.fromRGB(30, 30, 38),
             BackgroundTransparency = 0.5,
-            -- Mobile: icon only (6 tabs must fit on a phone screen)
-            Text = IS_MOBILE and (icon or name) or ((icon or "") .. " " .. name),
-            TextColor3 = Color3.fromRGB(140, 140, 155),
-            Font = Enum.Font.GothamMedium,
-            TextSize = IS_MOBILE and 15 or 11,
+            AutoButtonColor = false,
+            Text = "",
+            LayoutOrder = #self._tabs + 1,
             Parent = self.TabBar,
         })
         applyCorner(tabBtn, UDim.new(0, 6))
-        applyPadding(tabBtn, 3, 8, 3, 8)
+
+        local inner = create("Frame", {
+            Name = "Inner",
+            Size = UDim2.new(0, 0, 1, 0),
+            AutomaticSize = Enum.AutomaticSize.X,
+            AnchorPoint = IS_MOBILE and Vector2.new(0.5, 0) or Vector2.new(0, 0),
+            Position = IS_MOBILE and UDim2.new(0.5, 0, 0, 0) or UDim2.new(0, 0, 0, 0),
+            BackgroundTransparency = 1,
+            Parent = tabBtn,
+        })
+        create("UIListLayout", {
+            FillDirection = Enum.FillDirection.Horizontal,
+            VerticalAlignment = Enum.VerticalAlignment.Center,
+            Padding = UDim.new(0, 5),
+            SortOrder = Enum.SortOrder.LayoutOrder,
+            Parent = inner,
+        })
+        if not IS_MOBILE then applyPadding(inner, 0, 9, 0, 9) end
+
+        local iconFrame = nil
+        if icon and Icons.has(icon) then
+            iconFrame = Icons.draw(icon, inner, iconSize, Color3.fromRGB(140, 140, 155), Color3.fromRGB(30, 30, 38))
+            iconFrame.LayoutOrder = 1
+        end
+
+        local label = create("TextLabel", {
+            Name = "Label",
+            Size = UDim2.new(0, 0, 1, 0),
+            AutomaticSize = Enum.AutomaticSize.X,
+            BackgroundTransparency = 1,
+            Text = name,
+            TextColor3 = Color3.fromRGB(140, 140, 155),
+            Font = Enum.Font.GothamMedium,
+            TextSize = 11,
+            Visible = not IS_MOBILE, -- mobile: icon only
+            LayoutOrder = 2,
+            Parent = inner,
+        })
+
+        -- Active indicator (accent line)
+        local indicator = create("Frame", {
+            Name = "Indicator",
+            Size = UDim2.new(0.6, 0, 0, 2),
+            AnchorPoint = Vector2.new(0.5, 0),
+            Position = self._bottomTabs and UDim2.new(0.5, 0, 0, 0) or UDim2.new(0.5, 0, 1, -2),
+            BackgroundColor3 = Theme.Colors.Accent,
+            BorderSizePixel = 0,
+            Visible = false,
+            Parent = tabBtn,
+        })
+
+        if IS_MOBILE then Framework.tooltip(tabBtn, name) end
 
         local contentFrame = create("Frame", {
             Name = "TabContent_" .. name,
-            Size = UDim2.new(1, 0, 1, -22), -- leave room for status bar
+            Size = UDim2.new(1, 0, 1, 0),
             BackgroundTransparency = 1,
             Visible = false,
             Parent = self.Content,
@@ -6794,16 +9815,17 @@ do
         local tab = {
             name = name,
             button = tabBtn,
+            label = label,
+            icon = iconFrame,
+            indicator = indicator,
             content = contentFrame,
         }
-
         table.insert(self._tabs, tab)
 
-        tabBtn.MouseButton1Click:Connect(function()
+        tabBtn.Activated:Connect(function()
             self:switchTab(name)
         end)
 
-        -- First tab becomes active
         if #self._tabs == 1 then
             self:switchTab(name)
         end
@@ -6815,17 +9837,21 @@ do
         for _, tab in ipairs(self._tabs) do
             local isActive = (tab.name == name)
             tab.content.Visible = isActive
-            if isActive then
-                self._activeTab = tab
-                tab.button.BackgroundTransparency = 0
-                tab.button.BackgroundColor3 = Color3.fromRGB(45, 45, 55)
-                tab.button.TextColor3 = Color3.fromRGB(220, 220, 235)
-            else
-                tab.button.BackgroundTransparency = 0.5
-                tab.button.BackgroundColor3 = Color3.fromRGB(30, 30, 38)
-                tab.button.TextColor3 = Color3.fromRGB(140, 140, 155)
+            local fg = isActive and Color3.fromRGB(225, 225, 240) or Color3.fromRGB(140, 140, 155)
+            tab.button.BackgroundTransparency = isActive and 0 or 0.5
+            tab.button.BackgroundColor3 = isActive and Color3.fromRGB(42, 42, 54) or Color3.fromRGB(30, 30, 38)
+            tab.label.TextColor3 = fg
+            tab.indicator.Visible = isActive
+            if tab.icon then
+                Icons.recolor(tab.icon, isActive and Theme.Colors.Accent or fg)
             end
+            if isActive then self._activeTab = tab end
         end
+        if self._onTabChanged then pcall(self._onTabChanged, name) end
+    end
+
+    function Window:getActiveTabName()
+        return self._activeTab and self._activeTab.name
     end
 
     function Window:setStatus(text, color)
@@ -6833,12 +9859,20 @@ do
         self.StatusLabel.TextColor3 = color or Color3.fromRGB(120, 120, 135)
     end
 
+    -- 0 = opaque … 0.5 = very transparent (window background only)
+    function Window:setTransparency(t)
+        t = math.clamp(tonumber(t) or 0, 0, 0.6)
+        self._bgTransparency = t
+        if self._visible then self.Frame.BackgroundTransparency = t end
+        self.Content.BackgroundTransparency = t
+    end
+
     function Window:show()
         self._visible = true
         self.Frame.Visible = true
-        tween(self.Frame, { BackgroundTransparency = 0 }, 0.2):Play()
-        -- Hide the reopen button while the window is open
+        tween(self.Frame, { BackgroundTransparency = self._bgTransparency or 0 }, 0.2):Play()
         if self._toggleBtn then self._toggleBtn.Visible = false end
+        Framework.setUnread(0)
     end
 
     function Window:hide()
@@ -6846,12 +9880,22 @@ do
         local t = tween(self.Frame, { BackgroundTransparency = 1 }, 0.2)
         t:Play()
         t.Completed:Wait()
-        self.Frame.Visible = false
-        -- Show the small reopen button
-        if self._toggleBtn then self._toggleBtn.Visible = true end
+        if not self._visible then -- re-opened during the fade
+            self.Frame.Visible = false
+            if self._toggleBtn then self._toggleBtn.Visible = true end
+        end
+    end
+
+    function Window:toggle()
+        if self._visible then self:hide() else self:show() end
+    end
+
+    function Window:isVisible()
+        return self._visible == true
     end
 
     function Window:toggleMinimize()
+        if self._maximized then self:toggleMaximize(false) end
         self._minimized = not self._minimized
         if self._minimized then
             self._savedSize = self.Frame.Size
@@ -6865,6 +9909,17 @@ do
             self.StatusBar.Visible = true
             tween(self.Frame, { Size = self._savedSize }, 0.2):Play()
         end
+    end
+
+    local function setMaxIcon(self, iconName)
+        if not self.MaxButton then return end
+        if self._maxIcon then self._maxIcon:Destroy() end
+        local size = math.floor(self.MaxButton.AbsoluteSize.X * 0.5)
+        if size < 8 then size = IS_MOBILE and 15 or 13 end
+        local icon = Icons.draw(iconName, self.MaxButton, size, self._iconColor, Color3.fromRGB(50, 50, 60))
+        icon.AnchorPoint = Vector2.new(0.5, 0.5)
+        icon.Position = UDim2.new(0.5, 0, 0.5, 0)
+        self._maxIcon = icon
     end
 
     -- Fill (almost) the whole screen, or restore the previous size/position.
@@ -6882,12 +9937,12 @@ do
             self._maximized = true
             self.Frame.Position = UDim2.fromOffset(m, m)
             self.Frame.Size = UDim2.fromOffset(vp.X - m * 2, vp.Y - m * 2)
-            if self.MaxButton then self.MaxButton.Text = "❐" end
+            setMaxIcon(self, "restore")
         else
             self._maximized = false
             if self._preMaxSize then self.Frame.Size = self._preMaxSize end
             if self._preMaxPos then self.Frame.Position = self._preMaxPos end
-            if self.MaxButton then self.MaxButton.Text = "⛶" end
+            setMaxIcon(self, "maximize")
             task.defer(function() pcall(clampToScreen, self.Frame) end)
         end
     end
@@ -6900,53 +9955,372 @@ do
         for _, conn in ipairs(self._connections) do
             pcall(function() conn:Disconnect() end)
         end
+        self._connections = {}
+        if self._toggleBtn then pcall(function() self._toggleBtn:Destroy() end) end
+        self._toggleBtn = nil
         if self.Frame then
             self.Frame:Destroy()
         end
+        if Framework._mainWindow == self then Framework._mainWindow = nil end
+    end
+
+    -- ── KEYBIND (PC) ────────────────────────────────────────────────
+    -- Shows / hides the window with a key (default RightShift).
+    -- Ignored while typing in a TextBox (gameProcessed).
+
+    function Framework.bindToggleKey(window, keyName)
+        if window._keyConn then
+            pcall(function() window._keyConn:Disconnect() end)
+            window._keyConn = nil
+        end
+        local key = nil
+        pcall(function() key = Enum.KeyCode[keyName] end)
+        if not key then return false end
+        window._keyConn = own(window._connections, UserInputService.InputBegan:Connect(function(input, gameProcessed)
+            if gameProcessed then return end
+            if input.KeyCode == key then
+                task.spawn(function() window:toggle() end)
+            end
+        end))
+        return true
+    end
+
+    -- Waits for the next key press (for the "change keybind" button)
+    function Framework.captureKey(callback)
+        local conn
+        conn = UserInputService.InputBegan:Connect(function(input)
+            if input.UserInputType == Enum.UserInputType.Keyboard then
+                conn:Disconnect()
+                if input.KeyCode ~= Enum.KeyCode.Escape then
+                    pcall(callback, input.KeyCode.Name)
+                else
+                    pcall(callback, nil)
+                end
+            end
+        end)
+        return conn
     end
 
     -- ── TOGGLE BUTTON (floating, to reopen) ─────────────────────────
 
+    local _unread = 0
+    local _badge, _badgeLabel, _pulseStroke = nil, nil, nil
+
+    function Framework.setUnread(n)
+        _unread = math.max(0, n or 0)
+        if _badge then
+            _badge.Visible = _unread > 0
+            _badgeLabel.Text = _unread > 99 and "99+" or tostring(_unread)
+        end
+    end
+
+    function Framework.bumpUnread()
+        local w = Framework._mainWindow
+        if w and not w._visible then
+            Framework.setUnread(_unread + 1)
+        end
+    end
+
     function Framework.createToggleButton(window)
         local screenGui = getScreenGui()
         if not screenGui then return nil end
-
         if window._toggleBtn then return window._toggleBtn end
 
+        local size = IS_MOBILE and 50 or 40
         local btn = create("TextButton", {
             Name = "SpyToggle",
-            Visible = not window._visible, -- only shown once the window is closed
+            Visible = not window._visible,
             ZIndex = 50,
-            Size = IS_MOBILE and UDim2.new(0, 44, 0, 44) or UDim2.new(0, 36, 0, 36),
-            Position = IS_MOBILE
-                and UDim2.new(0, 10, 0.4, 0)
-                or UDim2.new(0, 10, 0, 10),
-            BackgroundColor3 = Color3.fromRGB(75, 130, 255),
-            Text = "🔍",
-            TextSize = IS_MOBILE and 20 or 16,
-            Font = Enum.Font.GothamBold,
-            TextColor3 = Color3.fromRGB(255, 255, 255),
+            Size = UDim2.new(0, size, 0, size),
+            Position = IS_MOBILE and UDim2.new(0, 10, 0.4, 0) or UDim2.new(0, 10, 0, 10),
+            BackgroundColor3 = Color3.fromRGB(24, 24, 32),
+            AutoButtonColor = false,
+            Text = "",
             Parent = screenGui,
         })
         applyCorner(btn, UDim.new(0.5, 0))
-        applyStroke(btn, Color3.fromRGB(100, 150, 255), 1)
+        _pulseStroke = applyStroke(btn, Theme.Colors.Accent, 2)
 
-        -- Draggable (PC + mobile) so it never blocks the game UI
-        local wasDragged = makeDraggable(btn, btn, 6)
-        keepOnScreen(btn, 6)
+        local icon = Icons.draw("logo", btn, math.floor(size * 0.5), Theme.Colors.Accent)
+        icon.AnchorPoint = Vector2.new(0.5, 0.5)
+        icon.Position = UDim2.new(0.5, 0, 0.5, 0)
+        icon.ZIndex = 51
+
+        -- Unread events badge
+        _badge = create("Frame", {
+            Name = "Badge",
+            Size = UDim2.new(0, 0, 0, 16),
+            AutomaticSize = Enum.AutomaticSize.X,
+            AnchorPoint = Vector2.new(1, 0),
+            Position = UDim2.new(1, 4, 0, -4),
+            BackgroundColor3 = Color3.fromRGB(220, 60, 70),
+            Visible = false,
+            ZIndex = 53,
+            Parent = btn,
+        })
+        applyCorner(_badge, UDim.new(0.5, 0))
+        applyPadding(_badge, 0, 4, 0, 4)
+        _badgeLabel = create("TextLabel", {
+            Size = UDim2.new(0, 0, 1, 0),
+            AutomaticSize = Enum.AutomaticSize.X,
+            BackgroundTransparency = 1,
+            Text = "0",
+            TextColor3 = Color3.fromRGB(255, 255, 255),
+            Font = Enum.Font.GothamBold,
+            TextSize = 10,
+            ZIndex = 54,
+            Parent = _badge,
+        })
+        Framework.setUnread(_unread)
+
+        -- Gentle pulse while there are unread events
+        task.spawn(function()
+            while btn.Parent do
+                if _unread > 0 and btn.Visible then
+                    tween(_pulseStroke, { Thickness = 4, Transparency = 0.5 }, 0.6):Play()
+                    task.wait(0.6)
+                    tween(_pulseStroke, { Thickness = 2, Transparency = 0 }, 0.6):Play()
+                    task.wait(0.6)
+                else
+                    task.wait(0.5)
+                end
+            end
+        end)
+
+        local wasDragged = makeDraggable(btn, btn, 6, window._connections)
+        keepOnScreen(btn, 6, window._connections)
+        Framework.tooltip(btn, T("tip_reopen"))
 
         window._toggleBtn = btn
 
         btn.Activated:Connect(function()
-            if wasDragged and wasDragged() then return end -- end of a drag, not a click
-            if window._visible then
-                window:hide()
-            else
-                window:show()
-            end
+            if wasDragged and wasDragged() then return end
+            window:toggle()
         end)
 
         return btn
+    end
+
+    -- ── TOOLTIPS ────────────────────────────────────────────────────
+    -- PC: hover 0.45 s. Mobile: long press 0.5 s (the press then does NOT
+    -- trigger the button, so a long press never deletes/fires anything).
+
+    local _tip = nil
+
+    local function showTip(text, anchor)
+        local sg = getScreenGui()
+        if not sg or not text or text == "" then return end
+        if not _tip or not _tip.Parent then
+            _tip = create("TextLabel", {
+                Name = "Tooltip",
+                Size = UDim2.new(0, 0, 0, 0),
+                AutomaticSize = Enum.AutomaticSize.XY,
+                BackgroundColor3 = Color3.fromRGB(12, 12, 16),
+                TextColor3 = Color3.fromRGB(230, 230, 240),
+                Font = Enum.Font.Gotham,
+                TextSize = 11,
+                TextWrapped = false,
+                ZIndex = 300,
+                Visible = false,
+                Parent = sg,
+            })
+            applyCorner(_tip, UDim.new(0, 5))
+            applyStroke(_tip, Color3.fromRGB(70, 70, 85), 1)
+            applyPadding(_tip, 4, 7, 4, 7)
+        end
+        _tip.Text = text
+        local vp = getViewportSize()
+        local pos = anchor.AbsolutePosition
+        local x = math.clamp(pos.X, 4, math.max(4, vp.X - 260))
+        local y = pos.Y + anchor.AbsoluteSize.Y + 6
+        if y > vp.Y - 30 then y = pos.Y - 28 end
+        _tip.Position = UDim2.fromOffset(x, y)
+        _tip.Visible = true
+    end
+
+    local function hideTip()
+        if _tip then _tip.Visible = false end
+    end
+
+    function Framework.tooltip(obj, text)
+        if not obj or not text then return end
+        if IS_MOBILE then
+            local pressId = 0
+            obj.InputBegan:Connect(function(input)
+                if input.UserInputType ~= Enum.UserInputType.Touch then return end
+                pressId = pressId + 1
+                local my = pressId
+                task.delay(0.5, function()
+                    if my ~= pressId then return end
+                    if input.UserInputState == Enum.UserInputState.End then return end
+                    showTip(text, obj)
+                    -- swallow the release so the long press doesn't click
+                    pcall(function() obj.Interactable = false end)
+                    task.delay(1.6, hideTip)
+                end)
+            end)
+            obj.InputEnded:Connect(function(input)
+                if input.UserInputType ~= Enum.UserInputType.Touch then return end
+                pressId = pressId + 1
+                task.delay(0.05, function() pcall(function() obj.Interactable = true end) end)
+            end)
+        else
+            local hoverId = 0
+            obj.MouseEnter:Connect(function()
+                hoverId = hoverId + 1
+                local my = hoverId
+                task.delay(0.45, function()
+                    if my == hoverId then showTip(text, obj) end
+                end)
+            end)
+            obj.MouseLeave:Connect(function()
+                hoverId = hoverId + 1
+                hideTip()
+            end)
+        end
+    end
+
+    -- ── EMPTY STATE ─────────────────────────────────────────────────
+    -- Centered hint shown when a list is empty (caller toggles .Visible)
+
+    function Framework.emptyState(parent, text, iconName)
+        local holder = create("Frame", {
+            Name = "EmptyState",
+            Size = UDim2.new(1, 0, 0, 90),
+            BackgroundTransparency = 1,
+            LayoutOrder = -1,
+            Parent = parent,
+        })
+        if iconName and Icons.has(iconName) then
+            local ic = Icons.draw(iconName, holder, 26, Color3.fromRGB(90, 90, 105), Color3.fromRGB(18, 18, 24))
+            ic.AnchorPoint = Vector2.new(0.5, 0)
+            ic.Position = UDim2.new(0.5, 0, 0, 14)
+        end
+        create("TextLabel", {
+            Name = "Text",
+            Size = UDim2.new(1, -20, 0, 36),
+            Position = UDim2.new(0, 10, 0, 46),
+            BackgroundTransparency = 1,
+            Text = text,
+            TextWrapped = true,
+            TextColor3 = Color3.fromRGB(110, 110, 125),
+            Font = Enum.Font.Gotham,
+            TextSize = 12,
+            Parent = holder,
+        })
+        return holder
+    end
+
+    -- ── MODAL ───────────────────────────────────────────────────────
+    -- Simple dialog over the window content.
+    -- buttons = { { text, color, callback }, ... }
+
+    function Framework.modal(window, title, lines, buttons)
+        local parent = window and window.Frame or getScreenGui()
+        if not parent then return end
+
+        local overlay = create("TextButton", {
+            Name = "Modal",
+            Size = UDim2.new(1, 0, 1, 0),
+            BackgroundColor3 = Color3.fromRGB(0, 0, 0),
+            BackgroundTransparency = 0.35,
+            AutoButtonColor = false,
+            Text = "",
+            ZIndex = 100,
+            Parent = parent,
+        })
+        local box = create("Frame", {
+            Size = UDim2.new(0.9, 0, 0, 0),
+            AutomaticSize = Enum.AutomaticSize.Y,
+            AnchorPoint = Vector2.new(0.5, 0.5),
+            Position = UDim2.new(0.5, 0, 0.5, 0),
+            BackgroundColor3 = Color3.fromRGB(26, 26, 34),
+            ZIndex = 101,
+            Parent = overlay,
+        })
+        create("UISizeConstraint", { MaxSize = Vector2.new(460, 2000), Parent = box })
+        applyCorner(box, UDim.new(0, 10))
+        applyStroke(box, Theme.Colors.Accent, 1)
+        applyPadding(box, 12, 14, 12, 14)
+        create("UIListLayout", { Padding = UDim.new(0, 6), SortOrder = Enum.SortOrder.LayoutOrder, Parent = box })
+
+        create("TextLabel", {
+            Size = UDim2.new(1, 0, 0, 22),
+            BackgroundTransparency = 1,
+            Text = title,
+            TextColor3 = Color3.fromRGB(235, 235, 245),
+            Font = Enum.Font.GothamBold,
+            TextSize = 15,
+            TextXAlignment = Enum.TextXAlignment.Left,
+            LayoutOrder = 1,
+            ZIndex = 102,
+            Parent = box,
+        })
+
+        -- Scrollable body so long notes fit on small phones
+        local body = create("ScrollingFrame", {
+            Size = UDim2.new(1, 0, 0, math.min(260, #lines * 34 + 10)),
+            BackgroundTransparency = 1,
+            BorderSizePixel = 0,
+            ScrollBarThickness = 3,
+            CanvasSize = UDim2.new(0, 0, 0, 0),
+            AutomaticCanvasSize = Enum.AutomaticSize.Y,
+            LayoutOrder = 2,
+            ZIndex = 102,
+            Parent = box,
+        })
+        create("UIListLayout", { Padding = UDim.new(0, 4), SortOrder = Enum.SortOrder.LayoutOrder, Parent = body })
+        for i, line in ipairs(lines) do
+            create("TextLabel", {
+                Size = UDim2.new(1, -6, 0, 0),
+                AutomaticSize = Enum.AutomaticSize.Y,
+                BackgroundTransparency = 1,
+                Text = line,
+                TextWrapped = true,
+                TextColor3 = Color3.fromRGB(190, 190, 205),
+                Font = Enum.Font.Gotham,
+                TextSize = 12,
+                TextXAlignment = Enum.TextXAlignment.Left,
+                LayoutOrder = i,
+                ZIndex = 103,
+                Parent = body,
+            })
+        end
+
+        local row = create("Frame", {
+            Size = UDim2.new(1, 0, 0, 30),
+            BackgroundTransparency = 1,
+            LayoutOrder = 3,
+            ZIndex = 102,
+            Parent = box,
+        })
+        create("UIListLayout", {
+            FillDirection = Enum.FillDirection.Horizontal,
+            HorizontalAlignment = Enum.HorizontalAlignment.Right,
+            Padding = UDim.new(0, 6),
+            Parent = row,
+        })
+        local function close() pcall(function() overlay:Destroy() end) end
+        for _, b in ipairs(buttons or { { T("ok"), Theme.Colors.Accent } }) do
+            local btn = create("TextButton", {
+                Size = UDim2.new(0, 0, 1, 0),
+                AutomaticSize = Enum.AutomaticSize.X,
+                BackgroundColor3 = b[2] or Theme.Colors.Accent,
+                Text = b[1],
+                TextColor3 = Color3.fromRGB(255, 255, 255),
+                Font = Enum.Font.GothamMedium,
+                TextSize = 12,
+                ZIndex = 103,
+                Parent = row,
+            })
+            applyCorner(btn, UDim.new(0, 6))
+            applyPadding(btn, 0, 12, 0, 12)
+            btn.Activated:Connect(function()
+                close()
+                if b[3] then pcall(b[3]) end
+            end)
+        end
+        return overlay, close
     end
 
     -- ── NOTIFICATIONS (toast) ───────────────────────────────────────
@@ -7026,8 +10400,8 @@ do
             Position = config.Position or UDim2.new(0, 0, 0, 0),
             BackgroundTransparency = 1,
             BorderSizePixel = 0,
-            ScrollBarThickness = 4,
-            ScrollBarImageColor3 = Color3.fromRGB(80, 80, 95),
+            ScrollBarThickness = IS_MOBILE and 8 or 5,
+            ScrollBarImageColor3 = Color3.fromRGB(95, 95, 115),
             CanvasSize = UDim2.new(0, 0, 0, 0),
             AutomaticCanvasSize = Enum.AutomaticSize.Y,
             Parent = parent,
@@ -7058,6 +10432,8 @@ do
     Framework.clampToScreen = clampToScreen
     function Framework.getMainWindow() return Framework._mainWindow end
     Framework.keepOnScreen = keepOnScreen
+    Framework.own = own
+    Framework.Icons = Icons
     Framework.getScreenGui = getScreenGui
     _G._RSPY.Framework = Framework
 end
@@ -7068,15 +10444,22 @@ end
 do
     --[[
         RobloxSpy — gui/components/log-entry.lua
-        Single remote call log row for the spy feed
+        Single remote call log row for the spy feed (v1.1.0)
 
         The whole row is clickable (opens the detail panel).
-        Action buttons: 📋 copy R2S · 🔇 ignore remote · 🗑 delete row
+        Action buttons (drawn icons): copy R2S · ignore remote · delete row
         Buttons use .Activated (works with mouse AND touch on every executor).
+
+        Extra row states:
+          LogEntry.setCount(row, n)      → "×n" badge (grouped identical calls)
+          LogEntry.setReturned(row, on)  → "↩" mark (server answered the Invoke)
+          LogEntry.setWatched(row, on)   → star + gold stripe (watchlist)
+          LogEntry.setAlert(row, on)     → highlighted background (keyword alert)
     ]]
 
     local Framework = _G._RSPY.Framework
     local Theme = _G._RSPY.Theme
+    local Icons = _G._RSPY.Icons
     local I18n = _G._RSPY.I18n
     local T = I18n.T
 
@@ -7085,52 +10468,41 @@ do
 
     local LogEntry = {}
 
-    local ROW_HEIGHT = 34
+    local IS_MOBILE = Framework.IS_MOBILE
+    local ROW_HEIGHT = IS_MOBILE and 44 or 34
+    local BTN = IS_MOBILE and 34 or 26
 
-    local function actionButton(parent, name, icon, color, order)
+    local function actionButton(parent, name, iconName, color, order, tip)
         local btn = create("TextButton", {
             Name = name,
-            Size = UDim2.new(0, 26, 0, 24),
+            Size = UDim2.new(0, BTN, 0, BTN - 2),
             BackgroundColor3 = color,
             BackgroundTransparency = 0.65,
             AutoButtonColor = true,
-            Text = icon,
-            TextColor3 = Color3.fromRGB(255, 255, 255),
-            TextSize = 12,
-            Font = Theme.Fonts.Body,
+            Text = "",
             LayoutOrder = order,
             ZIndex = 5,
             Parent = parent,
         })
         applyCorner(btn, Theme.CornerRadius.SM)
+        local icon = Icons.draw(iconName, btn, math.floor(BTN * 0.5), Color3.fromRGB(235, 235, 245), Theme.Colors.BgPrimary)
+        icon.AnchorPoint = Vector2.new(0.5, 0.5)
+        icon.Position = UDim2.new(0.5, 0, 0.5, 0)
+        icon.ZIndex = 6
+        if tip then Framework.tooltip(btn, tip) end
         return btn
     end
 
     function LogEntry.new(parent, data, callbacks)
         --[[
-            data = {
-                t       = number (ms),
-                type    = "fire" | "invoke" | "incoming" | "block",
-                remote  = string,
-                class   = string,
-                args    = string,
-                path    = string?,
-                caller  = string?,
-                index   = number,
-            }
-            callbacks = {
-                onSelect  = function(data),   -- row clicked → details
-                onCopy    = function(data),
-                onBlock   = function(data),   -- ignore this remote
-                onDelete  = function(data, row),
-            }
+            data = { t, type, remote, class, args, path?, caller?, index }
+            callbacks = { onSelect, onCopy, onBlock, onDelete }
         ]]
         callbacks = callbacks or {}
 
         local color = Theme.getRemoteColor(data.type)
         local label = Theme.getRemoteLabel(data.type)
 
-        -- Row = TextButton so the whole line is clickable
         local row = create("TextButton", {
             Name = "Entry_" .. tostring(data.index or 0),
             Size = UDim2.new(1, 0, 0, ROW_HEIGHT),
@@ -7144,7 +10516,6 @@ do
         })
         applyCorner(row, Theme.CornerRadius.SM)
 
-        -- Colored left stripe
         local stripe = create("Frame", {
             Name = "Stripe",
             Size = UDim2.new(0, 3, 1, -8),
@@ -7155,18 +10526,17 @@ do
         })
         applyCorner(stripe, UDim.new(0, 2))
 
-        -- Hover effect
+        local normalBg = Theme.Colors.BgPrimary
         row.MouseEnter:Connect(function()
             Framework.tween(row, { BackgroundColor3 = Theme.Colors.BgHover }, 0.1):Play()
         end)
         row.MouseLeave:Connect(function()
-            Framework.tween(row, { BackgroundColor3 = Theme.Colors.BgPrimary }, 0.1):Play()
+            Framework.tween(row, { BackgroundColor3 = row:GetAttribute("AlertBg") and Color3.fromRGB(60, 45, 20) or normalBg }, 0.1):Play()
         end)
 
-        -- Type badge
         local badge = create("TextLabel", {
             Name = "Badge",
-            Size = UDim2.new(0, 52, 0, 16),
+            Size = UDim2.new(0, 56, 0, 16),
             Position = UDim2.new(0, 9, 0.5, -8),
             BackgroundColor3 = color,
             BackgroundTransparency = 0.8,
@@ -7174,18 +10544,17 @@ do
             TextColor3 = color,
             Font = Theme.Fonts.Code,
             TextSize = Theme.TextSizes.Tiny,
+            TextTruncate = Enum.TextTruncate.AtEnd,
             Parent = row,
         })
         applyCorner(badge, Theme.CornerRadius.SM)
 
-        -- Timestamp
-        local timeStr = string.format("%.1fs", (data.t or 0) / 1000)
         create("TextLabel", {
             Name = "Time",
-            Size = UDim2.new(0, 40, 1, 0),
-            Position = UDim2.new(0, 64, 0, 0),
+            Size = UDim2.new(0, 42, 1, 0),
+            Position = UDim2.new(0, 68, 0, 0),
             BackgroundTransparency = 1,
-            Text = timeStr,
+            Text = string.format("%.1fs", (data.t or 0) / 1000),
             TextColor3 = Theme.Colors.TextMuted,
             Font = Theme.Fonts.Code,
             TextSize = Theme.TextSizes.Tiny,
@@ -7193,11 +10562,13 @@ do
             Parent = row,
         })
 
-        -- Remote name
+        local actionsW = BTN * 3 + 10
+        local textW = -(110 + actionsW + 8)
+
         create("TextLabel", {
             Name = "RemoteName",
-            Size = UDim2.new(1, -196, 0, 15),
-            Position = UDim2.new(0, 104, 0, 3),
+            Size = UDim2.new(1, textW - 74, 0, 16), -- room for the markers
+            Position = UDim2.new(0, 110, 0, IS_MOBILE and 5 or 3),
             BackgroundTransparency = 1,
             Text = data.remote or "?",
             TextColor3 = Theme.Colors.TextPrimary,
@@ -7208,11 +10579,10 @@ do
             Parent = row,
         })
 
-        -- Args summary
         create("TextLabel", {
             Name = "Args",
-            Size = UDim2.new(1, -196, 0, 13),
-            Position = UDim2.new(0, 104, 0, 18),
+            Size = UDim2.new(1, textW, 0, 13),
+            Position = UDim2.new(0, 110, 0, IS_MOBILE and 24 or 18),
             BackgroundTransparency = 1,
             Text = data.args or "",
             TextColor3 = Theme.Colors.TextMuted,
@@ -7223,11 +10593,52 @@ do
             Parent = row,
         })
 
-        -- Action buttons (right side)
+        -- Right-side markers: "↩" returned, "×n" count, star (watch)
+        local markers = create("Frame", {
+            Name = "Markers",
+            Size = UDim2.new(0, 70, 0, 16),
+            Position = UDim2.new(1, -(actionsW + 76), 0, IS_MOBILE and 5 or 3),
+            BackgroundTransparency = 1,
+            Parent = row,
+        })
+        create("UIListLayout", {
+            FillDirection = Enum.FillDirection.Horizontal,
+            HorizontalAlignment = Enum.HorizontalAlignment.Right,
+            VerticalAlignment = Enum.VerticalAlignment.Center,
+            Padding = UDim.new(0, 3),
+            SortOrder = Enum.SortOrder.LayoutOrder,
+            Parent = markers,
+        })
+        local function pill(name, text, c, order)
+            local p = create("TextLabel", {
+                Name = name,
+                Size = UDim2.new(0, 0, 1, 0),
+                AutomaticSize = Enum.AutomaticSize.X,
+                BackgroundColor3 = c,
+                BackgroundTransparency = 0.75,
+                Text = text,
+                TextColor3 = c,
+                Font = Theme.Fonts.Code,
+                TextSize = Theme.TextSizes.Tiny,
+                Visible = false,
+                LayoutOrder = order,
+                Parent = markers,
+            })
+            applyCorner(p, Theme.CornerRadius.SM)
+            Framework.applyPadding(p, 0, 4, 0, 4)
+            return p
+        end
+        pill("Returned", "↩", Theme.Colors.InvokeServer, 1)
+        pill("Count", "×1", Theme.Colors.TextSecondary, 2)
+        local star = Icons.draw("star", markers, 10, Theme.Colors.Watched)
+        star.Name = "Watched"
+        star.Visible = false
+        star.LayoutOrder = 3
+
         local actionsFrame = create("Frame", {
             Name = "Actions",
-            Size = UDim2.new(0, 86, 0, 24),
-            Position = UDim2.new(1, -90, 0.5, -12),
+            Size = UDim2.new(0, actionsW, 0, BTN),
+            Position = UDim2.new(1, -(actionsW + 4), 0.5, -BTN / 2),
             BackgroundTransparency = 1,
             ZIndex = 5,
             Parent = row,
@@ -7236,13 +10647,14 @@ do
             FillDirection = Enum.FillDirection.Horizontal,
             Padding = UDim.new(0, 3),
             HorizontalAlignment = Enum.HorizontalAlignment.Right,
+            VerticalAlignment = Enum.VerticalAlignment.Center,
             SortOrder = Enum.SortOrder.LayoutOrder,
             Parent = actionsFrame,
         })
 
-        local copyBtn   = actionButton(actionsFrame, "Copy",   "📋", Theme.Colors.Accent, 1)
-        local blockBtn  = actionButton(actionsFrame, "Ignore", "🔇", Theme.Colors.Warning, 2)
-        local deleteBtn = actionButton(actionsFrame, "Delete", "🗑", Theme.Colors.Error, 3)
+        local copyBtn   = actionButton(actionsFrame, "Copy",   "copy",   Theme.Colors.Accent, 1, T("tip_copy_r2s"))
+        local blockBtn  = actionButton(actionsFrame, "Ignore", "ignore", Theme.Colors.Warning, 2, T("tip_ignore"))
+        local deleteBtn = actionButton(actionsFrame, "Delete", "close",  Theme.Colors.Error, 3, T("tip_delete"))
 
         -- Guard: a button press must not also open the detail panel
         local buttonPressed = false
@@ -7277,6 +10689,38 @@ do
 
         return row
     end
+
+    local function marker(row, name)
+        local m = row and row:FindFirstChild("Markers")
+        return m and m:FindFirstChild(name)
+    end
+
+    function LogEntry.setCount(row, n)
+        local p = marker(row, "Count")
+        if not p then return end
+        p.Text = "×" .. tostring(n)
+        p.Visible = (n or 1) > 1
+    end
+
+    function LogEntry.setReturned(row, on)
+        local p = marker(row, "Returned")
+        if p then p.Visible = on and true or false end
+    end
+
+    function LogEntry.setWatched(row, on)
+        local p = marker(row, "Watched")
+        if p then p.Visible = on and true or false end
+        local stripe = row and row:FindFirstChild("Stripe")
+        if stripe and on then stripe.BackgroundColor3 = Theme.Colors.Watched end
+    end
+
+    function LogEntry.setAlert(row, on)
+        if not row then return end
+        row:SetAttribute("AlertBg", on and true or nil)
+        row.BackgroundColor3 = on and Color3.fromRGB(60, 45, 20) or Theme.Colors.BgPrimary
+    end
+
+    LogEntry.ROW_HEIGHT = ROW_HEIGHT
     _G._RSPY.LogEntry = LogEntry
 end
 
@@ -7291,6 +10735,7 @@ do
 
     local Framework = _G._RSPY.Framework
     local Theme = _G._RSPY.Theme
+    local Icons = _G._RSPY.Icons
 
     local create = Framework.create
     local applyCorner = Framework.applyCorner
@@ -7311,15 +10756,10 @@ do
         })
         applyCorner(bar, Theme.CornerRadius.MD)
 
-        -- Search icon
-        create("TextLabel", {
-            Size = UDim2.new(0, 28, 1, 0),
-            Position = UDim2.new(0, 4, 0, 0),
-            BackgroundTransparency = 1,
-            Text = "🔍",
-            TextSize = 12,
-            Parent = bar,
-        })
+        -- Search icon (drawn magnifier)
+        local icon = Icons.draw("logo", bar, 13, Theme.Colors.TextMuted)
+        icon.AnchorPoint = Vector2.new(0, 0.5)
+        icon.Position = UDim2.new(0, 10, 0.5, 0)
 
         -- Text input
         local input = create("TextBox", {
@@ -7344,14 +10784,14 @@ do
             Size = UDim2.new(0, 28, 0, 24),
             Position = UDim2.new(1, -32, 0.5, -12),
             BackgroundColor3 = Theme.Colors.BgTertiary,
-            Text = "✕",
-            TextColor3 = Theme.Colors.TextMuted,
-            Font = Theme.Fonts.Body,
-            TextSize = 10,
+            Text = "",
             Visible = false,
             Parent = bar,
         })
         applyCorner(clearBtn, Theme.CornerRadius.SM)
+        local x = Icons.draw("close", clearBtn, 10, Theme.Colors.TextSecondary)
+        x.AnchorPoint = Vector2.new(0.5, 0.5)
+        x.Position = UDim2.new(0.5, 0, 0.5, 0)
 
         -- Events
         local onChange = config.OnChange
@@ -7364,7 +10804,7 @@ do
             end
         end)
 
-        clearBtn.MouseButton1Click:Connect(function()
+        clearBtn.Activated:Connect(function()
             input.Text = ""
         end)
 
@@ -7430,19 +10870,23 @@ end
 do
     --[[
         RobloxSpy — modules/remote-spy.lua
-        Main Remote Spy module
+        Main Remote Spy module (v1.1.0)
 
         Wires Hooks → Session → GUI together.
-        Provides the live feed of intercepted remote calls,
-        plus a detail panel for each event (info, args, R2S code, actions).
+        • Live feed with filters, search, grouping of identical calls (×N)
+        • Detail panel: info, stats, arguments (+ diff with previous call),
+          InvokeServer return values, R2S / replay code, actions
+        • Keyword alerts, watchlist, per-game ignore / block lists
     ]]
 
     local Compat = _G._RSPY.Compat
     local Serializer = _G._RSPY.Serializer
     local Hooks = _G._RSPY.Hooks
     local Session = _G._RSPY.Session
+    local Errors = _G._RSPY.Errors
     local Framework = _G._RSPY.Framework
     local Theme = _G._RSPY.Theme
+    local Icons = _G._RSPY.Icons
     local LogEntry = _G._RSPY.LogEntry
     local SearchBar = _G._RSPY.SearchBar
     local I18n = _G._RSPY.I18n
@@ -7457,26 +10901,35 @@ do
     local RemoteSpy = {}
 
     local _feedScroll = nil
-    local _entries = {}     -- GUI entry frames
-    local _maxVisible = 500 -- max visible rows (older ones removed from GUI)
+    local _emptyState = nil
+    local _entries = {}     -- { data, frame, hidden }
+    local _maxVisible = 500 -- max rows kept (older ones removed)
     local _autoScroll = Config.get("autoScroll") ~= false
     local _filterText = ""
-    local _filterType = nil -- nil = all, "fire", "invoke", "incoming", "block"
+    local _filterType = nil -- nil = all | fire | invoke | incoming | clientinvoke | bindable | block | watched
     local _paused = false
     local _entryCount = 0
-    local _startClock = os.clock() -- feed times are relative to spy start
+    local _serial = 0       -- never reset: used by incremental auto-save
+    local _startClock = os.clock()
+
+    local _lastData = nil   -- last created entry (grouping)
+    local _byCapture = {}   -- [captureId] = entry data (to attach InvokeServer results)
+    local _stats = {}       -- [remote] = { count, first, last, callers = {}, nCallers }
+    local _alertCooldown = {}
+    local _watched = {}     -- [fullName] = true
+    local _keywords = {}
 
     -- Detail panel
-    local _detail = nil      -- { frame, scroll, ... }
-    local _detailData = nil  -- entry data currently shown
+    local _detail = nil
+    local _detailData = nil
     local _detail_refreshExpand = nil
 
     -- ── HELPERS ─────────────────────────────────────────────────────
 
-    local function smallButton(parent, name, text, color, order)
+    local function smallButton(parent, name, text, color, order, tip)
         local btn = create("TextButton", {
             Name = name,
-            Size = UDim2.new(0, 0, 0, 24),
+            Size = UDim2.new(0, 0, 0, Framework.IS_MOBILE and 30 or 24),
             AutomaticSize = Enum.AutomaticSize.X,
             BackgroundColor3 = color or Theme.Colors.BgTertiary,
             BackgroundTransparency = 0.45,
@@ -7489,31 +10942,45 @@ do
         })
         applyCorner(btn, Theme.CornerRadius.SM)
         applyPadding(btn, 2, 8, 2, 8)
+        if tip then Framework.tooltip(btn, tip) end
         return btn
     end
 
     local function serializeArgs(args)
-        local out = {}
-        if not args then return out end
-        local n = args.n or #args
-        for i = 1, n do
-            local v = args[i]
-            local s = "nil"
-            local ok, res = pcall(Serializer.serialize, v, 1)
-            if ok then s = res else s = tostring(v) end
-            table.insert(out, { index = i, type = typeof(v), value = s })
-        end
-        return out
+        local ok, out = pcall(Serializer.serializeArgs, args or {})
+        return ok and out or {}
     end
 
-    -- Builds the code shown in the detail panel / copied by 📋
+    local function loadKeywords()
+        _keywords = {}
+        for raw in tostring(Config.get("alertKeywords") or ""):gmatch("[^,]+") do
+            local word = raw:gsub("^%s+", ""):gsub("%s+$", ""):lower()
+            if word ~= "" then table.insert(_keywords, word) end
+        end
+    end
+
+    local function loadWatched()
+        _watched = {}
+        for _, p in ipairs(Config.getGameList("watch")) do _watched[p] = true end
+    end
+
+    local function matchesKeyword(name)
+        name = tostring(name or ""):lower()
+        for _, k in ipairs(_keywords) do
+            if name:find(k, 1, true) then return k end
+        end
+        return nil
+    end
+
+    -- Builds the code shown in the detail panel / copied by the copy button
     local function buildCode(event)
         if not event then return "-- no event" end
-        if event.method == "OnClientEvent" then
+        if event.method == "OnClientEvent" or event.type == "clientinvoke" then
+            local isInvoke = event.type == "clientinvoke"
             local lines = {
-                T("code_incoming"),
+                isInvoke and T("code_clientinvoke") or T("code_incoming"),
                 "-- Remote: " .. tostring(event.remotePath or "?"),
-                T("code_replay"),
+                isInvoke and T("code_clientinvoke_note") or T("code_replay"),
                 "",
             }
             local okPath, path = pcall(Serializer.serialize, event.remote)
@@ -7524,33 +10991,61 @@ do
                 table.insert(names, "arg" .. a.index)
             end
             table.insert(lines, "")
-            local call = "firesignal(remote.OnClientEvent"
-            if #names > 0 then call = call .. ", " .. table.concat(names, ", ") end
-            table.insert(lines, call .. ")")
+            if not isInvoke then
+                local call = "firesignal(remote.OnClientEvent"
+                if #names > 0 then call = call .. ", " .. table.concat(names, ", ") end
+                table.insert(lines, call .. ")")
+            end
             return table.concat(lines, "\n")
         end
+        if event.r2s and event.r2s ~= "" then return event.r2s end
         local ok, code = pcall(Serializer.generateR2S, event.remote, event.method, event.args)
         if ok and code then return code end
         return "-- R2S generation failed: " .. tostring(code)
     end
 
+    local function entryTypeOf(event)
+        if event.blocked then return "block" end
+        if event.type == "clientinvoke" then return "clientinvoke" end
+        if event.type == "bindable" then return "bindable" end
+        if event.method == "InvokeServer" then return "invoke" end
+        if event.method == "OnClientEvent" then return "incoming" end
+        return "fire"
+    end
+
+    local function updateEmptyState()
+        if not _emptyState then return end
+        local anyVisible = false
+        for _, e in ipairs(_entries) do
+            if e.frame and e.frame.Visible then anyVisible = true; break end
+        end
+        _emptyState.Visible = not anyVisible
+        local txt = _emptyState:FindFirstChild("Text")
+        if txt then
+            txt.Text = (#_entries == 0) and T("empty_feed") or T("empty_filter")
+        end
+    end
+
     -- ── BUILD UI ────────────────────────────────────────────────────
 
     function RemoteSpy.buildUI(tabContent)
-        -- Top toolbar (horizontal scroll so it fits small/mobile windows)
+        loadKeywords()
+        loadWatched()
+
+        local barH = Framework.IS_MOBILE and 40 or 34
+
         local toolbar = create("ScrollingFrame", {
             Name = "Toolbar",
-            Size = UDim2.new(1, 0, 0, 34),
+            Size = UDim2.new(1, 0, 0, barH),
             BackgroundColor3 = Theme.Colors.BgSecondary,
             BorderSizePixel = 0,
-            ScrollBarThickness = 2,
+            ScrollBarThickness = Framework.IS_MOBILE and 4 or 2,
             ScrollingDirection = Enum.ScrollingDirection.X,
             CanvasSize = UDim2.new(0, 0, 0, 0),
             AutomaticCanvasSize = Enum.AutomaticSize.X,
             Parent = tabContent,
         })
         applyPadding(toolbar, 4, 6, 4, 6)
-
         create("UIListLayout", {
             FillDirection = Enum.FillDirection.Horizontal,
             Padding = UDim.new(0, 5),
@@ -7559,80 +11054,70 @@ do
             Parent = toolbar,
         })
 
-        -- Pause/Resume button
-        local pauseBtn = smallButton(toolbar, "Pause", Hooks.isPaused() and T("resume") or T("pause"), Hooks.isPaused() and Theme.Colors.Success or Theme.Colors.Warning, 1)
+        local pauseBtn = smallButton(toolbar, "Pause", Hooks.isPaused() and T("resume") or T("pause"),
+            Hooks.isPaused() and Theme.Colors.Success or Theme.Colors.Warning, 1, T("tip_pause"))
+        local clearBtn = smallButton(toolbar, "Clear", T("clear"), Theme.Colors.Error, 2, T("tip_clear"))
 
-        -- Clear button
-        local clearBtn = smallButton(toolbar, "Clear", T("clear"), Theme.Colors.Error, 2)
-
-        -- Filter type buttons
         local filters = {
-            { "All", T("f_all") },
-            { "Fire", T("f_fire") },
-            { "Invoke", T("f_invoke") },
-            { "Incoming", T("f_incoming") },
-            { "Blocked", T("f_blocked") },
+            { "All", T("f_all"), nil },
+            { "Fire", T("f_fire"), "fire" },
+            { "Invoke", T("f_invoke"), "invoke" },
+            { "Incoming", T("f_incoming"), "incoming" },
+            { "ClientInvoke", T("f_clientinvoke"), "clientinvoke" },
+            { "Bindable", T("f_bindable"), "bindable" },
+            { "Blocked", T("f_blocked"), "block" },
+            { "Watched", T("f_watched"), "watched" },
         }
         for i, f in ipairs(filters) do
-            local name, text = f[1], f[2]
+            local name, text, ftype = f[1], f[2], f[3]
             local fb = smallButton(toolbar, "Filter_" .. name, text, Theme.Colors.BgTertiary, 10 + i)
             fb.TextColor3 = Theme.Colors.TextSecondary
             if name == "All" then
                 fb.BackgroundColor3 = Theme.Colors.Accent
                 fb.TextColor3 = Color3.fromRGB(255, 255, 255)
             end
-
             fb.Activated:Connect(function()
-                if name == "All" then
-                    _filterType = nil
-                elseif name == "Blocked" then
-                    _filterType = "block"
-                else
-                    _filterType = name:lower()
-                end
+                _filterType = ftype
                 RemoteSpy._refreshFilter()
-                -- Visual update
                 for _, c in ipairs(toolbar:GetChildren()) do
                     if c:IsA("TextButton") and c.Name:match("^Filter_") then
                         local isActive = (c.Name == "Filter_" .. name)
                         c.BackgroundColor3 = isActive and Theme.Colors.Accent or Theme.Colors.BgTertiary
-                        c.TextColor3 = isActive and Color3.fromRGB(255,255,255) or Theme.Colors.TextSecondary
+                        c.TextColor3 = isActive and Color3.fromRGB(255, 255, 255) or Theme.Colors.TextSecondary
                     end
                 end
             end)
         end
 
-        -- Search bar
         local searchContainer = create("Frame", {
             Name = "SearchContainer",
             Size = UDim2.new(1, 0, 0, 32),
-            Position = UDim2.new(0, 0, 0, 34),
+            Position = UDim2.new(0, 0, 0, barH),
             BackgroundTransparency = 1,
             Parent = tabContent,
         })
         applyPadding(searchContainer, 2, 6, 2, 6)
 
-        SearchBar.new(searchContainer, {
+        local search = SearchBar.new(searchContainer, {
             Placeholder = T("search_spy"),
             OnChange = function(text)
                 _filterText = text:lower()
                 RemoteSpy._refreshFilter()
             end,
         })
+        RemoteSpy._searchBar = search
 
-        -- Feed scroll area
         _feedScroll = Framework.createScrollFrame(tabContent, {
             Name = "Feed",
-            Size = UDim2.new(1, 0, 1, -66),
-            Position = UDim2.new(0, 0, 0, 66),
+            Size = UDim2.new(1, 0, 1, -(barH + 32)),
+            Position = UDim2.new(0, 0, 0, barH + 32),
             Padding = 2,
             InnerPadding = 4,
         })
+        _emptyState = Framework.emptyState(_feedScroll, T("empty_feed"), "spy")
 
-        -- Detail panel (overlay, hidden until a row is clicked)
         RemoteSpy._buildDetailPanel(tabContent)
 
-        -- Button handlers
         pauseBtn.Activated:Connect(function()
             _paused = not _paused
             if _paused then
@@ -7651,7 +11136,7 @@ do
             Framework.notify(T("feed_cleared"), "info", 1.5)
         end)
 
-        -- UI rebuilt (e.g. language change): re-create rows for kept entries
+        -- UI rebuilt (language / theme change): re-create rows for kept entries
         _paused = Hooks.isPaused()
         _detailData = nil
         _filterType = nil
@@ -7659,6 +11144,18 @@ do
         for _, entry in ipairs(_entries) do
             entry.frame = nil
         end
+        RemoteSpy._refreshFilter()
+    end
+
+    -- Filters the feed on one remote (used by the Network tab)
+    function RemoteSpy.filterByRemote(name)
+        _filterType = nil
+        _filterText = tostring(name or ""):lower()
+        pcall(function()
+            if RemoteSpy._searchBar and RemoteSpy._searchBar.setText then
+                RemoteSpy._searchBar:setText(name)
+            end
+        end)
         RemoteSpy._refreshFilter()
     end
 
@@ -7675,7 +11172,6 @@ do
             Parent = tabContent,
         })
 
-        -- Header
         local header = create("Frame", {
             Name = "Header",
             Size = UDim2.new(1, 0, 0, 32),
@@ -7686,7 +11182,7 @@ do
         })
         local backBtn = create("TextButton", {
             Name = "Back",
-            Size = UDim2.new(0, 60, 0, 24),
+            Size = UDim2.new(0, 66, 0, 24),
             Position = UDim2.new(0, 6, 0.5, -12),
             BackgroundColor3 = Theme.Colors.BgTertiary,
             Text = T("back"),
@@ -7697,26 +11193,24 @@ do
             Parent = header,
         })
         applyCorner(backBtn, Theme.CornerRadius.SM)
-        -- Expand: maximizes the whole window so the event is easy to read
+
         local expandBtn = create("TextButton", {
             Name = "Expand",
             Size = UDim2.new(0, 30, 0, 24),
             Position = UDim2.new(1, -36, 0.5, -12),
             BackgroundColor3 = Theme.Colors.Accent,
             BackgroundTransparency = 0.4,
-            Text = "⛶",
-            TextColor3 = Theme.Colors.TextPrimary,
-            Font = Theme.Fonts.Heading,
-            TextSize = 14,
+            Text = "",
             ZIndex = 22,
             Parent = header,
         })
         applyCorner(expandBtn, Theme.CornerRadius.SM)
+        Framework.tooltip(expandBtn, T("tip_expand"))
 
         local title = create("TextLabel", {
             Name = "Title",
-            Size = UDim2.new(1, -116, 1, 0),
-            Position = UDim2.new(0, 72, 0, 0),
+            Size = UDim2.new(1, -122, 1, 0),
+            Position = UDim2.new(0, 78, 0, 0),
             BackgroundTransparency = 1,
             Text = "",
             TextColor3 = Theme.Colors.TextPrimary,
@@ -7728,14 +11222,13 @@ do
             Parent = header,
         })
 
-        -- Action bar (wraps into a horizontal scroll)
         local actions = create("ScrollingFrame", {
             Name = "Actions",
-            Size = UDim2.new(1, 0, 0, 32),
+            Size = UDim2.new(1, 0, 0, Framework.IS_MOBILE and 38 or 32),
             Position = UDim2.new(0, 0, 0, 32),
             BackgroundColor3 = Theme.Colors.BgPrimary,
             BorderSizePixel = 0,
-            ScrollBarThickness = 2,
+            ScrollBarThickness = Framework.IS_MOBILE and 4 or 2,
             ScrollingDirection = Enum.ScrollingDirection.X,
             CanvasSize = UDim2.new(0, 0, 0, 0),
             AutomaticCanvasSize = Enum.AutomaticSize.X,
@@ -7751,22 +11244,23 @@ do
             Parent = actions,
         })
 
-        local btnCopyCode = smallButton(actions, "CopyCode", T("copy_code"), Theme.Colors.Accent, 1)
+        local btnCopyCode = smallButton(actions, "CopyCode", T("copy_code"), Theme.Colors.Accent, 1, T("tip_copy_r2s"))
         local btnCopyPath = smallButton(actions, "CopyPath", T("copy_path"), Theme.Colors.BgTertiary, 2)
         local btnCopyArgs = smallButton(actions, "CopyArgs", T("copy_args"), Theme.Colors.BgTertiary, 3)
-        local btnRefire   = smallButton(actions, "Refire", T("refire"), Theme.Colors.Success, 4)
-        local btnIgnore   = smallButton(actions, "Ignore", T("ignore"), Theme.Colors.Warning, 5)
-        local btnDrop     = smallButton(actions, "Drop", T("drop"), Theme.Colors.Error, 6)
-        local btnDelete   = smallButton(actions, "Delete", T("delete"), Theme.Colors.Error, 7)
+        local btnRefire   = smallButton(actions, "Refire", T("refire"), Theme.Colors.Success, 4, T("tip_refire"))
+        local btnWatch    = smallButton(actions, "Watch", T("watch"), Theme.Colors.Warning, 5, T("tip_watch"))
+        local btnIgnore   = smallButton(actions, "Ignore", T("ignore"), Theme.Colors.Warning, 6, T("tip_ignore"))
+        local btnDrop     = smallButton(actions, "Drop", T("drop"), Theme.Colors.Error, 7, T("tip_drop"))
+        local btnDelete   = smallButton(actions, "Delete", T("delete"), Theme.Colors.Error, 8, T("tip_delete"))
         for _, b in ipairs(actions:GetChildren()) do
             if b:IsA("GuiObject") then b.ZIndex = 22 end
         end
 
-        -- Body
+        local actionsH = Framework.IS_MOBILE and 38 or 32
         local scroll = Framework.createScrollFrame(frame, {
             Name = "Body",
-            Size = UDim2.new(1, 0, 1, -64),
-            Position = UDim2.new(0, 0, 0, 64),
+            Size = UDim2.new(1, 0, 1, -(32 + actionsH)),
+            Position = UDim2.new(0, 0, 0, 32 + actionsH),
             Padding = 6,
             InnerPadding = 8,
         })
@@ -7774,15 +11268,22 @@ do
 
         _detail = {
             frame = frame, scroll = scroll, title = title,
-            btnIgnore = btnIgnore, btnDrop = btnDrop, btnRefire = btnRefire,
+            btnIgnore = btnIgnore, btnDrop = btnDrop, btnRefire = btnRefire, btnWatch = btnWatch,
         }
 
         backBtn.Activated:Connect(function() RemoteSpy.closeDetail() end)
 
+        local expandIcon = nil
         local function refreshExpandIcon()
             local w = Framework.getMainWindow and Framework.getMainWindow()
-            expandBtn.Text = (w and w:isMaximized()) and "❐" or "⛶"
+            if expandIcon then expandIcon:Destroy() end
+            expandIcon = Icons.draw((w and w:isMaximized()) and "restore" or "maximize", expandBtn, 13,
+                Color3.fromRGB(255, 255, 255), Theme.Colors.AccentDim)
+            expandIcon.AnchorPoint = Vector2.new(0.5, 0.5)
+            expandIcon.Position = UDim2.new(0.5, 0, 0.5, 0)
+            expandIcon.ZIndex = 23
         end
+        refreshExpandIcon()
         expandBtn.Activated:Connect(function()
             local w = Framework.getMainWindow and Framework.getMainWindow()
             if not w then return end
@@ -7830,31 +11331,32 @@ do
                 end
             end)
         end)
+        btnWatch.Activated:Connect(function()
+            if not _detailData then return end
+            RemoteSpy.toggleWatch(_detailData)
+            RemoteSpy._refreshDetailButtons()
+        end)
         btnIgnore.Activated:Connect(function()
-            local ev = _detailData and _detailData._event
-            if not ev or not ev.remote then return end
-            if Hooks.isBlocked(ev.remote) then
-                Hooks.unblockRemote(ev.remote)
-                Framework.notify(T("n_log_resumed", _detailData.remote), "info")
-            else
-                Hooks.blockRemote(ev.remote)
-                Framework.notify(T("n_ignored", _detailData.remote), "warning")
-            end
+            if not _detailData then return end
+            RemoteSpy.toggleIgnore(_detailData)
             RemoteSpy._refreshDetailButtons()
         end)
         btnDrop.Activated:Connect(function()
             local ev = _detailData and _detailData._event
             if not ev or not ev.remote then return end
-            if ev.method == "OnClientEvent" then
+            if ev.method ~= "FireServer" and ev.method ~= "InvokeServer" then
                 Framework.notify(T("n_cant_block_in"), "warning")
                 return
             end
+            local name = Hooks.getFullName(ev.remote)
             if Hooks.isDropped(ev.remote) then
                 Hooks.undropRemote(ev.remote)
+                Config.setGameRule("drop", name, false)
                 Framework.notify(T("n_allowed", _detailData.remote), "info")
             else
                 Hooks.dropRemote(ev.remote)
-                Framework.notify(T("n_blocked", _detailData.remote), "warning")
+                Config.setGameRule("drop", name, true)
+                Framework.notify(T("n_blocked", _detailData.remote) .. " · " .. T("n_saved_game"), "warning")
             end
             RemoteSpy._refreshDetailButtons()
         end)
@@ -7865,12 +11367,45 @@ do
         end)
     end
 
+    function RemoteSpy.toggleIgnore(d)
+        local remote = d._event and d._event.remote
+        if not remote then return end
+        local name = Hooks.getFullName(remote)
+        if Hooks.isBlocked(remote) then
+            Hooks.unblockRemote(remote)
+            Config.setGameRule("ignore", name, false)
+            Framework.notify(T("n_log_resumed", d.remote), "info")
+        else
+            Hooks.blockRemote(remote)
+            Config.setGameRule("ignore", name, true)
+            Framework.notify(T("n_ignored", d.remote) .. " · " .. T("n_saved_game"), "warning")
+        end
+    end
+
+    function RemoteSpy.toggleWatch(d)
+        local name = d._event and d._event.remoteFullName or d.path
+        if not name then return end
+        local on = not _watched[name]
+        _watched[name] = on or nil
+        Config.setGameRule("watch", name, on)
+        for _, e in ipairs(_entries) do
+            local en = e.data._event and e.data._event.remoteFullName
+            if en == name then
+                e.data.watched = on
+                if e.frame then LogEntry.setWatched(e.frame, on) end
+            end
+        end
+        Framework.notify(on and T("n_watch_on", d.remote) or T("n_watch_off", d.remote), on and "success" or "info", 2)
+        if _filterType == "watched" then RemoteSpy._refreshFilter() end
+    end
+
     function RemoteSpy._refreshDetailButtons()
         if not _detail or not _detailData then return end
         local ev = _detailData._event
         local remote = ev and ev.remote
         _detail.btnIgnore.Text = (remote and Hooks.isBlocked(remote)) and T("unignore") or T("ignore")
         _detail.btnDrop.Text = (remote and Hooks.isDropped(remote)) and T("undrop") or T("drop")
+        _detail.btnWatch.Text = _detailData.watched and T("unwatch") or T("watch")
         local outgoing = ev and (ev.method == "FireServer" or ev.method == "InvokeServer")
         _detail.btnRefire.Visible = outgoing and true or false
         _detail.btnDrop.Visible = outgoing and true or false
@@ -7892,7 +11427,7 @@ do
         })
     end
 
-    local function infoRow(parent, order, key, value)
+    local function infoRow(parent, order, key, value, valueColor, note)
         local row = create("Frame", {
             Name = "Info_" .. order,
             Size = UDim2.new(1, 0, 0, 0),
@@ -7906,26 +11441,29 @@ do
         applyCorner(row, Theme.CornerRadius.SM)
         applyPadding(row, 4, 8, 4, 8)
         create("TextLabel", {
-            Size = UDim2.new(0, 90, 0, 14),
+            Size = UDim2.new(0, 96, 0, 14),
             BackgroundTransparency = 1,
             Text = key,
             TextColor3 = Theme.Colors.TextSecondary,
             Font = Theme.Fonts.Medium,
             TextSize = Theme.TextSizes.Small,
             TextXAlignment = Enum.TextXAlignment.Left,
+            TextTruncate = Enum.TextTruncate.AtEnd,
             ZIndex = 23,
             Parent = row,
         })
+        local text = tostring(value)
+        if note then text = text .. "\n" .. note end
         create("TextBox", {
-            Size = UDim2.new(1, -94, 0, 0),
-            Position = UDim2.new(0, 94, 0, 0),
+            Size = UDim2.new(1, -100, 0, 0),
+            Position = UDim2.new(0, 100, 0, 0),
             AutomaticSize = Enum.AutomaticSize.Y,
             BackgroundTransparency = 1,
-            Text = tostring(value),
+            Text = text,
             TextEditable = false,
             ClearTextOnFocus = false,
             TextWrapped = true,
-            TextColor3 = Theme.Colors.TextPrimary,
+            TextColor3 = valueColor or Theme.Colors.TextPrimary,
             Font = Theme.Fonts.Code,
             TextSize = Theme.TextSizes.Small,
             TextXAlignment = Enum.TextXAlignment.Left,
@@ -7934,30 +11472,86 @@ do
         })
     end
 
+    -- Code block styled like the Script Viewer: numbered lines, no wrapping,
+    -- its own horizontal scroll bar for long lines.
+    local TextService = game:GetService("TextService")
     local function codeBlock(parent, order, text)
-        local box = create("TextBox", {
+        text = tostring(text or "")
+        local size = Framework.IS_MOBILE and 13 or Theme.TextSizes.Code
+        local lines = {}
+        for line in (text .. "\n"):gmatch("(.-)\n") do table.insert(lines, line) end
+        if #lines > 1 and lines[#lines] == "" then table.remove(lines) end
+        local width = #tostring(#lines)
+        for i, l in ipairs(lines) do
+            lines[i] = string.format("%" .. width .. "d │ %s", i, l)
+        end
+        local numbered = table.concat(lines, "\n")
+        local okSz, bounds = pcall(function()
+            return TextService:GetTextSize(numbered, size, Theme.Fonts.Code, Vector2.new(100000, 100000))
+        end)
+        local textW = (okSz and bounds) and bounds.X or (#numbered * size * 0.6)
+        local textH = (okSz and bounds) and bounds.Y or (#lines * (size + 2))
+        local barH = Framework.IS_MOBILE and 8 or 5
+
+        local holder = create("Frame", {
             Name = "Code_" .. order,
-            Size = UDim2.new(1, 0, 0, 0),
-            AutomaticSize = Enum.AutomaticSize.Y,
+            Size = UDim2.new(1, 0, 0, textH + 14 + barH),
             BackgroundColor3 = Theme.Colors.BgPrimary,
             BorderSizePixel = 0,
-            Text = text,
-            TextEditable = false,
-            ClearTextOnFocus = false,
-            MultiLine = true,
-            TextWrapped = true,
-            TextColor3 = Color3.fromRGB(190, 220, 255),
-            Font = Theme.Fonts.Code,
-            TextSize = Framework.IS_MOBILE and 13 or Theme.TextSizes.Code,
-            TextXAlignment = Enum.TextXAlignment.Left,
-            TextYAlignment = Enum.TextYAlignment.Top,
             LayoutOrder = order,
             ZIndex = 22,
             Parent = parent,
         })
-        applyCorner(box, Theme.CornerRadius.SM)
-        applyPadding(box, 6, 8, 6, 8)
-        return box
+        applyCorner(holder, Theme.CornerRadius.SM)
+        local sc = create("ScrollingFrame", {
+            Size = UDim2.new(1, 0, 1, 0),
+            BackgroundTransparency = 1,
+            BorderSizePixel = 0,
+            ScrollingDirection = Enum.ScrollingDirection.X,
+            ScrollBarThickness = barH,
+            ScrollBarImageColor3 = Color3.fromRGB(90, 90, 110),
+            CanvasSize = UDim2.new(0, textW + 20, 0, 0),
+            ElasticBehavior = Enum.ElasticBehavior.Never,
+            ZIndex = 22,
+            Parent = holder,
+        })
+        create("TextBox", {
+            Size = UDim2.new(0, textW + 4, 0, textH),
+            Position = UDim2.new(0, 8, 0, 6),
+            BackgroundTransparency = 1,
+            Text = numbered,
+            TextEditable = false,
+            ClearTextOnFocus = false,
+            MultiLine = true,
+            TextWrapped = false,
+            TextColor3 = Color3.fromRGB(190, 220, 255),
+            Font = Theme.Fonts.Code,
+            TextSize = size,
+            TextXAlignment = Enum.TextXAlignment.Left,
+            TextYAlignment = Enum.TextYAlignment.Top,
+            ZIndex = 23,
+            Parent = sc,
+        })
+        return holder
+    end
+
+    -- Previous call of the same remote (for the argument diff)
+    local function findPrevious(data)
+        local remote = data._event and data._event.remote
+        if not remote then return nil end
+        local found = false
+        for i = #_entries, 1, -1 do
+            local d = _entries[i].data
+            if found and d._event and d._event.remote == remote and d.type == data.type then
+                return d
+            end
+            if d == data then found = true end
+        end
+        return nil
+    end
+
+    local function fmtClock(c)
+        return string.format("+%.1fs", (tonumber(c) or _startClock) - _startClock)
     end
 
     function RemoteSpy.openDetail(data)
@@ -7982,35 +11576,87 @@ do
         local status = T("st_logged")
         if ev.remote and Hooks.isDropped(ev.remote) then status = T("st_dropped")
         elseif ev.remote and Hooks.isBlocked(ev.remote) then status = T("st_ignored") end
+        if data.watched then status = status .. "  ·  " .. T("st_watched") end
+
+        local direction = T("dir_out")
+        if ev.method == "OnClientEvent" or ev.type == "clientinvoke" then direction = T("dir_in")
+        elseif ev.type == "bindable" then direction = T("dir_local") end
 
         local rows = {
             { T("k_remote"),   data.remote or "?" },
             { T("k_class"),    data.class ~= "" and data.class or (ev.remoteType or "?") },
             { T("k_method"),   ev.method or "?" },
-            { T("k_direction"), ev.method == "OnClientEvent" and T("dir_in") or T("dir_out") },
+            { T("k_direction"), direction },
             { T("k_path"),     data.path ~= "" and data.path or "?" },
             { T("k_caller"),   caller or T("caller_unknown") },
-            { T("k_call"),   tostring(ev.id or data.index or "?") },
+            { T("k_call"),     tostring(ev.id or data.index or "?") },
             { T("k_time"),     T("time_fmt", (tonumber(ev.timestamp) or _startClock) - _startClock) },
             { T("k_status"),   status },
         }
+        if (data.count or 1) > 1 then
+            table.insert(rows, { T("k_grouped"), T("grouped_fmt", data.count) })
+        end
+        if (data.skipped or 0) > 0 then
+            table.insert(rows, { T("k_flood"), T("flood_fmt", data.skipped) })
+        end
         for i, r in ipairs(rows) do
             infoRow(scroll, 1 + i, r[1], r[2])
         end
 
-        -- Arguments
+        -- Stats for this remote
+        local st = ev.remote and _stats[ev.remote]
+        if st then
+            section(scroll, 30, T("sec_stats"))
+            local elapsed = math.max(1, os.clock() - st.first)
+            local callers = {}
+            for name in pairs(st.callers) do table.insert(callers, name) end
+            table.sort(callers)
+            infoRow(scroll, 31, T("k_total"), tostring(st.count))
+            infoRow(scroll, 32, T("k_rate"), T("rate_fmt", st.count / elapsed * 60))
+            infoRow(scroll, 33, T("k_first_last"), fmtClock(st.first) .. "  →  " .. fmtClock(st.last))
+            infoRow(scroll, 34, T("k_callers"), #callers > 0 and table.concat(callers, "\n") or T("caller_unknown"))
+        end
+
+        -- Arguments (+ diff with the previous call of the same remote)
         local args = serializeArgs(ev.args)
-        section(scroll, 20, T("sec_args", #args))
+        local prev = findPrevious(data)
+        local prevArgs = prev and serializeArgs(prev._event and prev._event.args) or nil
+        section(scroll, 40, T("sec_args", #args) .. (prevArgs and ("  ·  " .. T("diff_hint")) or ""))
         if #args == 0 then
-            infoRow(scroll, 21, "—", T("no_args"))
+            infoRow(scroll, 41, "—", T("no_args"))
         else
             for i, a in ipairs(args) do
-                infoRow(scroll, 20 + i, string.format("[%d] %s", a.index, a.type), a.value)
+                local color, note = nil, nil
+                if prevArgs then
+                    local p = prevArgs[i]
+                    if not p or p.value ~= a.value then
+                        color = Theme.Colors.Warning
+                        note = T("diff_was", p and p.value or "—")
+                    end
+                end
+                infoRow(scroll, 40 + i, string.format("[%d] %s", a.index, a.type), a.value, color, note)
+            end
+        end
+
+        -- InvokeServer return value
+        if ev.method == "InvokeServer" then
+            section(scroll, 300, T("sec_return"))
+            if data.result then
+                if #data.result == 0 then
+                    infoRow(scroll, 301, "—", T("ret_nothing"))
+                else
+                    for i, r in ipairs(data.result) do
+                        infoRow(scroll, 300 + i, string.format("[%d] %s", r.index, r.type), r.value, Theme.Colors.InvokeServer)
+                    end
+                end
+            else
+                infoRow(scroll, 301, "—", Hooks.getCaptureReturns() and T("ret_waiting") or T("ret_disabled"))
             end
         end
 
         -- Code
-        section(scroll, 500, ev.method == "OnClientEvent" and T("sec_replay") or T("sec_r2s"))
+        local isIn = ev.method == "OnClientEvent" or ev.type == "clientinvoke"
+        section(scroll, 500, isIn and T("sec_replay") or T("sec_r2s"))
         codeBlock(scroll, 501, buildCode(ev))
 
         RemoteSpy._refreshDetailButtons()
@@ -8022,7 +11668,6 @@ do
     function RemoteSpy.closeDetail()
         if _detail then
             _detail.frame.Visible = false
-            -- Window was enlarged from the detail panel → give the old size back
             if _detail.expandedByDetail then
                 _detail.expandedByDetail = false
                 local w = Framework.getMainWindow and Framework.getMainWindow()
@@ -8034,31 +11679,41 @@ do
 
     -- ── FEED MANAGEMENT ─────────────────────────────────────────────
 
+    local function recordStats(event, data)
+        local remote = event.remote
+        if not remote then return end
+        local st = _stats[remote]
+        if not st then
+            st = { count = 0, first = event.timestamp or os.clock(), last = 0, callers = {}, nCallers = 0 }
+            _stats[remote] = st
+        end
+        st.count = st.count + 1
+        st.last = event.timestamp or os.clock()
+        if data.caller and not st.callers[data.caller] and st.nCallers < 20 then
+            st.callers[data.caller] = true
+            st.nCallers = st.nCallers + 1
+        end
+    end
+
+    function RemoteSpy.getStats()
+        return _stats
+    end
+
     function RemoteSpy.addEntry(event)
         if not _feedScroll then return end
 
-        _entryCount = _entryCount + 1
-
         local entryData = {
             t      = event.timestamp and math.floor((event.timestamp - _startClock) * 1000) or 0,
-            type   = "fire",
+            type   = entryTypeOf(event),
             remote = "",
             class  = "",
             args   = "",
             path   = "",
             caller = nil,
-            index  = _entryCount,
-            _event = event, -- keep ref for R2S
+            count  = 1,
+            skipped = event.floodSkipped or 0,
+            _event = event,
         }
-
-        -- Determine type
-        if event.blocked then
-            entryData.type = "block"
-        elseif event.method == "InvokeServer" then
-            entryData.type = "invoke"
-        elseif event.method == "OnClientEvent" then
-            entryData.type = "incoming"
-        end
 
         pcall(function() entryData.remote = event.remote.Name end)
         pcall(function() entryData.class = event.remote.ClassName end)
@@ -8066,59 +11721,105 @@ do
         if entryData.path == "" and event.remotePath then entryData.path = event.remotePath end
         pcall(function() entryData.args = Serializer.summarize(event.args, 120) end)
         pcall(function()
-            local c = event.caller or event.callingScript
+            local c = event.callingScript or event.caller
             if c then entryData.caller = c:GetFullName() end
         end)
+        entryData.watched = event.remoteFullName and _watched[event.remoteFullName] or false
+        if entryData.skipped > 0 then
+            entryData.args = T("skipped_prefix", entryData.skipped) .. " " .. entryData.args
+        end
 
-        -- Check filter before creating GUI element
-        if not RemoteSpy._matchesFilter(entryData) then
-            -- Store data but don't create visible row
-            table.insert(_entries, { data = entryData, frame = nil, hidden = true })
+        recordStats(event, entryData)
+        Framework.bumpUnread()
+
+        -- Grouping: identical consecutive call within 3 s → "×N" on the same row
+        local last = _lastData
+        if Config.get("groupDuplicates") ~= false and last and last._event
+            and last._event.remote == event.remote and last.type == entryData.type
+            and last.args == entryData.args and (entryData.t - (last.lastT or last.t)) < 3000 then
+            last.count = last.count + 1
+            last.lastT = entryData.t
+            last._event = event -- newest call wins (code, return value)
+            if event.captureId then _byCapture[event.captureId] = last end
+            for i = #_entries, math.max(1, #_entries - 3), -1 do
+                if _entries[i].data == last then
+                    if _entries[i].frame then LogEntry.setCount(_entries[i].frame, last.count) end
+                    break
+                end
+            end
+            if _detailData == last then RemoteSpy.openDetail(last) end
             return
         end
 
-        local row = RemoteSpy._createRow(entryData)
-        table.insert(_entries, { data = entryData, frame = row, hidden = false })
+        _entryCount = _entryCount + 1
+        _serial = _serial + 1
+        entryData.index = _entryCount
+        entryData.serial = _serial
+        if event.captureId then _byCapture[event.captureId] = entryData end
+        _lastData = entryData
 
-        -- Trim old visible entries
-        while #_entries > _maxVisible do
-            local oldest = table.remove(_entries, 1)
-            if oldest.frame then
-                oldest.frame:Destroy()
+        -- Keyword alert (throttled per remote)
+        local kw = matchesKeyword(entryData.remote)
+        if kw and Config.get("alertsEnabled") ~= false then
+            entryData.alert = kw
+            local key = event.remote
+            if not _alertCooldown[key] or os.clock() - _alertCooldown[key] > 5 then
+                _alertCooldown[key] = os.clock()
+                Framework.notify(T("n_alert", entryData.remote, kw), "warning", 3)
             end
         end
 
-        -- Auto-scroll to bottom
-        if _autoScroll and _feedScroll then
+        local entry = { data = entryData, frame = nil, hidden = true }
+        table.insert(_entries, entry)
+        if RemoteSpy._matchesFilter(entryData) then
+            entry.frame = RemoteSpy._createRow(entryData)
+            entry.hidden = false
+        end
+
+        -- Trim old entries
+        while #_entries > _maxVisible do
+            local oldest = table.remove(_entries, 1)
+            if oldest.frame then oldest.frame:Destroy() end
+            if oldest.data._event and oldest.data._event.captureId then
+                _byCapture[oldest.data._event.captureId] = nil
+            end
+        end
+
+        updateEmptyState()
+
+        if _autoScroll and _feedScroll and entry.frame then
             task.defer(function()
                 _feedScroll.CanvasPosition = Vector2.new(0, _feedScroll.AbsoluteCanvasSize.Y)
             end)
         end
     end
 
+    -- InvokeServer returned: attach the values to the matching row
+    function RemoteSpy.attachResult(resultEvent)
+        local data = resultEvent.captureId and _byCapture[resultEvent.captureId]
+        if not data then return end
+        data.result = serializeArgs(resultEvent.args)
+        for i = #_entries, 1, -1 do
+            if _entries[i].data == data then
+                if _entries[i].frame then LogEntry.setReturned(_entries[i].frame, true) end
+                break
+            end
+        end
+        if _detailData == data then RemoteSpy.openDetail(data) end
+    end
+
     function RemoteSpy._createRow(entryData)
-        return LogEntry.new(_feedScroll, entryData, {
-            onSelect = function(d)
-                RemoteSpy.openDetail(d)
-            end,
-            onCopy = function(d)
-                RemoteSpy._copyR2S(d)
-            end,
-            onBlock = function(d)
-                if d._event and d._event.remote then
-                    if Hooks.isBlocked(d._event.remote) then
-                        Hooks.unblockRemote(d._event.remote)
-                        Framework.notify(T("n_log_resumed", d.remote), "info")
-                    else
-                        Hooks.blockRemote(d._event.remote)
-                        Framework.notify(T("n_ignored", d.remote), "warning")
-                    end
-                end
-            end,
-            onDelete = function(d)
-                RemoteSpy.deleteEntry(d)
-            end,
+        local row = LogEntry.new(_feedScroll, entryData, {
+            onSelect = function(d) RemoteSpy.openDetail(d) end,
+            onCopy = function(d) RemoteSpy._copyR2S(d) end,
+            onBlock = function(d) RemoteSpy.toggleIgnore(d) end,
+            onDelete = function(d) RemoteSpy.deleteEntry(d) end,
         })
+        if (entryData.count or 1) > 1 then LogEntry.setCount(row, entryData.count) end
+        if entryData.result then LogEntry.setReturned(row, true) end
+        if entryData.watched then LogEntry.setWatched(row, true) end
+        if entryData.alert then LogEntry.setAlert(row, true) end
+        return row
     end
 
     function RemoteSpy.deleteEntry(data)
@@ -8126,6 +11827,8 @@ do
             if entry.data == data then
                 if entry.frame then entry.frame:Destroy() end
                 table.remove(_entries, i)
+                if _lastData == data then _lastData = nil end
+                updateEmptyState()
                 return true
             end
         end
@@ -8134,13 +11837,14 @@ do
 
     function RemoteSpy.clearFeed()
         for _, entry in ipairs(_entries) do
-            if entry.frame then
-                entry.frame:Destroy()
-            end
+            if entry.frame then entry.frame:Destroy() end
         end
         _entries = {}
         _entryCount = 0
+        _lastData = nil
+        _byCapture = {}
         RemoteSpy.closeDetail()
+        updateEmptyState()
     end
 
     function RemoteSpy.getEntries()
@@ -8160,7 +11864,30 @@ do
         _maxVisible = math.max(50, tonumber(n) or 500)
     end
 
-    -- Plain-text dump of the current feed (for export / clipboard)
+    function RemoteSpy.reloadKeywords()
+        loadKeywords()
+    end
+
+    local function entryText(d, lines)
+        local countStr = (d.count or 1) > 1 and ("  ×" .. d.count) or ""
+        table.insert(lines, string.format("[%s] %s%s  %s", Theme.getRemoteLabel(d.type), d.remote or "?", countStr, d.path or ""))
+        table.insert(lines, "    args: " .. (d.args or ""))
+        if d.caller then table.insert(lines, "    caller: " .. d.caller) end
+        if d.result then
+            local parts = {}
+            for _, r in ipairs(d.result) do table.insert(parts, r.value) end
+            table.insert(lines, "    returned: " .. (#parts > 0 and table.concat(parts, ", ") or "nothing"))
+        end
+        local okC, code = pcall(buildCode, d._event)
+        if okC then
+            for l in tostring(code):gmatch("[^\n]+") do
+                table.insert(lines, "    | " .. l)
+            end
+        end
+        table.insert(lines, "")
+    end
+
+    -- Plain-text dump of the current feed (export / clipboard)
     function RemoteSpy.exportText()
         local lines = {
             T("log_export_title"),
@@ -8169,29 +11896,37 @@ do
             string.rep("=", 60),
         }
         for _, entry in ipairs(_entries) do
-            local d = entry.data
-            table.insert(lines, string.format("[%s] %s  %s", Theme.getRemoteLabel(d.type), d.remote or "?", d.path or ""))
-            table.insert(lines, "    args: " .. (d.args or ""))
-            if d.caller then table.insert(lines, "    caller: " .. d.caller) end
-            local okC, code = pcall(buildCode, d._event)
-            if okC then
-                for l in tostring(code):gmatch("[^\n]+") do
-                    table.insert(lines, "    | " .. l)
-                end
-            end
-            table.insert(lines, "")
+            entryText(entry.data, lines)
         end
         return table.concat(lines, "\n")
+    end
+
+    -- Only the entries created after `sinceSerial` (incremental auto-save).
+    -- Returns text, newestSerial.
+    function RemoteSpy.exportTextSince(sinceSerial)
+        sinceSerial = sinceSerial or 0
+        local lines = {}
+        local newest = sinceSerial
+        for _, entry in ipairs(_entries) do
+            local d = entry.data
+            if (d.serial or 0) > sinceSerial then
+                entryText(d, lines)
+                newest = math.max(newest, d.serial or 0)
+            end
+        end
+        return table.concat(lines, "\n"), newest
     end
 
     -- ── FILTERING ───────────────────────────────────────────────────
 
     function RemoteSpy._matchesFilter(data)
-        -- Type filter
         if _filterType then
-            if data.type ~= _filterType then return false end
+            if _filterType == "watched" then
+                if not data.watched then return false end
+            elseif data.type ~= _filterType then
+                return false
+            end
         end
-        -- Text filter
         if _filterText ~= "" then
             local haystack = (data.remote or ""):lower()
                 .. " " .. (data.args or ""):lower()
@@ -8211,11 +11946,11 @@ do
             if entry.frame then
                 entry.frame.Visible = show
             elseif show then
-                -- Row was filtered out at creation time: create it now
                 entry.frame = RemoteSpy._createRow(entry.data)
                 entry.hidden = false
             end
         end
+        updateEmptyState()
     end
 
     -- ── R2S (REMOTE TO SCRIPT) ─────────────────────────────────────
@@ -8228,20 +11963,28 @@ do
 
     -- ── LIFECYCLE ───────────────────────────────────────────────────
 
+    local _subscribed = false
+
     function RemoteSpy.start()
-        -- Start session first so the very first events are recorded
         pcall(Session.start)
 
-        -- Subscribe to hooks
-        Hooks.subscribe(function(event)
-            -- Add to GUI feed (isolated: a session error must not hide the row)
-            local okGui, errGui = pcall(RemoteSpy.addEntry, event)
-            if not okGui then warn("[RobloxSpy] addEntry error: " .. tostring(errGui)) end
-            -- Record in session
-            pcall(Session.record, event)
-        end)
+        -- Saved per-game ignore / block rules
+        Hooks.setPathRules(Config.getGameList("ignore"), Config.getGameList("drop"))
 
-        -- Start hooking
+        if not _subscribed then
+            _subscribed = true
+            Hooks.subscribe(function(event)
+                local okGui, errGui = pcall(RemoteSpy.addEntry, event)
+                if not okGui then Errors.add("RemoteSpy.addEntry", errGui) end
+                local okS, errS = pcall(Session.record, event)
+                if not okS then Errors.add("Session.record", errS) end
+            end)
+            Hooks.onResult(function(ev)
+                local ok, err = pcall(RemoteSpy.attachResult, ev)
+                if not ok then Errors.add("RemoteSpy.attachResult", err) end
+            end)
+        end
+
         Hooks.start()
     end
 
@@ -8288,7 +12031,10 @@ do
     local _propsHeader = nil
     local _selectedInstance = nil
     local _expandedNodes = {}  -- [Instance] = true
-    local _treeRows = {}
+    local _rowCache = {}     -- [key] = { frame, arrow, label, inst } (v1.1.0 row cache)
+    local _seen = {}         -- keys used during the current pass
+    local _extraRows = {}    -- info / warning labels (recreated each pass)
+    local _selectedKey = nil
     local _searchText = ""
     local _searchResults = nil -- flat list when a deep search is active
     local _rebuildQueued = false
@@ -8417,7 +12163,10 @@ do
     end
 
     function Explorer.buildUI(tabContent)
-        _treeRows = {}
+        -- New tab content (UI rebuild): previous rows died with the old window
+        _rowCache = {}
+        _extraRows = {}
+        _selectedKey = nil
 
         -- Split: left = tree, right = properties
         local leftPanel = create("Frame", {
@@ -8569,17 +12318,43 @@ do
 
     -- ── TREE RENDERING ──────────────────────────────────────────────
 
+    -- v1.1.0: rows are CACHED and reused. A rebuild only updates order /
+    -- indent / text of existing rows instead of destroying and recreating up
+    -- to 1,500 frames on every click (much faster on big games / mobile).
+
+
+    local function rowKey(inst, showPath)
+        return showPath and ("s:" .. tostring(inst)) or inst
+    end
+
+    local function paintSelection(cached, selected)
+        if not cached then return end
+        cached.frame.BackgroundColor3 = selected and Theme.Colors.BgSelected or Theme.Colors.BgDark
+        cached.frame.BackgroundTransparency = selected and 0 or 1
+        cached.label.TextColor3 = selected and Theme.Colors.TextAccent or Theme.Colors.TextPrimary
+    end
+
+    -- Selecting only repaints two rows (no rebuild)
+    local function selectInstance(inst, key)
+        if _selectedKey and _rowCache[_selectedKey] then
+            paintSelection(_rowCache[_selectedKey], false)
+        end
+        _selectedInstance = inst
+        _selectedKey = key
+        paintSelection(_rowCache[key], true)
+    end
+
     function Explorer._rebuildTree()
         if not _treeScroll then return end
 
-        for _, row in ipairs(_treeRows) do
-            if row and row.Parent then row:Destroy() end
+        _seen = {}
+        for _, lbl in ipairs(_extraRows) do
+            if lbl and lbl.Parent then lbl:Destroy() end
         end
-        _treeRows = {}
+        _extraRows = {}
 
         local order = 0
 
-        -- Search mode: flat result list with full paths
         if _searchResults then
             local info = create("TextLabel", {
                 Name = "SearchInfo",
@@ -8592,77 +12367,131 @@ do
                 LayoutOrder = 0,
                 Parent = _treeScroll,
             })
-            table.insert(_treeRows, info)
+            table.insert(_extraRows, info)
             for _, inst in ipairs(_searchResults) do
                 order = order + 1
                 Explorer._renderRow(inst, 0, order, true)
             end
-            return
+        else
+            local roots = {}
+            local serviceNames = {
+                "Workspace", "Players", "Lighting", "MaterialService", "ReplicatedFirst",
+                "ReplicatedStorage", "ServerScriptService", "ServerStorage",
+                "StarterGui", "StarterPack", "StarterPlayer", "Teams",
+                "SoundService", "Chat", "TextChatService", "LocalizationService", "TestService",
+            }
+            for _, name in ipairs(serviceNames) do
+                local ok, svc = pcall(function() return game:GetService(name) end)
+                if ok and svc then table.insert(roots, svc) end
+            end
+            if Compat.has("getnilinstances") then
+                table.insert(roots, NIL_ROOT)
+            end
+
+            for _, root in ipairs(roots) do
+                order = Explorer._renderNode(root, 0, order)
+                if order >= MAX_ROWS then
+                    local warnLbl = create("TextLabel", {
+                        Size = UDim2.new(1, 0, 0, 18),
+                        BackgroundTransparency = 1,
+                        Text = T("ex_too_many", MAX_ROWS),
+                        TextColor3 = Theme.Colors.Warning,
+                        Font = Theme.Fonts.Body,
+                        TextSize = Theme.TextSizes.Tiny,
+                        LayoutOrder = order + 1,
+                        Parent = _treeScroll,
+                    })
+                    table.insert(_extraRows, warnLbl)
+                    break
+                end
+            end
         end
 
-        local roots = {}
-        local serviceNames = {
-            "Workspace", "Players", "Lighting", "MaterialService", "ReplicatedFirst",
-            "ReplicatedStorage", "ServerScriptService", "ServerStorage",
-            "StarterGui", "StarterPack", "StarterPlayer", "Teams",
-            "SoundService", "Chat", "TextChatService", "LocalizationService", "TestService",
-        }
-        for _, name in ipairs(serviceNames) do
-            local ok, svc = pcall(function() return game:GetService(name) end)
-            if ok and svc then table.insert(roots, svc) end
-        end
-        if Compat.has("getnilinstances") then
-            table.insert(roots, NIL_ROOT)
-        end
-
-        for _, root in ipairs(roots) do
-            order = Explorer._renderNode(root, 0, order)
-            if order >= MAX_ROWS then
-                local warnLbl = create("TextLabel", {
-                    Size = UDim2.new(1, 0, 0, 18),
-                    BackgroundTransparency = 1,
-                    Text = T("ex_too_many", MAX_ROWS),
-                    TextColor3 = Theme.Colors.Warning,
-                    Font = Theme.Fonts.Body,
-                    TextSize = Theme.TextSizes.Tiny,
-                    LayoutOrder = order + 1,
-                    Parent = _treeScroll,
-                })
-                table.insert(_treeRows, warnLbl)
-                break
+        -- Drop rows that are no longer displayed (collapsed / destroyed instances)
+        for key, cached in pairs(_rowCache) do
+            if not _seen[key] then
+                pcall(function() cached.frame:Destroy() end)
+                _rowCache[key] = nil
             end
         end
     end
 
     function Explorer._renderRow(inst, depth, order, showPath)
         local isNil = (inst == NIL_ROOT)
-        local children = isNil and {1} or getChildrenOf(inst)
+        local children = isNil and { 1 } or getChildrenOf(inst)
         local hasChildren = #children > 0
         local isExpanded = _expandedNodes[inst] == true
-        local isSelected = (_selectedInstance == inst)
+        local key = rowKey(inst, showPath)
+        _seen[key] = true
 
-        local row = create("Frame", {
-            Name = "Node_" .. order,
-            Size = UDim2.new(1, 0, 0, Framework.IS_MOBILE and 24 or 20),
-            BackgroundColor3 = isSelected and Theme.Colors.BgSelected or Theme.Colors.BgDark,
-            BackgroundTransparency = isSelected and 0 or 1,
-            BorderSizePixel = 0,
-            LayoutOrder = order,
-            Parent = _treeScroll,
-        })
+        local cached = _rowCache[key]
+        if not cached then
+            local row = create("Frame", {
+                Name = "Node",
+                Size = UDim2.new(1, 0, 0, Framework.IS_MOBILE and 26 or 20),
+                BackgroundColor3 = Theme.Colors.BgDark,
+                BackgroundTransparency = 1,
+                BorderSizePixel = 0,
+                Parent = _treeScroll,
+            })
+            local arrow = create("TextButton", {
+                Size = UDim2.new(0, Framework.IS_MOBILE and 22 or 16, 1, 0),
+                BackgroundTransparency = 1,
+                Text = " ",
+                TextColor3 = Theme.Colors.TextMuted,
+                Font = Theme.Fonts.Code,
+                TextSize = 10,
+                Parent = row,
+            })
+            local label = create("TextButton", {
+                BackgroundTransparency = 1,
+                Text = "",
+                TextColor3 = Theme.Colors.TextPrimary,
+                Font = Theme.Fonts.Body,
+                TextSize = Theme.TextSizes.Small,
+                TextXAlignment = Enum.TextXAlignment.Left,
+                TextTruncate = Enum.TextTruncate.AtEnd,
+                Parent = row,
+            })
+            cached = { frame = row, arrow = arrow, label = label, inst = inst }
+            _rowCache[key] = cached
 
+            row.MouseEnter:Connect(function()
+                if _selectedKey ~= key then
+                    row.BackgroundTransparency = 0
+                    row.BackgroundColor3 = Theme.Colors.BgHover
+                end
+            end)
+            row.MouseLeave:Connect(function()
+                if _selectedKey ~= key then
+                    row.BackgroundTransparency = 1
+                end
+            end)
+
+            local function toggleExpand()
+                _expandedNodes[inst] = not _expandedNodes[inst]
+                Explorer._rebuildTree()
+            end
+
+            label.Activated:Connect(function()
+                if inst == NIL_ROOT then toggleExpand() return end
+                selectInstance(inst, key)
+                Explorer._showProperties(inst)
+            end)
+            arrow.Activated:Connect(function()
+                if showPath then return end
+                if inst == NIL_ROOT or #getChildrenOf(inst) > 0 then toggleExpand() end
+            end)
+        end
+
+        -- Refresh what may have changed since last pass
         local indent = depth * 12
-
-        local arrow = create("TextButton", {
-            Size = UDim2.new(0, 16, 1, 0),
-            Position = UDim2.new(0, indent, 0, 0),
-            BackgroundTransparency = 1,
-            Text = (hasChildren and not showPath) and (isExpanded and "▼" or "▶") or " ",
-            TextColor3 = Theme.Colors.TextMuted,
-            Font = Theme.Fonts.Code,
-            TextSize = 10,
-            Parent = row,
-        })
+        local arrowW = Framework.IS_MOBILE and 22 or 16
+        cached.frame.LayoutOrder = order
+        cached.arrow.Position = UDim2.new(0, indent, 0, 0)
+        cached.arrow.Text = (hasChildren and not showPath) and (isExpanded and "▼" or "▶") or " "
+        cached.label.Size = UDim2.new(1, -(indent + arrowW + 4), 1, 0)
+        cached.label.Position = UDim2.new(0, indent + arrowW + 2, 0, 0)
 
         local text
         if isNil then
@@ -8674,51 +12503,12 @@ do
                 if okP then text = text .. "   ·  " .. full end
             end
         end
+        cached.label.Text = text
 
-        local label = create("TextButton", {
-            Size = UDim2.new(1, -(indent + 20), 1, 0),
-            Position = UDim2.new(0, indent + 18, 0, 0),
-            BackgroundTransparency = 1,
-            Text = text,
-            TextColor3 = isSelected and Theme.Colors.TextAccent or Theme.Colors.TextPrimary,
-            Font = Theme.Fonts.Body,
-            TextSize = Theme.TextSizes.Small,
-            TextXAlignment = Enum.TextXAlignment.Left,
-            TextTruncate = Enum.TextTruncate.AtEnd,
-            Parent = row,
-        })
+        local isSelected = (_selectedInstance == inst)
+        if isSelected then _selectedKey = key end
+        paintSelection(cached, isSelected)
 
-        row.MouseEnter:Connect(function()
-            if _selectedInstance ~= inst then
-                row.BackgroundTransparency = 0
-                row.BackgroundColor3 = Theme.Colors.BgHover
-            end
-        end)
-        row.MouseLeave:Connect(function()
-            if _selectedInstance ~= inst then
-                row.BackgroundTransparency = 1
-            end
-        end)
-
-        label.Activated:Connect(function()
-            if isNil then
-                _expandedNodes[inst] = not _expandedNodes[inst]
-                Explorer._rebuildTree()
-                return
-            end
-            _selectedInstance = inst
-            Explorer._rebuildTree()
-            Explorer._showProperties(inst)
-        end)
-
-        arrow.Activated:Connect(function()
-            if hasChildren and not showPath then
-                _expandedNodes[inst] = not _expandedNodes[inst]
-                Explorer._rebuildTree()
-            end
-        end)
-
-        table.insert(_treeRows, row)
         return children, hasChildren, isExpanded
     end
 
@@ -9239,7 +13029,7 @@ do
         create("TextLabel", {
             Size = UDim2.new(1, 0, 0, 20),
             BackgroundTransparency = 1,
-            Text = T("net_top"),
+            Text = T("net_top") .. "  ·  " .. T("net_click_hint"),
             TextColor3 = Theme.Colors.TextPrimary,
             Font = Theme.Fonts.Heading,
             TextSize = Theme.TextSizes.Body,
@@ -9385,7 +13175,7 @@ do
 
         -- Clear old rows
         for _, c in ipairs(topList:GetChildren()) do
-            if c:IsA("Frame") then c:Destroy() end
+            if c:IsA("GuiObject") then c:Destroy() end
         end
 
         -- Sort remotes by count
@@ -9395,17 +13185,38 @@ do
         end
         table.sort(sorted, function(a, b) return a.count > b.count end)
 
-        -- Show top 10
+        if #sorted == 0 then
+            create("TextLabel", {
+                Size = UDim2.new(1, 0, 0, 40),
+                BackgroundTransparency = 1,
+                Text = T("empty_network"),
+                TextWrapped = true,
+                TextColor3 = Theme.Colors.TextMuted,
+                Font = Theme.Fonts.Body,
+                TextSize = Theme.TextSizes.Small,
+                Parent = topList,
+            })
+            return
+        end
+
+        -- Show top 10 — click a row to filter the Remote Spy feed on it
         for i = 1, math.min(10, #sorted) do
             local item = sorted[i]
-            local row = create("Frame", {
-                Size = UDim2.new(1, 0, 0, 20),
+            local row = create("TextButton", {
+                Size = UDim2.new(1, 0, 0, Framework.IS_MOBILE and 26 or 20),
                 BackgroundColor3 = (i % 2 == 0) and Theme.Colors.BgTertiary or Theme.Colors.BgSecondary,
                 BackgroundTransparency = 0.3,
                 BorderSizePixel = 0,
+                AutoButtonColor = true,
+                Text = "",
                 LayoutOrder = i,
                 Parent = topList,
             })
+            row.Activated:Connect(function()
+                if NetworkMonitor.onRemoteClick then
+                    pcall(NetworkMonitor.onRemoteClick, item.name)
+                end
+            end)
 
             create("TextLabel", {
                 Size = UDim2.new(0, 24, 1, 0),
@@ -9476,6 +13287,7 @@ do
     local Compat = _G._RSPY.Compat
     local Config = _G._RSPY.Config
     local I18n = _G._RSPY.I18n
+    local Errors = _G._RSPY.Errors
 
     local T = I18n.T
     local create = Framework.create
@@ -9490,10 +13302,14 @@ do
     local _countLabel = nil
     local _scripts = {}          -- { inst, name, path, kind, running }
     local _cache = {}            -- [inst] = source
+    local _failReason = setmetatable({}, { __mode = "k" })
     local _current = nil         -- { inst, path, source }
     local _filterText = ""
     local _filterKind = "all"    -- all | local | module | running
     local _scanning = false
+    local _view = {}             -- filtered scripts shown in the list
+    local _rowPool = {}          -- reusable row buttons (virtualized list)
+    local ROW_H = Framework.IS_MOBILE and 42 or 34
 
     local LINES_PER_CHUNK = 150
 
@@ -9524,7 +13340,14 @@ do
         -- Method 1: decompile
         if Compat.has("decompile") then
             pcall(function() source = Compat.decompile(scr) end)
-            if source and source:match("^%-%- Decompil") and #source < 80 then source = nil end
+            if source and #source < 200 then
+                local low = source:lower()
+                if source:match("^%-%- Decompil") or low:find("failed to", 1, true)
+                    or low:find("bytecode", 1, true) or low:find("unable to", 1, true) then
+                    _failReason[scr] = source
+                    source = nil
+                end
+            end
         end
         -- Method 2: getsourcecode (some executors)
         if not source then
@@ -9554,7 +13377,7 @@ do
         -- Left: script list
         local leftPanel = create("Frame", {
             Name = "ScriptList",
-            Size = Framework.IS_MOBILE and UDim2.new(1, 0, 0.42, 0) or UDim2.new(0.38, -2, 1, 0),
+            Size = UDim2.new(0.38, -2, 1, 0),
             BackgroundColor3 = Theme.Colors.BgDark,
             BorderSizePixel = 0,
             Parent = tabContent,
@@ -9635,23 +13458,58 @@ do
             Parent = leftPanel,
         })
 
-        _listScroll = Framework.createScrollFrame(leftPanel, {
+        _listScroll = create("ScrollingFrame", {
             Name = "ScriptListScroll",
             Size = UDim2.new(1, 0, 1, -98),
             Position = UDim2.new(0, 0, 0, 98),
-            Padding = 1,
-            InnerPadding = 2,
+            BackgroundTransparency = 1,
+            BorderSizePixel = 0,
+            ScrollBarThickness = Framework.IS_MOBILE and 10 or 6,
+            ScrollBarImageColor3 = Color3.fromRGB(80, 80, 95),
+            ScrollingDirection = Enum.ScrollingDirection.Y,
+            CanvasSize = UDim2.new(0, 0, 0, 0),
+            AutomaticCanvasSize = Enum.AutomaticSize.None,
+            ClipsDescendants = true,
+            Parent = leftPanel,
         })
+        _rowPool = {}
+        _listScroll:GetPropertyChangedSignal("CanvasPosition"):Connect(function()
+            ScriptViewer._paintRows()
+        end)
+        _listScroll:GetPropertyChangedSignal("AbsoluteSize"):Connect(function()
+            ScriptViewer._paintRows()
+        end)
 
         -- Right: code viewer
         local rightPanel = create("Frame", {
             Name = "CodePanel",
-            Size = Framework.IS_MOBILE and UDim2.new(1, 0, 0.58, -2) or UDim2.new(0.62, -2, 1, 0),
-            Position = Framework.IS_MOBILE and UDim2.new(0, 0, 0.42, 2) or UDim2.new(0.38, 2, 0, 0),
+            Size = UDim2.new(0.62, -2, 1, 0),
+            Position = UDim2.new(0.38, 2, 0, 0),
             BackgroundColor3 = Theme.Colors.BgDark,
             BorderSizePixel = 0,
             Parent = tabContent,
         })
+
+        -- Adaptive layout: side by side when the area is wide (PC, phone in
+        -- landscape), stacked when it is tall (phone in portrait).
+        local function relayout()
+            local sz = tabContent.AbsoluteSize
+            if sz.X <= 0 then return end
+            if sz.X >= sz.Y * 1.15 then
+                local listW = Framework.IS_MOBILE and 0.42 or 0.38
+                leftPanel.Size = UDim2.new(listW, -2, 1, 0)
+                leftPanel.Position = UDim2.new(0, 0, 0, 0)
+                rightPanel.Size = UDim2.new(1 - listW, -2, 1, 0)
+                rightPanel.Position = UDim2.new(listW, 2, 0, 0)
+            else
+                leftPanel.Size = UDim2.new(1, 0, 0.55, 0)
+                leftPanel.Position = UDim2.new(0, 0, 0, 0)
+                rightPanel.Size = UDim2.new(1, 0, 0.45, -2)
+                rightPanel.Position = UDim2.new(0, 0, 0.55, 2)
+            end
+        end
+        relayout()
+        tabContent:GetPropertyChangedSignal("AbsoluteSize"):Connect(relayout)
 
         local codeHeader = create("Frame", {
             Name = "CodeHeader",
@@ -9671,7 +13529,7 @@ do
             Font = Theme.Fonts.Medium,
             TextSize = Theme.TextSizes.Small,
             TextXAlignment = Enum.TextXAlignment.Left,
-            TextTruncate = Enum.TextTruncate.AtStart,
+            TextTruncate = Enum.TextTruncate.AtEnd,
             Parent = codeHeader,
         })
 
@@ -9735,7 +13593,7 @@ do
         end)
 
         -- Keep the previous scan after a UI rebuild (language change)
-        if #_scripts > 0 then ScriptViewer._renderList() end
+        ScriptViewer._renderList()
     end
 
     -- ── CODE DISPLAY ────────────────────────────────────────────────
@@ -9789,138 +13647,220 @@ do
         _scanning = true
 
         task.spawn(function()
+          local okScan = Errors.guard("ScriptViewer.scan", function()
             local seen = {}
             local found = {}
+            local skipped = 0
             local running = {}
 
             local function add(inst)
-                if seen[inst] then return end
-                local okA, isScript = pcall(function()
-                    return inst:IsA("LocalScript") or inst:IsA("ModuleScript")
-                        or (inst:IsA("Script") and inst.RunContext == Enum.RunContext.Client)
-                end)
-                if not okA or not isScript then return end
+                if inst == nil or seen[inst] or typeof(inst) ~= "Instance" then return end
                 seen[inst] = true
-                local name, path, kind = "?", "?", "local"
+                local cls
+                pcall(function() cls = inst.ClassName end)
+                local kind
+                if cls == "LocalScript" then
+                    kind = "local"
+                elseif cls == "ModuleScript" then
+                    kind = "module"
+                elseif cls == "Script" then
+                    local rc
+                    pcall(function() rc = inst.RunContext end)
+                    if rc ~= Enum.RunContext.Client then return end
+                    kind = "local"
+                else
+                    return
+                end
+                local name, path = "?", "?"
                 pcall(function() name = inst.Name end)
                 pcall(function() path = inst:GetFullName() end)
-                pcall(function() if inst:IsA("ModuleScript") then kind = "module" end end)
+                -- Roblox's own CoreGui scripts can't be decompiled: skip them
+                if path:sub(1, 8) == "CoreGui." or path:sub(1, 11) == "CorePackages" then
+                    skipped = skipped + 1
+                    return
+                end
                 table.insert(found, { inst = inst, name = name, path = path, kind = kind })
-                if _countLabel and #found % 50 == 0 then
+                if _countLabel and #found % 25 == 0 then
                     _countLabel.Text = T("sc_scanning", #found)
                 end
             end
 
-            -- Running scripts (executor API)
-            pcall(function()
-                local fn = Compat.getGlobal("getrunningscripts")
-                if fn then for _, s in ipairs(fn()) do running[s] = true end end
-            end)
-
-            -- 1. Executor lists (fast, includes hidden/nil-parented scripts)
-            for _, fname in ipairs({ "getscripts", "getloadedmodules", "getrunningscripts" }) do
-                pcall(function()
-                    local fn = Compat.getGlobal(fname)
-                    if fn then
-                        for _, s in ipairs(fn()) do add(s) end
-                    end
-                end)
+            local function fromList(fname, mark)
+                local fn = Compat.getGlobal(fname)
+                if not fn then return end
+                local okL, list = pcall(fn)
+                if not okL then
+                    if Errors then pcall(Errors.add, "Scan " .. fname, list) end
+                    return
+                end
+                if type(list) ~= "table" then return end
+                local n = 0
+                for _, s in pairs(list) do
+                    if mark and typeof(s) == "Instance" then running[s] = true end
+                    local okA, errA = pcall(add, s)
+                    if not okA and Errors then pcall(Errors.add, "Scan " .. fname, errA) end
+                    n = n + 1
+                    if n % 2000 == 0 then task.wait() end
+                end
             end
 
-            -- 2. Nil instances
-            pcall(function()
-                local fn = Compat.getGlobal("getnilinstances")
-                if fn then for _, s in ipairs(fn()) do add(s) end end
-            end)
+            if _countLabel then _countLabel.Text = T("sc_scanning", 0) end
 
-            -- 3. Whole game tree (yields regularly → no freeze)
-            local okD, all = pcall(function() return game:GetDescendants() end)
-            if okD then
-                for i, inst in ipairs(all) do
-                    add(inst)
-                    if i % 3000 == 0 then task.wait() end
+            -- 1. Executor lists (fast, includes hidden/nil-parented scripts)
+            fromList("getrunningscripts", true)
+            fromList("getscripts")
+            fromList("getloadedmodules")
+            -- 2. Nil instances + every instance the executor knows about
+            fromList("getnilinstances")
+            fromList("getinstances")
+
+            -- 3. Client-visible containers, walked one by one (yields → no freeze)
+            local roots = {}
+            for _, svc in ipairs({ "Workspace", "Players", "ReplicatedStorage", "ReplicatedFirst",
+                                   "StarterGui", "StarterPack", "StarterPlayer", "Lighting", "SoundService", "Teams", "Chat" }) do
+                local okS, inst = pcall(function() return game:GetService(svc) end)
+                if okS and inst then table.insert(roots, inst) end
+            end
+            pcall(function() for _, c in ipairs(game:GetChildren()) do table.insert(roots, c) end end)
+            local n = 0
+            for _, root in ipairs(roots) do
+                local okD, all = pcall(function() return root:GetDescendants() end)
+                if okD and type(all) == "table" then
+                    for _, inst in ipairs(all) do
+                        pcall(add, inst)
+                        n = n + 1
+                        if n % 3000 == 0 then task.wait() end
+                    end
                 end
             end
 
             for _, s in ipairs(found) do
                 s.running = running[s.inst] == true
             end
-            table.sort(found, function(a, b) return a.path < b.path end)
+            pcall(table.sort, found, function(a, b) return tostring(a.path) < tostring(b.path) end)
 
             _scripts = found
+          end)
             _scanning = false
-            ScriptViewer._renderList()
+            if not okScan and _countLabel then _countLabel.Text = "⚠ " .. T("tab_errors") end
+            Errors.guard("ScriptViewer.render", ScriptViewer._renderList)
         end)
+    end
+
+    -- Virtualized list: only the rows visible on screen exist, so even
+    -- tens of thousands of scripts render instantly and never overflow.
+
+    local function makeRow()
+        local btn = create("TextButton", {
+            Size = UDim2.new(1, -8, 0, ROW_H - 2),
+            BackgroundColor3 = Theme.Colors.BgSecondary,
+            BackgroundTransparency = 0.5,
+            AutoButtonColor = false,
+            Text = "",
+            ClipsDescendants = true,
+            Visible = false,
+            Parent = _listScroll,
+        })
+        applyCorner(btn, Theme.CornerRadius.SM)
+        local title = create("TextLabel", {
+            Name = "Title",
+            Size = UDim2.new(1, -10, 0, 15),
+            Position = UDim2.new(0, 5, 0, Framework.IS_MOBILE and 4 or 1),
+            BackgroundTransparency = 1,
+            Text = "",
+            TextColor3 = Theme.Colors.TextPrimary,
+            Font = Theme.Fonts.Medium,
+            TextSize = Theme.TextSizes.Small,
+            TextXAlignment = Enum.TextXAlignment.Left,
+            TextTruncate = Enum.TextTruncate.AtEnd,
+            Parent = btn,
+        })
+        local sub = create("TextLabel", {
+            Name = "Path",
+            Size = UDim2.new(1, -10, 0, 12),
+            Position = UDim2.new(0, 5, 0, Framework.IS_MOBILE and 21 or 16),
+            BackgroundTransparency = 1,
+            Text = "",
+            TextColor3 = Theme.Colors.TextMuted,
+            Font = Theme.Fonts.Code,
+            TextSize = Theme.TextSizes.Tiny,
+            TextXAlignment = Enum.TextXAlignment.Left,
+            TextTruncate = Enum.TextTruncate.AtEnd,
+            Parent = btn,
+        })
+        local row = { btn = btn, title = title, sub = sub, item = nil }
+        btn.MouseEnter:Connect(function() btn.BackgroundTransparency = 0.1 end)
+        btn.MouseLeave:Connect(function() btn.BackgroundTransparency = 0.5 end)
+        btn.Activated:Connect(function()
+            if row.item then ScriptViewer.view(row.item.inst, row.item.path) end
+        end)
+        return row
+    end
+
+    -- Paths are long: show the end (where the script name is) by trimming the start
+    local function shortPath(path, maxLen)
+        path = tostring(path)
+        if #path <= maxLen then return path end
+        return "…" .. path:sub(#path - maxLen + 2)
+    end
+
+    function ScriptViewer._paintRows()
+        Errors.guard("ScriptViewer.paint", ScriptViewer._paintRowsImpl)
+    end
+
+    function ScriptViewer._paintRowsImpl()
+        if not _listScroll or not _listScroll.Parent then return end
+        local viewH = _listScroll.AbsoluteSize.Y
+        if viewH < 20 then viewH = 600 end
+        local width = _listScroll.AbsoluteSize.X
+        local top = _listScroll.CanvasPosition.Y
+        local first = math.max(1, math.floor(top / ROW_H) + 1)
+        local need = math.ceil(viewH / ROW_H) + 2
+        while #_rowPool < need do table.insert(_rowPool, makeRow()) end
+        local maxChars = math.max(16, math.floor((width - 14) / 5.5))
+        for i, row in ipairs(_rowPool) do
+            local idx = first + i - 1
+            local item = (i <= need) and _view[idx] or nil
+            if item then
+                row.item = item
+                row.btn.Position = UDim2.new(0, 4, 0, (idx - 1) * ROW_H + 2)
+                row.title.Text = ((item.kind == "module") and "📘 " or "📄 ") .. (item.running and "🟢 " or "") .. tostring(item.name)
+                row.sub.Text = shortPath(item.path, maxChars)
+                row.btn.Visible = true
+            else
+                row.item = nil
+                row.btn.Visible = false
+            end
+        end
     end
 
     function ScriptViewer._renderList()
         if not _listScroll then return end
-        for _, c in ipairs(_listScroll:GetChildren()) do
-            if c:IsA("GuiObject") then c:Destroy() end
-        end
-
-        local shown = 0
-        for i, s in ipairs(_scripts) do
-            local okKind = (_filterKind == "all")
-                or (_filterKind == "running" and s.running)
-                or (_filterKind == s.kind)
-            local okText = (_filterText == "")
-                or s.path:lower():find(_filterText, 1, true) ~= nil
-            if okKind and okText and shown < 800 then
-                shown = shown + 1
-                local icon = (s.kind == "module") and "📘" or "📄"
-                if s.running then icon = icon .. "🟢" end
-
-                local btn = create("TextButton", {
-                    Name = "Script_" .. i,
-                    Size = UDim2.new(1, -4, 0, 30),
-                    BackgroundColor3 = Theme.Colors.BgSecondary,
-                    BackgroundTransparency = 0.5,
-                    Text = "",
-                    LayoutOrder = i,
-                    Parent = _listScroll,
-                })
-                applyCorner(btn, Theme.CornerRadius.SM)
-                create("TextLabel", {
-                    Size = UDim2.new(1, -10, 0, 15),
-                    Position = UDim2.new(0, 5, 0, 1),
-                    BackgroundTransparency = 1,
-                    Text = icon .. " " .. s.name,
-                    TextColor3 = Theme.Colors.TextPrimary,
-                    Font = Theme.Fonts.Medium,
-                    TextSize = Theme.TextSizes.Small,
-                    TextXAlignment = Enum.TextXAlignment.Left,
-                    TextTruncate = Enum.TextTruncate.AtEnd,
-                    Parent = btn,
-                })
-                create("TextLabel", {
-                    Size = UDim2.new(1, -10, 0, 12),
-                    Position = UDim2.new(0, 5, 0, 16),
-                    BackgroundTransparency = 1,
-                    Text = s.path,
-                    TextColor3 = Theme.Colors.TextMuted,
-                    Font = Theme.Fonts.Code,
-                    TextSize = Theme.TextSizes.Tiny,
-                    TextXAlignment = Enum.TextXAlignment.Left,
-                    TextTruncate = Enum.TextTruncate.AtStart,
-                    Parent = btn,
-                })
-
-                btn.MouseEnter:Connect(function()
-                    Framework.tween(btn, { BackgroundTransparency = 0 }, 0.1):Play()
-                end)
-                btn.MouseLeave:Connect(function()
-                    Framework.tween(btn, { BackgroundTransparency = 0.5 }, 0.1):Play()
-                end)
-                btn.Activated:Connect(function()
-                    ScriptViewer.view(s.inst, s.path)
-                end)
+        Errors.guard("ScriptViewer.render", function()
+            _view = {}
+            for _, s in ipairs(_scripts) do
+                local okKind = (_filterKind == "all")
+                    or (_filterKind == "running" and s.running)
+                    or (_filterKind == s.kind)
+                local okText = (_filterText == "")
+                    or tostring(s.path):lower():find(_filterText, 1, true) ~= nil
+                if okKind and okText then table.insert(_view, s) end
             end
-        end
 
-        if _countLabel then
-            _countLabel.Text = T("sc_found", #_scripts) .. (shown < #_scripts and ("  ·  " .. shown .. " / " .. #_scripts) or "")
-        end
+            local empty = _listScroll:FindFirstChild("EmptyState")
+            if empty then empty:Destroy() end
+            _listScroll.CanvasSize = UDim2.new(0, 0, 0, #_view * ROW_H + 6)
+            _listScroll.CanvasPosition = Vector2.new(0, 0)
+            if #_view == 0 then
+                local e = Framework.emptyState(_listScroll, #_scripts == 0 and T("empty_scripts") or T("empty_filter"), "scripts")
+                if e then e.Position = UDim2.new(0, 0, 0, 4) end
+            end
+            ScriptViewer._paintRows()
+
+            if _countLabel then
+                _countLabel.Text = T("sc_found", #_scripts) .. ((#_view < #_scripts) and ("  ·  " .. #_view .. " / " .. #_scripts) or "")
+            end
+        end)
     end
 
     -- ── VIEW / DECOMPILE ────────────────────────────────────────────
@@ -9942,7 +13882,15 @@ do
                 _codeLabel.Text = tostring(path) .. "  ·  " .. T("sc_lines", n)
             else
                 _current = nil
-                ScriptViewer._setCode(T("sc_fail", tostring(path or "?")), Theme.Colors.TextMuted)
+                local reason = _failReason[scr]
+                local cls = "?"
+                pcall(function() cls = scr.ClassName end)
+                local msg = T("sc_fail", tostring(path or "?")) .. "\n-- Class: " .. cls
+                if reason then msg = msg .. "\n-- " .. tostring(Compat.ExecutorName) .. ": " .. reason:gsub("^%-%-%s*", "") end
+                if cls == "ModuleScript" then
+                    msg = msg .. "\n\n-- Tip: a ModuleScript that was never required has no bytecode loaded;\n-- play until the game uses it, then try again."
+                end
+                ScriptViewer._setCode(msg, Theme.Colors.TextMuted)
             end
         end)
     end
@@ -9963,15 +13911,38 @@ do
         Fusion of SimpleSpy × DarkDEX V5 × Cobalt — with innovations
 
         Created by Rival960 with the help of Claude
-        Version: 1.0.0
-        Status: untested in-game
+        Version: 1.1.0
+        Status: v1.0.0 tested on Delta (PC + iPhone) — v1.1.0 in local testing
         ================================================================
 
-        Usage:
-            loadstring(game:HttpGet("URL_HERE"))()
+        RELEASE NOTES — v1.1.0
+        ----------------------
+        Robustness
+          • Running the script twice now replaces the old instance (no double hooks)
+          • "Unload" button: restores __namecall, disconnects everything, removes the GUI
+          • UI connections owned by the window → no leak when the language/theme changes
+          • Anti-flood: max N logged calls per remote per second, identical calls grouped "×N"
+          • Errors tab: every internal error is listed, deduplicated and copyable
+          • Fixed: hookfunction fallback could call nil, R2S lost args after a nil,
+            missing Serializer.serializeArgs, caller never saved in sessions
+        Capture & analysis
+          • InvokeServer return values (optional), OnClientInvoke (optional), Bindables (optional)
+          • Per-remote stats, diff with the previous call, keyword alerts, watchlist
+          • Ignore / block / watch lists saved per game (PlaceId)
+          • Export a whole session as a replayable R2S script
+        Performance
+          • Explorer reuses its rows (no full rebuild on every click)
+          • Auto-save appends only new entries to one file per run (live mode = every 2 s)
+        Interface
+          • Drawn icons (✕ / maximize / restore / minimize / tabs / reopen button)
+            identical on every device and executor
+          • Reopen button with unread counter, PC keybind (RightShift by default)
+          • Mobile: bottom tab bar, bigger rows and buttons
+          • Accent colors, window transparency, text size, tooltips, empty states
+          • "What's new" window on first launch of each version
 
-        Or locally:
-            dofile("RobloxSpy/init.lua")
+        Usage:
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/Rival99900/Roblox-Scripts/refs/heads/main/RobloxSpy/loader.lua"))()
     ]]
 
     -- ── EXECUTOR COMPATIBILITY SHIM ─────────────────────────────────
@@ -9987,10 +13958,8 @@ do
 
     -- ── LOAD CORE ───────────────────────────────────────────────────
 
-    -- For loadstring execution, modules are inline.
-    -- For development, we use require.
-    local Compat, Config, I18n, Serializer, Hooks, Session
-    local Framework, Theme, RemoteSpy
+    local Compat, Config, I18n, Errors, Serializer, Hooks, Session
+    local Framework, Theme, Icons, RemoteSpy
     local Explorer, NetworkMonitor, ScriptViewer
 
 
@@ -9998,24 +13967,33 @@ do
     Compat     = _G._RSPY.Compat
     Config     = _G._RSPY.Config
     I18n       = _G._RSPY.I18n
+    Errors     = _G._RSPY.Errors
+    if Errors and Errors.watchConsole then pcall(Errors.watchConsole) end
     Serializer = _G._RSPY.Serializer
     Hooks      = _G._RSPY.Hooks
     Session    = _G._RSPY.Session
     Framework  = _G._RSPY.Framework
     Theme      = _G._RSPY.Theme
+    Icons      = _G._RSPY.Icons
     RemoteSpy      = _G._RSPY.RemoteSpy
     Explorer       = _G._RSPY.Explorer
     NetworkMonitor = _G._RSPY.NetworkMonitor
     ScriptViewer   = _G._RSPY.ScriptViewer
     local T = (I18n and I18n.T) or function(k) return k end
 
-    local VERSION = "1.0.0"
+    local VERSION = "1.1.0"
     local _window = nil
     local _spyStarted = false
     local _autoSaveThread = nil
+    local _alive = true          -- false once unloaded (stops every loop)
+    local _statusThread = nil
 
     -- Forward declarations
-    local buildWindow, buildHistoryTab, buildSettingsTab, startAutoSave
+    local buildWindow, buildHistoryTab, buildSettingsTab, buildErrorsTab, startAutoSave, unloadAll
+
+    local function logError(source, err)
+        if Errors then Errors.add(source, err) else warn("[RobloxSpy] " .. source .. ": " .. tostring(err)) end
+    end
 
     -- ── FILE HELPERS ────────────────────────────────────────────────
 
@@ -10040,7 +14018,7 @@ do
     end
 
     -- Writes content into the export folder. Returns ok, pathOrError.
-    local function writeExport(fileName, content)
+    local function writeExport(fileName, content, append)
         if not Compat.has("writefile") then
             return false, T("n_no_write", tostring(Compat.ExecutorName))
         end
@@ -10052,85 +14030,158 @@ do
             return false, T("n_folder_fail", folder)
         end
         local path = folder .. "/" .. fileName
-        local ok, err = Compat.writeFile(path, content)
+        local ok, err
+        if append and Compat.has("appendfile") and Compat.fileExists(path) then
+            ok = Compat.appendFile(path, content)
+        else
+            ok, err = Compat.writeFile(path, content)
+        end
         if ok then return true, path end
         return false, T("n_save_fail", tostring(err))
     end
 
-    -- ── AUTO-SAVE ───────────────────────────────────────────────────
-    -- One file per game run, overwritten at each interval.
+    -- ── AUTO-SAVE (incremental) ─────────────────────────────────────
+    -- Only entries that are new since the last save are written. With
+    -- appendfile they are appended; files are split past MAX_PART_BYTES.
 
     startAutoSave = function()
         if _autoSaveThread then return end
+        -- One text file + one JSON file per run, updated in place on every save
         local runId = os.date("%Y%m%d_%H%M%S") .. "_" .. tostring(game.PlaceId)
+        local txtName = "autosave_" .. runId .. ".txt"
+        local jsonName = "autosave_" .. runId .. ".json"
+        local lastSerial = 0
+        local headerWritten = false
+        local lastJson = 0
+
         _autoSaveThread = task.spawn(function()
-            while true do
-                local interval = math.max(10, tonumber(Config.get("autoSaveInterval")) or 60)
-                task.wait(interval)
-                if Config.get("autoSave") and Compat.has("writefile") then
-                    pcall(function()
-                        if RemoteSpy then writeExport("autosave_" .. runId .. ".txt", RemoteSpy.exportText()) end
-                        if Session then
-                            writeExport("autosave_" .. runId .. ".json", Session.exportCurrent("json"))
+            while _alive do
+                local configured = tonumber(Config.get("autoSaveInterval")) or 60
+                local live = configured <= 0
+                task.wait(live and 2 or math.max(10, configured))
+                if not _alive then break end
+                if Config.get("autoSave") and Compat.has("writefile") and RemoteSpy then
+                    local ok, err = pcall(function()
+                        local text, newest = RemoteSpy.exportTextSince(lastSerial)
+                        if text ~= "" then
+                            local chunk = text
+                            if not headerWritten then
+                                chunk = T("log_export_title") .. " — " .. os.date("%Y-%m-%d %H:%M:%S")
+                                    .. " — PlaceId " .. tostring(game.PlaceId) .. "\n" .. string.rep("=", 60) .. "\n" .. text
+                            end
+                            local wrote
+                            if headerWritten and Compat.has("appendfile") then
+                                wrote = writeExport(txtName, "\n" .. chunk, true)
+                            else
+                                local existing = headerWritten and (Compat.readFile(cleanFolder(Config.get("exportFolder")) .. "/" .. txtName) or "") or ""
+                                wrote = writeExport(txtName, existing .. (existing ~= "" and "\n" or "") .. chunk, false)
+                            end
+                            if wrote then
+                                headerWritten = true
+                                lastSerial = newest
+                            end
+                        end
+                        -- JSON snapshot: rewritten in place (throttled to 10 s in live mode)
+                        if Session and (text ~= "" or not live) and (not live or os.clock() - lastJson >= 10) then
+                            lastJson = os.clock()
+                            writeExport(jsonName, Session.exportCurrent("json"))
                             Session.save()
                         end
                     end)
+                    if not ok then logError("AutoSave", err) end
                 end
             end
+            _autoSaveThread = nil
         end)
     end
 
-    -- ── MAIN ────────────────────────────────────────────────────────
+    local function applyHookOptions()
+        if not Hooks then return end
+        pcall(Hooks.setLogIncoming, Config.get("logIncoming") ~= false)
+        pcall(Hooks.setCaptureReturns, Config.get("captureReturns") == true)
+        pcall(Hooks.setCaptureClientInvoke, Config.get("captureClientInvoke") == true)
+        pcall(Hooks.setSpyBindables, Config.get("spyBindables") == true)
+        pcall(Hooks.setFloodLimit, tonumber(Config.get("floodLimit")) or 30)
+    end
+
+    local function setRecordingStatus()
+        if not _window then return end
+        local text = T("status_recording", (Compat and Compat.ExecutorName or "Unknown"),
+            tostring(Hooks and Hooks.getStrategy and Hooks.getStrategy() or "?"))
+        local count = Hooks and Hooks.getCallCount and Hooks.getCallCount() or 0
+        text = text .. "  ·  " .. T("status_events", count)
+        local skipped = Hooks and Hooks.getFloodSkipped and Hooks.getFloodSkipped() or 0
+        if skipped > 0 then text = text .. "  ·  " .. T("status_flood", skipped) end
+        local errCount = Errors and Errors.count() or 0
+        if errCount > 0 then text = text .. "  ·  " .. T("status_errors", errCount) end
+        _window:setStatus(text, (Hooks and Hooks.isPaused and Hooks.isPaused()) and Theme.Colors.Warning or Theme.Colors.Success)
+    end
 
     local function startSpy()
         if _spyStarted or not RemoteSpy then return end
         _spyStarted = true
 
-        -- Feed network monitor
         Hooks.subscribe(function(event)
             if NetworkMonitor then
                 NetworkMonitor.recordCall(event)
             end
         end)
-        if Hooks.setLogIncoming then
-            Hooks.setLogIncoming(Config.get("logIncoming") ~= false)
-        end
+        applyHookOptions()
         RemoteSpy.start()
         startAutoSave()
+
+        -- Live status bar (events, flood, errors)
+        _statusThread = task.spawn(function()
+            while _alive do
+                pcall(setRecordingStatus)
+                task.wait(2)
+            end
+        end)
 
         -- Cleanup on teleport
         pcall(function()
             game:GetService("Players").LocalPlayer.OnTeleport:Connect(function()
-                if RemoteSpy then RemoteSpy.stop() end
+                if RemoteSpy then pcall(RemoteSpy.stop) end
             end)
         end)
     end
 
-    local function setRecordingStatus()
+    -- ── WINDOW ──────────────────────────────────────────────────────
+
+    local SIZE_PRESETS_MOBILE = {
+        Small  = UDim2.new(0.75, 0, 0.5, 0),
+        Medium = UDim2.new(0.9, 0, 0.62, 0),
+        Large  = UDim2.new(0.97, 0, 0.82, 0),
+    }
+    local SIZE_PRESETS_PC = {
+        Small  = UDim2.new(0, 440, 0, 300),
+        Medium = UDim2.new(0, 540, 0, 370),
+        Large  = UDim2.new(0, 700, 0, 490),
+    }
+
+    local function showReleaseNotes(force)
         if not _window then return end
-        _window:setStatus(
-            T("status_recording", (Compat and Compat.ExecutorName or "Unknown"),
-                tostring(Hooks and Hooks.getStrategy and Hooks.getStrategy() or "?")),
-            Theme and Theme.Colors.Success or Color3.fromRGB(80, 200, 120))
+        if not force and Config.get("lastSeenVersion") == VERSION then return end
+        local lines = {}
+        for i = 1, 10 do
+            local key = "rn_" .. i
+            local line = T(key)
+            if line ~= key then table.insert(lines, "• " .. line) end
+        end
+        Framework.modal(_window, T("rn_title", VERSION), lines, {
+            { T("ok"), Theme.Colors.Accent, function() Config.set("lastSeenVersion", VERSION) end },
+        })
     end
 
     buildWindow = function()
-        local sizePresets = Framework.IS_MOBILE and {
-            Small  = UDim2.new(0.75, 0, 0.5, 0),
-            Medium = UDim2.new(0.9, 0, 0.62, 0),
-            Large  = UDim2.new(0.97, 0, 0.82, 0),
-        } or {
-            Small  = UDim2.new(0, 440, 0, 300),
-            Medium = UDim2.new(0, 520, 0, 360),
-            Large  = UDim2.new(0, 680, 0, 480),
-        }
+        local presets = Framework.IS_MOBILE and SIZE_PRESETS_MOBILE or SIZE_PRESETS_PC
 
         local window = Framework.createWindow({
-            Title = "🔍 RobloxSpy v" .. VERSION,
-            Size = sizePresets[Config.get("windowSize") or "Medium"] or sizePresets.Medium,
+            Title = "RobloxSpy v" .. VERSION,
+            Size = presets[Config.get("windowSize") or "Medium"] or presets.Medium,
         })
         if not window then
-            warn("[RobloxSpy] Failed to create window.")
+            logError("Window", "Failed to create window")
             return nil
         end
         _window = window
@@ -10138,26 +14189,32 @@ do
         -- Reopen button first: it must exist even if a tab fails to build
         pcall(Framework.createToggleButton, window)
 
-        -- Tabs
-        local spyTab       = window:addTab(T("tab_spy"), "🛰")
-        local explorerTab  = window:addTab(T("tab_explorer"), "🗂")
-        local networkTab   = window:addTab(T("tab_network"), "📶")
-        local scriptsTab   = window:addTab(T("tab_scripts"), "🧾")
-        local historyTab   = window:addTab(T("tab_history"), "🕘")
-        local settingsTab  = window:addTab(T("tab_settings"), "🛠")
+        -- PC keybind
+        if not Framework.IS_MOBILE then
+            pcall(Framework.bindToggleKey, window, Config.get("toggleKey") or "RightShift")
+        end
+
+        -- Tabs (drawn icons — identical on every device)
+        local spyTab       = window:addTab(T("tab_spy"), "spy")
+        local explorerTab  = window:addTab(T("tab_explorer"), "explorer")
+        local networkTab   = window:addTab(T("tab_network"), "network")
+        local scriptsTab   = window:addTab(T("tab_scripts"), "scripts")
+        local historyTab   = window:addTab(T("tab_history"), "history")
+        local errorsTab    = window:addTab(T("tab_errors"), "errors")
+        local settingsTab  = window:addTab(T("tab_settings"), "settings")
 
         -- Each tab is built in isolation: one error no longer blanks every menu
         local function buildTab(name, fn, ...)
-            local ok, err = pcall(fn, ...)
-            if not ok then
-                warn("[RobloxSpy] Tab '" .. name .. "' failed: " .. tostring(err))
-            end
+            local args = table.pack(...)
+            local ok, err = xpcall(function() return fn(table.unpack(args, 1, args.n)) end, function(e)
+                return tostring(e) .. "\n" .. (debug and debug.traceback and debug.traceback("", 2) or "")
+            end)
+            if not ok then logError("Tab " .. name, err) end
         end
 
         if RemoteSpy then buildTab("Remote Spy", RemoteSpy.buildUI, spyTab) end
         if Explorer then
             buildTab("Explorer", Explorer.buildUI, explorerTab)
-            -- "View source" in the Explorer opens the Scripts tab
             if Explorer.setViewSourceHandler and ScriptViewer then
                 Explorer.setViewSourceHandler(function(inst)
                     window:switchTab(T("tab_scripts"))
@@ -10165,29 +14222,57 @@ do
                 end)
             end
         end
-        if NetworkMonitor then buildTab("Network", NetworkMonitor.buildUI, networkTab) end
+        if NetworkMonitor then
+            buildTab("Network", NetworkMonitor.buildUI, networkTab)
+            -- Click a top remote → filter the spy feed on it
+            NetworkMonitor.onRemoteClick = function(name)
+                window:switchTab(T("tab_spy"))
+                if RemoteSpy and RemoteSpy.filterByRemote then RemoteSpy.filterByRemote(name) end
+            end
+        end
         if ScriptViewer then buildTab("Scripts", ScriptViewer.buildUI, scriptsTab) end
         buildTab("History", buildHistoryTab, historyTab, window)
+        buildTab("Errors", buildErrorsTab, errorsTab, window)
         buildTab("Settings", buildSettingsTab, settingsTab, window)
 
-        if _spyStarted then setRecordingStatus() end
+        if _spyStarted then pcall(setRecordingStatus) end
         return window
     end
 
-    -- Rebuilds the whole interface (used when the language changes).
+    -- Rebuilds the whole interface (language / theme / text size change).
     -- Hooks, session and captured events are kept.
     local function rebuildWindow(openTabKey)
+        local wasMaximized = false
         if _window then
-            pcall(function()
-                if _window._toggleBtn then _window._toggleBtn:Destroy() end
-            end)
+            wasMaximized = _window:isMaximized()
             pcall(function() _window:destroy() end)
             _window = nil
         end
         local w = buildWindow()
-        if w and openTabKey then
-            pcall(function() w:switchTab(T(openTabKey)) end)
+        if w then
+            if openTabKey then pcall(function() w:switchTab(T(openTabKey)) end) end
+            if wasMaximized then pcall(function() w:toggleMaximize(true) end) end
         end
+    end
+
+    -- Full unload: hooks restored, loops stopped, GUI removed, session saved.
+    unloadAll = function()
+        _alive = false
+        pcall(function() if Errors and Errors.stopConsole then Errors.stopConsole() end end)
+        pcall(function() if Session then Session.save() end end)
+        pcall(function() if Hooks and Hooks.unload then Hooks.unload() end end)
+        pcall(function() if NetworkMonitor then NetworkMonitor.stop() end end)
+        pcall(function() if _window then _window:destroy() end end)
+        _window = nil
+        pcall(function()
+            local sg = Framework and Framework.getScreenGui and Framework.getScreenGui()
+            if sg then sg:Destroy() end
+        end)
+        local G = (getgenv and getgenv()) or _G
+        if G.RobloxSpy_Instance and G.RobloxSpy_Instance.version == VERSION and G.RobloxSpy_Instance.unload == unloadAll then
+            G.RobloxSpy_Instance = nil
+        end
+        print("[RobloxSpy] Unloaded.")
     end
 
     local function main()
@@ -10195,6 +14280,27 @@ do
         print("  RobloxSpy v" .. VERSION)
         print("  Remote Spy • Explorer • Sessions")
         print("═══════════════════════════════════════")
+
+        -- 0. Single instance: running the script again replaces the old one
+        local G = (getgenv and getgenv()) or _G
+        local previous = G.RobloxSpy_Instance
+        if previous and type(previous.unload) == "function" then
+            print("[RobloxSpy] Previous instance found (v" .. tostring(previous.version) .. ") — unloading it")
+            pcall(previous.unload)
+            task.wait(0.1)
+        end
+        -- Also remove a leftover GUI from an older build without unload()
+        pcall(function()
+            local parents = {}
+            pcall(function() if gethui then table.insert(parents, gethui()) end end)
+            pcall(function() table.insert(parents, game:GetService("Players").LocalPlayer:FindFirstChild("PlayerGui")) end)
+            pcall(function() table.insert(parents, game:GetService("CoreGui")) end)
+            for _, p in ipairs(parents) do
+                local old = p and p:FindFirstChild("RobloxSpyGUI")
+                if old then old:Destroy() end
+            end
+        end)
+        G.RobloxSpy_Instance = { version = VERSION, unload = unloadAll }
 
         -- 1. Init compatibility layer
         if Compat then
@@ -10228,9 +14334,131 @@ do
 
         -- 4. Start spy (once)
         startSpy()
-        setRecordingStatus()
+        pcall(setRecordingStatus)
+
+        -- 5. What's new (once per version)
+        task.delay(0.6, function() pcall(showReleaseNotes, false) end)
 
         print("[RobloxSpy] Ready.")
+    end
+
+    -- ── ERRORS TAB ──────────────────────────────────────────────────
+
+    buildErrorsTab = function(parent, window)
+        if not Errors or not Framework or not Theme then return end
+        local create = Framework.create
+        local applyCorner = Framework.applyCorner
+        local applyPadding = Framework.applyPadding
+
+        local top = create("Frame", {
+            Size = UDim2.new(1, 0, 0, 34),
+            BackgroundColor3 = Theme.Colors.BgSecondary,
+            BorderSizePixel = 0,
+            Parent = parent,
+        })
+        applyPadding(top, 4, 6, 4, 8)
+        create("UIListLayout", {
+            FillDirection = Enum.FillDirection.Horizontal,
+            VerticalAlignment = Enum.VerticalAlignment.Center,
+            Padding = UDim.new(0, 6),
+            SortOrder = Enum.SortOrder.LayoutOrder,
+            Parent = top,
+        })
+        local countLbl = create("TextLabel", {
+            Size = UDim2.new(0, 0, 1, 0),
+            AutomaticSize = Enum.AutomaticSize.X,
+            BackgroundTransparency = 1,
+            Text = "",
+            TextColor3 = Theme.Colors.TextPrimary,
+            Font = Theme.Fonts.Heading,
+            TextSize = Theme.TextSizes.Body,
+            LayoutOrder = 1,
+            Parent = top,
+        })
+        local function topBtn(text, color, order)
+            local b = create("TextButton", {
+                Size = UDim2.new(0, 0, 0, 24),
+                AutomaticSize = Enum.AutomaticSize.X,
+                BackgroundColor3 = color,
+                BackgroundTransparency = 0.4,
+                Text = text,
+                TextColor3 = Theme.Colors.TextPrimary,
+                Font = Theme.Fonts.Medium,
+                TextSize = Theme.TextSizes.Small,
+                LayoutOrder = order,
+                Parent = top,
+            })
+            applyCorner(b, Theme.CornerRadius.SM)
+            applyPadding(b, 2, 8, 2, 8)
+            return b
+        end
+        local copyBtn = topBtn(T("err_copy"), Theme.Colors.Accent, 2)
+        local clearBtn = topBtn(T("err_clear"), Theme.Colors.Error, 3)
+
+        local list = Framework.createScrollFrame(parent, {
+            Name = "ErrorList",
+            Size = UDim2.new(1, 0, 1, -34),
+            Position = UDim2.new(0, 0, 0, 34),
+            Padding = 3,
+            InnerPadding = 6,
+        })
+
+        local refreshQueued = false
+        local function refresh()
+            refreshQueued = false
+            if not list.Parent then return end
+            for _, c in ipairs(list:GetChildren()) do
+                if c:IsA("GuiObject") then c:Destroy() end
+            end
+            local items = Errors.list()
+            countLbl.Text = T("err_count", #items)
+            if #items == 0 then
+                Framework.emptyState(list, T("empty_errors"), "check")
+                return
+            end
+            for i = #items, 1, -1 do
+                local e = items[i]
+                local row = create("Frame", {
+                    Size = UDim2.new(1, 0, 0, 0),
+                    AutomaticSize = Enum.AutomaticSize.Y,
+                    BackgroundColor3 = Theme.Colors.BgSecondary,
+                    LayoutOrder = #items - i,
+                    Parent = list,
+                })
+                applyCorner(row, Theme.CornerRadius.SM)
+                applyPadding(row, 4, 8, 4, 8)
+                create("TextBox", {
+                    Size = UDim2.new(1, 0, 0, 0),
+                    AutomaticSize = Enum.AutomaticSize.Y,
+                    BackgroundTransparency = 1,
+                    Text = string.format("[%s]  ×%d  %s\n%s", os.date("%H:%M:%S", e.last), e.count, e.source, e.message),
+                    TextEditable = false,
+                    ClearTextOnFocus = false,
+                    TextWrapped = true,
+                    TextColor3 = Theme.Colors.TextPrimary,
+                    Font = Theme.Fonts.Code,
+                    TextSize = Theme.TextSizes.Small,
+                    TextXAlignment = Enum.TextXAlignment.Left,
+                    Parent = row,
+                })
+            end
+        end
+
+        Errors.subscribe(function()
+            if refreshQueued then return end
+            refreshQueued = true
+            task.delay(0.5, refresh) -- coalesce bursts
+        end)
+
+        copyBtn.Activated:Connect(function()
+            Framework.copy(Errors.toText(), T("c_errors"))
+        end)
+        clearBtn.Activated:Connect(function()
+            Errors.clear()
+            refresh()
+        end)
+
+        refresh()
     end
 
     -- ── HISTORY TAB ─────────────────────────────────────────────────
@@ -10341,9 +14569,14 @@ do
         -- Entry list of one session (viewer)
         local function openSession(meta, data)
             clear()
-            local backRow = create("Frame", {
-                Size = UDim2.new(1, -12, 0, 24),
+            local backRow = create("ScrollingFrame", { -- scrolls on narrow phones
+                Size = UDim2.new(1, -12, 0, 26),
                 BackgroundTransparency = 1,
+                BorderSizePixel = 0,
+                ScrollBarThickness = 0,
+                ScrollingDirection = Enum.ScrollingDirection.X,
+                CanvasSize = UDim2.new(0, 0, 0, 0),
+                AutomaticCanvasSize = Enum.AutomaticSize.X,
                 LayoutOrder = 0,
                 Parent = scroll,
             })
@@ -10364,6 +14597,15 @@ do
             end)
             smallBtn(backRow, T("sc_copy"), Theme.Colors.Accent).Activated:Connect(function()
                 Framework.copy(Session.toText(data), T("c_logs"))
+            end)
+            smallBtn(backRow, T("hi_export_script"), Theme.Colors.InvokeServer).Activated:Connect(function()
+                local script = Session.toR2SScript(data)
+                local ok, res = writeExport("replay_" .. tostring(data.id) .. ".lua", script)
+                if ok then
+                    Framework.notify(T("n_saved", res), "success", 4)
+                else
+                    Framework.copy(script, T("c_r2s"))
+                end
             end)
 
             local dur = (data.endTime or os.time()) - (data.startTime or os.time())
@@ -10729,38 +14971,111 @@ do
             end)
         end
 
+        -- Drop-down selector (same look as the language picker)
         local function choiceRow(options, selected, onPick)
-            local row = create("Frame", {
-                Size = UDim2.new(1, 0, 0, 28),
-                BackgroundTransparency = 1,
+            local function labelOf(v)
+                for _, o in ipairs(options) do if o[1] == v then return o[2] end end
+                return tostring(v)
+            end
+            local dropBtn = create("TextButton", {
+                Size = UDim2.new(1, 0, 0, 30),
+                BackgroundColor3 = Theme.Colors.BgSecondary,
+                AutoButtonColor = false,
+                Text = "",
                 LayoutOrder = nextOrder(),
                 Parent = scroll,
             })
-            create("UIListLayout", {
-                FillDirection = Enum.FillDirection.Horizontal,
-                Padding = UDim.new(0, 6),
-                Parent = row,
+            applyCorner(dropBtn, Theme.CornerRadius.SM)
+            Framework.applyStroke(dropBtn, Theme.Colors.Border, 1)
+            local valueLbl = create("TextLabel", {
+                Size = UDim2.new(1, -40, 1, 0),
+                Position = UDim2.new(0, 10, 0, 0),
+                BackgroundTransparency = 1,
+                Text = labelOf(selected),
+                TextColor3 = Theme.Colors.TextPrimary,
+                Font = Theme.Fonts.Medium,
+                TextSize = Theme.TextSizes.Body,
+                TextXAlignment = Enum.TextXAlignment.Left,
+                TextTruncate = Enum.TextTruncate.AtEnd,
+                Parent = dropBtn,
             })
-            local buttons = {}
-            for _, opt in ipairs(options) do
+            local arrow = create("TextLabel", {
+                Size = UDim2.new(0, 24, 1, 0),
+                Position = UDim2.new(1, -30, 0, 0),
+                BackgroundTransparency = 1,
+                Text = "▼",
+                TextColor3 = Theme.Colors.TextSecondary,
+                Font = Theme.Fonts.Body,
+                TextSize = 12,
+                Parent = dropBtn,
+            })
+            local rowH = 28
+            local listFrame = create("Frame", {
+                Size = UDim2.new(1, 0, 0, math.min(#options, 6) * (rowH + 2) + 10),
+                BackgroundColor3 = Theme.Colors.BgPrimary,
+                Visible = false,
+                LayoutOrder = nextOrder(),
+                Parent = scroll,
+            })
+            applyCorner(listFrame, Theme.CornerRadius.SM)
+            Framework.applyStroke(listFrame, Theme.Colors.Border, 1)
+            local list = Framework.createScrollFrame(listFrame, { Padding = 2, InnerPadding = 4 })
+
+            local current = selected
+            local rows = {}
+            local function paint()
+                for v, r in pairs(rows) do
+                    local isCur = (v == current)
+                    r.btn.BackgroundColor3 = isCur and Theme.Colors.Accent or Theme.Colors.BgSecondary
+                    r.btn.BackgroundTransparency = isCur and 0.2 or 0.4
+                    r.check.Text = isCur and "✓" or ""
+                end
+                valueLbl.Text = labelOf(current)
+            end
+            for i, opt in ipairs(options) do
                 local b = create("TextButton", {
-                    Size = UDim2.new(1 / #options, -5, 1, 0),
-                    BackgroundColor3 = (opt[1] == selected) and Theme.Colors.Accent or Theme.Colors.BgTertiary,
+                    Size = UDim2.new(1, -4, 0, rowH),
+                    Text = "",
+                    LayoutOrder = i,
+                    Parent = list,
+                })
+                applyCorner(b, Theme.CornerRadius.SM)
+                create("TextLabel", {
+                    Size = UDim2.new(1, -40, 1, 0),
+                    Position = UDim2.new(0, 10, 0, 0),
+                    BackgroundTransparency = 1,
                     Text = opt[2],
                     TextColor3 = Theme.Colors.TextPrimary,
                     Font = Theme.Fonts.Medium,
                     TextSize = Theme.TextSizes.Small,
-                    Parent = row,
+                    TextXAlignment = Enum.TextXAlignment.Left,
+                    Parent = b,
                 })
-                applyCorner(b, Theme.CornerRadius.SM)
-                buttons[opt[1]] = b
+                local check = create("TextLabel", {
+                    Size = UDim2.new(0, 30, 1, 0),
+                    Position = UDim2.new(1, -34, 0, 0),
+                    BackgroundTransparency = 1,
+                    Text = "",
+                    TextColor3 = Theme.Colors.TextPrimary,
+                    Font = Theme.Fonts.Code,
+                    TextSize = Theme.TextSizes.Small,
+                    Parent = b,
+                })
+                rows[opt[1]] = { btn = b, check = check }
                 b.Activated:Connect(function()
-                    for k, other in pairs(buttons) do
-                        other.BackgroundColor3 = (k == opt[1]) and Theme.Colors.Accent or Theme.Colors.BgTertiary
-                    end
+                    listFrame.Visible = false
+                    arrow.Text = "▼"
+                    if opt[1] == current then return end
+                    current = opt[1]
+                    paint()
                     onPick(opt[1])
                 end)
             end
+            paint()
+            dropBtn.Activated:Connect(function()
+                listFrame.Visible = not listFrame.Visible
+                arrow.Text = listFrame.Visible and "▲" or "▼"
+            end)
         end
 
         -- ── 1. LANGUAGE (drop-down) ──────────────────────────────────
@@ -10958,22 +15273,51 @@ do
                 return false
             end
             Config.set("autoSave", on)
-            Framework.notify(on and T("n_autosave_on", tonumber(Config.get("autoSaveInterval")) or 60, cleanFolder(Config.get("exportFolder"))) or T("n_autosave_off"), on and "success" or "info", 3)
+            Framework.notify(on and T("n_autosave_on", (tonumber(Config.get("autoSaveInterval")) or 60) == 0 and 2 or (tonumber(Config.get("autoSaveInterval")) or 60), cleanFolder(Config.get("exportFolder"))) or T("n_autosave_off"), on and "success" or "info", 3)
             return true
         end)
         note(T("se_interval"), Theme.Colors.TextSecondary)
-        choiceRow({ { 30, "30s" }, { 60, "1 min" }, { 300, "5 min" }, { 600, "10 min" } },
+        choiceRow({ { 0, T("as_live") }, { 30, "30 s" }, { 60, "1 min" }, { 300, "5 min" }, { 600, "10 min" } },
             tonumber(Config.get("autoSaveInterval")) or 60,
             function(v) Config.set("autoSaveInterval", v) end)
 
-        -- ── 3. OPTIONS ───────────────────────────────────────────────
-        heading(T("se_options"))
+        -- ── 3. CAPTURE ───────────────────────────────────────────────
+        heading(T("se_capture"))
 
         toggle(T("se_incoming"), Config.get("logIncoming") ~= false, function(on)
             if Hooks and Hooks.setLogIncoming then Hooks.setLogIncoming(on) end
             Config.set("logIncoming", on)
             Framework.notify(on and T("n_inc_on") or T("n_inc_off"), "info", 1.5)
         end)
+        toggle(T("se_returns"), Config.get("captureReturns") == true, function(on)
+            Config.set("captureReturns", on)
+            if Hooks and Hooks.setCaptureReturns then Hooks.setCaptureReturns(on) end
+            Framework.notify(on and T("n_returns_on") or T("n_option_off"), on and "success" or "info", 3)
+        end)
+        note(T("se_returns_note"), Theme.Colors.TextMuted)
+        toggle(T("se_clientinvoke"), Config.get("captureClientInvoke") == true, function(on)
+            if on and not (Hooks and Hooks.canCaptureClientInvoke and Hooks.canCaptureClientInvoke()) then
+                Framework.notify(T("n_need_fn", "getcallbackvalue", tostring(Compat.ExecutorName)), "error", 4)
+                return false
+            end
+            Config.set("captureClientInvoke", on)
+            if Hooks and Hooks.setCaptureClientInvoke then Hooks.setCaptureClientInvoke(on) end
+            return true
+        end)
+        toggle(T("se_bindables"), Config.get("spyBindables") == true, function(on)
+            Config.set("spyBindables", on)
+            if Hooks and Hooks.setSpyBindables then Hooks.setSpyBindables(on) end
+        end)
+        toggle(T("se_group"), Config.get("groupDuplicates") ~= false, function(on)
+            Config.set("groupDuplicates", on)
+        end)
+        note(T("se_flood"), Theme.Colors.TextSecondary)
+        choiceRow({ { 0, T("off") }, { 5, "5 / s" }, { 10, "10 / s" }, { 30, "30 / s" }, { 60, "60 / s" }, { 100, "100 / s" }, { 250, "250 / s" } },
+            tonumber(Config.get("floodLimit")) or 30,
+            function(v)
+                Config.set("floodLimit", v)
+                if Hooks and Hooks.setFloodLimit then Hooks.setFloodLimit(v) end
+            end)
         toggle(T("se_autoscroll"), RemoteSpy and RemoteSpy.getAutoScroll and RemoteSpy.getAutoScroll(), function(on)
             if RemoteSpy and RemoteSpy.setAutoScroll then RemoteSpy.setAutoScroll(on) end
         end)
@@ -10982,29 +15326,120 @@ do
             Framework.notify(on and T("n_paused") or T("n_resumed"), "info", 1.5)
         end)
 
+        -- ── 4. ALERTS ────────────────────────────────────────────────
+        heading(T("se_alerts"))
+        toggle(T("se_alerts_on"), Config.get("alertsEnabled") ~= false, function(on)
+            Config.set("alertsEnabled", on)
+        end)
+        note(T("se_keywords"), Theme.Colors.TextSecondary)
+        local kwBox = create("TextBox", {
+            Size = UDim2.new(1, 0, 0, 30),
+            BackgroundColor3 = Theme.Colors.BgSecondary,
+            Text = tostring(Config.get("alertKeywords") or ""),
+            PlaceholderText = "buy, admin, ban…",
+            ClearTextOnFocus = false,
+            TextColor3 = Theme.Colors.TextPrimary,
+            Font = Theme.Fonts.Code,
+            TextSize = Theme.TextSizes.Small,
+            TextXAlignment = Enum.TextXAlignment.Left,
+            TextTruncate = Enum.TextTruncate.AtEnd,
+            LayoutOrder = nextOrder(),
+            Parent = scroll,
+        })
+        applyCorner(kwBox, Theme.CornerRadius.SM)
+        applyPadding(kwBox, 0, 8, 0, 8)
+        kwBox.FocusLost:Connect(function()
+            Config.set("alertKeywords", kwBox.Text)
+            if RemoteSpy and RemoteSpy.reloadKeywords then RemoteSpy.reloadKeywords() end
+            Framework.notify(T("n_keywords_saved"), "success", 1.5)
+        end)
+
+        -- ── 5. APPEARANCE ────────────────────────────────────────────
+        heading(T("se_appearance"))
+        note(T("se_accent"), Theme.Colors.TextSecondary)
+        local accentNames = { blue = T("c_blue"), purple = T("c_purple"), green = T("c_green"), red = T("c_red"), orange = T("c_orange") }
+        local accentOpts = {}
+        for _, a in ipairs(Theme.Accents) do table.insert(accentOpts, { a.id, accentNames[a.id] or a.id }) end
+        choiceRow(accentOpts, Config.get("accent") or "blue", function(id)
+            Config.set("accent", id)
+            Theme.applyAccent(id)
+            task.defer(function() rebuildWindow("tab_settings") end)
+        end)
+        note(T("se_transparency"), Theme.Colors.TextSecondary)
+        choiceRow({ { 0, "0 %" }, { 0.1, "10 %" }, { 0.2, "20 %" }, { 0.3, "30 %" }, { 0.4, "40 %" }, { 0.5, "50 %" } },
+            tonumber(Config.get("windowTransparency")) or 0,
+            function(v)
+                Config.set("windowTransparency", v)
+                if window and window.setTransparency then window:setTransparency(v) end
+            end)
+        note(T("se_textsize"), Theme.Colors.TextSecondary)
+        choiceRow({ { "small", T("sz_small") }, { "normal", T("sz_medium") }, { "large", T("sz_large") } },
+            Config.get("textScale") or "normal",
+            function(id)
+                Config.set("textScale", id)
+                Theme.applyTextScale(id)
+                task.defer(function() rebuildWindow("tab_settings") end)
+            end)
+
+        if Framework.IS_MOBILE then
+            toggle(T("se_bottomtabs"), Config.get("mobileBottomTabs") ~= false, function(on)
+                Config.set("mobileBottomTabs", on)
+                task.defer(function() rebuildWindow("tab_settings") end)
+            end)
+        else
+            -- PC keybind
+            local keyBtn = button(T("se_keybind", tostring(Config.get("toggleKey") or "RightShift")))
+            keyBtn.Activated:Connect(function()
+                keyBtn.Text = T("se_keybind_wait")
+                Framework.captureKey(function(keyName)
+                    if keyName then
+                        Config.set("toggleKey", keyName)
+                        Framework.bindToggleKey(window, keyName)
+                        Framework.notify(T("n_keybind", keyName), "success", 2)
+                    end
+                    keyBtn.Text = T("se_keybind", tostring(Config.get("toggleKey") or "RightShift"))
+                end)
+            end)
+        end
+
         -- Window size presets
         heading(T("se_size"))
-        local presets = Framework.IS_MOBILE and {
-            Small  = UDim2.new(0.75, 0, 0.5, 0),
-            Medium = UDim2.new(0.9, 0, 0.62, 0),
-            Large  = UDim2.new(0.97, 0, 0.82, 0),
-        } or {
-            Small  = UDim2.new(0, 440, 0, 300),
-            Medium = UDim2.new(0, 520, 0, 360),
-            Large  = UDim2.new(0, 680, 0, 480),
-        }
+        local presets = Framework.IS_MOBILE and SIZE_PRESETS_MOBILE or SIZE_PRESETS_PC
         choiceRow({ { "Small", T("sz_small") }, { "Medium", T("sz_medium") }, { "Large", T("sz_large") } },
             Config.get("windowSize") or "Medium",
             function(key)
                 Config.set("windowSize", key)
                 if window and window.Frame then
-                    -- Convert scale sizes to pixels so the clamp keeps it on screen
+                    if window:isMaximized() then window:toggleMaximize(false) end
                     local target = presets[key]
                     window.Frame.Size = target
                     window._savedSize = target
                     pcall(Framework.clampToScreen, window.Frame)
                 end
             end)
+
+        -- ── 6. TOOLS ─────────────────────────────────────────────────
+        heading(T("se_tools"))
+        button(T("se_export_script"), Theme.Colors.InvokeServer).Activated:Connect(function()
+            local data = Session and Session.getCurrent()
+            if not data then Framework.notify(T("n_nothing"), "warning") return end
+            local script = Session.toR2SScript(data)
+            local ok, res = writeExport("replay_" .. tostring(data.id) .. ".lua", script)
+            if ok then
+                Framework.notify(T("n_saved", res), "success", 4)
+            else
+                Framework.copy(script, T("c_r2s"))
+            end
+        end)
+        button(T("se_whatsnew")).Activated:Connect(function()
+            showReleaseNotes(true)
+        end)
+        button(T("se_unload"), Theme.Colors.Error).Activated:Connect(function()
+            Framework.modal(window, T("unload_title"), { T("unload_body") }, {
+                { T("cancel"), Theme.Colors.BgTertiary },
+                { T("se_unload"), Theme.Colors.Error, function() task.defer(unloadAll) end },
+            })
+        end)
 
         -- ── 4. INFO ──────────────────────────────────────────────────
         heading(T("se_info"))
@@ -11016,6 +15451,9 @@ do
             { T("i_files"), Compat.has("writefile") and T("v_avail") or T("v_unavail") },
             { T("i_clip"), Compat.has("setclipboard") and T("v_avail") or T("v_unavail") },
             { T("i_platform"), Framework.IS_MOBILE and T("v_mobile") or T("v_pc") },
+            { "getcallbackvalue", (Compat.getGlobal and Compat.getGlobal("getcallbackvalue")) and T("v_avail") or T("v_unavail") },
+            { "appendfile", Compat.has("appendfile") and T("v_avail") or T("v_unavail") },
+            { "setnamecallmethod", (Compat.getGlobal and Compat.getGlobal("setnamecallmethod")) and T("v_avail") or T("v_unavail") },
         }
 
         for _, pair in ipairs(info) do

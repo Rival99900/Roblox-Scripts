@@ -121,7 +121,10 @@ typeHandlers["Enum"] = function(v)
 end
 
 -- Roblox value types
-local robloxConstructors = {
+-- Declared first: the constructors below reference the table itself
+-- (a `local x = { … x … }` initializer can't see its own local).
+local robloxConstructors
+robloxConstructors = {
     Vector3 = function(v)
         if v == Vector3.zero then return "Vector3.zero" end
         if v == Vector3.one then return "Vector3.one" end
@@ -416,16 +419,18 @@ function Serializer.generateR2S(remote, method, args)
     table.insert(lines, "")
 
     -- Args
-    if args and #args > 0 then
-        for i, arg in ipairs(args) do
+    -- args.n (table.pack) keeps nil holes: FireServer("a", nil, 5) has 3 args
+    local argCount = args and (args.n or #args) or 0
+    if argCount > 0 then
+        for i = 1, argCount do
             local varName = "arg" .. i
-            table.insert(lines, "local " .. varName .. " = " .. Serializer.serialize(arg, 1))
+            table.insert(lines, "local " .. varName .. " = " .. Serializer.serialize(args[i], 1))
         end
         table.insert(lines, "")
 
         -- Call
         local argNames = {}
-        for i = 1, #args do
+        for i = 1, argCount do
             table.insert(argNames, "arg" .. i)
         end
 
@@ -502,12 +507,26 @@ end
 -- ── COMPACT ONE-LINE SUMMARY ─────────────────────────────────────
 -- For log display: short, max ~120 chars.
 
+-- Serializes every argument (nil holes kept) → { {index, type, value} }
+function Serializer.serializeArgs(args)
+    local out = {}
+    local count = args and (args.n or #args) or 0
+    for i = 1, count do
+        local v = args[i]
+        local ok, res = pcall(Serializer.serialize, v, 1)
+        table.insert(out, { index = i, type = typeof(v), value = ok and res or tostring(v) })
+    end
+    return out
+end
+
 function Serializer.summarize(args, maxLen)
     maxLen = maxLen or 120
-    if not args or #args == 0 then return "()" end
+    local count = args and (args.n or #args) or 0
+    if count == 0 then return "()" end
 
     local parts = {}
-    for i, arg in ipairs(args) do
+    for i = 1, count do
+        local arg = args[i]
         local t = typeof(arg)
         local s
         if t == "string" then

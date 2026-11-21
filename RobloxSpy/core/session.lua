@@ -142,8 +142,10 @@ function Session.record(event)
         entryType = "invoke"
     elseif event.method == "OnClientEvent" then
         entryType = "incoming"
-    elseif event.method:find(":Return") then
-        entryType = "return"
+    elseif event.type == "clientinvoke" then
+        entryType = "clientinvoke"
+    elseif event.type == "bindable" then
+        entryType = "bindable"
     end
     if event.blocked then
         entryType = "block"
@@ -168,15 +170,17 @@ function Session.record(event)
     end)
 
     local callerStr = nil
-    if event.caller then
-        pcall(function() callerStr = event.caller:GetFullName() end)
+    local callerObj = event.callingScript or event.caller
+    if callerObj then
+        pcall(function() callerStr = callerObj:GetFullName() end)
     end
 
     -- Summarize args (lightweight, no full serialize)
     local argsSummary = ""
     pcall(function()
         local argParts = {}
-        for i, arg in ipairs(event.args) do
+        for i = 1, (event.args.n or #event.args) do
+            local arg = event.args[i]
             local t = typeof(arg)
             if t == "string" then
                 local s = arg:sub(1, 40)
@@ -209,6 +213,8 @@ function Session.record(event)
         path   = remotePath,
         args   = argsSummary,
         caller = callerStr,
+        -- Full R2S line(s), used by the "export as script" feature
+        code   = (type(event.r2s) == "string" and event.r2s ~= "") and event.r2s:sub(1, 3000) or nil,
     }
 
     table.insert(_currentSession.entries, entry)
@@ -409,6 +415,47 @@ function Session.toText(data)
         table.insert(lines, string.format("[%7.2fs] %-8s %s  (%s)", (e.t or 0) / 1000, tostring(e.type):upper(), tostring(e.remote), tostring(e.path)))
         if e.args and e.args ~= "" then table.insert(lines, "           args: " .. e.args) end
         if e.caller then table.insert(lines, "           caller: " .. e.caller) end
+    end
+    return table.concat(lines, "\n")
+end
+
+-- Rebuilds a session as ONE replayable script: every outgoing call in
+-- order, with the original delays (capped) between them.
+function Session.toR2SScript(data, maxDelay)
+    if not data then return "" end
+    maxDelay = maxDelay or 5
+    local lines = {
+        "-- RobloxSpy — Session replay script",
+        "-- Game: " .. tostring(data.gameName) .. " (PlaceId " .. tostring(data.placeId) .. ")",
+        "-- Recorded: " .. (data.startTime and os.date("%Y-%m-%d %H:%M:%S", data.startTime) or "?"),
+        "-- ⚠ Review before running: calls are replayed exactly as recorded.",
+        "",
+    }
+    local lastT, n = nil, 0
+    for _, e in ipairs(data.entries or {}) do
+        if e.code and (e.type == "fire" or e.type == "invoke" or e.type == "block" or e.type == "bindable") then
+            if lastT then
+                local gap = math.min(maxDelay, math.max(0, ((e.t or 0) - lastT) / 1000))
+                if gap >= 0.03 then
+                    table.insert(lines, string.format("task.wait(%.2f)", gap))
+                end
+            end
+            lastT = e.t or 0
+            n = n + 1
+            table.insert(lines, string.format("-- [%d] %s  (%.2fs)", n, tostring(e.remote), (e.t or 0) / 1000))
+            -- do … end keeps each call's locals separate (200-local limit)
+            table.insert(lines, "do")
+            for line in tostring(e.code):gmatch("[^\n]+") do
+                if not line:match("^%s*%-%-") then
+                    table.insert(lines, "    " .. line)
+                end
+            end
+            table.insert(lines, "end")
+            table.insert(lines, "")
+        end
+    end
+    if n == 0 then
+        table.insert(lines, "-- (no replayable outgoing calls in this session)")
     end
     return table.concat(lines, "\n")
 end

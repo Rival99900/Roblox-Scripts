@@ -153,7 +153,7 @@ function NetworkMonitor.buildUI(tabContent)
     create("TextLabel", {
         Size = UDim2.new(1, 0, 0, 20),
         BackgroundTransparency = 1,
-        Text = T("net_top"),
+        Text = T("net_top") .. "  ·  " .. T("net_click_hint"),
         TextColor3 = Theme.Colors.TextPrimary,
         Font = Theme.Fonts.Heading,
         TextSize = Theme.TextSizes.Body,
@@ -299,7 +299,7 @@ function NetworkMonitor._updateTopRemotes()
 
     -- Clear old rows
     for _, c in ipairs(topList:GetChildren()) do
-        if c:IsA("Frame") then c:Destroy() end
+        if c:IsA("GuiObject") then c:Destroy() end
     end
 
     -- Sort remotes by count
@@ -309,17 +309,38 @@ function NetworkMonitor._updateTopRemotes()
     end
     table.sort(sorted, function(a, b) return a.count > b.count end)
 
-    -- Show top 10
+    if #sorted == 0 then
+        create("TextLabel", {
+            Size = UDim2.new(1, 0, 0, 40),
+            BackgroundTransparency = 1,
+            Text = T("empty_network"),
+            TextWrapped = true,
+            TextColor3 = Theme.Colors.TextMuted,
+            Font = Theme.Fonts.Body,
+            TextSize = Theme.TextSizes.Small,
+            Parent = topList,
+        })
+        return
+    end
+
+    -- Show top 10 — click a row to filter the Remote Spy feed on it
     for i = 1, math.min(10, #sorted) do
         local item = sorted[i]
-        local row = create("Frame", {
-            Size = UDim2.new(1, 0, 0, 20),
+        local row = create("TextButton", {
+            Size = UDim2.new(1, 0, 0, Framework.IS_MOBILE and 26 or 20),
             BackgroundColor3 = (i % 2 == 0) and Theme.Colors.BgTertiary or Theme.Colors.BgSecondary,
             BackgroundTransparency = 0.3,
             BorderSizePixel = 0,
+            AutoButtonColor = true,
+            Text = "",
             LayoutOrder = i,
             Parent = topList,
         })
+        row.Activated:Connect(function()
+            if NetworkMonitor.onRemoteClick then
+                pcall(NetworkMonitor.onRemoteClick, item.name)
+            end
+        end)
 
         create("TextLabel", {
             Size = UDim2.new(0, 24, 1, 0),

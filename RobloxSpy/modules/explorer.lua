@@ -30,7 +30,10 @@ local _propsScroll = nil
 local _propsHeader = nil
 local _selectedInstance = nil
 local _expandedNodes = {}  -- [Instance] = true
-local _treeRows = {}
+local _rowCache = {}     -- [key] = { frame, arrow, label, inst } (v1.1.0 row cache)
+local _seen = {}         -- keys used during the current pass
+local _extraRows = {}    -- info / warning labels (recreated each pass)
+local _selectedKey = nil
 local _searchText = ""
 local _searchResults = nil -- flat list when a deep search is active
 local _rebuildQueued = false
@@ -159,7 +162,10 @@ function Explorer.setViewSourceHandler(fn)
 end
 
 function Explorer.buildUI(tabContent)
-    _treeRows = {}
+    -- New tab content (UI rebuild): previous rows died with the old window
+    _rowCache = {}
+    _extraRows = {}
+    _selectedKey = nil
 
     -- Split: left = tree, right = properties
     local leftPanel = create("Frame", {
@@ -311,17 +317,43 @@ end
 
 -- ── TREE RENDERING ──────────────────────────────────────────────
 
+-- v1.1.0: rows are CACHED and reused. A rebuild only updates order /
+-- indent / text of existing rows instead of destroying and recreating up
+-- to 1,500 frames on every click (much faster on big games / mobile).
+
+
+local function rowKey(inst, showPath)
+    return showPath and ("s:" .. tostring(inst)) or inst
+end
+
+local function paintSelection(cached, selected)
+    if not cached then return end
+    cached.frame.BackgroundColor3 = selected and Theme.Colors.BgSelected or Theme.Colors.BgDark
+    cached.frame.BackgroundTransparency = selected and 0 or 1
+    cached.label.TextColor3 = selected and Theme.Colors.TextAccent or Theme.Colors.TextPrimary
+end
+
+-- Selecting only repaints two rows (no rebuild)
+local function selectInstance(inst, key)
+    if _selectedKey and _rowCache[_selectedKey] then
+        paintSelection(_rowCache[_selectedKey], false)
+    end
+    _selectedInstance = inst
+    _selectedKey = key
+    paintSelection(_rowCache[key], true)
+end
+
 function Explorer._rebuildTree()
     if not _treeScroll then return end
 
-    for _, row in ipairs(_treeRows) do
-        if row and row.Parent then row:Destroy() end
+    _seen = {}
+    for _, lbl in ipairs(_extraRows) do
+        if lbl and lbl.Parent then lbl:Destroy() end
     end
-    _treeRows = {}
+    _extraRows = {}
 
     local order = 0
 
-    -- Search mode: flat result list with full paths
     if _searchResults then
         local info = create("TextLabel", {
             Name = "SearchInfo",
@@ -334,77 +366,131 @@ function Explorer._rebuildTree()
             LayoutOrder = 0,
             Parent = _treeScroll,
         })
-        table.insert(_treeRows, info)
+        table.insert(_extraRows, info)
         for _, inst in ipairs(_searchResults) do
             order = order + 1
             Explorer._renderRow(inst, 0, order, true)
         end
-        return
+    else
+        local roots = {}
+        local serviceNames = {
+            "Workspace", "Players", "Lighting", "MaterialService", "ReplicatedFirst",
+            "ReplicatedStorage", "ServerScriptService", "ServerStorage",
+            "StarterGui", "StarterPack", "StarterPlayer", "Teams",
+            "SoundService", "Chat", "TextChatService", "LocalizationService", "TestService",
+        }
+        for _, name in ipairs(serviceNames) do
+            local ok, svc = pcall(function() return game:GetService(name) end)
+            if ok and svc then table.insert(roots, svc) end
+        end
+        if Compat.has("getnilinstances") then
+            table.insert(roots, NIL_ROOT)
+        end
+
+        for _, root in ipairs(roots) do
+            order = Explorer._renderNode(root, 0, order)
+            if order >= MAX_ROWS then
+                local warnLbl = create("TextLabel", {
+                    Size = UDim2.new(1, 0, 0, 18),
+                    BackgroundTransparency = 1,
+                    Text = T("ex_too_many", MAX_ROWS),
+                    TextColor3 = Theme.Colors.Warning,
+                    Font = Theme.Fonts.Body,
+                    TextSize = Theme.TextSizes.Tiny,
+                    LayoutOrder = order + 1,
+                    Parent = _treeScroll,
+                })
+                table.insert(_extraRows, warnLbl)
+                break
+            end
+        end
     end
 
-    local roots = {}
-    local serviceNames = {
-        "Workspace", "Players", "Lighting", "MaterialService", "ReplicatedFirst",
-        "ReplicatedStorage", "ServerScriptService", "ServerStorage",
-        "StarterGui", "StarterPack", "StarterPlayer", "Teams",
-        "SoundService", "Chat", "TextChatService", "LocalizationService", "TestService",
-    }
-    for _, name in ipairs(serviceNames) do
-        local ok, svc = pcall(function() return game:GetService(name) end)
-        if ok and svc then table.insert(roots, svc) end
-    end
-    if Compat.has("getnilinstances") then
-        table.insert(roots, NIL_ROOT)
-    end
-
-    for _, root in ipairs(roots) do
-        order = Explorer._renderNode(root, 0, order)
-        if order >= MAX_ROWS then
-            local warnLbl = create("TextLabel", {
-                Size = UDim2.new(1, 0, 0, 18),
-                BackgroundTransparency = 1,
-                Text = T("ex_too_many", MAX_ROWS),
-                TextColor3 = Theme.Colors.Warning,
-                Font = Theme.Fonts.Body,
-                TextSize = Theme.TextSizes.Tiny,
-                LayoutOrder = order + 1,
-                Parent = _treeScroll,
-            })
-            table.insert(_treeRows, warnLbl)
-            break
+    -- Drop rows that are no longer displayed (collapsed / destroyed instances)
+    for key, cached in pairs(_rowCache) do
+        if not _seen[key] then
+            pcall(function() cached.frame:Destroy() end)
+            _rowCache[key] = nil
         end
     end
 end
 
 function Explorer._renderRow(inst, depth, order, showPath)
     local isNil = (inst == NIL_ROOT)
-    local children = isNil and {1} or getChildrenOf(inst)
+    local children = isNil and { 1 } or getChildrenOf(inst)
     local hasChildren = #children > 0
     local isExpanded = _expandedNodes[inst] == true
-    local isSelected = (_selectedInstance == inst)
+    local key = rowKey(inst, showPath)
+    _seen[key] = true
 
-    local row = create("Frame", {
-        Name = "Node_" .. order,
-        Size = UDim2.new(1, 0, 0, Framework.IS_MOBILE and 24 or 20),
-        BackgroundColor3 = isSelected and Theme.Colors.BgSelected or Theme.Colors.BgDark,
-        BackgroundTransparency = isSelected and 0 or 1,
-        BorderSizePixel = 0,
-        LayoutOrder = order,
-        Parent = _treeScroll,
-    })
+    local cached = _rowCache[key]
+    if not cached then
+        local row = create("Frame", {
+            Name = "Node",
+            Size = UDim2.new(1, 0, 0, Framework.IS_MOBILE and 26 or 20),
+            BackgroundColor3 = Theme.Colors.BgDark,
+            BackgroundTransparency = 1,
+            BorderSizePixel = 0,
+            Parent = _treeScroll,
+        })
+        local arrow = create("TextButton", {
+            Size = UDim2.new(0, Framework.IS_MOBILE and 22 or 16, 1, 0),
+            BackgroundTransparency = 1,
+            Text = " ",
+            TextColor3 = Theme.Colors.TextMuted,
+            Font = Theme.Fonts.Code,
+            TextSize = 10,
+            Parent = row,
+        })
+        local label = create("TextButton", {
+            BackgroundTransparency = 1,
+            Text = "",
+            TextColor3 = Theme.Colors.TextPrimary,
+            Font = Theme.Fonts.Body,
+            TextSize = Theme.TextSizes.Small,
+            TextXAlignment = Enum.TextXAlignment.Left,
+            TextTruncate = Enum.TextTruncate.AtEnd,
+            Parent = row,
+        })
+        cached = { frame = row, arrow = arrow, label = label, inst = inst }
+        _rowCache[key] = cached
 
+        row.MouseEnter:Connect(function()
+            if _selectedKey ~= key then
+                row.BackgroundTransparency = 0
+                row.BackgroundColor3 = Theme.Colors.BgHover
+            end
+        end)
+        row.MouseLeave:Connect(function()
+            if _selectedKey ~= key then
+                row.BackgroundTransparency = 1
+            end
+        end)
+
+        local function toggleExpand()
+            _expandedNodes[inst] = not _expandedNodes[inst]
+            Explorer._rebuildTree()
+        end
+
+        label.Activated:Connect(function()
+            if inst == NIL_ROOT then toggleExpand() return end
+            selectInstance(inst, key)
+            Explorer._showProperties(inst)
+        end)
+        arrow.Activated:Connect(function()
+            if showPath then return end
+            if inst == NIL_ROOT or #getChildrenOf(inst) > 0 then toggleExpand() end
+        end)
+    end
+
+    -- Refresh what may have changed since last pass
     local indent = depth * 12
-
-    local arrow = create("TextButton", {
-        Size = UDim2.new(0, 16, 1, 0),
-        Position = UDim2.new(0, indent, 0, 0),
-        BackgroundTransparency = 1,
-        Text = (hasChildren and not showPath) and (isExpanded and "▼" or "▶") or " ",
-        TextColor3 = Theme.Colors.TextMuted,
-        Font = Theme.Fonts.Code,
-        TextSize = 10,
-        Parent = row,
-    })
+    local arrowW = Framework.IS_MOBILE and 22 or 16
+    cached.frame.LayoutOrder = order
+    cached.arrow.Position = UDim2.new(0, indent, 0, 0)
+    cached.arrow.Text = (hasChildren and not showPath) and (isExpanded and "▼" or "▶") or " "
+    cached.label.Size = UDim2.new(1, -(indent + arrowW + 4), 1, 0)
+    cached.label.Position = UDim2.new(0, indent + arrowW + 2, 0, 0)
 
     local text
     if isNil then
@@ -416,51 +502,12 @@ function Explorer._renderRow(inst, depth, order, showPath)
             if okP then text = text .. "   ·  " .. full end
         end
     end
+    cached.label.Text = text
 
-    local label = create("TextButton", {
-        Size = UDim2.new(1, -(indent + 20), 1, 0),
-        Position = UDim2.new(0, indent + 18, 0, 0),
-        BackgroundTransparency = 1,
-        Text = text,
-        TextColor3 = isSelected and Theme.Colors.TextAccent or Theme.Colors.TextPrimary,
-        Font = Theme.Fonts.Body,
-        TextSize = Theme.TextSizes.Small,
-        TextXAlignment = Enum.TextXAlignment.Left,
-        TextTruncate = Enum.TextTruncate.AtEnd,
-        Parent = row,
-    })
+    local isSelected = (_selectedInstance == inst)
+    if isSelected then _selectedKey = key end
+    paintSelection(cached, isSelected)
 
-    row.MouseEnter:Connect(function()
-        if _selectedInstance ~= inst then
-            row.BackgroundTransparency = 0
-            row.BackgroundColor3 = Theme.Colors.BgHover
-        end
-    end)
-    row.MouseLeave:Connect(function()
-        if _selectedInstance ~= inst then
-            row.BackgroundTransparency = 1
-        end
-    end)
-
-    label.Activated:Connect(function()
-        if isNil then
-            _expandedNodes[inst] = not _expandedNodes[inst]
-            Explorer._rebuildTree()
-            return
-        end
-        _selectedInstance = inst
-        Explorer._rebuildTree()
-        Explorer._showProperties(inst)
-    end)
-
-    arrow.Activated:Connect(function()
-        if hasChildren and not showPath then
-            _expandedNodes[inst] = not _expandedNodes[inst]
-            Explorer._rebuildTree()
-        end
-    end)
-
-    table.insert(_treeRows, row)
     return children, hasChildren, isExpanded
 end
 

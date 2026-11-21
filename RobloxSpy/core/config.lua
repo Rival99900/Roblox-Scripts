@@ -22,6 +22,22 @@ local DEFAULTS = {
     logIncoming      = true,
     autoScroll       = true,
     windowSize       = "Medium",
+
+    -- v1.1.0
+    lastSeenVersion  = nil,                 -- shows the release notes once per version
+    accent           = "blue",              -- blue | purple | green | red | orange
+    textScale        = "normal",            -- small | normal | large
+    windowTransparency = 0,                 -- 0 … 0.5
+    toggleKey        = "RightShift",        -- PC keybind to show / hide
+    mobileBottomTabs = true,                -- mobile: tab bar at the bottom
+    floodLimit       = 30,                  -- logged calls per remote per second (0 = off)
+    groupDuplicates  = true,                -- identical consecutive calls → one row "×N"
+    captureReturns   = false,               -- InvokeServer return values
+    captureClientInvoke = false,            -- OnClientInvoke (needs getcallbackvalue)
+    spyBindables     = false,               -- BindableEvent / BindableFunction
+    alertsEnabled    = true,
+    alertKeywords    = "buy,purchase,admin,ban,kick,give,reward,money,cash,gems",
+    games            = {},                  -- [PlaceId] = { ignore = {}, drop = {}, watch = {} }
 }
 
 local _data = {}
@@ -34,7 +50,7 @@ function Config.load()
     local ok, parsed = pcall(function() return HttpService:JSONDecode(raw) end)
     if not ok or type(parsed) ~= "table" then return false end
     for k, v in pairs(parsed) do
-        if DEFAULTS[k] ~= nil or k == "language" then
+        if DEFAULTS[k] ~= nil or k == "language" or k == "lastSeenVersion" then
             _data[k] = v
         end
     end
@@ -55,6 +71,33 @@ end
 
 function Config.get(key)
     return _data[key]
+end
+
+-- Per-game rule lists (saved by PlaceId): kind = "ignore" | "drop" | "watch"
+function Config.getGameList(kind)
+    local games = _data.games
+    if type(games) ~= "table" then games = {}; _data.games = games end
+    local g = games[tostring(game.PlaceId)]
+    if type(g) ~= "table" then return {} end
+    return type(g[kind]) == "table" and g[kind] or {}
+end
+
+function Config.setGameRule(kind, path, enabled)
+    local games = _data.games
+    if type(games) ~= "table" then games = {}; _data.games = games end
+    local key = tostring(game.PlaceId)
+    local g = games[key]
+    if type(g) ~= "table" then g = {}; games[key] = g end
+    local list = type(g[kind]) == "table" and g[kind] or {}
+    local out, found = {}, false
+    for _, p in ipairs(list) do
+        if p == path then found = true end
+        if p ~= path then table.insert(out, p) end
+    end
+    if enabled then table.insert(out, path) end
+    g[kind] = out
+    Config.save()
+    return not found and enabled
 end
 
 function Config.set(key, value)

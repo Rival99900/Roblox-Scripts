@@ -5,6 +5,7 @@
 
 local Framework = require(script.Parent.Parent.framework)
 local Theme = require(script.Parent.Parent.theme)
+local Icons = require(script.Parent.Parent.icons)
 
 local create = Framework.create
 local applyCorner = Framework.applyCorner
@@ -25,15 +26,10 @@ function SearchBar.new(parent, config)
     })
     applyCorner(bar, Theme.CornerRadius.MD)
 
-    -- Search icon
-    create("TextLabel", {
-        Size = UDim2.new(0, 28, 1, 0),
-        Position = UDim2.new(0, 4, 0, 0),
-        BackgroundTransparency = 1,
-        Text = "🔍",
-        TextSize = 12,
-        Parent = bar,
-    })
+    -- Search icon (drawn magnifier)
+    local icon = Icons.draw("logo", bar, 13, Theme.Colors.TextMuted)
+    icon.AnchorPoint = Vector2.new(0, 0.5)
+    icon.Position = UDim2.new(0, 10, 0.5, 0)
 
     -- Text input
     local input = create("TextBox", {
@@ -58,14 +54,14 @@ function SearchBar.new(parent, config)
         Size = UDim2.new(0, 28, 0, 24),
         Position = UDim2.new(1, -32, 0.5, -12),
         BackgroundColor3 = Theme.Colors.BgTertiary,
-        Text = "✕",
-        TextColor3 = Theme.Colors.TextMuted,
-        Font = Theme.Fonts.Body,
-        TextSize = 10,
+        Text = "",
         Visible = false,
         Parent = bar,
     })
     applyCorner(clearBtn, Theme.CornerRadius.SM)
+    local x = Icons.draw("close", clearBtn, 10, Theme.Colors.TextSecondary)
+    x.AnchorPoint = Vector2.new(0.5, 0.5)
+    x.Position = UDim2.new(0.5, 0, 0.5, 0)
 
     -- Events
     local onChange = config.OnChange
@@ -78,7 +74,7 @@ function SearchBar.new(parent, config)
         end
     end)
 
-    clearBtn.MouseButton1Click:Connect(function()
+    clearBtn.Activated:Connect(function()
         input.Text = ""
     end)
 

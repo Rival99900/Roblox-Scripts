@@ -6,7 +6,7 @@
         loadstring(game:HttpGet("https://raw.githubusercontent.com/Rival99900/Roblox-Scripts/refs/heads/main/RobloxSpy/loader.lua"))()
 
     Created by Rival960 with the help of Claude
-    Version: 1.0.0 | Status: tested on Delta (PC + iPhone)
+    Version: 1.1.0 | Status: tested on Delta (PC + iPhone)
 ]]
 
 -- ── ScriptBlox analytics (project proj_6ec7ebb3da58) ───────────
@@ -15,7 +15,7 @@
 -- its HttpGet retries forever, so it must never block RobloxSpy.
 task.spawn(function()
     pcall(function()
-        loadstring(game:HttpGet("https://scriptblox.com/ingest/clientv2.lua"))("proj_6ec7ebb3da58", "1.0.0", false)
+        loadstring(game:HttpGet("https://scriptblox.com/ingest/clientv2.lua"))("proj_6ec7ebb3da58", "1.1.0", false)
     end)
 end)
 

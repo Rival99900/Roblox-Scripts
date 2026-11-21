@@ -5,15 +5,38 @@
     Fusion of SimpleSpy × DarkDEX V5 × Cobalt — with innovations
 
     Created by Rival960 with the help of Claude
-    Version: 1.0.0
-    Status: untested in-game
+    Version: 1.1.0
+    Status: v1.0.0 tested on Delta (PC + iPhone) — v1.1.0 in local testing
     ================================================================
 
-    Usage:
-        loadstring(game:HttpGet("URL_HERE"))()
+    RELEASE NOTES — v1.1.0
+    ----------------------
+    Robustness
+      • Running the script twice now replaces the old instance (no double hooks)
+      • "Unload" button: restores __namecall, disconnects everything, removes the GUI
+      • UI connections owned by the window → no leak when the language/theme changes
+      • Anti-flood: max N logged calls per remote per second, identical calls grouped "×N"
+      • Errors tab: every internal error is listed, deduplicated and copyable
+      • Fixed: hookfunction fallback could call nil, R2S lost args after a nil,
+        missing Serializer.serializeArgs, caller never saved in sessions
+    Capture & analysis
+      • InvokeServer return values (optional), OnClientInvoke (optional), Bindables (optional)
+      • Per-remote stats, diff with the previous call, keyword alerts, watchlist
+      • Ignore / block / watch lists saved per game (PlaceId)
+      • Export a whole session as a replayable R2S script
+    Performance
+      • Explorer reuses its rows (no full rebuild on every click)
+      • Auto-save appends only new entries to one file per run (live mode = every 2 s)
+    Interface
+      • Drawn icons (✕ / maximize / restore / minimize / tabs / reopen button)
+        identical on every device and executor
+      • Reopen button with unread counter, PC keybind (RightShift by default)
+      • Mobile: bottom tab bar, bigger rows and buttons
+      • Accent colors, window transparency, text size, tooltips, empty states
+      • "What's new" window on first launch of each version
 
-    Or locally:
-        dofile("RobloxSpy/init.lua")
+    Usage:
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/Rival99900/Roblox-Scripts/refs/heads/main/RobloxSpy/loader.lua"))()
 ]]
 
 -- ── EXECUTOR COMPATIBILITY SHIM ─────────────────────────────────
@@ -29,10 +52,8 @@ end
 
 -- ── LOAD CORE ───────────────────────────────────────────────────
 
--- For loadstring execution, modules are inline.
--- For development, we use require.
-local Compat, Config, I18n, Serializer, Hooks, Session
-local Framework, Theme, RemoteSpy
+local Compat, Config, I18n, Errors, Serializer, Hooks, Session
+local Framework, Theme, Icons, RemoteSpy
 local Explorer, NetworkMonitor, ScriptViewer
 
 local function tryRequire(path)
@@ -45,11 +66,14 @@ end
 Compat     = tryRequire(script.core.compat)
 Config     = tryRequire(script.core.config)
 I18n       = tryRequire(script.core.i18n)
+Errors     = tryRequire(script.core.errors)
+if Errors and Errors.watchConsole then pcall(Errors.watchConsole) end
 Serializer = tryRequire(script.core.serializer)
 Hooks      = tryRequire(script.core.hooks)
 Session    = tryRequire(script.core.session)
 Framework  = tryRequire(script.gui.framework)
 Theme      = tryRequire(script.gui.theme)
+Icons      = tryRequire(script.gui.icons)
 RemoteSpy      = tryRequire(script.modules["remote-spy"])
 Explorer       = tryRequire(script.modules.explorer)
 NetworkMonitor = tryRequire(script.modules["network-monitor"])
@@ -57,13 +81,19 @@ ScriptViewer   = tryRequire(script.modules["script-viewer"])
 
 local T = (I18n and I18n.T) or function(k) return k end
 
-local VERSION = "1.0.0"
+local VERSION = "1.1.0"
 local _window = nil
 local _spyStarted = false
 local _autoSaveThread = nil
+local _alive = true          -- false once unloaded (stops every loop)
+local _statusThread = nil
 
 -- Forward declarations
-local buildWindow, buildHistoryTab, buildSettingsTab, startAutoSave
+local buildWindow, buildHistoryTab, buildSettingsTab, buildErrorsTab, startAutoSave, unloadAll
+
+local function logError(source, err)
+    if Errors then Errors.add(source, err) else warn("[RobloxSpy] " .. source .. ": " .. tostring(err)) end
+end
 
 -- ── FILE HELPERS ────────────────────────────────────────────────
 
@@ -88,7 +118,7 @@ local function ensureFolders(path)
 end
 
 -- Writes content into the export folder. Returns ok, pathOrError.
-local function writeExport(fileName, content)
+local function writeExport(fileName, content, append)
     if not Compat.has("writefile") then
         return false, T("n_no_write", tostring(Compat.ExecutorName))
     end
@@ -100,85 +130,158 @@ local function writeExport(fileName, content)
         return false, T("n_folder_fail", folder)
     end
     local path = folder .. "/" .. fileName
-    local ok, err = Compat.writeFile(path, content)
+    local ok, err
+    if append and Compat.has("appendfile") and Compat.fileExists(path) then
+        ok = Compat.appendFile(path, content)
+    else
+        ok, err = Compat.writeFile(path, content)
+    end
     if ok then return true, path end
     return false, T("n_save_fail", tostring(err))
 end
 
--- ── AUTO-SAVE ───────────────────────────────────────────────────
--- One file per game run, overwritten at each interval.
+-- ── AUTO-SAVE (incremental) ─────────────────────────────────────
+-- Only entries that are new since the last save are written. With
+-- appendfile they are appended; files are split past MAX_PART_BYTES.
 
 startAutoSave = function()
     if _autoSaveThread then return end
+    -- One text file + one JSON file per run, updated in place on every save
     local runId = os.date("%Y%m%d_%H%M%S") .. "_" .. tostring(game.PlaceId)
+    local txtName = "autosave_" .. runId .. ".txt"
+    local jsonName = "autosave_" .. runId .. ".json"
+    local lastSerial = 0
+    local headerWritten = false
+    local lastJson = 0
+
     _autoSaveThread = task.spawn(function()
-        while true do
-            local interval = math.max(10, tonumber(Config.get("autoSaveInterval")) or 60)
-            task.wait(interval)
-            if Config.get("autoSave") and Compat.has("writefile") then
-                pcall(function()
-                    if RemoteSpy then writeExport("autosave_" .. runId .. ".txt", RemoteSpy.exportText()) end
-                    if Session then
-                        writeExport("autosave_" .. runId .. ".json", Session.exportCurrent("json"))
+        while _alive do
+            local configured = tonumber(Config.get("autoSaveInterval")) or 60
+            local live = configured <= 0
+            task.wait(live and 2 or math.max(10, configured))
+            if not _alive then break end
+            if Config.get("autoSave") and Compat.has("writefile") and RemoteSpy then
+                local ok, err = pcall(function()
+                    local text, newest = RemoteSpy.exportTextSince(lastSerial)
+                    if text ~= "" then
+                        local chunk = text
+                        if not headerWritten then
+                            chunk = T("log_export_title") .. " — " .. os.date("%Y-%m-%d %H:%M:%S")
+                                .. " — PlaceId " .. tostring(game.PlaceId) .. "\n" .. string.rep("=", 60) .. "\n" .. text
+                        end
+                        local wrote
+                        if headerWritten and Compat.has("appendfile") then
+                            wrote = writeExport(txtName, "\n" .. chunk, true)
+                        else
+                            local existing = headerWritten and (Compat.readFile(cleanFolder(Config.get("exportFolder")) .. "/" .. txtName) or "") or ""
+                            wrote = writeExport(txtName, existing .. (existing ~= "" and "\n" or "") .. chunk, false)
+                        end
+                        if wrote then
+                            headerWritten = true
+                            lastSerial = newest
+                        end
+                    end
+                    -- JSON snapshot: rewritten in place (throttled to 10 s in live mode)
+                    if Session and (text ~= "" or not live) and (not live or os.clock() - lastJson >= 10) then
+                        lastJson = os.clock()
+                        writeExport(jsonName, Session.exportCurrent("json"))
                         Session.save()
                     end
                 end)
+                if not ok then logError("AutoSave", err) end
             end
         end
+        _autoSaveThread = nil
     end)
 end
 
--- ── MAIN ────────────────────────────────────────────────────────
+local function applyHookOptions()
+    if not Hooks then return end
+    pcall(Hooks.setLogIncoming, Config.get("logIncoming") ~= false)
+    pcall(Hooks.setCaptureReturns, Config.get("captureReturns") == true)
+    pcall(Hooks.setCaptureClientInvoke, Config.get("captureClientInvoke") == true)
+    pcall(Hooks.setSpyBindables, Config.get("spyBindables") == true)
+    pcall(Hooks.setFloodLimit, tonumber(Config.get("floodLimit")) or 30)
+end
+
+local function setRecordingStatus()
+    if not _window then return end
+    local text = T("status_recording", (Compat and Compat.ExecutorName or "Unknown"),
+        tostring(Hooks and Hooks.getStrategy and Hooks.getStrategy() or "?"))
+    local count = Hooks and Hooks.getCallCount and Hooks.getCallCount() or 0
+    text = text .. "  ·  " .. T("status_events", count)
+    local skipped = Hooks and Hooks.getFloodSkipped and Hooks.getFloodSkipped() or 0
+    if skipped > 0 then text = text .. "  ·  " .. T("status_flood", skipped) end
+    local errCount = Errors and Errors.count() or 0
+    if errCount > 0 then text = text .. "  ·  " .. T("status_errors", errCount) end
+    _window:setStatus(text, (Hooks and Hooks.isPaused and Hooks.isPaused()) and Theme.Colors.Warning or Theme.Colors.Success)
+end
 
 local function startSpy()
     if _spyStarted or not RemoteSpy then return end
     _spyStarted = true
 
-    -- Feed network monitor
     Hooks.subscribe(function(event)
         if NetworkMonitor then
             NetworkMonitor.recordCall(event)
         end
     end)
-    if Hooks.setLogIncoming then
-        Hooks.setLogIncoming(Config.get("logIncoming") ~= false)
-    end
+    applyHookOptions()
     RemoteSpy.start()
     startAutoSave()
+
+    -- Live status bar (events, flood, errors)
+    _statusThread = task.spawn(function()
+        while _alive do
+            pcall(setRecordingStatus)
+            task.wait(2)
+        end
+    end)
 
     -- Cleanup on teleport
     pcall(function()
         game:GetService("Players").LocalPlayer.OnTeleport:Connect(function()
-            if RemoteSpy then RemoteSpy.stop() end
+            if RemoteSpy then pcall(RemoteSpy.stop) end
         end)
     end)
 end
 
-local function setRecordingStatus()
+-- ── WINDOW ──────────────────────────────────────────────────────
+
+local SIZE_PRESETS_MOBILE = {
+    Small  = UDim2.new(0.75, 0, 0.5, 0),
+    Medium = UDim2.new(0.9, 0, 0.62, 0),
+    Large  = UDim2.new(0.97, 0, 0.82, 0),
+}
+local SIZE_PRESETS_PC = {
+    Small  = UDim2.new(0, 440, 0, 300),
+    Medium = UDim2.new(0, 540, 0, 370),
+    Large  = UDim2.new(0, 700, 0, 490),
+}
+
+local function showReleaseNotes(force)
     if not _window then return end
-    _window:setStatus(
-        T("status_recording", (Compat and Compat.ExecutorName or "Unknown"),
-            tostring(Hooks and Hooks.getStrategy and Hooks.getStrategy() or "?")),
-        Theme and Theme.Colors.Success or Color3.fromRGB(80, 200, 120))
+    if not force and Config.get("lastSeenVersion") == VERSION then return end
+    local lines = {}
+    for i = 1, 10 do
+        local key = "rn_" .. i
+        local line = T(key)
+        if line ~= key then table.insert(lines, "• " .. line) end
+    end
+    Framework.modal(_window, T("rn_title", VERSION), lines, {
+        { T("ok"), Theme.Colors.Accent, function() Config.set("lastSeenVersion", VERSION) end },
+    })
 end
 
 buildWindow = function()
-    local sizePresets = Framework.IS_MOBILE and {
-        Small  = UDim2.new(0.75, 0, 0.5, 0),
-        Medium = UDim2.new(0.9, 0, 0.62, 0),
-        Large  = UDim2.new(0.97, 0, 0.82, 0),
-    } or {
-        Small  = UDim2.new(0, 440, 0, 300),
-        Medium = UDim2.new(0, 520, 0, 360),
-        Large  = UDim2.new(0, 680, 0, 480),
-    }
+    local presets = Framework.IS_MOBILE and SIZE_PRESETS_MOBILE or SIZE_PRESETS_PC
 
     local window = Framework.createWindow({
-        Title = "🔍 RobloxSpy v" .. VERSION,
-        Size = sizePresets[Config.get("windowSize") or "Medium"] or sizePresets.Medium,
+        Title = "RobloxSpy v" .. VERSION,
+        Size = presets[Config.get("windowSize") or "Medium"] or presets.Medium,
     })
     if not window then
-        warn("[RobloxSpy] Failed to create window.")
+        logError("Window", "Failed to create window")
         return nil
     end
     _window = window
@@ -186,26 +289,32 @@ buildWindow = function()
     -- Reopen button first: it must exist even if a tab fails to build
     pcall(Framework.createToggleButton, window)
 
-    -- Tabs
-    local spyTab       = window:addTab(T("tab_spy"), "🛰")
-    local explorerTab  = window:addTab(T("tab_explorer"), "🗂")
-    local networkTab   = window:addTab(T("tab_network"), "📶")
-    local scriptsTab   = window:addTab(T("tab_scripts"), "🧾")
-    local historyTab   = window:addTab(T("tab_history"), "🕘")
-    local settingsTab  = window:addTab(T("tab_settings"), "🛠")
+    -- PC keybind
+    if not Framework.IS_MOBILE then
+        pcall(Framework.bindToggleKey, window, Config.get("toggleKey") or "RightShift")
+    end
+
+    -- Tabs (drawn icons — identical on every device)
+    local spyTab       = window:addTab(T("tab_spy"), "spy")
+    local explorerTab  = window:addTab(T("tab_explorer"), "explorer")
+    local networkTab   = window:addTab(T("tab_network"), "network")
+    local scriptsTab   = window:addTab(T("tab_scripts"), "scripts")
+    local historyTab   = window:addTab(T("tab_history"), "history")
+    local errorsTab    = window:addTab(T("tab_errors"), "errors")
+    local settingsTab  = window:addTab(T("tab_settings"), "settings")
 
     -- Each tab is built in isolation: one error no longer blanks every menu
     local function buildTab(name, fn, ...)
-        local ok, err = pcall(fn, ...)
-        if not ok then
-            warn("[RobloxSpy] Tab '" .. name .. "' failed: " .. tostring(err))
-        end
+        local args = table.pack(...)
+        local ok, err = xpcall(function() return fn(table.unpack(args, 1, args.n)) end, function(e)
+            return tostring(e) .. "\n" .. (debug and debug.traceback and debug.traceback("", 2) or "")
+        end)
+        if not ok then logError("Tab " .. name, err) end
     end
 
     if RemoteSpy then buildTab("Remote Spy", RemoteSpy.buildUI, spyTab) end
     if Explorer then
         buildTab("Explorer", Explorer.buildUI, explorerTab)
-        -- "View source" in the Explorer opens the Scripts tab
         if Explorer.setViewSourceHandler and ScriptViewer then
             Explorer.setViewSourceHandler(function(inst)
                 window:switchTab(T("tab_scripts"))
@@ -213,29 +322,57 @@ buildWindow = function()
             end)
         end
     end
-    if NetworkMonitor then buildTab("Network", NetworkMonitor.buildUI, networkTab) end
+    if NetworkMonitor then
+        buildTab("Network", NetworkMonitor.buildUI, networkTab)
+        -- Click a top remote → filter the spy feed on it
+        NetworkMonitor.onRemoteClick = function(name)
+            window:switchTab(T("tab_spy"))
+            if RemoteSpy and RemoteSpy.filterByRemote then RemoteSpy.filterByRemote(name) end
+        end
+    end
     if ScriptViewer then buildTab("Scripts", ScriptViewer.buildUI, scriptsTab) end
     buildTab("History", buildHistoryTab, historyTab, window)
+    buildTab("Errors", buildErrorsTab, errorsTab, window)
     buildTab("Settings", buildSettingsTab, settingsTab, window)
 
-    if _spyStarted then setRecordingStatus() end
+    if _spyStarted then pcall(setRecordingStatus) end
     return window
 end
 
--- Rebuilds the whole interface (used when the language changes).
+-- Rebuilds the whole interface (language / theme / text size change).
 -- Hooks, session and captured events are kept.
 local function rebuildWindow(openTabKey)
+    local wasMaximized = false
     if _window then
-        pcall(function()
-            if _window._toggleBtn then _window._toggleBtn:Destroy() end
-        end)
+        wasMaximized = _window:isMaximized()
         pcall(function() _window:destroy() end)
         _window = nil
     end
     local w = buildWindow()
-    if w and openTabKey then
-        pcall(function() w:switchTab(T(openTabKey)) end)
+    if w then
+        if openTabKey then pcall(function() w:switchTab(T(openTabKey)) end) end
+        if wasMaximized then pcall(function() w:toggleMaximize(true) end) end
     end
+end
+
+-- Full unload: hooks restored, loops stopped, GUI removed, session saved.
+unloadAll = function()
+    _alive = false
+    pcall(function() if Errors and Errors.stopConsole then Errors.stopConsole() end end)
+    pcall(function() if Session then Session.save() end end)
+    pcall(function() if Hooks and Hooks.unload then Hooks.unload() end end)
+    pcall(function() if NetworkMonitor then NetworkMonitor.stop() end end)
+    pcall(function() if _window then _window:destroy() end end)
+    _window = nil
+    pcall(function()
+        local sg = Framework and Framework.getScreenGui and Framework.getScreenGui()
+        if sg then sg:Destroy() end
+    end)
+    local G = (getgenv and getgenv()) or _G
+    if G.RobloxSpy_Instance and G.RobloxSpy_Instance.version == VERSION and G.RobloxSpy_Instance.unload == unloadAll then
+        G.RobloxSpy_Instance = nil
+    end
+    print("[RobloxSpy] Unloaded.")
 end
 
 local function main()
@@ -243,6 +380,27 @@ local function main()
     print("  RobloxSpy v" .. VERSION)
     print("  Remote Spy • Explorer • Sessions")
     print("═══════════════════════════════════════")
+
+    -- 0. Single instance: running the script again replaces the old one
+    local G = (getgenv and getgenv()) or _G
+    local previous = G.RobloxSpy_Instance
+    if previous and type(previous.unload) == "function" then
+        print("[RobloxSpy] Previous instance found (v" .. tostring(previous.version) .. ") — unloading it")
+        pcall(previous.unload)
+        task.wait(0.1)
+    end
+    -- Also remove a leftover GUI from an older build without unload()
+    pcall(function()
+        local parents = {}
+        pcall(function() if gethui then table.insert(parents, gethui()) end end)
+        pcall(function() table.insert(parents, game:GetService("Players").LocalPlayer:FindFirstChild("PlayerGui")) end)
+        pcall(function() table.insert(parents, game:GetService("CoreGui")) end)
+        for _, p in ipairs(parents) do
+            local old = p and p:FindFirstChild("RobloxSpyGUI")
+            if old then old:Destroy() end
+        end
+    end)
+    G.RobloxSpy_Instance = { version = VERSION, unload = unloadAll }
 
     -- 1. Init compatibility layer
     if Compat then
@@ -276,9 +434,131 @@ local function main()
 
     -- 4. Start spy (once)
     startSpy()
-    setRecordingStatus()
+    pcall(setRecordingStatus)
+
+    -- 5. What's new (once per version)
+    task.delay(0.6, function() pcall(showReleaseNotes, false) end)
 
     print("[RobloxSpy] Ready.")
+end
+
+-- ── ERRORS TAB ──────────────────────────────────────────────────
+
+buildErrorsTab = function(parent, window)
+    if not Errors or not Framework or not Theme then return end
+    local create = Framework.create
+    local applyCorner = Framework.applyCorner
+    local applyPadding = Framework.applyPadding
+
+    local top = create("Frame", {
+        Size = UDim2.new(1, 0, 0, 34),
+        BackgroundColor3 = Theme.Colors.BgSecondary,
+        BorderSizePixel = 0,
+        Parent = parent,
+    })
+    applyPadding(top, 4, 6, 4, 8)
+    create("UIListLayout", {
+        FillDirection = Enum.FillDirection.Horizontal,
+        VerticalAlignment = Enum.VerticalAlignment.Center,
+        Padding = UDim.new(0, 6),
+        SortOrder = Enum.SortOrder.LayoutOrder,
+        Parent = top,
+    })
+    local countLbl = create("TextLabel", {
+        Size = UDim2.new(0, 0, 1, 0),
+        AutomaticSize = Enum.AutomaticSize.X,
+        BackgroundTransparency = 1,
+        Text = "",
+        TextColor3 = Theme.Colors.TextPrimary,
+        Font = Theme.Fonts.Heading,
+        TextSize = Theme.TextSizes.Body,
+        LayoutOrder = 1,
+        Parent = top,
+    })
+    local function topBtn(text, color, order)
+        local b = create("TextButton", {
+            Size = UDim2.new(0, 0, 0, 24),
+            AutomaticSize = Enum.AutomaticSize.X,
+            BackgroundColor3 = color,
+            BackgroundTransparency = 0.4,
+            Text = text,
+            TextColor3 = Theme.Colors.TextPrimary,
+            Font = Theme.Fonts.Medium,
+            TextSize = Theme.TextSizes.Small,
+            LayoutOrder = order,
+            Parent = top,
+        })
+        applyCorner(b, Theme.CornerRadius.SM)
+        applyPadding(b, 2, 8, 2, 8)
+        return b
+    end
+    local copyBtn = topBtn(T("err_copy"), Theme.Colors.Accent, 2)
+    local clearBtn = topBtn(T("err_clear"), Theme.Colors.Error, 3)
+
+    local list = Framework.createScrollFrame(parent, {
+        Name = "ErrorList",
+        Size = UDim2.new(1, 0, 1, -34),
+        Position = UDim2.new(0, 0, 0, 34),
+        Padding = 3,
+        InnerPadding = 6,
+    })
+
+    local refreshQueued = false
+    local function refresh()
+        refreshQueued = false
+        if not list.Parent then return end
+        for _, c in ipairs(list:GetChildren()) do
+            if c:IsA("GuiObject") then c:Destroy() end
+        end
+        local items = Errors.list()
+        countLbl.Text = T("err_count", #items)
+        if #items == 0 then
+            Framework.emptyState(list, T("empty_errors"), "check")
+            return
+        end
+        for i = #items, 1, -1 do
+            local e = items[i]
+            local row = create("Frame", {
+                Size = UDim2.new(1, 0, 0, 0),
+                AutomaticSize = Enum.AutomaticSize.Y,
+                BackgroundColor3 = Theme.Colors.BgSecondary,
+                LayoutOrder = #items - i,
+                Parent = list,
+            })
+            applyCorner(row, Theme.CornerRadius.SM)
+            applyPadding(row, 4, 8, 4, 8)
+            create("TextBox", {
+                Size = UDim2.new(1, 0, 0, 0),
+                AutomaticSize = Enum.AutomaticSize.Y,
+                BackgroundTransparency = 1,
+                Text = string.format("[%s]  ×%d  %s\n%s", os.date("%H:%M:%S", e.last), e.count, e.source, e.message),
+                TextEditable = false,
+                ClearTextOnFocus = false,
+                TextWrapped = true,
+                TextColor3 = Theme.Colors.TextPrimary,
+                Font = Theme.Fonts.Code,
+                TextSize = Theme.TextSizes.Small,
+                TextXAlignment = Enum.TextXAlignment.Left,
+                Parent = row,
+            })
+        end
+    end
+
+    Errors.subscribe(function()
+        if refreshQueued then return end
+        refreshQueued = true
+        task.delay(0.5, refresh) -- coalesce bursts
+    end)
+
+    copyBtn.Activated:Connect(function()
+        Framework.copy(Errors.toText(), T("c_errors"))
+    end)
+    clearBtn.Activated:Connect(function()
+        Errors.clear()
+        refresh()
+    end)
+
+    refresh()
 end
 
 -- ── HISTORY TAB ─────────────────────────────────────────────────
@@ -389,9 +669,14 @@ buildHistoryTab = function(parent, window)
     -- Entry list of one session (viewer)
     local function openSession(meta, data)
         clear()
-        local backRow = create("Frame", {
-            Size = UDim2.new(1, -12, 0, 24),
+        local backRow = create("ScrollingFrame", { -- scrolls on narrow phones
+            Size = UDim2.new(1, -12, 0, 26),
             BackgroundTransparency = 1,
+            BorderSizePixel = 0,
+            ScrollBarThickness = 0,
+            ScrollingDirection = Enum.ScrollingDirection.X,
+            CanvasSize = UDim2.new(0, 0, 0, 0),
+            AutomaticCanvasSize = Enum.AutomaticSize.X,
             LayoutOrder = 0,
             Parent = scroll,
         })
@@ -412,6 +697,15 @@ buildHistoryTab = function(parent, window)
         end)
         smallBtn(backRow, T("sc_copy"), Theme.Colors.Accent).Activated:Connect(function()
             Framework.copy(Session.toText(data), T("c_logs"))
+        end)
+        smallBtn(backRow, T("hi_export_script"), Theme.Colors.InvokeServer).Activated:Connect(function()
+            local script = Session.toR2SScript(data)
+            local ok, res = writeExport("replay_" .. tostring(data.id) .. ".lua", script)
+            if ok then
+                Framework.notify(T("n_saved", res), "success", 4)
+            else
+                Framework.copy(script, T("c_r2s"))
+            end
         end)
 
         local dur = (data.endTime or os.time()) - (data.startTime or os.time())
@@ -777,38 +1071,111 @@ buildSettingsTab = function(parent, window)
         end)
     end
 
+    -- Drop-down selector (same look as the language picker)
     local function choiceRow(options, selected, onPick)
-        local row = create("Frame", {
-            Size = UDim2.new(1, 0, 0, 28),
-            BackgroundTransparency = 1,
+        local function labelOf(v)
+            for _, o in ipairs(options) do if o[1] == v then return o[2] end end
+            return tostring(v)
+        end
+        local dropBtn = create("TextButton", {
+            Size = UDim2.new(1, 0, 0, 30),
+            BackgroundColor3 = Theme.Colors.BgSecondary,
+            AutoButtonColor = false,
+            Text = "",
             LayoutOrder = nextOrder(),
             Parent = scroll,
         })
-        create("UIListLayout", {
-            FillDirection = Enum.FillDirection.Horizontal,
-            Padding = UDim.new(0, 6),
-            Parent = row,
+        applyCorner(dropBtn, Theme.CornerRadius.SM)
+        Framework.applyStroke(dropBtn, Theme.Colors.Border, 1)
+        local valueLbl = create("TextLabel", {
+            Size = UDim2.new(1, -40, 1, 0),
+            Position = UDim2.new(0, 10, 0, 0),
+            BackgroundTransparency = 1,
+            Text = labelOf(selected),
+            TextColor3 = Theme.Colors.TextPrimary,
+            Font = Theme.Fonts.Medium,
+            TextSize = Theme.TextSizes.Body,
+            TextXAlignment = Enum.TextXAlignment.Left,
+            TextTruncate = Enum.TextTruncate.AtEnd,
+            Parent = dropBtn,
         })
-        local buttons = {}
-        for _, opt in ipairs(options) do
+        local arrow = create("TextLabel", {
+            Size = UDim2.new(0, 24, 1, 0),
+            Position = UDim2.new(1, -30, 0, 0),
+            BackgroundTransparency = 1,
+            Text = "▼",
+            TextColor3 = Theme.Colors.TextSecondary,
+            Font = Theme.Fonts.Body,
+            TextSize = 12,
+            Parent = dropBtn,
+        })
+        local rowH = 28
+        local listFrame = create("Frame", {
+            Size = UDim2.new(1, 0, 0, math.min(#options, 6) * (rowH + 2) + 10),
+            BackgroundColor3 = Theme.Colors.BgPrimary,
+            Visible = false,
+            LayoutOrder = nextOrder(),
+            Parent = scroll,
+        })
+        applyCorner(listFrame, Theme.CornerRadius.SM)
+        Framework.applyStroke(listFrame, Theme.Colors.Border, 1)
+        local list = Framework.createScrollFrame(listFrame, { Padding = 2, InnerPadding = 4 })
+
+        local current = selected
+        local rows = {}
+        local function paint()
+            for v, r in pairs(rows) do
+                local isCur = (v == current)
+                r.btn.BackgroundColor3 = isCur and Theme.Colors.Accent or Theme.Colors.BgSecondary
+                r.btn.BackgroundTransparency = isCur and 0.2 or 0.4
+                r.check.Text = isCur and "✓" or ""
+            end
+            valueLbl.Text = labelOf(current)
+        end
+        for i, opt in ipairs(options) do
             local b = create("TextButton", {
-                Size = UDim2.new(1 / #options, -5, 1, 0),
-                BackgroundColor3 = (opt[1] == selected) and Theme.Colors.Accent or Theme.Colors.BgTertiary,
+                Size = UDim2.new(1, -4, 0, rowH),
+                Text = "",
+                LayoutOrder = i,
+                Parent = list,
+            })
+            applyCorner(b, Theme.CornerRadius.SM)
+            create("TextLabel", {
+                Size = UDim2.new(1, -40, 1, 0),
+                Position = UDim2.new(0, 10, 0, 0),
+                BackgroundTransparency = 1,
                 Text = opt[2],
                 TextColor3 = Theme.Colors.TextPrimary,
                 Font = Theme.Fonts.Medium,
                 TextSize = Theme.TextSizes.Small,
-                Parent = row,
+                TextXAlignment = Enum.TextXAlignment.Left,
+                Parent = b,
             })
-            applyCorner(b, Theme.CornerRadius.SM)
-            buttons[opt[1]] = b
+            local check = create("TextLabel", {
+                Size = UDim2.new(0, 30, 1, 0),
+                Position = UDim2.new(1, -34, 0, 0),
+                BackgroundTransparency = 1,
+                Text = "",
+                TextColor3 = Theme.Colors.TextPrimary,
+                Font = Theme.Fonts.Code,
+                TextSize = Theme.TextSizes.Small,
+                Parent = b,
+            })
+            rows[opt[1]] = { btn = b, check = check }
             b.Activated:Connect(function()
-                for k, other in pairs(buttons) do
-                    other.BackgroundColor3 = (k == opt[1]) and Theme.Colors.Accent or Theme.Colors.BgTertiary
-                end
+                listFrame.Visible = false
+                arrow.Text = "▼"
+                if opt[1] == current then return end
+                current = opt[1]
+                paint()
                 onPick(opt[1])
             end)
         end
+        paint()
+        dropBtn.Activated:Connect(function()
+            listFrame.Visible = not listFrame.Visible
+            arrow.Text = listFrame.Visible and "▲" or "▼"
+        end)
     end
 
     -- ── 1. LANGUAGE (drop-down) ──────────────────────────────────
@@ -1006,22 +1373,51 @@ buildSettingsTab = function(parent, window)
             return false
         end
         Config.set("autoSave", on)
-        Framework.notify(on and T("n_autosave_on", tonumber(Config.get("autoSaveInterval")) or 60, cleanFolder(Config.get("exportFolder"))) or T("n_autosave_off"), on and "success" or "info", 3)
+        Framework.notify(on and T("n_autosave_on", (tonumber(Config.get("autoSaveInterval")) or 60) == 0 and 2 or (tonumber(Config.get("autoSaveInterval")) or 60), cleanFolder(Config.get("exportFolder"))) or T("n_autosave_off"), on and "success" or "info", 3)
         return true
     end)
     note(T("se_interval"), Theme.Colors.TextSecondary)
-    choiceRow({ { 30, "30s" }, { 60, "1 min" }, { 300, "5 min" }, { 600, "10 min" } },
+    choiceRow({ { 0, T("as_live") }, { 30, "30 s" }, { 60, "1 min" }, { 300, "5 min" }, { 600, "10 min" } },
         tonumber(Config.get("autoSaveInterval")) or 60,
         function(v) Config.set("autoSaveInterval", v) end)
 
-    -- ── 3. OPTIONS ───────────────────────────────────────────────
-    heading(T("se_options"))
+    -- ── 3. CAPTURE ───────────────────────────────────────────────
+    heading(T("se_capture"))
 
     toggle(T("se_incoming"), Config.get("logIncoming") ~= false, function(on)
         if Hooks and Hooks.setLogIncoming then Hooks.setLogIncoming(on) end
         Config.set("logIncoming", on)
         Framework.notify(on and T("n_inc_on") or T("n_inc_off"), "info", 1.5)
     end)
+    toggle(T("se_returns"), Config.get("captureReturns") == true, function(on)
+        Config.set("captureReturns", on)
+        if Hooks and Hooks.setCaptureReturns then Hooks.setCaptureReturns(on) end
+        Framework.notify(on and T("n_returns_on") or T("n_option_off"), on and "success" or "info", 3)
+    end)
+    note(T("se_returns_note"), Theme.Colors.TextMuted)
+    toggle(T("se_clientinvoke"), Config.get("captureClientInvoke") == true, function(on)
+        if on and not (Hooks and Hooks.canCaptureClientInvoke and Hooks.canCaptureClientInvoke()) then
+            Framework.notify(T("n_need_fn", "getcallbackvalue", tostring(Compat.ExecutorName)), "error", 4)
+            return false
+        end
+        Config.set("captureClientInvoke", on)
+        if Hooks and Hooks.setCaptureClientInvoke then Hooks.setCaptureClientInvoke(on) end
+        return true
+    end)
+    toggle(T("se_bindables"), Config.get("spyBindables") == true, function(on)
+        Config.set("spyBindables", on)
+        if Hooks and Hooks.setSpyBindables then Hooks.setSpyBindables(on) end
+    end)
+    toggle(T("se_group"), Config.get("groupDuplicates") ~= false, function(on)
+        Config.set("groupDuplicates", on)
+    end)
+    note(T("se_flood"), Theme.Colors.TextSecondary)
+    choiceRow({ { 0, T("off") }, { 5, "5 / s" }, { 10, "10 / s" }, { 30, "30 / s" }, { 60, "60 / s" }, { 100, "100 / s" }, { 250, "250 / s" } },
+        tonumber(Config.get("floodLimit")) or 30,
+        function(v)
+            Config.set("floodLimit", v)
+            if Hooks and Hooks.setFloodLimit then Hooks.setFloodLimit(v) end
+        end)
     toggle(T("se_autoscroll"), RemoteSpy and RemoteSpy.getAutoScroll and RemoteSpy.getAutoScroll(), function(on)
         if RemoteSpy and RemoteSpy.setAutoScroll then RemoteSpy.setAutoScroll(on) end
     end)
@@ -1030,29 +1426,120 @@ buildSettingsTab = function(parent, window)
         Framework.notify(on and T("n_paused") or T("n_resumed"), "info", 1.5)
     end)
 
+    -- ── 4. ALERTS ────────────────────────────────────────────────
+    heading(T("se_alerts"))
+    toggle(T("se_alerts_on"), Config.get("alertsEnabled") ~= false, function(on)
+        Config.set("alertsEnabled", on)
+    end)
+    note(T("se_keywords"), Theme.Colors.TextSecondary)
+    local kwBox = create("TextBox", {
+        Size = UDim2.new(1, 0, 0, 30),
+        BackgroundColor3 = Theme.Colors.BgSecondary,
+        Text = tostring(Config.get("alertKeywords") or ""),
+        PlaceholderText = "buy, admin, ban…",
+        ClearTextOnFocus = false,
+        TextColor3 = Theme.Colors.TextPrimary,
+        Font = Theme.Fonts.Code,
+        TextSize = Theme.TextSizes.Small,
+        TextXAlignment = Enum.TextXAlignment.Left,
+        TextTruncate = Enum.TextTruncate.AtEnd,
+        LayoutOrder = nextOrder(),
+        Parent = scroll,
+    })
+    applyCorner(kwBox, Theme.CornerRadius.SM)
+    applyPadding(kwBox, 0, 8, 0, 8)
+    kwBox.FocusLost:Connect(function()
+        Config.set("alertKeywords", kwBox.Text)
+        if RemoteSpy and RemoteSpy.reloadKeywords then RemoteSpy.reloadKeywords() end
+        Framework.notify(T("n_keywords_saved"), "success", 1.5)
+    end)
+
+    -- ── 5. APPEARANCE ────────────────────────────────────────────
+    heading(T("se_appearance"))
+    note(T("se_accent"), Theme.Colors.TextSecondary)
+    local accentNames = { blue = T("c_blue"), purple = T("c_purple"), green = T("c_green"), red = T("c_red"), orange = T("c_orange") }
+    local accentOpts = {}
+    for _, a in ipairs(Theme.Accents) do table.insert(accentOpts, { a.id, accentNames[a.id] or a.id }) end
+    choiceRow(accentOpts, Config.get("accent") or "blue", function(id)
+        Config.set("accent", id)
+        Theme.applyAccent(id)
+        task.defer(function() rebuildWindow("tab_settings") end)
+    end)
+    note(T("se_transparency"), Theme.Colors.TextSecondary)
+    choiceRow({ { 0, "0 %" }, { 0.1, "10 %" }, { 0.2, "20 %" }, { 0.3, "30 %" }, { 0.4, "40 %" }, { 0.5, "50 %" } },
+        tonumber(Config.get("windowTransparency")) or 0,
+        function(v)
+            Config.set("windowTransparency", v)
+            if window and window.setTransparency then window:setTransparency(v) end
+        end)
+    note(T("se_textsize"), Theme.Colors.TextSecondary)
+    choiceRow({ { "small", T("sz_small") }, { "normal", T("sz_medium") }, { "large", T("sz_large") } },
+        Config.get("textScale") or "normal",
+        function(id)
+            Config.set("textScale", id)
+            Theme.applyTextScale(id)
+            task.defer(function() rebuildWindow("tab_settings") end)
+        end)
+
+    if Framework.IS_MOBILE then
+        toggle(T("se_bottomtabs"), Config.get("mobileBottomTabs") ~= false, function(on)
+            Config.set("mobileBottomTabs", on)
+            task.defer(function() rebuildWindow("tab_settings") end)
+        end)
+    else
+        -- PC keybind
+        local keyBtn = button(T("se_keybind", tostring(Config.get("toggleKey") or "RightShift")))
+        keyBtn.Activated:Connect(function()
+            keyBtn.Text = T("se_keybind_wait")
+            Framework.captureKey(function(keyName)
+                if keyName then
+                    Config.set("toggleKey", keyName)
+                    Framework.bindToggleKey(window, keyName)
+                    Framework.notify(T("n_keybind", keyName), "success", 2)
+                end
+                keyBtn.Text = T("se_keybind", tostring(Config.get("toggleKey") or "RightShift"))
+            end)
+        end)
+    end
+
     -- Window size presets
     heading(T("se_size"))
-    local presets = Framework.IS_MOBILE and {
-        Small  = UDim2.new(0.75, 0, 0.5, 0),
-        Medium = UDim2.new(0.9, 0, 0.62, 0),
-        Large  = UDim2.new(0.97, 0, 0.82, 0),
-    } or {
-        Small  = UDim2.new(0, 440, 0, 300),
-        Medium = UDim2.new(0, 520, 0, 360),
-        Large  = UDim2.new(0, 680, 0, 480),
-    }
+    local presets = Framework.IS_MOBILE and SIZE_PRESETS_MOBILE or SIZE_PRESETS_PC
     choiceRow({ { "Small", T("sz_small") }, { "Medium", T("sz_medium") }, { "Large", T("sz_large") } },
         Config.get("windowSize") or "Medium",
         function(key)
             Config.set("windowSize", key)
             if window and window.Frame then
-                -- Convert scale sizes to pixels so the clamp keeps it on screen
+                if window:isMaximized() then window:toggleMaximize(false) end
                 local target = presets[key]
                 window.Frame.Size = target
                 window._savedSize = target
                 pcall(Framework.clampToScreen, window.Frame)
             end
         end)
+
+    -- ── 6. TOOLS ─────────────────────────────────────────────────
+    heading(T("se_tools"))
+    button(T("se_export_script"), Theme.Colors.InvokeServer).Activated:Connect(function()
+        local data = Session and Session.getCurrent()
+        if not data then Framework.notify(T("n_nothing"), "warning") return end
+        local script = Session.toR2SScript(data)
+        local ok, res = writeExport("replay_" .. tostring(data.id) .. ".lua", script)
+        if ok then
+            Framework.notify(T("n_saved", res), "success", 4)
+        else
+            Framework.copy(script, T("c_r2s"))
+        end
+    end)
+    button(T("se_whatsnew")).Activated:Connect(function()
+        showReleaseNotes(true)
+    end)
+    button(T("se_unload"), Theme.Colors.Error).Activated:Connect(function()
+        Framework.modal(window, T("unload_title"), { T("unload_body") }, {
+            { T("cancel"), Theme.Colors.BgTertiary },
+            { T("se_unload"), Theme.Colors.Error, function() task.defer(unloadAll) end },
+        })
+    end)
 
     -- ── 4. INFO ──────────────────────────────────────────────────
     heading(T("se_info"))
@@ -1064,6 +1551,9 @@ buildSettingsTab = function(parent, window)
         { T("i_files"), Compat.has("writefile") and T("v_avail") or T("v_unavail") },
         { T("i_clip"), Compat.has("setclipboard") and T("v_avail") or T("v_unavail") },
         { T("i_platform"), Framework.IS_MOBILE and T("v_mobile") or T("v_pc") },
+        { "getcallbackvalue", (Compat.getGlobal and Compat.getGlobal("getcallbackvalue")) and T("v_avail") or T("v_unavail") },
+        { "appendfile", Compat.has("appendfile") and T("v_avail") or T("v_unavail") },
+        { "setnamecallmethod", (Compat.getGlobal and Compat.getGlobal("setnamecallmethod")) and T("v_avail") or T("v_unavail") },
     }
 
     for _, pair in ipairs(info) do
